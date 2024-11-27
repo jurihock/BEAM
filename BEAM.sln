@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BEAM", "BEAM\BEAM.csproj", "{666B9FDD-58D3-4CF0-B2D1-8E112B777127}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BEAM.Tests", "BEAM.Tests\BEAM.Tests.csproj", "{B805EBCE-EC59-4493-B4FD-6E0895B6A720}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{666B9FDD-58D3-4CF0-B2D1-8E112B777127}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{666B9FDD-58D3-4CF0-B2D1-8E112B777127}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{666B9FDD-58D3-4CF0-B2D1-8E112B777127}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B805EBCE-EC59-4493-B4FD-6E0895B6A720}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B805EBCE-EC59-4493-B4FD-6E0895B6A720}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B805EBCE-EC59-4493-B4FD-6E0895B6A720}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B805EBCE-EC59-4493-B4FD-6E0895B6A720}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
