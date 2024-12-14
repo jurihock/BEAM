@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using BEAM.Image;
 
 namespace BEAM.ImageSequence;
@@ -34,14 +35,15 @@ public abstract class Sequence(List<string> imagePaths)
         }
     }
 
-    private List<IContiguousImage?> _loadedImages = [..new IContiguousImage[imagePaths.Count]];
+    private Mutex _loadedImagesMutex = new();
+    private IContiguousImage?[] _loadedImages = new IContiguousImage?[imagePaths.Count];
 
     protected abstract IContiguousImage LoadImage(int index);
     protected abstract void InitializeSequence();
 
     public IContiguousImage GetImage(int index)
     {
-        if (index < 0 || index >= _loadedImages.Count)
+        if (index < 0 || index >= _loadedImages.Length)
         {
             throw new NotImplementedException("Invalid image index");
         }
@@ -49,8 +51,17 @@ public abstract class Sequence(List<string> imagePaths)
         var img = _loadedImages[index];
         if (img is not null) return img;
 
+        _loadedImagesMutex.WaitOne();
+        img = _loadedImages[index];
+        if (img is not null)
+        {
+            _loadedImagesMutex.ReleaseMutex();
+            return img;
+        }
+
         img = LoadImage(index);
         _loadedImages[index] = img;
+        _loadedImagesMutex.ReleaseMutex();
         return img;
     }
 
