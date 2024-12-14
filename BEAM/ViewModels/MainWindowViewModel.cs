@@ -25,7 +25,6 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private string? _fileText;
 
     public static int TitleBarHeight => 38;
-    public static int StatusBarHeight => 26;
     
     [RelayCommand]
     public async Task OpenSequence()

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using BEAM.Image;
+using BEAM.Models.LoggerModels;
 
 namespace BEAM.ImageSequence;
 
@@ -96,8 +97,10 @@ public abstract class Sequence(List<string> imagePaths)
     /// <returns>The pixel value at the desired channel.</returns>
     public double GetPixel(long x, long y, int channel)
     {
-        if(x >= Shape.Width || x < 0) throw new ArgumentException($"Pixel row out of range -> is: {x}, Range: [0, {Shape.Width})");
-        if(y >= Shape.Height || y < 0) throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
+        if (x >= Shape.Width || x < 0)
+            throw new ArgumentException($"Pixel row out of range -> is: {x}, Range: [0, {Shape.Width})");
+        if (y >= Shape.Height || y < 0)
+            throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
 
         long line = y % SingleImageHeight;
         long imgIndex = y / SingleImageHeight;
@@ -114,8 +117,10 @@ public abstract class Sequence(List<string> imagePaths)
     /// <returns>The array containing the values of all channels for the pixel. The size of the array is Shape.Channels.</returns>
     public double[] GetPixel(long x, long y)
     {
-        if(x >= Shape.Width || x < 0) throw new ArgumentException($"Pixel row out of range -> is: {x}, Range: [0, {Shape.Width})");
-        if(y >= Shape.Height || y < 0) throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
+        if (x >= Shape.Width || x < 0)
+            throw new ArgumentException($"Pixel row out of range -> is: {x}, Range: [0, {Shape.Width})");
+        if (y >= Shape.Height || y < 0)
+            throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
 
         long line = y % SingleImageHeight;
         long imgIndex = y / SingleImageHeight;
@@ -137,7 +142,8 @@ public abstract class Sequence(List<string> imagePaths)
     /// <returns>A 2d-array with the pixel channel values. Access: [x position, channel index]</returns>
     public double[,] GetPixelLine(long y)
     {
-        if(y >= Shape.Height || y < 0) throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
+        if (y >= Shape.Height || y < 0)
+            throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
 
         long line = y % SingleImageHeight;
         long imgIndex = y / SingleImageHeight;
@@ -202,15 +208,29 @@ public abstract class Sequence(List<string> imagePaths)
     /// <exception cref="NotImplementedException">Throws when no images are being passed or all found file extensions are unsupported</exception>
     public static Sequence Open(List<string> paths)
     {
+        int skipped = 0;
         if (paths.Count == 0) throw new NotImplementedException("Empty sequences are not supported");
 
         var extensions = paths.Select(Path.GetExtension).ToHashSet();
         foreach (var extension in extensions.OfType<string>())
         {
-            if (!SequenceTypes.TryGetValue(extension, out var type)) continue;
+            if (!SequenceTypes.TryGetValue(extension, out var type))
+            {
+                skipped++;
+                continue;
+            }
 
             var sequence = _InstantiateFromType(type, paths);
             sequence.InitializeSequence();
+
+            if (skipped > 0)
+            {
+                string warningString = skipped + " Files could not be loaded";
+                
+                Logger? logger = Logger.getInstance("../../../../BEAM.Tests/loggerTests/testLogs/testLog.log");
+                logger.Warning(LogEvent.FileNotFound, warningString);
+            }
+            
             return sequence;
         }
 
