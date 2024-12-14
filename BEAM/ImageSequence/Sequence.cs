@@ -28,39 +28,19 @@ public abstract class Sequence(List<string> imagePaths)
     }
 
     /// Do not use -> set internally on first get
-    private SequenceShape? _shape
-    {
-        get
-        {
-            if (_shape is not null)
-            {
-                return _shape;
-            }
-            else
-            {
-                _InitializeShape();
-                return _shape;
-            }
-        }
-        set
-        {
-            _shape = value;
-        }
-    }
+    private SequenceShape? _shape;
 
     /// <summary>
     /// The Shape (width, height, channel count) of the entire sequence
     /// </summary>
     public SequenceShape Shape
     {
-        get => _shape;
-        /*TODO: remove
          get
         {
             if (_shape is not null) return _shape;
             _InitializeShape();
             return _shape!;
-        }*/
+        }
     }
 
     private Mutex _loadedImagesMutex = new();
