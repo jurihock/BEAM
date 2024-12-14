@@ -10,7 +10,7 @@ public class LoggerTests
     public void CreateNewLogger()
     {
         // Arrange
-        var logger = new Logger("../../../loggerTests/testLogs/testLog.txt", new LogViewModel());
+        var logger = new Logger("../../../loggerTests/testLogs/testLog.txt");
         
         // Act
         logger.Error(LogEvent.FileNotFound, "Test");

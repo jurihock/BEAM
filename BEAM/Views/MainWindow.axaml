@@ -17,15 +17,15 @@
     </Design.DataContext>
 
     <DockPanel>
-        <Border BorderBrush="Black"
-                Background="Gainsboro"
+        <Border BorderBrush="Gainsboro"
+                Background="#07081c"
                 BorderThickness="0,0, 0, 2"
                 CornerRadius="0"
                 DockPanel.Dock="Top">
             <views:BEAMMenuBar/>
         </Border>
         <Border BorderBrush="Gainsboro"
-                Background="Black"
+                Background="#07081c"
                 BorderThickness="0,2, 0, 0"
                 CornerRadius="0"
                 DockPanel.Dock="Bottom">

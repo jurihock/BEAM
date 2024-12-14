@@ -12,11 +12,11 @@ public class Logger :  ILog
     private string _pathToLogFile;
     private string _lastLogMessage;
     private LogLevel _logLevel;
-    private LogViewModel _logViewModel;
-    public Logger(string pathToLogFile, LogViewModel logViewModel)
+    // private LogViewModel _logViewModel;
+    public Logger(string pathToLogFile)
     {
         _pathToLogFile = pathToLogFile;
-        _logViewModel = logViewModel;
+        // _logViewModel = logViewModel;
         if (!File.Exists(pathToLogFile))
         {
             CreateNewLogFile(pathToLogFile);
@@ -103,7 +103,7 @@ public class Logger :  ILog
     
     private void UpdateLogView()
     {
-        _logViewModel.Update(_lastLogMessage, _logLevel);
+        //_logViewModel.Update(_lastLogMessage, _logLevel);
     }
     
     public string GetLastLogMessage()
