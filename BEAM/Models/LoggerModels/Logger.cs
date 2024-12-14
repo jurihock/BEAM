@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices.JavaScript;
+using System.Text;
 using BEAM.ViewModels.LogViewModel;
 
 namespace BEAM.Models.LoggerModels;
@@ -14,7 +15,7 @@ public class Logger :  ILog
     private LogViewModel _logViewModel;
     public Logger(string pathToLogFile, LogViewModel logViewModel)
     {
-        this._pathToLogFile = pathToLogFile;
+        _pathToLogFile = pathToLogFile;
         _logViewModel = logViewModel;
         if (!File.Exists(pathToLogFile))
         {
@@ -83,7 +84,7 @@ public class Logger :  ILog
         {
             using (BinaryWriter w = new BinaryWriter(fs))
             {
-                w.Write("New log file created at: " + DateTime.Now);
+                w.Write("New log file created at: " + DateTime.Now + "\n");
             }
         }
             
@@ -92,9 +93,9 @@ public class Logger :  ILog
     private void Write(string message)
     {
         _lastLogMessage = message;
-        using (StreamWriter outputFile = new StreamWriter("WriteLines.txt"))
+        using (StreamWriter outputFile = new StreamWriter(_pathToLogFile, true))
         {
-            outputFile.WriteLine(DateTime.Now.ToString("hh:mm:ss t z") + message);
+            outputFile.WriteLine(DateTime.Now + " " +message);
         }
         UpdateLogView();
     }
