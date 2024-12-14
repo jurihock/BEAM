@@ -9,7 +9,7 @@
 
     <Panel>
         <Border BorderBrush="White"
-                Background="Aqua"
+                Background="Black"
                 BorderThickness="0,0, 0, 2"
                 CornerRadius="0"
                 IsHitTestVisible="False">

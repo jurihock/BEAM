@@ -38,15 +38,11 @@
     </NativeMenu.Menu>
 
     <DockPanel>
-        <views:TitleBar Name="TitleBar" DockPanel.Dock="Top" Height="{Binding TitleBarHeight}"></views:TitleBar>
+        <views:TitleBar Name="TitleBar" DockPanel.Dock="Top" Height="{Binding TitleBarHeight}"/>
 
-        <Border BorderBrush="Gainsboro"
-                Background="#07081c"
-                BorderThickness="0,2, 0, 0"
-                CornerRadius="0"
-                DockPanel.Dock="Bottom">
-            <views:StatusBar />
-        </Border>
+        <views:StatusBar DockPanel.Dock="Bottom" Height="26"/>
+        
+        
         <Button Command="{Binding AddError}">Add Error</Button>
         <Button Command="{Binding AddWarning}">Add Warning</Button>
         <Button Command="{Binding AddInfo}">Add Info</Button>
