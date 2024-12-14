@@ -15,7 +15,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace BEAM.ViewModels;
 
-public partial class BEAMMenuBarViewModel : ViewModelBase
+public partial class MenuBarViewModel : ViewModelBase
 {
 #pragma warning disable CA1822 // Mark members as static
     public string Greeting => "Welcome to Avalonia!";

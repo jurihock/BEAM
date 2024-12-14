@@ -9,12 +9,33 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="BEAM">
-    
+
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
+        <vm:MainWindowViewModel />
     </Design.DataContext>
+
+    <NativeMenu.Menu>
+        <!-- <titlebar:MenuBar /> -->
+
+        <NativeMenu>
+            <NativeMenuItem Header="{Binding File}">
+                <NativeMenu>
+                    <NativeMenuItem Header="{Binding Open}" Command="{Binding OpenSequence}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{Binding Exit}" Command="{Binding ExitBeam}" />
+                </NativeMenu>
+            </NativeMenuItem>
+            <NativeMenuItem Header="{Binding Edit}">
+                <NativeMenu>
+                    <NativeMenuItem Header="{Binding Copy}" />
+                    <NativeMenuItem Header="{Binding Paste}" />
+                </NativeMenu>
+            </NativeMenuItem>
+        </NativeMenu>
+
+    </NativeMenu.Menu>
 
     <DockPanel>
         <Border BorderBrush="Black"
@@ -22,15 +43,15 @@
                 BorderThickness="0,0, 0, 2"
                 CornerRadius="0"
                 DockPanel.Dock="Top">
-            <views:BEAMMenuBar/>
+            <NativeMenuBar />
         </Border>
         <Border BorderBrush="Gainsboro"
                 Background="Black"
                 BorderThickness="0,2, 0, 0"
                 CornerRadius="0"
                 DockPanel.Dock="Bottom">
-            <views:StatusBar/>
+            <views:StatusBar />
         </Border>
-        <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center" />
     </DockPanel>
 </Window>
