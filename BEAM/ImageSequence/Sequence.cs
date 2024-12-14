@@ -35,7 +35,7 @@ public abstract class Sequence(List<string> imagePaths)
     /// </summary>
     public SequenceShape Shape
     {
-         get
+        get
         {
             if (_shape is not null) return _shape;
             _InitializeShape();
@@ -219,7 +219,7 @@ public abstract class Sequence(List<string> imagePaths)
                 skipped++;
                 continue;
             }
-            
+
             var sequence = _InstantiateFromType(type, paths);
             sequence.InitializeSequence();
 
@@ -240,13 +240,34 @@ public abstract class Sequence(List<string> imagePaths)
     /// <summary>
     /// Opens a sequence from a folder
     /// </summary>
-    /// <param name="folder">The folder with the sequence inside</param>
+    /// <param name="folder">The path to the folder with the sequence inside</param>
     /// <returns>The opened sequence</returns>
     public static Sequence Open(string folder)
     {
         if (!Directory.Exists(folder)) throw new NotImplementedException($"Unsupported folder: {folder}");
         var filePaths = Directory.EnumerateFiles(folder, "*.*", SearchOption.TopDirectoryOnly);
         return Open(filePaths.ToList());
+    }
+
+    /// <summary>
+    /// Opens a new sequence.
+    /// </summary>
+    /// <param name="paths">The image paths the sequence uses.</param>
+    /// <returns>The sequence</returns>
+    /// <exception cref="NotImplementedException">Throws when no images are being passed or all found file extensions are unsupported</exception>
+    public static Sequence Open(List<Uri> paths)
+    {
+        return Open(paths.Select(u => u.AbsolutePath).ToList());
+    }
+
+    /// <summary>
+    /// Opens a sequence from a folder
+    /// </summary>
+    /// <param name="folder">The uri to the folder with the sequence inside</param>
+    /// <returns>The opened sequence</returns>
+    public static Sequence Open(Uri folder)
+    {
+        return Open(folder.AbsolutePath);
     }
 
     /// <summary>
