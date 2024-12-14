@@ -33,6 +33,7 @@ public partial class MainWindowViewModel : ViewModelBase
         Console.WriteLine("File: " + file?.Path);
     }
 
+    [RelayCommand]
     public void ExitBeam()
     {
         Environment.Exit(0);
