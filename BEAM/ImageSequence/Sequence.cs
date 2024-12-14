@@ -7,6 +7,10 @@ using BEAM.Image;
 
 namespace BEAM.ImageSequence;
 
+/// <summary>
+/// Loads and manages an entire sequence.
+/// </summary>
+/// <param name="imagePaths">The paths of the images to use inside the sequence.</param>
 public abstract class Sequence(List<string> imagePaths)
 {
     /// Do not use -> set internally on first get
@@ -49,7 +53,7 @@ public abstract class Sequence(List<string> imagePaths)
     protected abstract IContiguousImage LoadImage(int index);
 
     /// <summary>
-    /// Initializes and verifies the sequence.
+    /// Initializes and validates the sequence.
     /// </summary>
     protected abstract void InitializeSequence();
 

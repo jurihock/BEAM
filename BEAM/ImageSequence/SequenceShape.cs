@@ -2,6 +2,12 @@ using System;
 
 namespace BEAM.ImageSequence;
 
+/// <summary>
+/// The shape of the sequence consisting of width, height and channel count
+/// </summary>
+/// <param name="width">The pixel width of the sequence</param>
+/// <param name="height">The pixel height of the sequence</param>
+/// <param name="channels">The channel count of the sequence</param>
 public class SequenceShape(long width, long height, int channels) : IEquatable<SequenceShape>
 {
     /// <summary>

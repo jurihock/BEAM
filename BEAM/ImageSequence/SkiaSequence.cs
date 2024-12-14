@@ -5,6 +5,10 @@ using BEAM.Image.Skia;
 
 namespace BEAM.ImageSequence;
 
+/// <summary>
+/// Implementation details for skia images.
+/// </summary>
+/// <param name="imagePaths">The skia images to use inside the sequence</param>
 public class SkiaSequence(List<string> imagePaths) : Sequence(imagePaths)
 {
     protected override IContiguousImage LoadImage(int index) => new RgbSkiaImage(imagePaths[index]);
