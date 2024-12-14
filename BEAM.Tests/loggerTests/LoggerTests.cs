@@ -10,7 +10,7 @@ public class LoggerTests
     public void CreateNewLogger()
     {
         // Arrange
-        var logger = new Logger("../../../loggerTests/testLogs/testLog.txt");
+        var logger = Logger.getInstance("../../../../BEAM.Tests/loggerTests/testLogs/testLog.log");
         
         // Act
         logger.Error(LogEvent.FileNotFound, "Test");

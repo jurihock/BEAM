@@ -92,7 +92,7 @@ public class Logger :  ILog
         {
             using (BinaryWriter w = new BinaryWriter(fs))
             {
-                w.Write("New log file created at: " + DateTime.Now + "\n");
+                w.Write("New log file created at: " + DateTime.Now.ToString() + "\n");
             }
         }
             
