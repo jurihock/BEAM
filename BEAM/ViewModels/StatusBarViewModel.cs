@@ -1,5 +1,7 @@
 using System.IO.Pipelines;
+using BEAM.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace BEAM.ViewModels;
 
@@ -64,5 +66,12 @@ public partial class StatusBarViewModel : ViewModelBase
         InfoText = "";
         WarningText = "";
         ErrorText = "";
+    }
+    
+    [RelayCommand]
+    public void OpenStatusWindow()
+    {
+        var statusWindow = new StatusWindow();
+        statusWindow.Show();
     }
 }

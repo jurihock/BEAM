@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using BEAM.ViewModels;
 
@@ -10,6 +11,6 @@ public partial class StatusBar : UserControl
     public StatusBar()
     {
         InitializeComponent();
-        DataContext = StatusBarViewModel.GetInstance(); 
+        DataContext = StatusBarViewModel.GetInstance();
     }
 }
