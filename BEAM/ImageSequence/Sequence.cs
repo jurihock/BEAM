@@ -8,6 +8,13 @@ namespace BEAM.ImageSequence;
 
 public abstract class Sequence(List<string> imagePaths)
 {
+    private static readonly Dictionary<string, Type> SequenceTypes = new()
+    {
+        [".png"] = typeof(SkiaSequence),
+        [".raw"] = typeof(EnviSequence),
+        [".hdr"] = typeof(EnviSequence),
+    };
+
     public SequenceShape Shape { get; protected set; }
 
     protected abstract IContiguousImage LoadImage(int index);
@@ -26,12 +33,28 @@ public abstract class Sequence(List<string> imagePaths)
     public static Sequence Open(List<string> paths)
     {
         // TODO: set _singleImageHeight, Shape
-        throw new NotImplementedException();
+
+        var extensions = paths.Select(Path.GetExtension).ToHashSet();
+        foreach (var extension in extensions.OfType<string>())
+        {
+            if (!SequenceTypes.TryGetValue(extension, out var type)) continue;
+
+            return _InstantiateFromType(type, paths);
+        }
+
+        throw new NotImplementedException($"Unsupported extensions: {string.Join(", ", extensions)}");
     }
 
     public static Sequence Open(string folder)
     {
         var filePaths = Directory.EnumerateFiles(folder, "*.*", SearchOption.TopDirectoryOnly);
         return Open(filePaths.ToList());
+    }
+
+    private static Sequence _InstantiateFromType(Type type, List<string> paths)
+    {
+        // opens constructor with List<string> as parameter (main constructor of Sequence)
+        var ctor = type.GetConstructor([typeof(List<string>)])!;
+        return (Sequence)ctor.Invoke([paths]);
     }
 }
