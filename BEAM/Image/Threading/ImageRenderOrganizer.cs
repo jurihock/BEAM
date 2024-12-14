@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
 using BEAM.Exceptions;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
