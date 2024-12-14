@@ -11,12 +11,12 @@ public abstract class Sequence(List<string> imagePaths)
     // Do not use -> set internally on first get
     private long? _singleFileHeight;
 
-    public long SingleFileHeight
+    public long SingleImageHeight
     {
         get
         {
             if (_singleFileHeight is not null) return _singleFileHeight.Value;
-            _singleFileHeight = LoadImage(0).Shape.Height;
+            _singleFileHeight = GetImage(0).Shape.Height;
             return _singleFileHeight.Value;
         }
     }
@@ -34,24 +34,51 @@ public abstract class Sequence(List<string> imagePaths)
         }
     }
 
+    private List<IContiguousImage?> _loadedImages = [..new IContiguousImage[imagePaths.Count]];
+
     protected abstract IContiguousImage LoadImage(int index);
     protected abstract void InitializeSequence();
 
+    public IContiguousImage GetImage(int index)
+    {
+        if (index < 0 || index >= _loadedImages.Count)
+        {
+            throw new NotImplementedException("Invalid image index");
+        }
+
+        var img = _loadedImages[index];
+        if (img is not null) return img;
+
+        img = LoadImage(index);
+        _loadedImages[index] = img;
+        return img;
+    }
+
     public double GetPixel(long x, long y, int channel)
     {
-        throw new NotImplementedException();
+        long line = y % SingleImageHeight;
+        long imgIndex = y / SingleImageHeight;
+
+        var image = GetImage((int) imgIndex);
+        return image.GetAsDouble(x, line, channel);
     }
 
     public double[] GetPixel(long x, long y)
     {
-        throw new NotImplementedException();
+        var channels = new double[Shape.Channels];
+        for (int i = 0; i < channels.Length; i++)
+        {
+            channels[i] = GetPixel(x, y, i);
+        }
+
+        return channels;
     }
 
     private void _InitializeShape()
     {
         int length = imagePaths.Count;
 
-        var firstImage = LoadImage(0);
+        var firstImage = GetImage(0);
         long width = firstImage.Shape.Width;
         long height = firstImage.Shape.Height;
         _singleFileHeight = height;
@@ -65,7 +92,7 @@ public abstract class Sequence(List<string> imagePaths)
 
         height *= (length - 1);
 
-        var lastImage = LoadImage(length - 1);
+        var lastImage = GetImage(length - 1);
         height += lastImage.Shape.Height;
 
         _shape = new SequenceShape(width, height, firstImage.Shape.Channels);
