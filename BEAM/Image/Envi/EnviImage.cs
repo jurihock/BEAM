@@ -4,6 +4,9 @@ using System.IO.MemoryMappedFiles;
 
 namespace BEAM.Image.Envi;
 
+/// <summary>
+/// A base class used to cast its generic subclasses to a common type.
+/// </summary>
 public interface IEnviImage : IContiguousImage
 {
 }
@@ -17,26 +20,68 @@ public class EnviImage<T> : IContiguousImage<T>, IDisposable, IEnviImage
     private MemoryMappedViewAccessor? FileAccessor { get; set; }
     private Func<long, T> GetValue { get; init; }
 
+    /// <summary>
+    /// This image's dimensions, meaning its length, width and channel count.
+    /// </summary>
     public ImageShape Shape { get; init; }
+    /// <summary>
+    /// The orientation pixels are being stored in memory with. 
+    /// </summary>
     public ImageMemoryLayout Layout { get; init; }
 
+    /// <summary>
+    /// Gets a specific pixel value's channel by coordinates-
+    /// </summary>
+    /// <param name="x">The pixel's width coordinate.</param>
+    /// <param name="y">The pixel's height coordinate.</param>
+    /// <param name="z">The pixel's channel.</param>
     public T this[long x, long y, int z] => GetValue(Layout.Flatten(x, y, z));
+    
+    /// <summary>
+    /// Gets a specific pixel value's channel by the pixels position in a flattened one dimensional image, meaning by its position in the raw filestream.
+    /// </summary>
+    /// <param name="i">The pixel's position in a one dimensional array according to the <see cref="ImageMemoryLayout"/>.</param>
     public T this[long i] => GetValue(i);
 
+    /// <summary>
+    /// Returns a pixel channel's value, converted to a double.
+    /// </summary>
+    /// <param name="i">The pixel's position in a one dimensional array according to the <see cref="ImageMemoryLayout"/>.</param>
+    /// <returns>The specified pixel-channel value as a double.</returns>
     public double GetAsDouble(long i)
     {
         return (double) Convert.ChangeType(this[i], typeof(double))!;
     }
 
+    /// <summary>
+    /// Returns a pixel channel's value, converted to a double.
+    /// </summary>
+    /// <param name="x">The pixel's width coordinate.</param>
+    /// <param name="y">The pixel's height coordinate.</param>
+    /// <param name="z">The pixel's channel.</param>
+    /// <returns>The specified pixel-channel value as a double.</returns>
     public double GetAsDouble(long x,long y, int z)
     {
         return (double) Convert.ChangeType(this[x, y, z], typeof(double))!;
     }
 
+    /// <summary>
+    /// Creates a new instance given the filepath to an envis header and raw file, whose names must match except for their file endings.
+    /// The default file endings of .hdr for header files and .raw for data files must be used.
+    /// </summary>
+    /// <param name="filepath">The path to both envi files including their name. Therefor their names must match.</param>
     public EnviImage(string filepath) : this(filepath, (hdr: ".hdr", raw: ".raw"))
     {
     }
 
+    /// <summary>
+    /// Creates a new instance given the filepath to an envis header and raw file, whose names must match except for their file endings.
+    /// The extensions for the different types (header and data) can be customized
+    /// </summary>
+    /// <param name="filepath">The path to both envi files including their name. Therefor their names must match.</param>
+    /// <param name="extensions">A tuple whose first entry is the file extension for the header file and its second is the data files extension.</param>
+    /// <exception cref="FileNotFoundException">If either file was found at the specified filepath.</exception>
+    /// <exception cref="NotSupportedException">If no envi file, or an ENVI file with a byte order other than the host's was found.</exception>
     public EnviImage(string filepath, (string hdr, string raw) extensions)
     {
         var filepaths = (
@@ -138,8 +183,17 @@ public class EnviImage<T> : IContiguousImage<T>, IDisposable, IEnviImage
     }
 }
 
+/// <summary>
+/// This class contains the utility to open new ENVI files. 
+/// </summary>
 public static class EnviImage
 {
+    /// <summary>
+    /// This method opens a new file as an envi file given the supplied path. Its corresponding header file must be located at the same location with the same name.
+    /// </summary>
+    /// <param name="filepath">The path to the ENVI file (header and data).</param>
+    /// <returns> A generic <see cref="EnviImage{T}"/> cast to its superclass <see cref="IEnviImage"/> which represents the files found under the supplied path.</returns>
+    /// <exception cref="FileNotFoundException">If either the header or the raw file were not found in under the supplied path.</exception>
     public static IEnviImage OpenImage(string filepath)
     {
         var filepaths = (

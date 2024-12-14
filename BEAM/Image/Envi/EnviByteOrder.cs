@@ -2,6 +2,9 @@ using System;
 
 namespace BEAM.Image.Envi;
 
+/// <summary>
+/// This enum is used to represent the hosts byte-order (Endianess).
+/// </summary>
 public enum EnviByteOrder
 {
   /// <summary>

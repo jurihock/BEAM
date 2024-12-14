@@ -2,6 +2,9 @@ using System;
 
 namespace BEAM.Image.Envi;
 
+/// <summary>
+/// This enum contains the possible data types which are being used to store data in ENVI files.
+/// </summary>
 public enum EnviDataType
 {
   Byte = 1,

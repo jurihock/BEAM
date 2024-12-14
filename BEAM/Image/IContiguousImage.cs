@@ -9,6 +9,13 @@ public interface IContiguousImage
   /// </summary>
   ImageShape Shape { get; }
 
+  /// <summary>
+  /// Returns a pixel channel's value, converted to a double.
+  /// </summary>
+  /// <param name="x">The pixel's width coordinate.</param>
+  /// <param name="y">The pixel's height coordinate.</param>
+  /// <param name="z">The pixel's channel.</param>
+  /// <returns>The specified pixel-channel value as a double.</returns>
   double GetAsDouble(long x, long y, int z);
 
   /// <summary>
@@ -16,6 +23,11 @@ public interface IContiguousImage
   /// </summary>
   ImageMemoryLayout Layout { get; }
 
+  /// <summary>
+  /// Returns a pixel channel's value, converted to a double.
+  /// </summary>
+  /// <param name="i">The pixel's position in a one dimensional array according to the <see cref="ImageMemoryLayout"/>.</param>
+  /// <returns>The specified pixel-channel value as a double.</returns>
   double GetAsDouble(long i);
 }
 
@@ -40,4 +52,6 @@ public interface IContiguousImage<T> : IContiguousImage
   /// <param name="y">Image line index in range [0..H).</param>
   /// <param name="z">Image channel index in range [0..C).</param>
   T this[long x, long y, int z] { get; }
+  
+  
 }
