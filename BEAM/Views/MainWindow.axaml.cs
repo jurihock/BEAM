@@ -11,10 +11,4 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
     }
-
-
-    private void NativeMenuItem_OnClick(object? sender, EventArgs e)
-    {
-        Console.WriteLine("NativeMenuItem_OnClick");
-    }
 }

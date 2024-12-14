@@ -38,15 +38,7 @@
     </NativeMenu.Menu>
 
     <DockPanel>
-        <Panel Height="{Binding TitleBarHeight}" DockPanel.Dock="Top">
-            <Border BorderBrush="White"
-                    Background="Aqua"
-                    BorderThickness="0,0, 0, 2"
-                    CornerRadius="0"
-                    IsHitTestVisible="False">
-            </Border>
-            <NativeMenuBar IsHitTestVisible="True"/>
-        </Panel>
+        <views:TitleBar Name="TitleBar" DockPanel.Dock="Top" Height="{Binding TitleBarHeight}"></views:TitleBar>
 
         <Border BorderBrush="Gainsboro"
                 Background="Black"

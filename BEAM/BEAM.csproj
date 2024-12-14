@@ -29,4 +29,11 @@
     <ItemGroup>
       <UpToDateCheckInput Remove="Views\Titlebar\MenuBar.axaml" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Views\TitleBar.axaml.cs">
+        <DependentUpon>TitleBar.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
 </Project>
