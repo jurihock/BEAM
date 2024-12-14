@@ -56,7 +56,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private Logger? _logger;
     public MainWindowViewModel()
     {
-        _logger = new Logger("../../../../BEAM.Tests/loggerTests/testLogs/testLog.txt");
+        _logger = Logger.getInstance("../../../../BEAM.Tests/loggerTests/testLogs/testLog.log");
     }
     
     [RelayCommand]

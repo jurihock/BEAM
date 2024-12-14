@@ -10,11 +10,13 @@ namespace BEAM.Models.LoggerModels;
 
 public class Logger :  ILog
 {
+    private static Logger _instance;
+    
     private string _pathToLogFile;
     private string _lastLogMessage;
     private LogLevel _logLevel;
     private StatusBarViewModel _StatusBarViewModel;
-    public Logger(string pathToLogFile)
+    private Logger(string pathToLogFile)
     {
         _pathToLogFile = pathToLogFile;
         _StatusBarViewModel = StatusBarViewModel.GetInstance();
@@ -25,6 +27,11 @@ public class Logger :  ILog
         
     }
 
+    public static Logger getInstance(string pathToLogFile)
+    {
+        return _instance ?? (_instance = new Logger(pathToLogFile));
+    }
+    
     public void Error(LogEvent occuredEvent)
     {
         _logLevel = LogLevel.Error;
