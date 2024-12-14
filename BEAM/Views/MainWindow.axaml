@@ -24,7 +24,8 @@
                 <NativeMenu>
                     <NativeMenuItem Header="{Binding Open}" Command="{Binding OpenSequence}" />
                     <NativeMenuItemSeparator />
-                    <NativeMenuItem Header="{Binding Exit}" Command="{Binding ExitBeam}" IsVisible="{OnPlatform macOS=False, Default=True}"/>
+                    <NativeMenuItem Header="{Binding Exit}" Command="{Binding ExitBeam}"
+                                    IsVisible="{OnPlatform macOS=False, Default=True}" />
                 </NativeMenu>
             </NativeMenuItem>
             <NativeMenuItem Header="{Binding Edit}">
@@ -38,14 +39,16 @@
     </NativeMenu.Menu>
 
     <DockPanel>
-        <views:TitleBar Name="TitleBar" DockPanel.Dock="Top" Height="{Binding TitleBarHeight}"/>
+        <views:TitleBar Name="TitleBar" DockPanel.Dock="Top" Height="{Binding TitleBarHeight}" />
 
-        <views:StatusBar DockPanel.Dock="Bottom" Height="26"/>
-        
-        
-        <Button Command="{Binding AddError}">Add Error</Button>
-        <Button Command="{Binding AddWarning}">Add Warning</Button>
-        <Button Command="{Binding AddInfo}">Add Info</Button>
-        <Button Command="{Binding ClearLog}">Flush Status Bar</Button>
+        <views:StatusBar DockPanel.Dock="Bottom" Height="{Binding StatusBarHeight}" />
+
+        <StackPanel Name="TestStatusBar" Margin="10" Orientation="Horizontal" VerticalAlignment="Top">
+            <Button Command="{Binding AddError}">Add Error</Button>
+            <Button Command="{Binding AddWarning}">Add Warning</Button>
+            <Button Command="{Binding AddInfo}">Add Info</Button>
+            <Button Command="{Binding ClearLog}">Flush Status Bar</Button>
+        </StackPanel>
+
     </DockPanel>
 </Window>
