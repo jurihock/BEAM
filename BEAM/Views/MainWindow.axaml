@@ -38,13 +38,6 @@
     </NativeMenu.Menu>
 
     <DockPanel>
-        <Border BorderBrush="Gainsboro"
-                Background="#07081c"
-                BorderThickness="0,0, 0, 2"
-                CornerRadius="0"
-                DockPanel.Dock="Top">
-            <views:BEAMMenuBar/>
-        </Border>
         <views:TitleBar Name="TitleBar" DockPanel.Dock="Top" Height="{Binding TitleBarHeight}"></views:TitleBar>
 
         <Border BorderBrush="Gainsboro"
@@ -58,6 +51,5 @@
         <Button Command="{Binding AddWarning}">Add Warning</Button>
         <Button Command="{Binding AddInfo}">Add Info</Button>
         <Button Command="{Binding ClearLog}">Flush Status Bar</Button>
-        <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center" />
     </DockPanel>
 </Window>

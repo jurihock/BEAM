@@ -14,9 +14,6 @@ namespace BEAM.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-#pragma warning disable CA1822 // Mark members as static
-    public string Greeting => "Welcome to Avalonia!";
-#pragma warning restore CA1822 // Mark members as static
     [ObservableProperty] public partial string File { get; set; } = Configuration.StandardEnglish().FileMenu;
     [ObservableProperty] public partial string Open { get; set; } = Configuration.StandardEnglish().Open;
     [ObservableProperty] public partial string Exit { get; set; } = Configuration.StandardEnglish().Exit;
