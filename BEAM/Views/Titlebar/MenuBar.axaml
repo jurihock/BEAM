@@ -1,0 +1,6 @@
+<NativeMenu xmlns="https://github.com/avaloniaui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            x:Class="BEAM.Views.Titlebar.MenuBar">
+    <NativeMenuItem Header="File" Click="NativeMenuItem_OnClick"/>
+    <NativeMenuItem Header="dasd"></NativeMenuItem>
+</NativeMenu>
