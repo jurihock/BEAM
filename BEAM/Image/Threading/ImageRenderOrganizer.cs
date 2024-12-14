@@ -1,15 +1,17 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 using BEAM.Exceptions;
 using BEAM.ImageSequence;
+using BEAM.Renderer;
 
 namespace BEAM.Image.Threading;
 
 public class ImageRenderOrganizer
 {
     private readonly ManualResetEventSlim _pauseEvent = new ManualResetEventSlim(true); // Used to pause/resume
-    private readonly CancellationTokenSource _cts = new CancellationTokenSource(); // Used to stop
+    private CancellationTokenSource _cts = new CancellationTokenSource(); // Used to stop
     private readonly object _lockObj = new object();
     
     public RenderedImageExcerpt renderableExcerpt { get; private set; }
@@ -29,18 +31,18 @@ public class ImageRenderOrganizer
         long width = sequence.Shape.Width;
         _cts.Cancel();
         _cts = new CancellationTokenSource();
-        if (renderableExcerpt is null || !renderer.IsCompatible((width, imageStartLine-  imageEndLine + 1), zoomLevel))
+        if (renderableExcerpt is null || !renderableExcerpt.IsCompatible((width, imageStartLine-  imageEndLine + 1), zoomLevel) || !renderableExcerpt.IsCopyable(imageStartLine))
         {
             long startindex = imageStartLine * width;
             long  endIndex = imageEndLine * width - 1;
-            int padding = 100; //TODO Absolute vs Relative
+            int padding = 100; //TODO: Absolute vs Relative
             var renderedImageExcerpt = new RenderedImageExcerpt(width, imageEndLine - imageStartLine + 1, padding, zoomLevel, (0, imageStartLine)); 
 
             Parallel.For(startindex, endIndex + 1, new ParallelOptions(){MaxDegreeOfParallelism =Environment.ProcessorCount},(i) =>
             {
                 long y = i / width; // Integer division for line
                 long x = i % width; // Pixel coord within line
-                double[3] pixelRGBValues = renderer.RenderPixel(sequence.GetPixel(x, y));
+                byte[] pixelRGBValues = renderer.RenderPixel(sequence.GetPixel(x, y));
                 renderedImageExcerpt.PixelData[x, y + padding - 1, 0] = pixelRGBValues[0];
                 renderedImageExcerpt.PixelData[x, y + padding - 1, 1] = pixelRGBValues[1];
                 renderedImageExcerpt.PixelData[x, y + padding - 1, 2] = pixelRGBValues[2];
@@ -48,10 +50,38 @@ public class ImageRenderOrganizer
             this.renderableExcerpt = renderedImageExcerpt;
         } else
         {
-            lock (_lockObj)
+            long validCopyRange = imageEndLine - imageStartLine + 1;  //TODO:  We could even try to save the padding and not just the main image data
+
+            long remainingLines = renderableExcerpt.Height;
+            if (imageStartLine <= renderableExcerpt.OriginPixel.Item2)
             {
-                
+                if (renderableExcerpt.OriginPixel.Item2 - imageStartLine <= renderableExcerpt.Padding)
+                {
+                    CopyOverlappingArea3D(renderableExcerpt.PixelData, 0, renderableExcerpt.OriginPixel.Item2, 0,
+                        renderableExcerpt.Width,renderableExcerpt.Height + renderableExcerpt.Padding, 3, 0, Math.Min(renderableExcerpt.OriginPixel.Item2 - imageStartLine, renderableExcerpt.Padding),0);
+                    remainingLines = Math.Max(-renderableExcerpt.Padding + (renderableExcerpt.OriginPixel.Item2 - imageStartLine), 0);
+                }
+                else
+                {
+                    
+                }
+               
             }
+            else
+            {
+                if (imageStartLine - renderableExcerpt.OriginPixel.Item2 <= renderableExcerpt.Padding)
+                {
+                    
+                }
+                else
+                {
+                    
+                }
+                CopyOverlappingArea3D(renderableExcerpt.PixelData, 0, renderableExcerpt.OriginPixel.Item2, 0,
+                    renderableExcerpt.Width,renderableExcerpt.Height + renderableExcerpt.Padding, 3, 0, Math.Min(renderableExcerpt.OriginPixel.Item2 - imageStartLine, renderableExcerpt.Padding),0);
+            }
+            
+            
         }
         
         ParallelOptions options = new ParallelOptions
@@ -68,24 +98,23 @@ public class ImageRenderOrganizer
             {
                 long y = i / renderableExcerpt.Width;
                 long x = i % renderableExcerpt.Width;
-                if (y - renderableExcerpt.Padding < 0)
                 if (i <  renderableExcerpt.Padding * renderableExcerpt.Width)
                 {
-                    double[3] pixelRGBValues = renderer.RenderPixel(sequence.GetPixel(x, y));
-                    renderableExcerpt.PixelData[x, y + renderableExcerpt.Padding, 0] = pixelRGBValues[0];
-                    renderableExcerpt.PixelData[x, y + renderableExcerpt.Padding, 1] = pixelRGBValues[1];
-                    renderableExcerpt.PixelData[x, y + renderableExcerpt.Padding, 2] = pixelRGBValues[2];
+                    byte[] pixelRGBValues = renderer.RenderPixel(sequence.GetPixel(x, y));
+                    renderableExcerpt.PixelData[x, y, 0] = pixelRGBValues[0];
+                    renderableExcerpt.PixelData[x, y, 1] = pixelRGBValues[1];
+                    renderableExcerpt.PixelData[x, y, 2] = pixelRGBValues[2];
                 } else
                 {
-                    double[3] pixelRGBValues = renderer.RenderPixel(sequence.GetPixel(x, y));
-                    renderableExcerpt.PixelData[x, y + renderableExcerpt.Padding - 1, 0] = pixelRGBValues[0];
-                    renderableExcerpt.PixelData[x, y + renderableExcerpt.Padding - 1, 1] = pixelRGBValues[1];
-                    renderableExcerpt.PixelData[x, y + renderableExcerpt.Padding - 1, 2] = pixelRGBValues[2];
+                    byte[] pixelRGBValues = renderer.RenderPixel(sequence.GetPixel(x, y));
+                    renderableExcerpt.PixelData[x, y + renderableExcerpt.Height, 0] = pixelRGBValues[0];
+                    renderableExcerpt.PixelData[x, y + renderableExcerpt.Height, 1] = pixelRGBValues[1];
+                    renderableExcerpt.PixelData[x, y + renderableExcerpt.Height, 2] = pixelRGBValues[2];
                 }
             });
         }, _cts.Token);
-
-        return null;
+        
+        return renderableExcerpt;
 
     }
 
@@ -110,7 +139,7 @@ public class ImageRenderOrganizer
                         for (int x = 0; x < prevExcerpt.Width; x++)
                         {
                             //TODO Dummy
-                            double[3] pixelRGBValues = renderer.RenderPixel(sequence.GetPixel(x, y));
+                            byte[] pixelRGBValues = renderer.RenderPixel(sequence.GetPixel(x, y));
                             prevExcerpt.PixelData[x, y, 0] = pixelRGBValues[0];
                             prevExcerpt.PixelData[x, y, 1] = pixelRGBValues[1];
                             prevExcerpt.PixelData[x, y, 2] = pixelRGBValues[2];
@@ -125,7 +154,7 @@ public class ImageRenderOrganizer
                             for (int x = 0; x < prevExcerpt.Width; x++)
                             {
                                 //TODO Dummy
-                                double[3] pixelRGBValues = renderer.RenderPixel(sequence.GetPixel(x, y));
+                                byte[] pixelRGBValues = renderer.RenderPixel(sequence.GetPixel(x, y));
                                 prevExcerpt.PixelData[x, y, 0] = pixelRGBValues[0];
                                 prevExcerpt.PixelData[x, y, 1] = pixelRGBValues[1];
                                 prevExcerpt.PixelData[x, y, 2] = pixelRGBValues[2];
@@ -169,6 +198,54 @@ public class ImageRenderOrganizer
         Console.WriteLine("Stopping padding creation...");
         _cts.Cancel();
     }
+    public static void CopyOverlappingArea3D<T>(
+        T[,,] array, 
+        long sourceX, long sourceY, long sourceZ, 
+        long width, long height, long depth, 
+        long destX, long destY, long destZ)
+    {
+        // Validate array bounds and ensure no out-of-bound access
+        if (array == null) throw new ArgumentNullException(nameof(array));
+        long sizeX = array.GetLength(0);
+        long sizeY = array.GetLength(1);
+        long sizeZ = array.GetLength(2);
+
+        if (sourceX < 0 || sourceY < 0 || sourceZ < 0 ||
+            destX < 0 || destY < 0 || destZ < 0 ||
+            sourceX + width > sizeX || sourceY + height > sizeY || sourceZ + depth > sizeZ ||
+            destX + width > sizeX || destY + height > sizeY || destZ + depth > sizeZ)
+        {
+            throw new ArgumentOutOfRangeException("Source or destination region is out of bounds.");
+        }
+
+        // Use a temporary buffer to avoid overwriting issues during copying
+        T[,,] temp = new T[width, height, depth];
+
+        // Copy the source region to the temporary buffer
+        for (long x = 0; x < width; x++)
+        {
+            for (long y = 0; y < height; y++)
+            {
+                for (long z = 0; z < depth; z++)
+                {
+                    temp[x, y, z] = array[sourceX + x, sourceY + y, sourceZ + z];
+                }
+            }
+        }
+
+        // Copy the temporary buffer to the destination region
+        for (long x = 0; x < width; x++)
+        {
+            for (long y = 0; y < height; y++)
+            {
+                for (long z = 0; z < depth; z++)
+                {
+                    array[destX + x, destY + y, destZ + z] = temp[x, y, z];
+                }
+            }
+        }
+    }
+
 }
 
 public class RenderedImageExcerpt
@@ -186,7 +263,7 @@ public class RenderedImageExcerpt
         this.Height = height;
         this.ZoomLevel = zoomLevel;
         this.OriginPixel = upperLeftPixel;
-        PixelData = new byte[width, 2* padding + height, 3];//TODO Constant separation
+        PixelData = new byte[width, 2* padding + height, 3];//TODO: Constant separation
     }
 
     public bool IsCompatible((long, long) dimension, double zoomLevel, double compThreshold = 1e-7)
@@ -194,6 +271,9 @@ public class RenderedImageExcerpt
         return (dimension.Equals((Width, Height)) && Math.Abs(this.ZoomLevel - zoomLevel) < compThreshold);
     }
 
-    
-    
+
+    public bool IsCopyable(long newInitialLine)
+    {
+        return (Math.Abs(OriginPixel.Item2 - newInitialLine) < Height + Padding);
+    }
 }
