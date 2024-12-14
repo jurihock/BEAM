@@ -1,10 +1,13 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using BEAM.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+
+using BEAM.Models.LoggerModels;
 using CommunityToolkit.Mvvm.Input;
 
 namespace BEAM.ViewModels;
@@ -50,5 +53,32 @@ public partial class MainWindowViewModel : ViewModelBase
         });
 
         return files?.Count >= 1 ? files[0] : null;
+    }
+    private Logger? _logger;
+    public MainWindowViewModel()
+    {
+        _logger = new Logger("../../../../BEAM.Tests/loggerTests/testLogs/testLog.txt");
+    }
+    
+    [RelayCommand]
+    public void AddInfo()
+    {
+        _logger?.Info(LogEvent.OpenedFile);
+    }
+    [RelayCommand]
+    public void AddWarning()
+    {
+        _logger?.Warning(LogEvent.UnknownFileFormat);
+    }
+    [RelayCommand]
+    public void AddError()
+    {
+        _logger?.Error(LogEvent.FileNotFound);
+    }
+    
+    [RelayCommand]
+    public void ClearLog()
+    {
+        _logger?.ClearStatusBar();
     }
 }
