@@ -24,7 +24,7 @@
                 <NativeMenu>
                     <NativeMenuItem Header="{Binding Open}" Command="{Binding OpenSequence}" />
                     <NativeMenuItemSeparator />
-                    <NativeMenuItem Header="{Binding Exit}" Command="{Binding ExitBeam}" />
+                    <NativeMenuItem Header="{Binding Exit}" Command="{Binding ExitBeam}" IsVisible="{OnPlatform macOS=False, Default=True}"/>
                 </NativeMenu>
             </NativeMenuItem>
             <NativeMenuItem Header="{Binding Edit}">
