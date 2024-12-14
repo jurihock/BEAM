@@ -96,6 +96,9 @@ public abstract class Sequence(List<string> imagePaths)
     /// <returns>The pixel value at the desired channel.</returns>
     public double GetPixel(long x, long y, int channel)
     {
+        if(x >= Shape.Width || x < 0) throw new ArgumentException($"Pixel row out of range -> is: {x}, Range: [0, {Shape.Width})");
+        if(y >= Shape.Height || y < 0) throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
+
         long line = y % SingleImageHeight;
         long imgIndex = y / SingleImageHeight;
 
@@ -111,6 +114,9 @@ public abstract class Sequence(List<string> imagePaths)
     /// <returns>The array containing the values of all channels for the pixel. The size of the array is Shape.Channels.</returns>
     public double[] GetPixel(long x, long y)
     {
+        if(x >= Shape.Width || x < 0) throw new ArgumentException($"Pixel row out of range -> is: {x}, Range: [0, {Shape.Width})");
+        if(y >= Shape.Height || y < 0) throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
+
         long line = y % SingleImageHeight;
         long imgIndex = y / SingleImageHeight;
         var image = GetImage((int)imgIndex);
@@ -131,6 +137,8 @@ public abstract class Sequence(List<string> imagePaths)
     /// <returns>A 2d-array with the pixel channel values. Access: [x position, channel index]</returns>
     public double[,] GetPixelLine(long y)
     {
+        if(y >= Shape.Height || y < 0) throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
+
         long line = y % SingleImageHeight;
         long imgIndex = y / SingleImageHeight;
 
