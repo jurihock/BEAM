@@ -27,5 +27,5 @@ public abstract class ImageMemoryLayout
   /// <param name="x">Image pixel index in range [0..W).</param>
   /// <param name="y">Image line index in range [0..H).</param>
   /// <param name="z">Image channel index in range [0..C).</param>
-  public abstract long Flatten(int x, int y, int z);
+  public abstract long Flatten(long x, long y, int z);
 }

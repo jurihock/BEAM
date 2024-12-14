@@ -9,7 +9,7 @@ public interface IContiguousImage
   /// </summary>
   ImageShape Shape { get; }
 
-  double GetAsDouble(int x, int y, int z);
+  double GetAsDouble(long x, long y, int z);
 
   /// <summary>
   /// Arrangement of the image values in memory.
@@ -39,5 +39,5 @@ public interface IContiguousImage<T> : IContiguousImage
   /// <param name="x">Image pixel index in range [0..W).</param>
   /// <param name="y">Image line index in range [0..H).</param>
   /// <param name="z">Image channel index in range [0..C).</param>
-  T this[int x, int y, int z] { get; }
+  T this[long x, long y, int z] { get; }
 }

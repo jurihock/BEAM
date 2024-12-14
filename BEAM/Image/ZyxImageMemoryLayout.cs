@@ -14,5 +14,5 @@ public sealed class ZyxImageMemoryLayout : ImageMemoryLayout
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public override long Flatten(int x, int y, int z) => x + y * Y + z * Z;
+    public override long Flatten(long x, long y, int z) => x + y * Y + z * Z;
 }

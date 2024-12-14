@@ -20,15 +20,15 @@ public class EnviImage<T> : IContiguousImage<T>, IDisposable, IEnviImage
     public ImageShape Shape { get; init; }
     public ImageMemoryLayout Layout { get; init; }
 
-    public T this[int x, int y, int z] => GetValue(Layout.Flatten(x, y, z));
+    public T this[long x, long y, int z] => GetValue(Layout.Flatten(x, y, z));
     public T this[long i] => GetValue(i);
 
-    public virtual double GetAsDouble(long i)
+    public double GetAsDouble(long i)
     {
         return (double) Convert.ChangeType(this[i], typeof(double))!;
     }
 
-    public virtual double GetAsDouble(int x, int y, int z)
+    public double GetAsDouble(long x,long y, int z)
     {
         return (double) Convert.ChangeType(this[x, y, z], typeof(double))!;
     }
