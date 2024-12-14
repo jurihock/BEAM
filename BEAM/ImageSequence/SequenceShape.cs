@@ -2,35 +2,25 @@ using System;
 
 namespace BEAM.ImageSequence;
 
-public class SequenceShape : IEquatable<SequenceShape>
+public class SequenceShape(long width, long height, int channels) : IEquatable<SequenceShape>
 {
     /// <summary>
     /// Number of available image pixels.
     /// </summary>
-    public int Width { get; }
+    public long Width { get; } = width;
 
     /// <summary>
     /// Number of available image lines.
     /// </summary>
-    public int Height { get; }
+    public long Height { get; } = height;
 
     /// <summary>
     /// Number of available image color channels.
     /// </summary>
-    public int Channels { get; }
+    public int Channels { get; } = channels;
 
-    public SequenceShape(int width, int height, int channels)
+    public SequenceShape(SequenceShape other) : this(other.Width, other.Height, other.Channels)
     {
-        Width = width;
-        Height = height;
-        Channels = channels;
-    }
-
-    public SequenceShape(SequenceShape other)
-    {
-        Width = other.Width;
-        Height = other.Height;
-        Channels = other.Channels;
     }
 
     public static bool operator ==(SequenceShape left, SequenceShape right) => left.Equals(right);
