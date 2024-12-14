@@ -9,10 +9,10 @@ namespace BEAM.ImageSequence;
 
 public abstract class Sequence(List<string> imagePaths)
 {
-    // Do not use -> set internally on first get
+    /// Do not use -> set internally on first get
     private long? _singleFileHeight;
 
-    public long SingleImageHeight
+    private long SingleImageHeight
     {
         get
         {
@@ -22,9 +22,12 @@ public abstract class Sequence(List<string> imagePaths)
         }
     }
 
-    // DO not use -> set internally on first get
+    /// Do not use -> set internally on first get
     private SequenceShape? _shape;
 
+    /// <summary>
+    /// The Shape (width, height, channel count) of the entire sequence
+    /// </summary>
     public SequenceShape Shape
     {
         get
@@ -38,9 +41,24 @@ public abstract class Sequence(List<string> imagePaths)
     private Mutex _loadedImagesMutex = new();
     private IContiguousImage?[] _loadedImages = new IContiguousImage?[imagePaths.Count];
 
+    /// <summary>
+    /// Loads the desired image so that it's data can be accessed randomly.
+    /// </summary>
+    /// <param name="index">The index of the desired image.</param>
+    /// <returns>The loaded image.</returns>
     protected abstract IContiguousImage LoadImage(int index);
+
+    /// <summary>
+    /// Initializes and verifies the sequence.
+    /// </summary>
     protected abstract void InitializeSequence();
 
+    /// <summary>
+    /// Returns the desired image. Loads the image into main memory on-demand if necessary.
+    /// </summary>
+    /// <param name="index">The index of the image to load.</param>
+    /// <returns>The image with the correct index.</returns>
+    /// <exception cref="NotImplementedException"></exception>
     public IContiguousImage GetImage(int index)
     {
         if (index < 0 || index >= _loadedImages.Length)
@@ -65,26 +83,71 @@ public abstract class Sequence(List<string> imagePaths)
         return img;
     }
 
+    /// <summary>
+    /// Returns the value of a single channel of a single pixel.
+    /// </summary>
+    /// <param name="x">The x position of the pixel.</param>
+    /// <param name="y">The line of the pixel.</param>
+    /// <param name="channel">The channel of the image to look into.</param>
+    /// <returns>The pixel value at the desired channel.</returns>
     public double GetPixel(long x, long y, int channel)
     {
         long line = y % SingleImageHeight;
         long imgIndex = y / SingleImageHeight;
 
-        var image = GetImage((int) imgIndex);
+        var image = GetImage((int)imgIndex);
         return image.GetAsDouble(x, line, channel);
     }
 
+    /// <summary>
+    /// Returns the entire value of a pixel -> all channel values are returned
+    /// </summary>
+    /// <param name="x">The x position of the pixel.</param>
+    /// <param name="y">The line of the pixel.</param>
+    /// <returns>The array containing the values of all channels for the pixel. The size of the array is Shape.Channels.</returns>
     public double[] GetPixel(long x, long y)
     {
+        long line = y % SingleImageHeight;
+        long imgIndex = y / SingleImageHeight;
+        var image = GetImage((int)imgIndex);
+
         var channels = new double[Shape.Channels];
         for (int i = 0; i < channels.Length; i++)
         {
-            channels[i] = GetPixel(x, y, i);
+            channels[i] = image.GetAsDouble(x, line, i);
         }
 
         return channels;
     }
 
+    /// <summary>
+    /// Returns the pixel data of an entire line.
+    /// </summary>
+    /// <param name="y"></param>
+    /// <returns>A 2d-array with the pixel channel values. Access: [x position, channel index]</returns>
+    public double[,] GetPixelLine(long y)
+    {
+        long line = y % SingleImageHeight;
+        long imgIndex = y / SingleImageHeight;
+
+        var image = GetImage((int)imgIndex);
+
+        var values = new double[Shape.Width, Shape.Channels];
+        for (int i = 0; i < Shape.Width; i++)
+        {
+            for (int j = 0; j < Shape.Channels; j++)
+            {
+                values[i, j] = image.GetAsDouble(i, line, j);
+            }
+        }
+
+        return values;
+    }
+
+    /// <summary>
+    /// Calculates the shape of the entire sequence.
+    /// Only run once: when Shape is accessed the first tie
+    /// </summary>
     private void _InitializeShape()
     {
         int length = imagePaths.Count;
@@ -109,6 +172,9 @@ public abstract class Sequence(List<string> imagePaths)
         _shape = new SequenceShape(width, height, firstImage.Shape.Channels);
     }
 
+    /// <summary>
+    /// The supported file types and their respective Sequence type
+    /// </summary>
     private static readonly Dictionary<string, Type> SequenceTypes = new()
     {
         [".png"] = typeof(SkiaSequence),
@@ -116,7 +182,12 @@ public abstract class Sequence(List<string> imagePaths)
         [".hdr"] = typeof(EnviSequence),
     };
 
-    // ReSharper disable once MemberCanBePrivate.Global
+    /// <summary>
+    /// Opens a new sequence.
+    /// </summary>
+    /// <param name="paths">The image paths the sequence uses.</param>
+    /// <returns>The sequence</returns>
+    /// <exception cref="NotImplementedException">Throws when no images are being passed or all found file extensions are unsupported</exception>
     public static Sequence Open(List<string> paths)
     {
         if (paths.Count == 0) throw new NotImplementedException("Empty sequences are not supported");
@@ -134,12 +205,23 @@ public abstract class Sequence(List<string> imagePaths)
         throw new NotImplementedException($"Unsupported extensions: {string.Join(", ", extensions)}");
     }
 
+    /// <summary>
+    /// Opens a sequence from a folder
+    /// </summary>
+    /// <param name="folder">The folder with the sequence inside</param>
+    /// <returns>The opened sequence</returns>
     public static Sequence Open(string folder)
     {
         var filePaths = Directory.EnumerateFiles(folder, "*.*", SearchOption.TopDirectoryOnly);
         return Open(filePaths.ToList());
     }
 
+    /// <summary>
+    /// Instantiates a sequence object from a sequence type and image paths
+    /// </summary>
+    /// <param name="type">The type of the sequence</param>
+    /// <param name="paths">The paths of the used images</param>
+    /// <returns>The sequence object</returns>
     private static Sequence _InstantiateFromType(Type type, List<string> paths)
     {
         // opens constructor with List<string> as parameter (main constructor of Sequence)
