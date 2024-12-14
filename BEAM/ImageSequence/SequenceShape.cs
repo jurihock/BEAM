@@ -1,6 +1,6 @@
 using System;
 
-namespace BEAM.Sequence;
+namespace BEAM.ImageSequence;
 
 public class SequenceShape : IEquatable<SequenceShape>
 {

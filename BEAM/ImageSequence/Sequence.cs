@@ -4,11 +4,11 @@ using System.IO;
 using System.Linq;
 using BEAM.Image;
 
-namespace BEAM.Sequence;
+namespace BEAM.ImageSequence;
 
 public abstract class Sequence(List<string> imagePaths)
 {
-    public ImageShape Shape { get; protected set; }
+    public SequenceShape Shape { get; protected set; }
 
     protected abstract IContiguousImage LoadImage(int index);
 
