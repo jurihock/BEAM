@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -9,7 +10,6 @@ using BEAM.ImageSequence;
 using BEAM.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
 using BEAM.Models.LoggerModels;
 using CommunityToolkit.Mvvm.Input;
 
@@ -17,39 +17,54 @@ namespace BEAM.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    [ObservableProperty] public partial string File { get; set; } = Configuration.StandardEnglish().FileMenu;
-    [ObservableProperty] public partial string Open { get; set; } = Configuration.StandardEnglish().Open;
-    [ObservableProperty] public partial string Exit { get; set; } = Configuration.StandardEnglish().Exit;
-    [ObservableProperty] public partial string Edit { get; set; } = Configuration.StandardEnglish().Edit;
-    [ObservableProperty] public partial string Paste { get; set; } = Configuration.StandardEnglish().Paste;
-    [ObservableProperty] public partial string Copy { get; set; } = Configuration.StandardEnglish().Copy;
-    [ObservableProperty] public partial string Help { get; set; } = Configuration.StandardEnglish().Help;
+    public static readonly Configuration BaseConfig = Configuration.StandardEnglish();
+    
+    [ObservableProperty] public partial string File { get; set; } = BaseConfig.FileMenu;
+    [ObservableProperty] public partial string Open { get; set; } = BaseConfig.Open;
+    [ObservableProperty] public partial string OpenFolder { get; set; } = BaseConfig.OpenFolder;
+    [ObservableProperty] public partial string Exit { get; set; } = BaseConfig.Exit;
+    [ObservableProperty] public partial string Edit { get; set; } = BaseConfig.Edit;
+    [ObservableProperty] public partial string Paste { get; set; } = BaseConfig.Paste;
+    [ObservableProperty] public partial string Copy { get; set; } = BaseConfig.Copy;
+    [ObservableProperty] public partial string Help { get; set; } = BaseConfig.Help;
 
     [ObservableProperty] private string? _fileText;
 
     public static int TitleBarHeight => 38;
-    
+
     private List<Sequence> loadedSequences = [];
-   
+
     private Logger? _logger;
-    
+
     public MainWindowViewModel()
-        {
-            _logger = Logger.getInstance("../../../../BEAM.Tests/loggerTests/testLogs/testLog.log");
-        }
-    
+    {
+        _logger = Logger.getInstance("../../../../BEAM.Tests/loggerTests/testLogs/testLog.log");
+    }
+
     [RelayCommand]
     public async Task OpenSequence()
     {
-        var file = await OpenFilePickerAsync();
+        var files = await OpenFilePickerAsync();
 
-        if (file != null)
+        if (files != null)
         {
-            List<string> fileAsList =
-            [
-                file.Path.ToString()
-            ];
-            loadedSequences.Add(Sequence.Open(fileAsList));
+            var list = files.Select(f => f.Path).ToList();
+            loadedSequences.Add(Sequence.Open(list));
+        }
+        else
+        {
+            _logger?.Warning(LogEvent.FileNotFound);
+        }
+    }
+
+    [RelayCommand]
+    public async Task OpenSequenceFromFolder()
+    {
+        var folder = await OpenFolderPickerAsync();
+
+        if (folder != null)
+        {
+            loadedSequences.Add(Sequence.Open(folder.Path));
         }
         else
         {
@@ -63,7 +78,22 @@ public partial class MainWindowViewModel : ViewModelBase
         Environment.Exit(0);
     }
 
-    private async Task<IStorageFile?> OpenFilePickerAsync()
+    private async Task<IStorageFolder?> OpenFolderPickerAsync()
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
+            desktop.MainWindow?.StorageProvider is not { } provider)
+            throw new NullReferenceException("Missing StorageProvider instance.");
+
+        var folder = await provider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
+        {
+            Title = "Open Sequence Folder",
+            AllowMultiple = false,
+        });
+
+        return folder?.Count >= 1 ? folder[0] : null;
+    }
+
+    private async Task<IReadOnlyList<IStorageFile>?> OpenFilePickerAsync()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
             desktop.MainWindow?.StorageProvider is not { } provider)
@@ -72,29 +102,31 @@ public partial class MainWindowViewModel : ViewModelBase
         var files = await provider.OpenFilePickerAsync(new FilePickerOpenOptions()
         {
             Title = "Open Text File",
-            AllowMultiple = false
+            AllowMultiple = false,
         });
 
-        return files?.Count >= 1 ? files[0] : null;
+        return files;
     }
-    
-    
+
+
     [RelayCommand]
     public void AddInfo()
     {
         _logger?.Info(LogEvent.OpenedFile);
     }
+
     [RelayCommand]
     public void AddWarning()
     {
         _logger?.Warning(LogEvent.UnknownFileFormat);
     }
+
     [RelayCommand]
     public void AddError()
     {
         _logger?.Error(LogEvent.FileNotFound);
     }
-    
+
     [RelayCommand]
     public void ClearLog()
     {

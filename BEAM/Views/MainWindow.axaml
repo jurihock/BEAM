@@ -22,7 +22,8 @@
         <NativeMenu>
             <NativeMenuItem Header="{Binding File}">
                 <NativeMenu>
-                    <NativeMenuItem Header="{Binding Open}" Command="{Binding OpenSequence}" />
+                    <NativeMenuItem Header="{Binding Open}" Command="{Binding OpenSequenceCommand}" />
+                    <NativeMenuItem Header="{Binding OpenFolder}" Command="{Binding OpenSequenceFromFolderCommand}"></NativeMenuItem>
                     <NativeMenuItemSeparator />
                     <NativeMenuItem Header="{Binding Exit}" Command="{Binding ExitBeam}"
                                     IsVisible="{OnPlatform macOS=False, Default=True}" />
