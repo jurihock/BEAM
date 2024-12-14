@@ -40,13 +40,12 @@
     <DockPanel>
         <Border BorderBrush="White"
                 Height="{Binding TitleBarHeight}"
-                Background="Black"
+                Background="Aqua"
                 BorderThickness="0,0, 0, 2"
                 CornerRadius="0"
                 IsHitTestVisible="False"
-                HorizontalAlignment="Left"
                 DockPanel.Dock="Top">
-            <NativeMenuBar />
+            <NativeMenuBar IsHitTestVisible="True"/>
         </Border>
         <Border BorderBrush="Gainsboro"
                 Background="Black"
