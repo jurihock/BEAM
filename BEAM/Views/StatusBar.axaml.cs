@@ -10,6 +10,6 @@ public partial class StatusBar : UserControl
     public StatusBar()
     {
         InitializeComponent();
-        DataContext = new StatusBarViewModel();
+        DataContext = StatusBarViewModel.GetInstance(); 
     }
 }

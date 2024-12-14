@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Runtime.InteropServices.JavaScript;
 using System.Text;
+using BEAM.ViewModels;
 using BEAM.ViewModels.LogViewModel;
 
 namespace BEAM.Models.LoggerModels;
@@ -12,11 +13,11 @@ public class Logger :  ILog
     private string _pathToLogFile;
     private string _lastLogMessage;
     private LogLevel _logLevel;
-    // private LogViewModel _logViewModel;
+    private StatusBarViewModel _StatusBarViewModel;
     public Logger(string pathToLogFile)
     {
         _pathToLogFile = pathToLogFile;
-        // _logViewModel = logViewModel;
+        _StatusBarViewModel = StatusBarViewModel.GetInstance();
         if (!File.Exists(pathToLogFile))
         {
             CreateNewLogFile(pathToLogFile);
@@ -97,13 +98,18 @@ public class Logger :  ILog
         {
             outputFile.WriteLine(DateTime.Now + " " +message);
         }
-        UpdateLogView();
-    }
-    
-    
-    private void UpdateLogView()
-    {
-        //_logViewModel.Update(_lastLogMessage, _logLevel);
+        if (_logLevel == LogLevel.Error)
+        {
+            _StatusBarViewModel.AddError(message);
+        }
+        else if (_logLevel == LogLevel.Warning)
+        {
+            _StatusBarViewModel.AddWarning(message);
+        }
+        else
+        {
+            _StatusBarViewModel.AddInfo(message);
+        }
     }
     
     public string GetLastLogMessage()
@@ -111,4 +117,8 @@ public class Logger :  ILog
         return _lastLogMessage;
     }
     
+    public void ClearStatusBar()
+    {
+        _StatusBarViewModel.Clear();
+    }
 }

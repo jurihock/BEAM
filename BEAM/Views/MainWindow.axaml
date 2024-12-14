@@ -31,6 +31,9 @@
                 DockPanel.Dock="Bottom">
             <views:StatusBar/>
         </Border>
-        <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Button Command="{Binding AddError}">Add Error</Button>
+        <Button Command="{Binding AddWarning}">Add Warning</Button>
+        <Button Command="{Binding AddInfo}">Add Info</Button>
+        <Button Command="{Binding ClearLog}">Flush Status Bar</Button>
     </DockPanel>
 </Window>
