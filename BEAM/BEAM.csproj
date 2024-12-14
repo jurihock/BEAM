@@ -35,5 +35,8 @@
         <DependentUpon>TitleBar.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\StatusWindow.axaml.cs">
+        <DependentUpon>StatusWindow.axaml</DependentUpon>
+      </Compile>
     </ItemGroup>
 </Project>
