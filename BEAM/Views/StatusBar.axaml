@@ -8,20 +8,21 @@
              x:DataType="vm:StatusBarViewModel">
 
     <Panel>
-        <Border BorderBrush="Gainsboro"
-                Background="#07081c"
+        <Border BorderBrush="{DynamicResource ThemeAccentBrush}"
+                Background="{DynamicResource ThemeBackgroundColor}"
                 BorderThickness="0,2, 0, 0"
-                CornerRadius="0">
+                CornerRadius="0"
+                Padding="5"
+                IsVisible="{Binding StatusBarVisible}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Svg Path="../Assets/error.svg" Width="16" Height="16" Margin="2" IsVisible="{Binding ErrorVisible}" />
+                        <TextBlock VerticalAlignment="Center" Margin="5, 0" Text="{Binding ErrorText}"></TextBlock>
+                        <Svg Path="../Assets/warning.svg" Width="16" Height="16" Margin="2" IsVisible="{Binding WarningVisible}" />
+                        <TextBlock VerticalAlignment="Center" Margin="5, 0" Text="{Binding WarningText}"></TextBlock>
+                        <Svg Path="../Assets/info.svg" Width="16" Height="16" Margin="2" IsVisible="{Binding InfoVisible}" />
+                        <TextBlock VerticalAlignment="Center" Margin="5, 0" Text="{Binding InfoText}"></TextBlock>
+                    </StackPanel>
         </Border>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Svg Path="../Assets/error.svg" Width="16" Height="16" Margin="2" IsVisible="{Binding ErrorVisible}" />
-            <TextBlock VerticalAlignment="Center" Margin="5, 0" Text="{Binding ErrorText}"></TextBlock>
-            <Svg Path="../Assets/warning.svg" Width="16" Height="16" Margin="2" IsVisible="{Binding WarningVisible}" />
-            <TextBlock VerticalAlignment="Center" Margin="5, 0" Text="{Binding WarningText}"></TextBlock>
-            <Svg Path="../Assets/info.svg" Width="16" Height="16" Margin="2" IsVisible="{Binding InfoVisible}" />
-            <TextBlock VerticalAlignment="Center" Margin="5, 0" Text="{Binding InfoText}"></TextBlock>
-        </StackPanel>
+        
     </Panel>
-
-
 </UserControl>

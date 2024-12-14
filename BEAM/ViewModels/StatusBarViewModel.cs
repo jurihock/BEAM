@@ -13,6 +13,7 @@ public partial class StatusBarViewModel : ViewModelBase
     [ObservableProperty] public partial bool InfoVisible { get; set; } = false;
     [ObservableProperty] public partial bool WarningVisible { get; set; } = false;
     [ObservableProperty] public partial bool ErrorVisible { get; set; } = false;
+    [ObservableProperty] public partial bool StatusBarVisible { get; set; } = false;
     [ObservableProperty] public partial string InfoText { get; set; } = "";
     [ObservableProperty] public partial string WarningText { get; set; } = "";
     [ObservableProperty] public partial string ErrorText { get; set; } = "";
@@ -31,6 +32,7 @@ public partial class StatusBarViewModel : ViewModelBase
     {
         _infoCounter += 1;
         InfoVisible = true;
+        StatusBarVisible = true;
         InfoText = _infoCounter >= 100 ? "99+ Info" : _infoCounter + " Info";
     }
     
@@ -38,6 +40,7 @@ public partial class StatusBarViewModel : ViewModelBase
     {
         _warningCounter += 1;
         WarningVisible = true;
+        StatusBarVisible = true;
         WarningText = _warningCounter >= 100 ? "99+ Warnings" : _warningCounter + " Warnings";
     }
     
@@ -46,6 +49,7 @@ public partial class StatusBarViewModel : ViewModelBase
         _errorCounter += 1;
         ErrorText = _errorCounter >= 100 ? "99+ Errors" : _errorCounter + " Errors";
         ErrorVisible = true;
+        StatusBarVisible = true;
     }
     
     public void Clear()
@@ -56,6 +60,7 @@ public partial class StatusBarViewModel : ViewModelBase
         InfoVisible = false;
         WarningVisible = false;
         ErrorVisible = false;
+        StatusBarVisible = false;
         InfoText = "";
         WarningText = "";
         ErrorText = "";

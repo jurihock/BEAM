@@ -41,7 +41,7 @@
     <DockPanel>
         <views:TitleBar Name="TitleBar" DockPanel.Dock="Top" Height="{Binding TitleBarHeight}" />
 
-        <views:StatusBar DockPanel.Dock="Bottom" Height="{Binding StatusBarHeight}" />
+        <views:StatusBar DockPanel.Dock="Bottom"/>
 
         <StackPanel Name="TestStatusBar" Margin="10" Orientation="Horizontal" VerticalAlignment="Top">
             <Button Command="{Binding AddError}">Add Error</Button>

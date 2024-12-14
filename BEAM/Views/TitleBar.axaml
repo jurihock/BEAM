@@ -8,8 +8,8 @@
              x:DataType="vm:TitleBarViewModel">
 
     <Panel>
-        <Border BorderBrush="White"
-                Background="Black"
+        <Border BorderBrush="{DynamicResource ThemeAccentBrush}"
+                Background="{DynamicResource ThemeBackgroundColor}"
                 BorderThickness="0,0, 0, 2"
                 CornerRadius="0"
                 IsHitTestVisible="False">
