@@ -40,7 +40,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         _logger = Logger.getInstance("../../../../BEAM.Tests/loggerTests/testLogs/testLog.log");
     }
-
+    
     [RelayCommand]
     public async Task OpenSequence()
     {
@@ -56,7 +56,8 @@ public partial class MainWindowViewModel : ViewModelBase
             _logger?.Warning(LogEvent.FileNotFound);
         }
     }
-
+    
+    // TODO: Fix the Pathing for Folders with Spaces in Path
     [RelayCommand]
     public async Task OpenSequenceFromFolder()
     {

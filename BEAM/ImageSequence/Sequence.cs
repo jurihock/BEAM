@@ -200,6 +200,8 @@ public abstract class Sequence(List<string> imagePaths)
         [".hdr"] = typeof(EnviSequence),
     };
 
+    
+    // TODO: Fix Pathing
     /// <summary>
     /// Opens a new sequence.
     /// </summary>
