@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
+using BEAM.ImageSequence;
 using BEAM.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -26,11 +29,32 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public static int TitleBarHeight => 38;
     
+    private List<Sequence> loadedSequences = [];
+   
+    private Logger? _logger;
+    
+    public MainWindowViewModel()
+        {
+            _logger = Logger.getInstance("../../../../BEAM.Tests/loggerTests/testLogs/testLog.log");
+        }
+    
     [RelayCommand]
     public async Task OpenSequence()
     {
         var file = await OpenFilePickerAsync();
-        Console.WriteLine("File: " + file?.Path);
+
+        if (file != null)
+        {
+            List<string> fileAsList =
+            [
+                file.Path.ToString()
+            ];
+            loadedSequences.Add(Sequence.Open(fileAsList));
+        }
+        else
+        {
+            _logger?.Warning(LogEvent.FileNotFound);
+        }
     }
 
     [RelayCommand]
@@ -53,11 +77,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         return files?.Count >= 1 ? files[0] : null;
     }
-    private Logger? _logger;
-    public MainWindowViewModel()
-    {
-        _logger = Logger.getInstance("../../../../BEAM.Tests/loggerTests/testLogs/testLog.log");
-    }
+    
     
     [RelayCommand]
     public void AddInfo()

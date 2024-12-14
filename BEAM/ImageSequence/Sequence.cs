@@ -239,19 +239,19 @@ public abstract class Sequence(List<string> imagePaths)
                 skipped++;
                 continue;
             }
-
+            
             var sequence = _InstantiateFromType(type, paths);
             sequence.InitializeSequence();
 
-            if (skipped > 0)
-            {
-                string warningString = skipped + " Files could not be loaded";
-                
-                Logger? logger = Logger.getInstance("../../../../BEAM.Tests/loggerTests/testLogs/testLog.log");
-                logger.Warning(LogEvent.FileNotFound, warningString);
-            }
-            
             return sequence;
+        }
+
+        if (skipped > 0)
+        {
+            string warningString = skipped + " Files could not be loaded";
+
+            Logger? logger = Logger.getInstance("../../../../BEAM.Tests/loggerTests/testLogs/testLog.log");
+            logger.Warning(LogEvent.FileNotFound, warningString);
         }
 
         throw new NotImplementedException($"Unsupported extensions: {string.Join(", ", extensions)}");
@@ -264,6 +264,7 @@ public abstract class Sequence(List<string> imagePaths)
     /// <returns>The opened sequence</returns>
     public static Sequence Open(string folder)
     {
+        if (!Directory.Exists(folder)) throw new NotImplementedException($"Unsupported folder: {folder}");
         var filePaths = Directory.EnumerateFiles(folder, "*.*", SearchOption.TopDirectoryOnly);
         return Open(filePaths.ToList());
     }
