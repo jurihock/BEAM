@@ -6,5 +6,6 @@ public enum LogEvent
     UnknownFileFormat,
     OpenedFile,
     ClosedFile,
-    ExportedFile
+    ExportedFile,
+    BasicMessage
 }
