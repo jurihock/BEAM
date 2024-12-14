@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:np="https://np.com/visuals"
+             xmlns:vm="clr-namespace:BEAM.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:DockingViewModel"
+             x:Class="BEAM.Views.DockingView"
+             Name="Root">
+
+    <Design.DataContext>
+        <vm:DockingViewModel />
+    </Design.DataContext>
+
+    <UserControl.Resources>
+        <np:DockManager x:Key="TheDockManager" />
+    </UserControl.Resources>
+
+    <np:RootDockGroup x:Name="RootDock" TheDockManager="{StaticResource TheDockManager}">
+        <np:StackDockGroup DockId="StackDock" IsStableGroup="True">
+            <np:DockItem>
+                <StackPanel>
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">Hello. It's me.</TextBlock>
+                    <Button Command="{Binding #Root.((vm:DockingViewModel)DataContext).FooCommand}">yayy</Button>
+                </StackPanel>
+            </np:DockItem>
+            <np:DockItem>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">I was wandering if after all these year you'd like to hear.</TextBlock>
+            </np:DockItem>
+            <np:DockItem>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">To go over</TextBlock>
+            </np:DockItem>
+            <np:DockItem>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">everything.</TextBlock>
+            </np:DockItem>
+        </np:StackDockGroup>
+    </np:RootDockGroup>
+</UserControl>
