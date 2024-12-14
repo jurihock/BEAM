@@ -34,6 +34,11 @@
                     <NativeMenuItem Header="{Binding Paste}" />
                 </NativeMenu>
             </NativeMenuItem>
+            <NativeMenuItem Header="{Binding Help}">
+                <NativeMenu>
+                    <NativeMenuItem Header="{Binding Help}" />
+                </NativeMenu>
+            </NativeMenuItem>
         </NativeMenu>
 
     </NativeMenu.Menu>

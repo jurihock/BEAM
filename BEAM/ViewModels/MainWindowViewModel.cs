@@ -20,6 +20,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] public partial string Edit { get; set; } = Configuration.StandardEnglish().Edit;
     [ObservableProperty] public partial string Paste { get; set; } = Configuration.StandardEnglish().Paste;
     [ObservableProperty] public partial string Copy { get; set; } = Configuration.StandardEnglish().Copy;
+    [ObservableProperty] public partial string Help { get; set; } = Configuration.StandardEnglish().Help;
 
     [ObservableProperty] private string? _fileText;
 
