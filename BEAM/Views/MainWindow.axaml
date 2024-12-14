@@ -24,8 +24,8 @@
                 DockPanel.Dock="Top">
             <views:BEAMMenuBar/>
         </Border>
-        <Border BorderBrush="Black"
-                Background="Gainsboro"
+        <Border BorderBrush="Gainsboro"
+                Background="Black"
                 BorderThickness="0,2, 0, 0"
                 CornerRadius="0"
                 DockPanel.Dock="Bottom">

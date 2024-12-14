@@ -8,7 +8,13 @@
              x:DataType="vm:StatusBarViewModel">
     
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBlock>3 Warnungen</TextBlock>
+        <Svg Path="../Assets/error.svg" Width="16" Height="16" Margin="2"/>
+        <TextBlock VerticalAlignment="Center" Margin="5, 0">15 Errors</TextBlock>
+        <Svg Path="../Assets/warning.svg" Width="16" Height="16" Margin="2"/>
+        <TextBlock VerticalAlignment="Center" Margin="5, 0">3 Warnings</TextBlock>
+        <Svg Path="../Assets/info.svg" Width="16" Height="16" Margin="2"/>
+        <TextBlock VerticalAlignment="Center" Margin="5, 0">3 Messages</TextBlock>
     </StackPanel>
     
 </UserControl>
+
