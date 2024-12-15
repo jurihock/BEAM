@@ -47,6 +47,11 @@ public sealed partial class BgraBitmap : SKBitmap, IBitmap<BGRA>
   }
 
 
+  /// <summary>
+  /// Returns a writable Span of the data's (byte array)  as bytes. This is a workaround in comparison
+  /// to the less permissive SKBitmap superclass.
+  /// </summary>
+  /// <returns>A byte span to the memory region of the pixel data.</returns>
   public unsafe Span<byte> GetPixelSpan()
   { 
     IntPtr length;
