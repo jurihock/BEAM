@@ -14,6 +14,8 @@
                 CornerRadius="0"
                 IsHitTestVisible="False">
         </Border>
-        <NativeMenuBar IsHitTestVisible="True" />
+            <NativeMenuBar IsHitTestVisible="True" HorizontalAlignment="Left" VerticalAlignment="Center" />
+            <TextBlock IsHitTestVisible="False" Text="{Binding $parent[Window].Title}" HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
     </Panel>
 </UserControl>

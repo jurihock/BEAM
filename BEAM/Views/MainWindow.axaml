@@ -41,7 +41,6 @@
                 </NativeMenu>
             </NativeMenuItem>
         </NativeMenu>
-
     </NativeMenu.Menu>
 
     <DockPanel>
@@ -55,5 +54,6 @@
             <Button Command="{Binding AddInfo}">Add Info</Button>
             <Button Command="{Binding ClearLog}">Flush Status Bar</Button>
         </StackPanel>
+        
     </DockPanel>
 </Window>
