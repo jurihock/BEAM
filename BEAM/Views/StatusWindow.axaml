@@ -16,12 +16,18 @@
         Width="750"
         Height="500">
 
+
+    <Design.DataContext>
+        <vm:StatusWindowViewModel />
+    </Design.DataContext>
+
     <StackPanel>
         <StackPanel.Resources>
             <converter:LogLevelIconConverter x:Key="LogLevelIconConverter" />
         </StackPanel.Resources>
         <TextBlock Margin="20, 20, 20, 0" FontWeight="Bold">List of status messages:</TextBlock>
         <Separator Background="{DynamicResource ThemeAccentBrush}" Margin="10"></Separator>
+
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Width="750" Height="442" Padding="5">
             <ItemsControl ItemsSource="{Binding StatusList}">
                 <ItemsControl.ItemTemplate>
@@ -30,10 +36,11 @@
                                 CornerRadius="5"
                                 BorderBrush="Gray" BorderThickness="1"
                                 Padding="5">
+
                             <StackPanel Orientation="Horizontal">
                                 <Svg Path="{Binding LevelStr, Converter={StaticResource LogLevelIconConverter}}"></Svg>
-                                <TextBlock Margin="5, 0" Text="{Binding LevelStr}" VerticalAlignment="Center"></TextBlock>
-                                <TextBlock Margin="5, 0" Text="{Binding Event}" VerticalAlignment="Center"></TextBlock>
+                                <TextBlock Margin="5, 0" Width="100" Text="{Binding LevelStr}" VerticalAlignment="Center"></TextBlock>
+                                <TextBlock Margin="5, 0" Width="150" Text="{Binding Event}" VerticalAlignment="Center"></TextBlock>
                                 <TextBlock Margin="5, 0" Text="{Binding Message}" VerticalAlignment="Center"></TextBlock>
                             </StackPanel>
                         </Border>
