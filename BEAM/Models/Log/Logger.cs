@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using BEAM.ViewModels;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BEAM.Log;
 
-public class Logger :  ILog
+public partial class Logger : ILog
 {
     private static Logger? _instance;
     
@@ -15,11 +16,11 @@ public class Logger :  ILog
     private LogEvent _logEvent;
     private StatusBarViewModel _StatusBarViewModel;
 
-    private List<LogEntry> _logEntries;
+    private List<LogEntry> _LogEntries;
     
     private Logger(string pathToLogFile)
     {
-        _logEntries = new List<LogEntry>();
+        _LogEntries = new List<LogEntry>();
         _pathToLogFile = pathToLogFile;
         _StatusBarViewModel = StatusBarViewModel.GetInstance();
         if (!File.Exists(pathToLogFile))
@@ -123,7 +124,7 @@ public class Logger :  ILog
         {
             outputFile.WriteLine(DateTime.Now + " " +message);
         }
-        _logEntries.Add(new LogEntry(Enum.GetName(_logLevel).ToUpper(), Enum.GetName(_logEvent), message));
+        _LogEntries.Add(new LogEntry(Enum.GetName(_logLevel).ToUpper(), Enum.GetName(_logEvent), message));
         if (_logLevel == LogLevel.Error)
         {
             _StatusBarViewModel.AddError(message);
@@ -145,12 +146,12 @@ public class Logger :  ILog
     
     public void ClearStatusBar()
     {
-        _logEntries.Clear();
+        _LogEntries.Clear();
         _StatusBarViewModel.Clear();
     }
     
     public List<LogEntry> GetLogEntries()
     {
-        return _logEntries;
+        return _LogEntries;
     }
 }
