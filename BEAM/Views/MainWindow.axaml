@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:BEAM.Views"
+        xmlns:np="https://np.com/visuals"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BEAM.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -11,8 +12,10 @@
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="{Binding TitleBarHeight}"
         ExtendClientAreaChromeHints="PreferSystemChrome, OSXThickTitleBar"
+        DragDrop.AllowDrop="True"
         SystemDecorations="Full"
-        Title="BEAM">
+        Title="BEAM"
+        np:DockAttachedProperties.DockChildWindowOwner="{Binding RelativeSource={RelativeSource Self}}">
 
     <Design.DataContext>
         <vm:MainWindowViewModel />
@@ -22,9 +25,11 @@
         <NativeMenu>
             <NativeMenuItem Header="{Binding File}">
                 <NativeMenu>
-                    <NativeMenuItem Header="{Binding Open}" Command="{Binding OpenSequence}" />
+                    <NativeMenuItem Header="{Binding Open}" Command="{Binding OpenSequenceCommand}" />
+                    <NativeMenuItem Header="{Binding OpenFolder}" Command="{Binding OpenSequenceFromFolderCommand}"></NativeMenuItem>
                     <NativeMenuItemSeparator />
-                    <NativeMenuItem Header="{Binding Exit}" Command="{Binding ExitBeam}" />
+                    <NativeMenuItem Header="{Binding Exit}" Command="{Binding ExitBeam}"
+                                    IsVisible="{OnPlatform macOS=False, Default=True}" />
                 </NativeMenu>
             </NativeMenuItem>
             <NativeMenuItem Header="{Binding Edit}">
@@ -33,20 +38,29 @@
                     <NativeMenuItem Header="{Binding Paste}" />
                 </NativeMenu>
             </NativeMenuItem>
+            <NativeMenuItem Header="{Binding Help}">
+                <NativeMenu>
+                    <NativeMenuItem Header="{Binding Help}" />
+                </NativeMenu>
+            </NativeMenuItem>
         </NativeMenu>
 
     </NativeMenu.Menu>
 
-    <DockPanel>
-        <views:TitleBar Name="TitleBar" DockPanel.Dock="Top" Height="{Binding TitleBarHeight}"></views:TitleBar>
+    <DockPanel LastChildFill="True">
+        <views:TitleBar Name="TitleBar" DockPanel.Dock="Top" Height="{Binding TitleBarHeight}" />
 
-        <Border BorderBrush="Gainsboro"
-                Background="Black"
-                BorderThickness="0,2, 0, 0"
-                CornerRadius="0"
-                DockPanel.Dock="Bottom">
-            <views:StatusBar />
-        </Border>
-        <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <views:StatusBar DockPanel.Dock="Bottom"/>
+
+        <DockPanel LastChildFill="True">
+            <StackPanel Name="TestStatusBar" Margin="10" Orientation="Horizontal" VerticalAlignment="Top" DockPanel.Dock="Top">
+                <Button Command="{Binding AddError}">Add Error</Button>
+                <Button Command="{Binding AddWarning}">Add Warning</Button>
+                <Button Command="{Binding AddInfo}">Add Info</Button>
+                <Button Command="{Binding ClearLog}">Flush Status Bar</Button>
+            </StackPanel>
+            <views:DockingView x:Name="DockView" />
+        </DockPanel>
+
     </DockPanel>
 </Window>

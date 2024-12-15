@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using BEAM.Image;
 using BEAM.Image.Envi;
+using BEAM.Log;
 
 namespace BEAM.ImageSequence;
 
@@ -13,8 +16,31 @@ public class EnviSequence(List<string> imagePaths) : Sequence(imagePaths)
 {
     protected override IContiguousImage LoadImage(int index) => EnviImage.OpenImage(imagePaths[index]);
 
-    protected override void InitializeSequence()
+    protected override bool InitializeSequence()
     {
-        imagePaths.RemoveAll(path => !Path.GetExtension(path).Equals(".raw"));
+        var removed = imagePaths.RemoveAll(path =>
+            !(Path.GetExtension(path).Equals(".raw") || Path.GetExtension(path).Equals(".hdr")));
+
+        List<string> missingHdrFiles = [];
+        foreach (var path in imagePaths.Where(p => Path.GetExtension(p).Equals(".raw")))
+        {
+            var hdr = Path.ChangeExtension(path, ".hdr");
+            if (!imagePaths.Contains(hdr))
+            {
+                missingHdrFiles.Add(Path.GetFileName(hdr));
+            }
+        }
+
+        if (missingHdrFiles.Count != 0)
+        {
+            Logger.GetInstance().Error(LogEvent.Critical, $"Cannot load ENVI sequence due to missing hdr files: {string.Join(", ", missingHdrFiles)}");
+            return false;
+        }
+
+        imagePaths.RemoveAll(path => !Path.GetExtension(path).Equals(".hdr"));
+
+        if (removed > 0)
+            Logger.GetInstance().Info(LogEvent.OpenedFile, $"{removed} file(s) were not loaded into the sequence.");
+        return true;
     }
 }

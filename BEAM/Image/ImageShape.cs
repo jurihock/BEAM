@@ -32,6 +32,12 @@ public readonly struct ImageShape : IEquatable<ImageShape>
   /// </summary>
   public long Volume { get; }
 
+  /// <summary>
+  /// Generates a new instance from the 3 base dimensions.
+  /// </summary>
+  /// <param name="width">The images number of pixels per line.</param>
+  /// <param name="height">The images number of vertical lines.</param>
+  /// <param name="channels">The number of channels per pixel.</param>
   public ImageShape(int width, int height, int channels)
   {
     Width = width;
@@ -42,6 +48,10 @@ public readonly struct ImageShape : IEquatable<ImageShape>
     Volume = (long)Width * (long)Height * (long)Channels;
   }
 
+  /// <summary>
+  /// Generates a new instance by copying the values of an older instance.
+  /// </summary>
+  /// <param name="other">The instance whose values will be copied.</param>
   public ImageShape(ImageShape other)
   {
     Width = other.Width;

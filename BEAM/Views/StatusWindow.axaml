@@ -1,0 +1,54 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:BEAM.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="BEAM.Views.StatusWindow"
+        x:DataType="vm:StatusWindowViewModel"
+        xmlns:converter="clr-namespace:BEAM.Converter"
+        xmlns:log="clr-namespace:BEAM.Log"
+        Title="StatusWindow"
+        WindowStartupLocation="CenterScreen"
+        Focusable="True"
+        CanResize="False"
+        KeyDown="OnKeyDown"
+        Width="750"
+        Height="500">
+
+
+    <Design.DataContext>
+        <vm:StatusWindowViewModel />
+    </Design.DataContext>
+
+    <StackPanel>
+        <StackPanel.Resources>
+            <converter:LogLevelIconConverter x:Key="LogLevelIconConverter" />
+        </StackPanel.Resources>
+        <TextBlock Margin="20, 20, 20, 0" FontWeight="Bold">List of status messages:</TextBlock>
+        <Separator Background="{DynamicResource ThemeAccentBrush}" Margin="10"></Separator>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Width="750" Height="442" Padding="5">
+            <ItemsControl ItemsSource="{Binding StatusList}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="20, 0,20,5"
+                                CornerRadius="5"
+                                BorderBrush="Gray" BorderThickness="1"
+                                Padding="5">
+
+                            <StackPanel Orientation="Horizontal">
+                                <Svg Path="{Binding LevelStr, Converter={StaticResource LogLevelIconConverter}}"></Svg>
+                                <TextBlock Margin="5, 0" Width="100" Text="{Binding LevelStr}" VerticalAlignment="Center"></TextBlock>
+                                <TextBlock Margin="5, 0" Width="150" Text="{Binding Event}" VerticalAlignment="Center"></TextBlock>
+                                <TextBlock Margin="5, 0" Text="{Binding Message}" VerticalAlignment="Center"></TextBlock>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+    </StackPanel>
+
+</Window>

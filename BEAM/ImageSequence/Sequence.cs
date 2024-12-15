@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using BEAM.Exceptions;
 using BEAM.Image;
+using BEAM.Log;
 
 namespace BEAM.ImageSequence;
 
@@ -55,19 +57,20 @@ public abstract class Sequence(List<string> imagePaths)
     /// <summary>
     /// Initializes and validates the sequence.
     /// </summary>
-    protected abstract void InitializeSequence();
+    /// <returns>True if the sequence has been initialised, false if an error occured (then see log)</returns>
+    protected abstract bool InitializeSequence();
 
     /// <summary>
     /// Returns the desired image. Loads the image into main memory on-demand if necessary.
     /// </summary>
     /// <param name="index">The index of the image to load.</param>
     /// <returns>The image with the correct index.</returns>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the image index is out of range</exception>
     public IContiguousImage GetImage(int index)
     {
         if (index < 0 || index >= _loadedImages.Length)
         {
-            throw new NotImplementedException("Invalid image index");
+            throw new ArgumentOutOfRangeException();
         }
 
         var img = _loadedImages[index];
@@ -96,8 +99,10 @@ public abstract class Sequence(List<string> imagePaths)
     /// <returns>The pixel value at the desired channel.</returns>
     public double GetPixel(long x, long y, int channel)
     {
-        if(x >= Shape.Width || x < 0) throw new ArgumentException($"Pixel row out of range -> is: {x}, Range: [0, {Shape.Width})");
-        if(y >= Shape.Height || y < 0) throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
+        if (x >= Shape.Width || x < 0)
+            throw new ArgumentException($"Pixel row out of range -> is: {x}, Range: [0, {Shape.Width})");
+        if (y >= Shape.Height || y < 0)
+            throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
 
         long line = y % SingleImageHeight;
         long imgIndex = y / SingleImageHeight;
@@ -114,8 +119,10 @@ public abstract class Sequence(List<string> imagePaths)
     /// <returns>The array containing the values of all channels for the pixel. The size of the array is Shape.Channels.</returns>
     public double[] GetPixel(long x, long y)
     {
-        if(x >= Shape.Width || x < 0) throw new ArgumentException($"Pixel row out of range -> is: {x}, Range: [0, {Shape.Width})");
-        if(y >= Shape.Height || y < 0) throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
+        if (x >= Shape.Width || x < 0)
+            throw new ArgumentException($"Pixel row out of range -> is: {x}, Range: [0, {Shape.Width})");
+        if (y >= Shape.Height || y < 0)
+            throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
 
         long line = y % SingleImageHeight;
         long imgIndex = y / SingleImageHeight;
@@ -137,7 +144,8 @@ public abstract class Sequence(List<string> imagePaths)
     /// <returns>A 2d-array with the pixel channel values. Access: [x position, channel index]</returns>
     public double[,] GetPixelLine(long y)
     {
-        if(y >= Shape.Height || y < 0) throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
+        if (y >= Shape.Height || y < 0)
+            throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
 
         long line = y % SingleImageHeight;
         long imgIndex = y / SingleImageHeight;
@@ -194,15 +202,17 @@ public abstract class Sequence(List<string> imagePaths)
         [".hdr"] = typeof(EnviSequence),
     };
 
+    
     /// <summary>
     /// Opens a new sequence.
     /// </summary>
     /// <param name="paths">The image paths the sequence uses.</param>
     /// <returns>The sequence</returns>
-    /// <exception cref="NotImplementedException">Throws when no images are being passed or all found file extensions are unsupported</exception>
+    /// <exception cref="EmptySequenceException">Thrown when no images are being passed or all found file extensions are unsupported</exception>
+    /// <exception cref="UnknownSequenceException">Thrown when no suitable sequence can be found in the paths</exception>
     public static Sequence Open(List<string> paths)
     {
-        if (paths.Count == 0) throw new NotImplementedException("Empty sequences are not supported");
+        if (paths.Count == 0) throw new EmptySequenceException("Empty sequences are not supported");
 
         var extensions = paths.Select(Path.GetExtension).ToHashSet();
         foreach (var extension in extensions.OfType<string>())
@@ -210,22 +220,52 @@ public abstract class Sequence(List<string> imagePaths)
             if (!SequenceTypes.TryGetValue(extension, out var type)) continue;
 
             var sequence = _InstantiateFromType(type, paths);
-            sequence.InitializeSequence();
+            if (!sequence.InitializeSequence())
+            {
+                throw new InvalidSequenceException("Sequence could not be loaded due to error (see log)!");
+            }
             return sequence;
         }
 
-        throw new NotImplementedException($"Unsupported extensions: {string.Join(", ", extensions)}");
+        throw new UnknownSequenceException($"Cannot find sequence in extensions: {string.Join(", ", extensions)}");
     }
 
     /// <summary>
     /// Opens a sequence from a folder
     /// </summary>
-    /// <param name="folder">The folder with the sequence inside</param>
+    /// <param name="folder">The path to the folder with the sequence inside</param>
     /// <returns>The opened sequence</returns>
+    /// <exception cref="EmptySequenceException">Thrown when no images are being passed or all found file extensions are unsupported</exception>
+    /// <exception cref="UnknownSequenceException">Thrown when the folder does not exist.</exception>
     public static Sequence Open(string folder)
     {
+        if (!Directory.Exists(folder)) throw new UnknownSequenceException($"Cannot find folder: {folder}");
+
         var filePaths = Directory.EnumerateFiles(folder, "*.*", SearchOption.TopDirectoryOnly);
         return Open(filePaths.ToList());
+    }
+
+    /// <summary>
+    /// Opens a new sequence.
+    /// </summary>
+    /// <param name="paths">The image paths the sequence uses.</param>
+    /// <returns>The sequence</returns>
+    /// <exception cref="UnknownSequenceException">Thrown when no suitable sequence can be found in the paths</exception>
+    public static Sequence Open(List<Uri> paths)
+    {
+        return Open(paths.Select(u => u.LocalPath).ToList());
+    }
+
+    /// <summary>
+    /// Opens a sequence from a folder
+    /// </summary>
+    /// <param name="folder">The uri to the folder with the sequence inside</param>
+    /// <returns>The opened sequence</returns>
+    /// <exception cref="UnknownSequenceException">Thrown when the folder does not exist.</exception>
+    public static Sequence Open(Uri folder)
+    {
+        Console.WriteLine(folder.ToString());
+        return Open(folder.LocalPath);
     }
 
     /// <summary>
@@ -236,8 +276,18 @@ public abstract class Sequence(List<string> imagePaths)
     /// <returns>The sequence object</returns>
     private static Sequence _InstantiateFromType(Type type, List<string> paths)
     {
+        if (!type.IsSubclassOf(typeof(Sequence)))
+        {
+            throw new CriticalBeamException($"{type} is not a subclass of Sequence!");
+        }
+
         // opens constructor with List<string> as parameter (main constructor of Sequence)
-        var ctor = type.GetConstructor([typeof(List<string>)])!;
+        var ctor = type.GetConstructor([typeof(List<string>)]);
+        if (ctor is null)
+        {
+            throw new CriticalBeamException($"Correct sequence constructor for {type} is not found!");
+        }
+
         return (Sequence)ctor.Invoke([paths]);
     }
 }

@@ -7,13 +7,16 @@
              x:Class="BEAM.Views.TitleBar"
              x:DataType="vm:TitleBarViewModel">
 
-    <Panel>
-        <Border BorderBrush="White"
-                Background="Aqua"
-                BorderThickness="0,0, 0, 2"
-                CornerRadius="0"
-                IsHitTestVisible="False">
-        </Border>
-        <NativeMenuBar IsHitTestVisible="True" />
-    </Panel>
+    <StackPanel Orientation="Vertical">
+       
+        <Panel Height="{Binding $parent[Window].ExtendClientAreaTitleBarHeightHint}">
+             <Border BorderBrush="Aqua"
+                            Background="{DynamicResource ThemeBackgroundColor}"
+                            BorderThickness="0,0, 0, 1"
+                            CornerRadius="0"
+                            IsHitTestVisible="False">
+                    </Border>
+            <NativeMenuBar IsHitTestVisible="True" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        </Panel>
+    </StackPanel>
 </UserControl>
