@@ -19,6 +19,13 @@
         <StyleInclude Source="avares://NP.Ava.UniDock/Themes/DockStyles.axaml" />
 
         <!-- Styling -->
+        <Style Selector=":is(np|CustomWindow).PlainFloatingWindow">
+            <Setter Property="Background" Value="{DynamicResource WindowBg}" />
+            <Setter Property="Foreground" Value="{DynamicResource WindowFg}" />
+            <Setter Property="HeaderBackground" Value="{DynamicResource TitleBarBg}" />
+            <!--<Setter Property="SystemDecorations" Value="Full"></Setter>-->
+        </Style>
+
         <Style Selector="np|TabbedDockGroup">
             <Setter Property="Background" Value="Transparent" />
         </Style>
@@ -77,6 +84,10 @@
             <Setter Property="Foreground" Value="{DynamicResource DockHeaderFg}"></Setter>
         </Style>
 
+        <Style Selector=":is(Button).HeaderIconButton">
+            <Setter Property="Foreground" Value="{DynamicResource DockHeaderFg}"/>
+            <Setter Property="Opacity" Value="1" />
+        </Style>
 
         <StyleInclude Source="avares://BEAM/Styles/LightTheme.axaml" />
         <StyleInclude Source="avares://BEAM/Styles/DarkTheme.axaml" />
