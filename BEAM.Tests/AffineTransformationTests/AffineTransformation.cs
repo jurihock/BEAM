@@ -1,8 +1,5 @@
 using Avalonia;
 using BEAM.AffTrans;
-using BEAM.ImageSequence;
-using BEAM.Models.LoggerModels;
-
 namespace BEAM.Tests.AffineTransformationTests;
 
 public class AffineTransformation

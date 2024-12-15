@@ -11,6 +11,7 @@
         Title="StatusWindow"
         WindowStartupLocation="CenterScreen"
         CanResize="False"
+        KeyDown="OnKeyDown"
         Width="750"
         Height="500">
 
