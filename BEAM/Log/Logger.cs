@@ -126,7 +126,7 @@ public class Logger :  ILog
         {
             outputFile.WriteLine(DateTime.Now + " " +message);
         }
-        _logEntries.Add(new LogEntry(Enum.GetName(_logLevel), Enum.GetName(_logEvent), message));
+        _logEntries.Add(new LogEntry(Enum.GetName(_logLevel).ToUpper(), Enum.GetName(_logEvent), message));
         if (_logLevel == LogLevel.Error)
         {
             _StatusBarViewModel.AddError(message);

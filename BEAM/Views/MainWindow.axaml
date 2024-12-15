@@ -13,7 +13,7 @@
         ExtendClientAreaChromeHints="PreferSystemChrome, OSXThickTitleBar"
         SystemDecorations="Full"
         Title="BEAM">
-
+    
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>

@@ -6,10 +6,14 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BEAM.Views.StatusWindow"
         x:DataType="vm:StatusWindowViewModel"
+        xmlns:converter="clr-namespace:BEAM.Converter"
         Title="StatusWindow"
         WindowStartupLocation="CenterScreen">
         
         <StackPanel Margin="20">
+                <StackPanel.Resources>
+                        <converter:LogLevelIconConverter x:Key="LogLevelIconConverter"/>
+                </StackPanel.Resources>
                 <TextBlock FontWeight="Bold">List of status messages:</TextBlock>
                 <ItemsControl ItemsSource="{Binding StatusList}">
                         <ItemsControl.ItemTemplate>
@@ -19,9 +23,10 @@
                                                 BorderBrush="Gray" BorderThickness="1"
                                                 Padding="5">
                                                 <StackPanel Orientation="Horizontal">
-                                                        <TextBlock Text="{Binding Level}"></TextBlock>
-                                                        <TextBlock Margin="5, 0" Text="{Binding Event}"></TextBlock>
-                                                        <TextBlock Margin="5, 0" Text="{Binding Message}"></TextBlock>
+                                                        <Svg Path="{Binding Level, Converter={StaticResource LogLevelIconConverter}}"></Svg>
+                                                        <TextBlock Margin="5, 0" Text="{Binding Level}" VerticalAlignment="Center"></TextBlock>
+                                                        <TextBlock Margin="5, 0" Text="{Binding Event}" VerticalAlignment="Center"></TextBlock>
+                                                        <TextBlock Margin="5, 0" Text="{Binding Message}" VerticalAlignment="Center"></TextBlock>
                                                 </StackPanel>
                                         </Border>
                                 </DataTemplate>
