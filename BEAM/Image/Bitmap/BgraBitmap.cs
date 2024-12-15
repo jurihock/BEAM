@@ -1,12 +1,19 @@
 using SkiaSharp;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace BEAM.Image.Bitmap;
 
 public sealed partial class BgraBitmap : SKBitmap, IBitmap<BGRA>
 {
+  private const int BytesPerPixel = BitmapBytesPerPixel;
+  private int BytesPerLine;
+  public byte[] Bytes { get; private set; } = [];
+  public int Width { get; private set; }
+  public int Height { get; private set; }
+  
   public ref BGRA this[int x, int y]
   {
     get
@@ -39,26 +46,41 @@ public sealed partial class BgraBitmap : SKBitmap, IBitmap<BGRA>
   public BgraBitmap(int width, int height) :
     base(width, height, SKColorType.Bgra8888, SKAlphaType.Premul)
   {
+    var header = new HeaderA(width, height);
+    var bytes = new byte[header.FileSize];
+
+    MemoryMarshal.Write(bytes, header);
+
+    BytesPerLine = header.BytesPerLine;
+    Width = header.Width;
+    Height = header.Height;
+    Bytes = bytes;
     Debug.Assert(Marshal.SizeOf<BGRA>() == BytesPerPixel);
+    
   }
 
 
   public Span<byte> GetPixelSpan()
   {
 
-    return new Span<byte>(Bytes, 0, Bytes.Length);
-    /*return Bytes.AsSpan(
+    return Bytes.AsSpan(
       BitmapHeaderSize,
-      Bytes.Length - BitmapHeaderSize);*/
+      Bytes.Length - BitmapHeaderSize);
   }
 
   public void Read(string path)
   {
-    throw new NotImplementedException("TODO");
+    var bytes = File.ReadAllBytes(path);
+    var header = MemoryMarshal.Read<BgraBitmap.HeaderA>(bytes);
+
+    BytesPerLine = header.BytesPerLine;
+    Width = header.Width;
+    Height = header.Height;
+    Bytes = bytes;
   }
 
   public void Write(string path)
   {
-    throw new NotImplementedException("TODO");
+    File.WriteAllBytes(path, Bytes);
   }
 }

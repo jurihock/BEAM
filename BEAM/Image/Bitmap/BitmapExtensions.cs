@@ -30,11 +30,12 @@ public static class BitmapExtensions
 
   public static IBitmap<BGRA> Fill(this IBitmap<BGRA> bitmap, BGRA pixel)
   {
-    var bytes = bitmap.GetPixelSpan();
-
+    var bytes = bitmap.GetPixelSpan(); 
+    //MemoryMarshal.CreateSpan(ref MemoryMarshal.AsRef<byte>(bitmap.Bytes.AsSpan()), bitmap.Bytes.Length);
     /*var pixels = MemoryMarshal.CreateSpan(
       ref MemoryMarshal.AsRef<BGRA>(bytes),
-      bytes.Length / Marshal.SizeOf<BGRA>());*/
+      bytes.Length / Marshal.SizeOf<BGRA>()); 
+    ;*/
     var pixels = MemoryMarshal.Cast<byte, BGRA>(bytes);
     if (bytes.Length % Marshal.SizeOf<BGRA>() != 0)
     {
