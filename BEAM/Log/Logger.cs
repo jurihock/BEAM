@@ -7,7 +7,7 @@ namespace BEAM.Log;
 
 public class Logger :  ILog
 {
-    private static Logger _instance;
+    private static Logger? _instance;
     
     private string _pathToLogFile;
     private string _lastLogMessage;
@@ -41,7 +41,7 @@ public class Logger :  ILog
 
     public static Logger GetInstance()
     {
-        return _instance;
+        return _instance ?? Init();
     }
     
     public void Error(LogEvent occuredEvent)
