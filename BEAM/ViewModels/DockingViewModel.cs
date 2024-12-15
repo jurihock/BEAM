@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using BEAM.Docking;
+using BEAM.ImageSequence;
 using BEAM.ViewModels;
 using CommunityToolkit.Mvvm.Input;
 
@@ -23,13 +24,13 @@ public partial class DockingViewModel : ViewModelBase
     [RelayCommand]
     public void Foo()
     {
-        OpenDock(new SequenceViewModel());
         OpenDock(new InspectionViewModel());
     }
 
+
     [RelayCommand]
-    public void OpenSequenceView()
+    public void OpenSequenceView(Sequence sequence)
     {
-        OpenDock(new SequenceViewModel());
+        OpenDock(new SequenceViewModel(sequence));
     }
 }

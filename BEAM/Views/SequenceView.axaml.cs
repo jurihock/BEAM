@@ -1,8 +1,11 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using BEAM.Image.Bitmap;
 using BEAM.IMage.Displayer.Scottplot;
+using BEAM.ImageSequence;
+using BEAM.ViewModels;
 using ScottPlot.Avalonia;
 
 namespace BEAM.Views;
@@ -12,11 +15,17 @@ public partial class SequenceView : UserControl
     public SequenceView()
     {
         InitializeComponent();
-        ScottPlotTest();
     }
 
-    private void ScottPlotTest()
+    private void ScottPlotTest(Sequence sequence)
     {
+        var channels = sequence.GetPixel(0, 0);
+
+        foreach (var channel in channels)
+        {
+            Console.WriteLine(channel);
+        }
+        
         var avaPlot1 = this.Find<AvaPlot>("AvaPlot1");
 
         if (avaPlot1 == null)
@@ -44,4 +53,10 @@ public partial class SequenceView : UserControl
         avaPlot1.Refresh();
     }
     
+    private void StyledElement_OnDataContextChanged(object? sender, EventArgs e)
+    {
+        var vm = DataContext as SequenceViewModel;
+
+        ScottPlotTest(vm.Sequence);
+    }
 }

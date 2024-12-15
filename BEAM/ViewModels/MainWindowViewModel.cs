@@ -30,6 +30,8 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] public partial string Help { get; set; } = BaseConfig.Help;
 
     [ObservableProperty] private string? _fileText;
+    [ObservableProperty] public partial DockingViewModel DockingVm { get; set; } = new();
+
 
     public static int TitleBarHeight => 38;
 
@@ -52,7 +54,7 @@ public partial class MainWindowViewModel : ViewModelBase
             var list = files.Select(f => f.Path).ToList();
             try
             {
-                loadedSequences.Add(Sequence.Open(list));
+                DockingVm.OpenSequenceView(Sequence.Open(list)); 
             } catch (Exception ex) {}
         }
         else

@@ -17,7 +17,14 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        DockView.DataContext = _dockingViewModel;
+        
+        DataContextChanged += (sender, args) =>
+        {
+            if (!IsInitialized) return;
+            var viewmodel = (MainWindowViewModel)DataContext;
+            DockView.DataContext = viewmodel.DockingVm;
+        };
+        
         AddHandler(DragDrop.DropEvent, OnDrop);
     }
 

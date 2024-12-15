@@ -6,7 +6,8 @@
              xmlns:vm="clr-namespace:BEAM.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:SequenceViewModel"
-             x:Class="BEAM.Views.SequenceView">
+             x:Class="BEAM.Views.SequenceView"
+             DataContextChanged="StyledElement_OnDataContextChanged">
     <Design.DataContext>
         <vm:SequenceViewModel/>
     </Design.DataContext>
