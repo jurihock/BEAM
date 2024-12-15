@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Specialized;
 using System.IO.Pipelines;
+using BEAM.Log;
 using BEAM.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -12,17 +15,48 @@ public partial class StatusBarViewModel : ViewModelBase
     private long _infoCounter = 0;
     private long _warningCounter = 0;
     private long _errorCounter = 0;
+
     [ObservableProperty] public partial bool InfoVisible { get; set; } = false;
     [ObservableProperty] public partial bool WarningVisible { get; set; } = false;
     [ObservableProperty] public partial bool ErrorVisible { get; set; } = false;
     [ObservableProperty] public partial bool StatusBarVisible { get; set; } = false;
+
     [ObservableProperty] public partial string InfoText { get; set; } = "";
     [ObservableProperty] public partial string WarningText { get; set; } = "";
     [ObservableProperty] public partial string ErrorText { get; set; } = "";
 
-    private StatusBarViewModel()
+    public StatusBarViewModel()
     {
-        
+        var logger = Logger.GetInstance();
+        logger.GetLogEntries().CollectionChanged += OnLogEntriesChanged;
+    }
+
+    private void OnLogEntriesChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.Action == NotifyCollectionChangedAction.Reset)
+        {
+            Clear();
+            return;
+        }
+
+        if (e is not { Action: NotifyCollectionChangedAction.Add, NewItems.Count: > 0 }) return;
+
+        var item = (LogEntry) e.NewItems[0]!;
+        switch (item.Level)
+        {
+            case LogLevel.Info:
+                AddInfo(item.Message);
+                break;
+            case LogLevel.Warning:
+                AddWarning(item.Message);
+                break;
+            case LogLevel.Error:
+                AddError(item.Message);
+                break;
+            case LogLevel.Debug:
+            default:
+                break;
+        }
     }
 
     public static StatusBarViewModel GetInstance()

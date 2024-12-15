@@ -1,28 +1,26 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using BEAM.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BEAM.Log;
 
-public partial class Logger : ILog
+public partial class Logger : ObservableObject, ILog
 {
     private static Logger? _instance;
     
     private string _pathToLogFile;
-    private string _lastLogMessage;
     private LogLevel _logLevel;
     private LogEvent _logEvent;
-    private StatusBarViewModel _StatusBarViewModel;
 
-    private List<LogEntry> _LogEntries;
-    
+    private ObservableCollection<LogEntry> _LogEntries;
+
     private Logger(string pathToLogFile)
     {
-        _LogEntries = new List<LogEntry>();
+        _LogEntries = [];
         _pathToLogFile = pathToLogFile;
-        _StatusBarViewModel = StatusBarViewModel.GetInstance();
         if (!File.Exists(pathToLogFile))
         {
             CreateNewLogFile(pathToLogFile);
@@ -39,7 +37,8 @@ public partial class Logger : ILog
 
     public static Logger GetInstance()
     {
-        return _instance ?? Init();
+        if (_instance is null) throw new Exception("Logger instance is null");
+        return _instance!;
     }
     
     public void Error(LogEvent occuredEvent)
@@ -119,38 +118,19 @@ public partial class Logger : ILog
     
     private void Write(string message)
     {
-        _lastLogMessage = message;
         using (StreamWriter outputFile = new StreamWriter(_pathToLogFile, true))
         {
             outputFile.WriteLine(DateTime.Now + " " +message);
         }
-        _LogEntries.Add(new LogEntry(Enum.GetName(_logLevel).ToUpper(), Enum.GetName(_logEvent), message));
-        if (_logLevel == LogLevel.Error)
-        {
-            _StatusBarViewModel.AddError(message);
-        }
-        else if (_logLevel == LogLevel.Warning)
-        {
-            _StatusBarViewModel.AddWarning(message);
-        }
-        else
-        {
-            _StatusBarViewModel.AddInfo(message);
-        }
-    }
-    
-    public string GetLastLogMessage()
-    {
-        return _lastLogMessage;
+        _LogEntries.Add(new LogEntry(_logLevel, Enum.GetName(_logEvent), message));
     }
     
     public void ClearStatusBar()
     {
         _LogEntries.Clear();
-        _StatusBarViewModel.Clear();
     }
     
-    public List<LogEntry> GetLogEntries()
+    public ObservableCollection<LogEntry> GetLogEntries()
     {
         return _LogEntries;
     }

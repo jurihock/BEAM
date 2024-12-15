@@ -9,7 +9,7 @@ namespace BEAM.ViewModels;
 public partial class StatusWindowViewModel : ViewModelBase
 {
     private Logger? _logger;
-    [ObservableProperty] public partial List<LogEntry> StatusList { get; set; }
+    public ObservableCollection<LogEntry> StatusList { get; set; }
 
     public StatusWindowViewModel()
     {

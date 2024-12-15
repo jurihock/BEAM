@@ -31,8 +31,8 @@
                                 BorderBrush="Gray" BorderThickness="1"
                                 Padding="5">
                             <StackPanel Orientation="Horizontal">
-                                <Svg Path="{Binding Level, Converter={StaticResource LogLevelIconConverter}}"></Svg>
-                                <TextBlock Margin="5, 0" Text="{Binding Level}" VerticalAlignment="Center"></TextBlock>
+                                <Svg Path="{Binding LevelStr, Converter={StaticResource LogLevelIconConverter}}"></Svg>
+                                <TextBlock Margin="5, 0" Text="{Binding LevelStr}" VerticalAlignment="Center"></TextBlock>
                                 <TextBlock Margin="5, 0" Text="{Binding Event}" VerticalAlignment="Center"></TextBlock>
                                 <TextBlock Margin="5, 0" Text="{Binding Message}" VerticalAlignment="Center"></TextBlock>
                             </StackPanel>
