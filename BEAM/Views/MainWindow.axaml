@@ -13,8 +13,9 @@
         ExtendClientAreaChromeHints="PreferSystemChrome, OSXThickTitleBar"
         DragDrop.AllowDrop="True"
         SystemDecorations="Full"
-        Title="BEAM">
-    
+        Title="BEAM"
+        np:DockAttachedProperties.DockChildWindowOwner="{Binding RelativeSource={RelativeSource Self}}">
+
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
@@ -42,11 +43,12 @@
                 </NativeMenu>
             </NativeMenuItem>
         </NativeMenu>
+
     </NativeMenu.Menu>
 
     <DockPanel>
         <views:TitleBar Name="TitleBar" DockPanel.Dock="Top" Height="{Binding TitleBarHeight}" />
-
+        <views:DockingView x:Name="DockView" />
         <views:StatusBar DockPanel.Dock="Bottom"/>
 
         <StackPanel Name="TestStatusBar" Margin="10" Orientation="Horizontal" VerticalAlignment="Top">
@@ -55,6 +57,6 @@
             <Button Command="{Binding AddInfo}">Add Info</Button>
             <Button Command="{Binding ClearLog}">Flush Status Bar</Button>
         </StackPanel>
-        
+
     </DockPanel>
 </Window>

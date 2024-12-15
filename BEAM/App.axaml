@@ -3,13 +3,18 @@
              x:Class="BEAM.App"
              xmlns:local="using:BEAM"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+    <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <local:ViewLocator />
     </Application.DataTemplates>
-  
+
     <Application.Styles>
-        <FluentTheme />
+        <SimpleTheme />
+
+        <!-- UniDock base styles -->
+        <StyleInclude Source="avares://NP.Ava.Visuals/Themes/TextStyles.axaml" />
+        <StyleInclude Source="avares://NP.Ava.Visuals/Themes/CustomWindowStyles.axaml" />
+        <StyleInclude Source="avares://NP.Ava.UniDock/Themes/DockStyles.axaml" />
     </Application.Styles>
 </Application>
