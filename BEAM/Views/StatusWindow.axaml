@@ -10,7 +10,9 @@
         xmlns:log="clr-namespace:BEAM.Log"
         Title="StatusWindow"
         WindowStartupLocation="CenterScreen"
+        Focusable="True"
         CanResize="False"
+        KeyDown="OnKeyDown"
         Width="750"
         Height="500">
 
