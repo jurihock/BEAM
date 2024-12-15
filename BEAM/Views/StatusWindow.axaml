@@ -28,7 +28,7 @@
         <TextBlock Margin="20, 20, 20, 0" FontWeight="Bold">List of status messages:</TextBlock>
         <Separator Background="{DynamicResource ThemeAccentBrush}" Margin="10"></Separator>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Width="750" Height="442" Padding="5">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Width="750" Height="442" Padding="0">
             <ItemsControl ItemsSource="{Binding StatusList}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -48,7 +48,6 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
-
     </StackPanel>
 
 </Window>
