@@ -12,6 +12,16 @@ namespace BEAM.Renderer;
 /// </summary>
 public class HeatMapRendererRB : HeatMapRenderer
 {
+    /// <summary>
+    /// Constructor for a HeatMapRendererRB
+    /// </summary>
+    /// <param name="minimumOfIntensityRange"></param>
+    /// <param name="maximumOfIntensityRange"></param>
+    /// <param name="channel"></param>
+    public HeatMapRendererRB(int minimumOfIntensityRange, int maximumOfIntensityRange, int channel) : base(minimumOfIntensityRange, maximumOfIntensityRange, channel)
+    {
+    }
+
     protected override byte[] GetColor(double value, double min, double max)
     {
         if (value > max) // intensity above maximum --> hottest color displayed
@@ -29,7 +39,8 @@ public class HeatMapRendererRB : HeatMapRenderer
             double range = (max - min);
             double
                 relative = (value - min) /
-                           range; // calculate the relative intensity inside the range between min and max
+                           range; // calculate the relative intensity inside the range between min and max --> Normalize
+            // the value of the color
             byte intensity = (byte)Math.Floor(relative * (double)255);
             byte[] color = [255, intensity, 0, (byte)(255 - intensity)];
             return color;
