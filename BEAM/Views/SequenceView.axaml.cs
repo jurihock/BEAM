@@ -26,6 +26,13 @@ public partial class SequenceView : UserControl
             Console.WriteLine(channel);
         }
         
+        channels = sequence.GetPixel(0, 201);
+        
+                foreach (var channel in channels)
+                {
+                    Console.WriteLine(channel);
+                }
+        
         var avaPlot1 = this.Find<AvaPlot>("AvaPlot1");
 
         if (avaPlot1 == null)

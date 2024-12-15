@@ -37,7 +37,7 @@ public partial class MainWindow : Window
         foreach (var file in data)
         {
             var path = file.Path;
-            if (Directory.Exists(path.ToString()))
+            if (Directory.Exists(path.AbsolutePath))
             {
                 Console.WriteLine("False");
                 try
