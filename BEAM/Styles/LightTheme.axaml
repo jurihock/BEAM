@@ -11,7 +11,8 @@
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
-                    <Color x:Key="TitleBarBg">Blue</Color>
+                    <Color x:Key="TitleBarBg">White</Color>
+                    <Color x:Key="TitleBarFg">Black</Color>
 
                     <Color x:Key="WindowBg">White</Color>
                     <Color x:Key="WindowFg">Black</Color>
