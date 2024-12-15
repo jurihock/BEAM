@@ -201,7 +201,6 @@ public abstract class Sequence(List<string> imagePaths)
     };
 
     
-    // TODO: Fix Pathing
     /// <summary>
     /// Opens a new sequence.
     /// </summary>
@@ -247,6 +246,7 @@ public abstract class Sequence(List<string> imagePaths)
     public static Sequence Open(string folder)
     {
         if (!Directory.Exists(folder)) throw new NotImplementedException($"Unsupported folder: {folder}");
+
         var filePaths = Directory.EnumerateFiles(folder, "*.*", SearchOption.TopDirectoryOnly);
         return Open(filePaths.ToList());
     }
@@ -259,7 +259,7 @@ public abstract class Sequence(List<string> imagePaths)
     /// <exception cref="NotImplementedException">Throws when no images are being passed or all found file extensions are unsupported</exception>
     public static Sequence Open(List<Uri> paths)
     {
-        return Open(paths.Select(u => u.AbsolutePath).ToList());
+        return Open(paths.Select(u => u.LocalPath).ToList());
     }
 
     /// <summary>
@@ -269,7 +269,8 @@ public abstract class Sequence(List<string> imagePaths)
     /// <returns>The opened sequence</returns>
     public static Sequence Open(Uri folder)
     {
-        return Open(folder.AbsolutePath);
+        Console.WriteLine(folder.ToString());
+        return Open(folder.LocalPath);
     }
 
     /// <summary>
