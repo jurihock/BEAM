@@ -1,8 +1,7 @@
 using BEAM.ViewModels;
-using BEAM.ViewModels.LogViewModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace BEAM.Models.LoggerModels;
+namespace BEAM.Log;
 
 public partial class LogEntry(string level, string occuredEvent, string message) : ViewModelBase
 {

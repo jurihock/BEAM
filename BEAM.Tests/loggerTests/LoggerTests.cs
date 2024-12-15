@@ -1,6 +1,5 @@
 using System.Net;
-using BEAM.Models.LoggerModels;
-using BEAM.ViewModels.LogViewModel;
+using BEAM.Log;
 
 namespace BEAM.Tests;
 
@@ -10,7 +9,7 @@ public class LoggerTests
     public void CreateNewLogger()
     {
         // Arrange
-        var logger = Logger.getInstance("../../../../BEAM.Tests/loggerTests/testLogs/testLog.log");
+        var logger = Logger.GetInstance();
         
         // Act
         logger.Error(LogEvent.FileNotFound, "Test");

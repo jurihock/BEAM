@@ -1,4 +1,4 @@
-namespace BEAM.Models.LoggerModels;
+namespace BEAM.Log;
 
 public enum LogEvent
 {
@@ -8,6 +8,4 @@ public enum LogEvent
     ClosedFile,
     ExportedFile,
     BasicMessage
-    
-    
 }

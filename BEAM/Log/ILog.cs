@@ -1,4 +1,4 @@
-namespace BEAM.Models.LoggerModels;
+namespace BEAM.Log;
 
 /// <summary>
 /// Interface for logging events.

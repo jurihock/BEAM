@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using BEAM.Models.LoggerModels;
+using BEAM.Log;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BEAM.ViewModels;
@@ -13,7 +13,7 @@ public partial class StatusWindowViewModel : ViewModelBase
 
     public StatusWindowViewModel()
     {
-        _logger = Logger.getInstance("../../../../BEAM.Tests/loggerTests/testLogs/testLog.log");
+        _logger = Logger.GetInstance();
         StatusList = _logger.GetLogEntries();
     }
 }

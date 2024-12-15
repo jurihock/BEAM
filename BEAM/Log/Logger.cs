@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Runtime.InteropServices.JavaScript;
-using System.Text;
 using BEAM.ViewModels;
-using BEAM.ViewModels.LogViewModel;
 
-namespace BEAM.Models.LoggerModels;
+namespace BEAM.Log;
 
 public class Logger :  ILog
 {
@@ -30,12 +26,22 @@ public class Logger :  ILog
         {
             CreateNewLogFile(pathToLogFile);
         }
-        
     }
 
-    public static Logger getInstance(string pathToLogFile)
+    public static Logger Init(string? pathToLogFile=null)
     {
-        return _instance ?? (_instance = new Logger(pathToLogFile));
+        if (pathToLogFile is null)
+        {
+            pathToLogFile = "log.txt";
+        }
+
+        _instance = new Logger(pathToLogFile);
+        return _instance;
+    }
+
+    public static Logger GetInstance()
+    {
+        return _instance;
     }
     
     public void Error(LogEvent occuredEvent)

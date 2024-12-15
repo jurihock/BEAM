@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using BEAM.Exceptions;
 using BEAM.Image;
-using BEAM.Models.LoggerModels;
+using BEAM.Log;
 
 namespace BEAM.ImageSequence;
 
@@ -233,7 +233,7 @@ public abstract class Sequence(List<string> imagePaths)
         {
             string warningString = skipped + " Files could not be loaded";
 
-            Logger? logger = Logger.getInstance("../../../../BEAM.Tests/loggerTests/testLogs/testLog.log");
+            Logger? logger = Logger.GetInstance();
             logger.Warning(LogEvent.FileNotFound, warningString);
         }
 

@@ -1,4 +1,4 @@
-namespace BEAM.ViewModels.LogViewModel;
+namespace BEAM.Log;
 
 public enum LogLevel
 {
