@@ -1,4 +1,4 @@
-using System;
+using BEAM.Log;
 
 namespace BEAM.Exceptions;
 
@@ -12,7 +12,7 @@ public class UnknownSequenceException : BeamException
     {
     }
 
-    public UnknownSequenceException(string message, Exception innerException) : base(message, innerException)
+    public UnknownSequenceException(LogEvent evt, string message) : base(evt, message)
     {
     }
 }

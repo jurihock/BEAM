@@ -1,14 +1,18 @@
-using System;
+using BEAM.Log;
 
 namespace BEAM.Exceptions;
 
-public class ImageDimensionException : Exception
+public class ImageDimensionException : BeamException
 {
-    public ImageDimensionException() { }
+    public ImageDimensionException()
+    {
+    }
 
-    public ImageDimensionException(string message)
-        : base(message) { }
+    public ImageDimensionException(string message) : base(message)
+    {
+    }
 
-    public ImageDimensionException(string message, Exception inner)
-        : base(message, inner) { }
+    public ImageDimensionException(LogEvent evt, string message) : base(evt, message)
+    {
+    }
 }

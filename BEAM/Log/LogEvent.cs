@@ -7,5 +7,7 @@ public enum LogEvent
     OpenedFile,
     ClosedFile,
     ExportedFile,
-    BasicMessage
+    BasicMessage,
+    ThrownException,
+    Critical
 }

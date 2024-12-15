@@ -1,5 +1,5 @@
-using System;
 using System.Runtime.CompilerServices;
+using BEAM.Log;
 
 namespace BEAM.Exceptions;
 
@@ -10,4 +10,4 @@ public class CriticalBeamException(
     string message,
     [CallerLineNumber] int lineNum = 0,
     [CallerFilePath] string path = "")
-    : BeamException($"{path}:{lineNum} -> {message}");
+    : BeamException(LogEvent.Critical, $"{path}:{lineNum} -> {message}");
