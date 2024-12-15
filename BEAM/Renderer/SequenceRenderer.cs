@@ -23,6 +23,22 @@ public abstract class SequenceRenderer
         MinimumOfIntensityRange = minimumOfIntensityRange;
         MaximumOfIntensityRange = maximumOfIntensityRange;
     }
+
+    /// <summary>
+    /// Normalizes the intensity of a given intensity to a value between 0 and 1.
+    /// Normalization uses the Minimum- and MaximumOfIntensityRange
+    /// </summary>
+    /// <param name="intensity">The unnormalized intensity of a channel</param>
+    /// <returns>The </returns>
+    public double NormalizeIntensity(double intensity)
+    {
+        if (intensity > MaximumOfIntensityRange || intensity < MinimumOfIntensityRange)
+        {
+            throw new ArgumentException();
+        }
+        return (intensity - MinimumOfIntensityRange) 
+               / (MaximumOfIntensityRange - MinimumOfIntensityRange);
+    }
     
     /// <summary>
     /// Returns an array of size 4. These three values

@@ -41,7 +41,7 @@ public abstract class HeatMapRenderer : SequenceRenderer
     {
         if (Channel >= channels.Length)
         {
-            throw new ImageDimensionException("Invalid channel nr.");
+            throw new ChannelException("Invalid channel nr.");
         }
 
         if (AmountParameters != displayParameters.Length)
