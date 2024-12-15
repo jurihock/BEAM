@@ -30,10 +30,7 @@ public class Logger :  ILog
 
     public static Logger Init(string? pathToLogFile=null)
     {
-        if (pathToLogFile is null)
-        {
-            pathToLogFile = "log.txt";
-        }
+        pathToLogFile ??= "log.txt";
 
         _instance = new Logger(pathToLogFile);
         return _instance;
