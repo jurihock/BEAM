@@ -57,7 +57,6 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
     
-    // TODO: Fix the Pathing for Folders with Spaces in Path
     [RelayCommand]
     public async Task OpenSequenceFromFolder()
     {
