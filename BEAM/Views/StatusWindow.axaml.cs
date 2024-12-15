@@ -19,9 +19,7 @@ public partial class StatusWindow : Window
 
     private void OnKeyDown(object? sender, KeyEventArgs e)
     {
-        Console.WriteLine("Hello");
         if (e.Key != Key.Escape) return;
-        Console.WriteLine("Hello");
         Close();
     }
 }
