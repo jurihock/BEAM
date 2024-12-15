@@ -16,7 +16,7 @@ public interface ISkiaImage : IContiguousImage
 /// </summary>
 public abstract class SkiaImage<T> : IContiguousImage<T>, IDisposable, ISkiaImage
 {
-  private SKBitmap? Data { get; set; }
+  public SKBitmap? Data { get; set; }
   private Func<long, T> GetValue { get; init; }
   private Func<int, int> GetColor { get; init; }
   

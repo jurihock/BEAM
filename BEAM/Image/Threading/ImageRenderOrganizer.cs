@@ -7,7 +7,7 @@ using BEAM.Renderer;
 
 namespace BEAM.Image.Threading;
 
-public class ImageRenderOrganizer
+/*public class ImageRenderOrganizer
 {
     private readonly ManualResetEventSlim _pauseEvent = new ManualResetEventSlim(true); // Used to pause/resume
     private CancellationTokenSource _cts = new CancellationTokenSource(); // Used to stop
@@ -15,7 +15,7 @@ public class ImageRenderOrganizer
     
     public RenderedImageExcerpt renderableExcerpt { get; private set; }
     private bool isRenderingPadding = false;
-    public RenderedImageExcerpt RenderRGBImage(Sequence? sequence, long imageStartLine, long imageEndLine, double zoomLevel, ISequenceRenderer renderer)
+    public RenderedImageExcerpt RenderRGBImage(Sequence? sequence, long imageStartLine, long imageEndLine, double zoomLevel, SequenceRenderer renderer)
     {
 
         if (sequence is null || sequence.Shape.Width <= 0 || sequence.Shape.Height < 0)
@@ -117,7 +117,7 @@ public class ImageRenderOrganizer
 
     }
 
-    public Task GeneratePadding(Sequence sequence, ISequenceRenderer renderer, RenderedImageExcerpt prevExcerpt)
+    public Task GeneratePadding(Sequence sequence, SequenceRenderer renderer, RenderedImageExcerpt prevExcerpt)
     {
         return Task.Run(() =>
         {
@@ -275,4 +275,4 @@ public class RenderedImageExcerpt
     {
         return (Math.Abs(OriginPixel.Item2 - newInitialLine) < Height + Padding);
     }
-}
+}*/

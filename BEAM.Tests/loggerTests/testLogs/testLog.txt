@@ -1,0 +1,83 @@
+-New log file created at: 14.12.2024 18:57:21
+14.12.2024 18:57:25 ERROR! --> FileNotFound
+14.12.2024 18:57:27 Warning --> UnknownFileFormat
+14.12.2024 18:57:28 Info: OpenedFile
+14.12.2024 18:57:28 Info: OpenedFile
+14.12.2024 18:57:28 Info: OpenedFile
+14.12.2024 18:57:28 Info: OpenedFile
+14.12.2024 18:57:29 Info: OpenedFile
+14.12.2024 18:57:30 Warning --> UnknownFileFormat
+14.12.2024 18:57:30 Warning --> UnknownFileFormat
+14.12.2024 18:57:30 Warning --> UnknownFileFormat
+14.12.2024 18:57:30 Warning --> UnknownFileFormat
+14.12.2024 18:57:31 ERROR! --> FileNotFound
+14.12.2024 18:57:31 ERROR! --> FileNotFound
+14.12.2024 18:57:33 Info: OpenedFile
+14.12.2024 18:57:34 Info: OpenedFile
+14.12.2024 18:57:34 Info: OpenedFile
+14.12.2024 18:57:34 Warning --> UnknownFileFormat
+14.12.2024 18:57:34 Warning --> UnknownFileFormat
+14.12.2024 18:57:35 Warning --> UnknownFileFormat
+14.12.2024 18:57:35 Warning --> UnknownFileFormat
+14.12.2024 18:57:35 ERROR! --> FileNotFound
+14.12.2024 18:57:35 ERROR! --> FileNotFound
+14.12.2024 18:57:36 ERROR! --> FileNotFound
+14.12.2024 18:57:36 ERROR! --> FileNotFound
+14.12.2024 18:57:36 ERROR! --> FileNotFound
+14.12.2024 18:57:36 ERROR! --> FileNotFound
+14.12.2024 18:57:36 Warning --> UnknownFileFormat
+14.12.2024 18:57:36 Warning --> UnknownFileFormat
+14.12.2024 18:57:37 Warning --> UnknownFileFormat
+14.12.2024 18:57:37 Info: OpenedFile
+14.12.2024 18:57:37 Info: OpenedFile
+14.12.2024 18:57:38 Info: OpenedFile
+14.12.2024 18:57:38 Info: OpenedFile
+14.12.2024 18:57:38 Info: OpenedFile
+14.12.2024 18:57:39 Warning --> UnknownFileFormat
+14.12.2024 18:57:39 Warning --> UnknownFileFormat
+14.12.2024 18:57:40 Warning --> UnknownFileFormat
+14.12.2024 18:57:40 ERROR! --> FileNotFound
+14.12.2024 18:57:40 ERROR! --> FileNotFound
+14.12.2024 18:57:41 ERROR! --> FileNotFound
+14.12.2024 18:57:41 ERROR! --> FileNotFound
+14.12.2024 18:57:41 ERROR! --> FileNotFound
+14.12.2024 18:57:41 ERROR! --> FileNotFound
+14.12.2024 18:57:41 ERROR! --> FileNotFound
+14.12.2024 18:57:41 ERROR! --> FileNotFound
+14.12.2024 18:57:41 ERROR! --> FileNotFound
+14.12.2024 18:57:42 ERROR! --> FileNotFound
+14.12.2024 18:57:42 ERROR! --> FileNotFound
+14.12.2024 18:57:42 ERROR! --> FileNotFound
+14.12.2024 18:57:42 ERROR! --> FileNotFound
+14.12.2024 18:57:42 ERROR! --> FileNotFound
+14.12.2024 18:57:42 ERROR! --> FileNotFound
+14.12.2024 18:57:43 ERROR! --> FileNotFound
+14.12.2024 18:57:43 ERROR! --> FileNotFound
+14.12.2024 18:57:43 ERROR! --> FileNotFound
+14.12.2024 18:57:43 ERROR! --> FileNotFound
+14.12.2024 18:57:44 ERROR! --> FileNotFound
+14.12.2024 18:57:44 ERROR! --> FileNotFound
+14.12.2024 18:57:44 ERROR! --> FileNotFound
+14.12.2024 18:57:44 ERROR! --> FileNotFound
+14.12.2024 18:57:44 ERROR! --> FileNotFound
+14.12.2024 18:57:44 ERROR! --> FileNotFound
+14.12.2024 18:57:44 ERROR! --> FileNotFound
+14.12.2024 18:57:45 ERROR! --> FileNotFound
+14.12.2024 18:57:50 Info: OpenedFile
+14.12.2024 18:57:51 Info: OpenedFile
+14.12.2024 18:57:51 Warning --> UnknownFileFormat
+14.12.2024 18:57:51 Warning --> UnknownFileFormat
+14.12.2024 18:57:52 ERROR! --> FileNotFound
+14.12.2024 18:57:52 ERROR! --> FileNotFound
+14.12.2024 18:57:52 ERROR! --> FileNotFound
+14.12.2024 18:57:52 ERROR! --> FileNotFound
+14.12.2024 18:57:54 Info: OpenedFile
+14.12.2024 18:57:54 Warning --> UnknownFileFormat
+14.12.2024 18:57:54 Warning --> UnknownFileFormat
+14.12.2024 18:57:55 Warning --> UnknownFileFormat
+14.12.2024 18:57:55 Warning --> UnknownFileFormat
+14.12.2024 18:57:55 Warning --> UnknownFileFormat
+14.12.2024 18:57:55 ERROR! --> FileNotFound
+14.12.2024 18:57:56 ERROR! --> FileNotFound
+14.12.2024 18:57:58 Warning --> UnknownFileFormat
+14.12.2024 18:57:58 Info: OpenedFile

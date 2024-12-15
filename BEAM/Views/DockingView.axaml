@@ -26,7 +26,10 @@
                 </StackPanel>
             </np:DockItem>
             <np:DockItem>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">I was wandering if after all these year you'd like to hear.</TextBlock>
+                <StackPanel>
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">I was wandering if after all these year you'd like to hear.</TextBlock>
+                    <Button Command="{Binding #Root.((vm:DockingViewModel)DataContext).OpenSequenceViewCommand}">Pls giiib view</Button>
+                </StackPanel>
             </np:DockItem>
             <np:DockItem>
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">To go over</TextBlock>
