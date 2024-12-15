@@ -28,31 +28,57 @@
         </Style>
 
         <Style Selector="np|DockTabItem.Dock[IsSelected=False]">
-            <Setter Property="Background" Value="Red" />
-            <Setter Property="Foreground" Value="Aqua" />
+            <Setter Property="Background" Value="{DynamicResource DockHeaderBg}" />
+            <Setter Property="Foreground" Value="{DynamicResource DockHeaderFg}" />
         </Style>
 
         <Style Selector="np|DockTabItem.Dock[IsSelected=True]">
-            <Setter Property="Background" Value="Blue" />
-            <Setter Property="Foreground" Value="Chartreuse" />
+            <Setter Property="Background" Value="{DynamicResource SelectedDockHeaderBg}" />
+            <Setter Property="Foreground" Value="{DynamicResource DockHeaderFg}" />
         </Style>
 
         <Style Selector="np|DockItemPresenter[IsActive=True]">
-            <Setter Property="HeaderBackground" Value="Chocolate" />
-            <Setter Property="HeaderForeground" Value="Cyan" />
+            <Setter Property="HeaderBackground" Value="{DynamicResource SelectedDockHeaderBg}" />
+            <Setter Property="HeaderForeground" Value="{DynamicResource DockHeaderFg}" />
         </Style>
 
         <Style Selector="np|DockItemPresenter">
-            <Setter Property="HeaderBackground" Value="Magenta" />
-            <Setter Property="HeaderForeground" Value="Yellow" />
+            <Setter Property="HeaderBackground" Value="{DynamicResource DockHeaderBg}" />
+            <Setter Property="HeaderForeground" Value="{DynamicResource DockHeaderFg}" />
         </Style>
 
-        <!--Style Selector="np|DockSeparator">
-            <Setter Property="Background" Value="" />
-        </-Style -->
+        <Style Selector="np|DockSeparator">
+            <Setter Property="Background" Value="{DynamicResource DockSeparatorColor}" />
+        </Style>
+
+        <Style Selector="np|DockSeparator[TheOrientation=Vertical]">
+            <Setter Property="MinWidth" Value="2" />
+            <Setter Property="Width" Value="2" />
+            <Setter Property="MaxWidth" Value="2" />
+        </Style>
+
+        <Style Selector="np|DockSeparator[TheOrientation=Horizontal]">
+            <Setter Property="MinHeight" Value="2" />
+            <Setter Property="Height" Value="2" />
+            <Setter Property="MaxHeight" Value="2" />
+        </Style>
 
         <Style Selector="np|TabbedDockGroup[IsFullyActive=True]">
-            <Setter Property="TabSeparatorBackground" Value="Chartreuse" />
+            <Setter Property="TabSeparatorBackground" Value="{DynamicResource Accent}" />
         </Style>
+        <Style Selector="np|TabbedDockGroup[IsFullyActive=False]">
+            <Setter Property="TabSeparatorBackground" Value="{DynamicResource Accent}" />
+        </Style>
+
+        <Style Selector="Button.CloseButton">
+            <Setter Property="Foreground" Value="{DynamicResource DockHeaderFg}"></Setter>
+        </Style>
+        <Style Selector="Button.TabCloseButton">
+            <Setter Property="Foreground" Value="{DynamicResource DockHeaderFg}"></Setter>
+        </Style>
+
+
+        <StyleInclude Source="avares://BEAM/Styles/LightTheme.axaml" />
+        <StyleInclude Source="avares://BEAM/Styles/DarkTheme.axaml" />
     </Application.Styles>
 </Application>

@@ -5,32 +5,31 @@
              xmlns:vm="clr-namespace:BEAM.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BEAM.Views.StatusBar"
-             x:DataType="vm:StatusBarViewModel">
+             x:DataType="vm:StatusBarViewModel"
+             IsVisible="{Binding StatusBarVisible}">
 
     <Panel>
-
-        <Border BorderBrush="Aqua"
+        <Border BorderBrush="{DynamicResource Accent}"
                 Background="{DynamicResource ThemeBackgroundColor}"
-                BorderThickness="0,1, 0, 0"
+                BorderThickness="0,2, 0, 0"
                 CornerRadius="0"
-                IsHitTestVisible="False"
-                IsVisible="{Binding StatusBarVisible}">
+                IsHitTestVisible="False">
         </Border>
-            <Button Command="{Binding OpenStatusWindowCommand}"
-                    Background="Transparent" BorderThickness="0"
-                    HorizontalAlignment="Center"
-                    Margin="5">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"
-                            Spacing="5">
-                    <Svg Path="../Assets/error.svg" Width="16" Height="16"
-                         IsVisible="{Binding ErrorVisible}" />
-                    <TextBlock VerticalAlignment="Center" Text="{Binding ErrorText}"></TextBlock>
-                    <Svg Path="../Assets/warning.svg" Width="16" Height="16"
-                         IsVisible="{Binding WarningVisible}" />
-                    <TextBlock VerticalAlignment="Center" Text="{Binding WarningText}"></TextBlock>
-                    <Svg Path="../Assets/info.svg" Width="16" Height="16" IsVisible="{Binding InfoVisible}" />
-                    <TextBlock VerticalAlignment="Center" Text="{Binding InfoText}"></TextBlock>
-                </StackPanel>
-            </Button>
+        <Button Command="{Binding OpenStatusWindowCommand}"
+                Background="Transparent" BorderThickness="0"
+                HorizontalAlignment="Center"
+                Margin="5">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Spacing="5">
+                <Svg Path="../Assets/error.svg" Width="16" Height="16"
+                     IsVisible="{Binding ErrorVisible}" />
+                <TextBlock VerticalAlignment="Center" Text="{Binding ErrorText}"></TextBlock>
+                <Svg Path="../Assets/warning.svg" Width="16" Height="16"
+                     IsVisible="{Binding WarningVisible}" />
+                <TextBlock VerticalAlignment="Center" Text="{Binding WarningText}"></TextBlock>
+                <Svg Path="../Assets/info.svg" Width="16" Height="16" IsVisible="{Binding InfoVisible}" />
+                <TextBlock VerticalAlignment="Center" Text="{Binding InfoText}"></TextBlock>
+            </StackPanel>
+        </Button>
     </Panel>
 </UserControl>
