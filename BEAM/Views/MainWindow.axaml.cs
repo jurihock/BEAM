@@ -26,7 +26,15 @@ public partial class MainWindow : Window
         List<string> list = new();
         foreach (var file in data)
         {
-            list.Add(file.Path.ToString());
+            var path = file.Path.ToString();
+            if (Directory.Exists(path))
+            {
+                viewmodel.AddSequence(Sequence.Open(path));
+            }
+            else if (File.Exists(path))
+            {
+                list.Add(path);   
+            }
         }
         viewmodel.AddSequence(Sequence.Open(list));
     }
