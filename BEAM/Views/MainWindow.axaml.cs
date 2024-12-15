@@ -17,14 +17,14 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        
+
         DataContextChanged += (sender, args) =>
         {
             if (!IsInitialized) return;
             var viewmodel = (MainWindowViewModel)DataContext;
             DockView.DataContext = viewmodel.DockingVm;
         };
-        
+
         AddHandler(DragDrop.DropEvent, OnDrop);
     }
 
@@ -32,20 +32,34 @@ public partial class MainWindow : Window
     {
         Console.WriteLine("Dropped");
         var data = e.Data.GetFiles();
-        var viewmodel = (MainWindowViewModel) ((MainWindow) sender!).DataContext;
-        List<string> list = new();
+        var vm = (MainWindowViewModel)((MainWindow)sender!).DataContext;
+        List<Uri> list = new();
         foreach (var file in data)
         {
-            var path = file.Path.ToString();
-            if (Directory.Exists(path))
+            var path = file.Path;
+            if (Directory.Exists(path.ToString()))
             {
-                viewmodel.AddSequence(Sequence.Open(path));
+                Console.WriteLine("False");
+                try
+                {
+                    vm.DockingVm.OpenSequenceView(Sequence.Open(path));
+                }
+                catch (Exception ex)
+                {
+                }
             }
-            else if (File.Exists(path))
+            else
             {
                 list.Add(path);
             }
         }
-        viewmodel.AddSequence(Sequence.Open(list));
+
+        try
+        {
+            vm.DockingVm.OpenSequenceView(Sequence.Open(list));
+        }
+        catch (Exception exception)
+        {
+        }
     }
 }

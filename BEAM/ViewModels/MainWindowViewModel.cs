@@ -38,8 +38,6 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public static int TitleBarHeight => 38;
 
-    private List<Sequence> loadedSequences = [];
-
     private Logger? _logger;
 
     public MainWindowViewModel()
@@ -75,7 +73,7 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             try
             {
-                loadedSequences.Add(Sequence.Open(folder.Path));
+                DockingVm.OpenSequenceView(Sequence.Open(folder.Path));
             } catch(Exception ex) {}
         }
         else
@@ -118,11 +116,6 @@ public partial class MainWindowViewModel : ViewModelBase
         });
 
         return files;
-    }
-    
-    public void AddSequence(Sequence sequence)
-    {
-        loadedSequences.Add(sequence);
     }
     
     [RelayCommand]
