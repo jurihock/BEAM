@@ -1,6 +1,7 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="BEAM.App"
+             xmlns:np="https://np.com/visuals"
              xmlns:local="using:BEAM"
              RequestedThemeVariant="Default">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
@@ -10,11 +11,48 @@
     </Application.DataTemplates>
 
     <Application.Styles>
-        <SimpleTheme />
+        <FluentTheme />
 
         <!-- UniDock base styles -->
         <StyleInclude Source="avares://NP.Ava.Visuals/Themes/TextStyles.axaml" />
         <StyleInclude Source="avares://NP.Ava.Visuals/Themes/CustomWindowStyles.axaml" />
         <StyleInclude Source="avares://NP.Ava.UniDock/Themes/DockStyles.axaml" />
+
+        <!-- Styling -->
+        <Style Selector="np|TabbedDockGroup">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+
+        <Style Selector="np|DockItemPresenter">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+
+        <Style Selector="np|DockTabItem.Dock[IsSelected=False]">
+            <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush3}" />
+            <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
+        </Style>
+
+        <Style Selector="np|DockTabItem.Dock[IsSelected=True]">
+            <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
+        </Style>
+
+        <Style Selector="np|DockItemPresenter[IsActive=True]">
+            <Setter Property="HeaderBackground" Value="{DynamicResource ThemeAccentBrush}" />
+            <Setter Property="HeaderForeground" Value="{DynamicResource ThemeForegroundBrush}" />
+        </Style>
+
+        <Style Selector="np|DockItemPresenter">
+            <Setter Property="HeaderBackground" Value="{DynamicResource ThemeAccentBrush3}" />
+            <Setter Property="HeaderForeground" Value="{DynamicResource ThemeForegroundBrush}" />
+        </Style>
+
+        <Style Selector="np|DockSeparator">
+            <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush3}" />
+        </Style>
+
+        <Style Selector="np|TabbedDockGroup[IsFullyActive=True]">
+            <Setter Property="TabSeparatorBackground" Value="{DynamicResource ThemeAccentBrush3}" />
+        </Style>
     </Application.Styles>
 </Application>
