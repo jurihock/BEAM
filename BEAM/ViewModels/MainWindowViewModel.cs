@@ -49,7 +49,10 @@ public partial class MainWindowViewModel : ViewModelBase
         if (files != null)
         {
             var list = files.Select(f => f.Path).ToList();
-            loadedSequences.Add(Sequence.Open(list));
+            try
+            {
+                loadedSequences.Add(Sequence.Open(list));
+            } catch (Exception ex) {}
         }
         else
         {
@@ -64,7 +67,10 @@ public partial class MainWindowViewModel : ViewModelBase
 
         if (folder != null)
         {
-            loadedSequences.Add(Sequence.Open(folder.Path));
+            try
+            {
+                loadedSequences.Add(Sequence.Open(folder.Path));
+            } catch(Exception ex) {}
         }
         else
         {

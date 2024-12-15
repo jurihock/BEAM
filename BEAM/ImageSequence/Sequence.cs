@@ -207,7 +207,7 @@ public abstract class Sequence(List<string> imagePaths)
     /// </summary>
     /// <param name="paths">The image paths the sequence uses.</param>
     /// <returns>The sequence</returns>
-    /// <exception cref="NotImplementedException">Thrown when no images are being passed or all found file extensions are unsupported</exception>
+    /// <exception cref="EmptySequenceException">Thrown when no images are being passed or all found file extensions are unsupported</exception>
     /// <exception cref="UnknownSequenceException">Thrown when no suitable sequence can be found in the paths</exception>
     public static Sequence Open(List<string> paths)
     {
@@ -225,16 +225,7 @@ public abstract class Sequence(List<string> imagePaths)
 
             var sequence = _InstantiateFromType(type, paths);
             sequence.InitializeSequence();
-
             return sequence;
-        }
-
-        if (skipped > 0)
-        {
-            string warningString = skipped + " Files could not be loaded";
-
-            Logger? logger = Logger.GetInstance();
-            logger.Warning(LogEvent.FileNotFound, warningString);
         }
 
         throw new UnknownSequenceException($"Cannot find sequence in extensions: {string.Join(", ", extensions)}");
@@ -245,6 +236,7 @@ public abstract class Sequence(List<string> imagePaths)
     /// </summary>
     /// <param name="folder">The path to the folder with the sequence inside</param>
     /// <returns>The opened sequence</returns>
+    /// <exception cref="EmptySequenceException">Thrown when no images are being passed or all found file extensions are unsupported</exception>
     /// <exception cref="UnknownSequenceException">Thrown when the folder does not exist.</exception>
     public static Sequence Open(string folder)
     {
@@ -259,7 +251,6 @@ public abstract class Sequence(List<string> imagePaths)
     /// </summary>
     /// <param name="paths">The image paths the sequence uses.</param>
     /// <returns>The sequence</returns>
-    /// <exception cref="NotImplementedException">Thrown when no images are being passed or all found file extensions are unsupported</exception>
     /// <exception cref="UnknownSequenceException">Thrown when no suitable sequence can be found in the paths</exception>
     public static Sequence Open(List<Uri> paths)
     {

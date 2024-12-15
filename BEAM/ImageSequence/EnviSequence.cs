@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using BEAM.Image;
 using BEAM.Image.Envi;
+using BEAM.Log;
 
 namespace BEAM.ImageSequence;
 
@@ -15,6 +16,7 @@ public class EnviSequence(List<string> imagePaths) : Sequence(imagePaths)
 
     protected override void InitializeSequence()
     {
-        imagePaths.RemoveAll(path => !Path.GetExtension(path).Equals(".raw"));
+        int removed = imagePaths.RemoveAll(path => !Path.GetExtension(path).Equals(".raw"));
+        Logger.GetInstance().Info(LogEvent.OpenedFile, $"{removed} files were not loaded");
     }
 }
