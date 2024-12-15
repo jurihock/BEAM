@@ -7,7 +7,7 @@ using BEAM.Renderer;
 
 namespace BEAM.Image.Threading;
 
-public class ImageRenderOrganizer
+/*public class ImageRenderOrganizer
 {
     private readonly ManualResetEventSlim _pauseEvent = new ManualResetEventSlim(true); // Used to pause/resume
     private CancellationTokenSource _cts = new CancellationTokenSource(); // Used to stop
@@ -275,4 +275,4 @@ public class RenderedImageExcerpt
     {
         return (Math.Abs(OriginPixel.Item2 - newInitialLine) < Height + Padding);
     }
-}
+}*/

@@ -26,4 +26,10 @@ public partial class DockingViewModel : ViewModelBase
         OpenDock(new SequenceViewModel());
         OpenDock(new InspectionViewModel());
     }
+
+    [RelayCommand]
+    public void SequenceDock()
+    {
+        OpenDock(new SequenceViewModel());
+    }
 }
