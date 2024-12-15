@@ -17,6 +17,6 @@ public class SkiaSequence(List<string> imagePaths) : Sequence(imagePaths)
     protected override void InitializeSequence()
     {
         int removed = imagePaths.RemoveAll(path => !Path.GetExtension(path).Equals(".png"));
-        Logger.GetInstance().Info(LogEvent.OpenedFile, $"{removed} files were not loaded");
+        if (removed > 0) Logger.GetInstance().Info(LogEvent.OpenedFile, $"{removed} file(s) were not loaded into the sequence.");
     }
 }

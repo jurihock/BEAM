@@ -211,17 +211,12 @@ public abstract class Sequence(List<string> imagePaths)
     /// <exception cref="UnknownSequenceException">Thrown when no suitable sequence can be found in the paths</exception>
     public static Sequence Open(List<string> paths)
     {
-        int skipped = 0;
         if (paths.Count == 0) throw new EmptySequenceException("Empty sequences are not supported");
 
         var extensions = paths.Select(Path.GetExtension).ToHashSet();
         foreach (var extension in extensions.OfType<string>())
         {
-            if (!SequenceTypes.TryGetValue(extension, out var type))
-            {
-                skipped++;
-                continue;
-            }
+            if (!SequenceTypes.TryGetValue(extension, out var type)) continue;
 
             var sequence = _InstantiateFromType(type, paths);
             sequence.InitializeSequence();
