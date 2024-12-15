@@ -9,8 +9,7 @@
 
     <StackPanel Orientation="Vertical">
        
-        <Panel Height="{Binding $parent[Window].ExtendClientAreaTitleBarHeightHint}"
-               IsHitTestVisible="False">
+        <Panel Height="{Binding $parent[Window].ExtendClientAreaTitleBarHeightHint}">
              <Border BorderBrush="Aqua"
                             Background="{DynamicResource ThemeBackgroundColor}"
                             BorderThickness="0,0, 0, 1"
