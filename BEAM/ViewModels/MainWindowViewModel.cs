@@ -115,6 +115,11 @@ public partial class MainWindowViewModel : ViewModelBase
         return files;
     }
     
+    public void AddSequence(Sequence sequence)
+    {
+        loadedSequences.Add(sequence);
+    }
+    
     [RelayCommand]
     public void AddInfo()
     {
