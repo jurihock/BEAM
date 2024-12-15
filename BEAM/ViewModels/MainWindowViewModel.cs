@@ -10,6 +10,7 @@ using Avalonia.Platform.Storage;
 using BEAM.ImageSequence;
 using BEAM.Log;
 using BEAM.Models;
+using BEAM.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Input;
@@ -28,6 +29,8 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] public partial string Paste { get; set; } = BaseConfig.Paste;
     [ObservableProperty] public partial string Copy { get; set; } = BaseConfig.Copy;
     [ObservableProperty] public partial string Help { get; set; } = BaseConfig.Help;
+    [ObservableProperty] public partial string View { get; set; } = BaseConfig.View;
+    [ObservableProperty] public partial string ViewOpenStatusWindow { get; set; } = BaseConfig.ViewOpenStatusWindow;
 
     [ObservableProperty] private string? _fileText;
     [ObservableProperty] public partial DockingViewModel DockingVm { get; set; } = new();
@@ -144,5 +147,12 @@ public partial class MainWindowViewModel : ViewModelBase
     public void ClearLog()
     {
         _logger?.ClearStatusBar();
+    }
+
+    [RelayCommand]
+    public void OpenStatusWindow()
+    {
+        var statusWindow = new StatusWindow();
+        statusWindow.Show();
     }
 }

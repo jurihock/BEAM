@@ -38,6 +38,11 @@
                     <NativeMenuItem Header="{Binding Paste}" />
                 </NativeMenu>
             </NativeMenuItem>
+            <NativeMenuItem Header="{Binding View}">
+                <NativeMenu>
+                    <NativeMenuItem Header="{Binding ViewOpenStatusWindow}" Command="{Binding OpenStatusWindowCommand}"/>
+                </NativeMenu>
+            </NativeMenuItem>
             <NativeMenuItem Header="{Binding Help}">
                 <NativeMenu>
                     <NativeMenuItem Header="{Binding Help}" />
