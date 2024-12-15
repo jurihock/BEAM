@@ -28,31 +28,31 @@
         </Style>
 
         <Style Selector="np|DockTabItem.Dock[IsSelected=False]">
-            <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush3}" />
-            <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
+            <Setter Property="Background" Value="Red" />
+            <Setter Property="Foreground" Value="Aqua" />
         </Style>
 
         <Style Selector="np|DockTabItem.Dock[IsSelected=True]">
-            <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}" />
-            <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
+            <Setter Property="Background" Value="Blue" />
+            <Setter Property="Foreground" Value="Chartreuse" />
         </Style>
 
         <Style Selector="np|DockItemPresenter[IsActive=True]">
-            <Setter Property="HeaderBackground" Value="{DynamicResource ThemeAccentBrush}" />
-            <Setter Property="HeaderForeground" Value="{DynamicResource ThemeForegroundBrush}" />
+            <Setter Property="HeaderBackground" Value="Chocolate" />
+            <Setter Property="HeaderForeground" Value="Cyan" />
         </Style>
 
         <Style Selector="np|DockItemPresenter">
-            <Setter Property="HeaderBackground" Value="{DynamicResource ThemeAccentBrush3}" />
-            <Setter Property="HeaderForeground" Value="{DynamicResource ThemeForegroundBrush}" />
+            <Setter Property="HeaderBackground" Value="Magenta" />
+            <Setter Property="HeaderForeground" Value="Yellow" />
         </Style>
 
-        <Style Selector="np|DockSeparator">
-            <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush3}" />
-        </Style>
+        <!--Style Selector="np|DockSeparator">
+            <Setter Property="Background" Value="" />
+        </-Style -->
 
         <Style Selector="np|TabbedDockGroup[IsFullyActive=True]">
-            <Setter Property="TabSeparatorBackground" Value="{DynamicResource ThemeAccentBrush3}" />
+            <Setter Property="TabSeparatorBackground" Value="Chartreuse" />
         </Style>
     </Application.Styles>
 </Application>
