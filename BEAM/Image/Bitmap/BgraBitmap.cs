@@ -8,22 +8,14 @@ namespace BEAM.Image.Bitmap;
 
 public sealed partial class BgraBitmap : SKBitmap, IBitmap<BGRA>
 {
-  private const int BytesPerPixel = BitmapBytesPerPixel;
-  private int BytesPerLine;
-
-  public new byte[] Bytes { get; private set; }
-  
-  public new int Width { get; private set; }
-  public new int Height { get; private set; }
   
   public ref BGRA this[int x, int y]
   {
     get
     {
-      var bytes = Bytes.AsSpan(
-        y * BytesPerLine +
-        x * BytesPerPixel +
-        BitmapHeaderSize,
+      var bytes = GetPixelSpan().Slice(
+        y * RowBytes +
+        x * BytesPerPixel,
         BytesPerPixel);
       
       return ref MemoryMarshal.AsRef<BGRA>(bytes);
@@ -37,10 +29,9 @@ public sealed partial class BgraBitmap : SKBitmap, IBitmap<BGRA>
       var x = (int)(i % Width);
       var y = (int)(i / Width);
 
-      var bytes = Bytes.AsSpan(
-        y * BytesPerLine +
-        x * BytesPerPixel +
-        BitmapHeaderSize,
+      var bytes = GetPixelSpan().Slice(
+        y * RowBytes +
+        x * BytesPerPixel,
         BytesPerPixel);
 
       return ref MemoryMarshal.AsRef<BGRA>(bytes);
@@ -50,41 +41,25 @@ public sealed partial class BgraBitmap : SKBitmap, IBitmap<BGRA>
   public BgraBitmap(int width, int height) :
     base(width, height, SKColorType.Bgra8888, SKAlphaType.Premul)
   {
-    var header = new HeaderA(width, height);
-    var bytes = new byte[header.FileSize];
 
-    MemoryMarshal.Write(bytes, header);
-
-    BytesPerLine = header.BytesPerLine;
-    Width = header.Width;
-    Height = header.Height;
-    Bytes = bytes;
     Debug.Assert(Marshal.SizeOf<BGRA>() == BytesPerPixel);
     
   }
 
 
-  public Span<byte> GetPixelSpan()
-  {
-
-    return Bytes.AsSpan(
-      BitmapHeaderSize,
-      Bytes.Length - BitmapHeaderSize);
+  public unsafe Span<byte> GetPixelSpan()
+  { 
+    IntPtr length;
+    return new Span<byte>((void*) base.GetPixels(out length), (int)length);
   }
 
   public void Read(string path)
   {
-    var bytes = File.ReadAllBytes(path);
-    var header = MemoryMarshal.Read<BgraBitmap.HeaderA>(bytes);
-
-    BytesPerLine = header.BytesPerLine;
-    Width = header.Width;
-    Height = header.Height;
-    Bytes = bytes;
+    throw new NotImplementedException();
   }
 
   public void Write(string path)
   {
-    File.WriteAllBytes(path, Bytes);
+    throw new NotImplementedException();
   }
 }
