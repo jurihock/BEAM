@@ -12,7 +12,7 @@ public interface ISkiaImage : IContiguousImage
 /// Supported image file formats include BMP, HEIF, JPEG, PNG and others:
 /// https://learn.microsoft.com/en-us/dotnet/api/skiasharp.skencodedimageformat
 /// TIFF image files are not supported by Skia, and thus SkiaSharp:
-/// https://github.com/mono/SkiaSharp/issues/433
+/// https://github.com/mono/SkiaSharp/issues/433.
 /// </summary>
 public abstract class SkiaImage<T> : IContiguousImage<T>, IDisposable, ISkiaImage
 {
@@ -59,7 +59,7 @@ public abstract class SkiaImage<T> : IContiguousImage<T>, IDisposable, ISkiaImag
   /// Supported files: .png
   /// </summary>
   /// <param name="filepath">The path to the picture.</param>
-  public SkiaImage(string filepath)
+  protected SkiaImage(string filepath)
   {
     var bmp = SKBitmap.Decode(filepath);
 

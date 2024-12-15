@@ -30,7 +30,7 @@ public class EnviImage<T> : IContiguousImage<T>, IDisposable, IEnviImage
     public ImageMemoryLayout Layout { get; init; }
 
     /// <summary>
-    /// Gets a specific pixel value's channel by coordinates-
+    /// Gets a specific pixel value's channel by coordinates.
     /// </summary>
     /// <param name="x">The pixel's width coordinate.</param>
     /// <param name="y">The pixel's height coordinate.</param>
@@ -76,7 +76,7 @@ public class EnviImage<T> : IContiguousImage<T>, IDisposable, IEnviImage
 
     /// <summary>
     /// Creates a new instance given the filepath to an envis header and raw file, whose names must match except for their file endings.
-    /// The extensions for the different types (header and data) can be customized
+    /// The extensions for the different types (header and data) can be customized.
     /// </summary>
     /// <param name="filepath">The path to both envi files including their name. Therefor their names must match.</param>
     /// <param name="extensions">A tuple whose first entry is the file extension for the header file and its second is the data files extension.</param>

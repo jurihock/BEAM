@@ -40,7 +40,10 @@ public class EnviSequence(List<string> imagePaths) : Sequence(imagePaths)
         imagePaths.RemoveAll(path => !Path.GetExtension(path).Equals(".hdr"));
 
         if (removed > 0)
+        {
             Logger.GetInstance().Info(LogEvent.OpenedFile, $"{removed} file(s) were not loaded into the sequence.");
+        }
+
         return true;
     }
 }

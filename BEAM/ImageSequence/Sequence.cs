@@ -22,23 +22,29 @@ public abstract class Sequence(List<string> imagePaths)
     {
         get
         {
-            if (_singleFileHeight is not null) return _singleFileHeight.Value;
+            if (_singleFileHeight is not null)
+            {
+                return _singleFileHeight.Value;
+            }
             _singleFileHeight = GetImage(0).Shape.Height;
             return _singleFileHeight.Value;
         }
     }
 
-    /// Do not use -> set internally on first get
+    /// Do not use -> set internally on first get.
     private SequenceShape? _shape;
 
     /// <summary>
-    /// The Shape (width, height, channel count) of the entire sequence
+    /// The Shape (width, height, channel count) of the entire sequence.
     /// </summary>
     public SequenceShape Shape
     {
         get
         {
-            if (_shape is not null) return _shape;
+            if (_shape is not null)
+            {
+                return _shape;
+            }
             _InitializeShape();
             return _shape!;
         }
@@ -70,7 +76,7 @@ public abstract class Sequence(List<string> imagePaths)
     {
         if (index < 0 || index >= _loadedImages.Length)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentOutOfRangeException(nameof(index), "Index is out of range [0, amount of images)");
         }
 
         var img = _loadedImages[index];
@@ -202,7 +208,7 @@ public abstract class Sequence(List<string> imagePaths)
         [".hdr"] = typeof(EnviSequence),
     };
 
-    
+
     /// <summary>
     /// Opens a new sequence.
     /// </summary>
@@ -224,6 +230,7 @@ public abstract class Sequence(List<string> imagePaths)
             {
                 throw new InvalidSequenceException("Sequence could not be loaded due to error (see log)!");
             }
+
             return sequence;
         }
 
@@ -231,11 +238,11 @@ public abstract class Sequence(List<string> imagePaths)
     }
 
     /// <summary>
-    /// Opens a sequence from a folder
+    /// Opens a sequence from a folder.
     /// </summary>
-    /// <param name="folder">The path to the folder with the sequence inside</param>
+    /// <param name="folder">The path to the folder with the sequence inside.</param>
     /// <returns>The opened sequence</returns>
-    /// <exception cref="EmptySequenceException">Thrown when no images are being passed or all found file extensions are unsupported</exception>
+    /// <exception cref="EmptySequenceException">Thrown when no images are being passed or all found file extensions are unsupported.</exception>
     /// <exception cref="UnknownSequenceException">Thrown when the folder does not exist.</exception>
     public static Sequence Open(string folder)
     {
@@ -257,7 +264,7 @@ public abstract class Sequence(List<string> imagePaths)
     }
 
     /// <summary>
-    /// Opens a sequence from a folder
+    /// Opens a sequence from a folder.
     /// </summary>
     /// <param name="folder">The uri to the folder with the sequence inside</param>
     /// <returns>The opened sequence</returns>
@@ -269,10 +276,10 @@ public abstract class Sequence(List<string> imagePaths)
     }
 
     /// <summary>
-    /// Instantiates a sequence object from a sequence type and image paths
+    /// Instantiates a sequence object from a sequence type and image paths.
     /// </summary>
-    /// <param name="type">The type of the sequence</param>
-    /// <param name="paths">The paths of the used images</param>
+    /// <param name="type">The type of the sequence.</param>
+    /// <param name="paths">The paths of the used images.</param>
     /// <returns>The sequence object</returns>
     private static Sequence _InstantiateFromType(Type type, List<string> paths)
     {

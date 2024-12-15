@@ -5,7 +5,7 @@ namespace BEAM.Exceptions;
 
 public class BeamException : Exception
 {
-    public BeamException() : base()
+    public BeamException()
     {
         var instance = Logger.GetInstance();
         instance.Error(LogEvent.ThrownException,

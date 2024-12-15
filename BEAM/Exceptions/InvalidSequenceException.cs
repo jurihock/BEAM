@@ -8,7 +8,7 @@ namespace BEAM.Exceptions;
 /// </summary>
 public class InvalidSequenceException : Exception
 {
-    public InvalidSequenceException() : base()
+    public InvalidSequenceException()
     {
     }
 

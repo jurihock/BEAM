@@ -4,7 +4,7 @@ namespace BEAM.Exceptions;
 
 public class EmptySequenceException : BeamException
 {
-    public EmptySequenceException() : base()
+    public EmptySequenceException()
     {
     }
 
