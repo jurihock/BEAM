@@ -57,7 +57,8 @@ public abstract class Sequence(List<string> imagePaths)
     /// <summary>
     /// Initializes and validates the sequence.
     /// </summary>
-    protected abstract void InitializeSequence();
+    /// <returns>True if the sequence has been initialised, false if an error occured (then see log)</returns>
+    protected abstract bool InitializeSequence();
 
     /// <summary>
     /// Returns the desired image. Loads the image into main memory on-demand if necessary.
@@ -219,7 +220,10 @@ public abstract class Sequence(List<string> imagePaths)
             if (!SequenceTypes.TryGetValue(extension, out var type)) continue;
 
             var sequence = _InstantiateFromType(type, paths);
-            sequence.InitializeSequence();
+            if (!sequence.InitializeSequence())
+            {
+                throw new InvalidSequenceException("Sequence could not be loaded due to error (see log)!");
+            }
             return sequence;
         }
 
