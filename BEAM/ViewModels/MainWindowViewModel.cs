@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using Avalonia.Platform.Storage;
 using BEAM.ImageSequence;
 using BEAM.Log;
@@ -113,8 +114,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         return files;
     }
-
-
+    
     [RelayCommand]
     public void AddInfo()
     {
