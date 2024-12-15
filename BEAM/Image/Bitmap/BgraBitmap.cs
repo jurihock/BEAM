@@ -10,19 +10,22 @@ public sealed partial class BgraBitmap : SKBitmap, IBitmap<BGRA>
 {
   private const int BytesPerPixel = BitmapBytesPerPixel;
   private int BytesPerLine;
-  public byte[] Bytes { get; private set; } = [];
-  public int Width { get; private set; }
-  public int Height { get; private set; }
+
+  public new byte[] Bytes { get; private set; }
+  
+  public new int Width { get; private set; }
+  public new int Height { get; private set; }
   
   public ref BGRA this[int x, int y]
   {
     get
     {
-      Span<byte> bytes = GetPixelSpan().Slice(
-        y * RowBytes +
-        x * BytesPerPixel,
+      var bytes = Bytes.AsSpan(
+        y * BytesPerLine +
+        x * BytesPerPixel +
+        BitmapHeaderSize,
         BytesPerPixel);
-
+      
       return ref MemoryMarshal.AsRef<BGRA>(bytes);
     }
   }
@@ -34,9 +37,10 @@ public sealed partial class BgraBitmap : SKBitmap, IBitmap<BGRA>
       var x = (int)(i % Width);
       var y = (int)(i / Width);
 
-      var bytes = GetPixelSpan().Slice(
-        y * RowBytes +
-        x * BytesPerPixel,
+      var bytes = Bytes.AsSpan(
+        y * BytesPerLine +
+        x * BytesPerPixel +
+        BitmapHeaderSize,
         BytesPerPixel);
 
       return ref MemoryMarshal.AsRef<BGRA>(bytes);
