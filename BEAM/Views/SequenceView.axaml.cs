@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -50,8 +51,20 @@ public partial class SequenceView : UserControl
         //var panButton = ScottPlot.Interactivity.StandardMouseButtons.Middle;
         //var panResponse = new ScottPlot.Interactivity.UserActionResponses.MouseDragPan(panButton);
 
-        var bitmap = new BgraBitmap(1 * 1000, 1 * 1000);
-        bitmap.Fill(b: 100, g: 0, r: 100, a: 255);
+        var image = sequence.GetImage(0);
+        var shape = image.Shape;
+        var bitmap = new BgraBitmap(shape.Width, shape.Height);
+        var bytes = bitmap.GetPixelSpan();
+        var pixels = MemoryMarshal.Cast<byte, BGRA>(bytes);
+        
+        for (int i = 0; i < shape.Height; i++)
+        { 
+            var pixel = sequence.GetPixelLine(i);
+            for (var j = 0; j < shape.Width; j++)
+            {
+                pixels[i * shape.Width + j] = new BGRA() { B = (byte) pixel[j, 0], G = (byte) pixel[j, 1], R = (byte) pixel[j, 2], A = (byte) pixel[j, 3] };
+            }
+        }
 
         var plottable = new BitmapPlottable(bitmap);
         avaPlot1.Plot.Add.Plottable(plottable);
