@@ -9,9 +9,9 @@
              IsVisible="{Binding StatusBarVisible}">
 
     <Panel>
-        <Border BorderBrush="{DynamicResource Accent}"
+        <Border BorderBrush="{DynamicResource ButtonBackgroundDisabled}"
                 Background="{DynamicResource ThemeBackgroundColor}"
-                BorderThickness="0,2, 0, 0"
+                BorderThickness="0,1, 0, 0"
                 CornerRadius="0"
                 IsHitTestVisible="False">
         </Border>

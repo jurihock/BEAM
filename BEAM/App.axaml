@@ -23,7 +23,10 @@
             <Setter Property="Background" Value="{DynamicResource WindowBg}" />
             <Setter Property="Foreground" Value="{DynamicResource WindowFg}" />
             <Setter Property="HeaderBackground" Value="{DynamicResource TitleBarBg}" />
-            <!--<Setter Property="SystemDecorations" Value="Full"></Setter>-->
+
+            <!--<Setter Property="SystemDecorations" Value="Full"></Setter>
+            <Setter Property="HeaderTemplate"></Setter>-->
+
             <Setter Property="BorderBrush" Value="{DynamicResource ButtonBackgroundDisabled}"></Setter>
             <Setter Property="Title" Value="BEAM" />
             <Setter Property="HeaderHeight" Value="45"></Setter>
