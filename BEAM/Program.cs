@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using System;
 using BEAM.Log;
+using BEAM.Profiling;
 
 namespace BEAM;
 
@@ -14,10 +15,14 @@ sealed class Program
     {
 #if DEBUG
         Logger.Init("../../../../BEAM.Tests/loggerTests/testLogs/testLog.log");
+
+        Timer.TimerEnd += (e) =>
+        {
+            Console.WriteLine($"[TIMER]: {e.Name} took {e.Watch.ElapsedMilliseconds}ms.");
+        };
 #else
         Logger.Init();
 #endif
-
 
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
