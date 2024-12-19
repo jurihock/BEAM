@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml;
 using BEAM.Image.Bitmap;
 using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence;
+using BEAM.Profiling;
 using BEAM.ViewModels;
 using ScottPlot.Avalonia;
 
@@ -50,6 +51,7 @@ public partial class SequenceView : UserControl
 
         //var panButton = ScottPlot.Interactivity.StandardMouseButtons.Middle;
         //var panResponse = new ScottPlot.Interactivity.UserActionResponses.MouseDragPan(panButton);
+        using var _ = Timer.Start();
 
         var image = sequence.GetImage(0);
         var shape = image.Shape;
@@ -68,6 +70,7 @@ public partial class SequenceView : UserControl
 
         var plottable = new BitmapPlottable(bitmap);
         avaPlot1.Plot.Add.Plottable(plottable);
+        avaPlot1.Plot.Axes.SquareUnits();
         avaPlot1.Plot.Axes.InvertY();
 
         avaPlot1.Refresh();
