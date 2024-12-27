@@ -52,6 +52,7 @@ public class MinimapCreator
         if (!result)
         {
             MinimapGenerated.Invoke(this, new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Failure));
+            return;
         }
         _isGenerated = true;
         MinimapGenerated.Invoke(this, new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Success));
