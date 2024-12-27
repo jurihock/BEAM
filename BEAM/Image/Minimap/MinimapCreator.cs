@@ -11,25 +11,28 @@ namespace BEAM.Image.Minimap;
 /// </summary>
 public class MinimapCreator
 {
-    private Sequence _sequence;
-    private bool isGenerated = false;
-    private float[] lineValues;
+    private readonly Sequence _sequence;
+    private bool _isGenerated = false;
     
-    private delegate void MinimapGeneratedEventHandler(object sender, MinimapGeneratedEventArgs e);
-    private event MinimapGeneratedEventHandler minimapGenerated;
+    /// <summary>
+    /// A function blueprint for the callback function which is called concurrently/in parallel
+    /// when the data generation process has finished.
+    /// </summary>
+    public delegate void MinimapGeneratedEventHandler(object sender, MinimapGeneratedEventArgs e);
+    private event MinimapGeneratedEventHandler MinimapGenerated;
     
-    private readonly MinimapAlgorithm _minimapAlgorithm;
+    private readonly IMinimapAlgorithm _minimapAlgorithm;
     
     /// <summary>
     /// Initializes the minimap creation process. It creates a separately running Task which generates the values.
-    /// Therefore the minimap is not instantly ready after this method call ends hence a method which is used as a callback must be supplied.
+    /// Therefor, the minimap is not instantly ready after this method call ends hence a method which is used as a callback must be supplied.
     /// </summary>
     /// <param name="sequence">The sequence based on which the minimap is based.</param>
     /// <param name="eventCallbackFunc">A function which is invoked once the minimap has finished generating its values.
     /// This is being done through the <see cref="MinimapGeneratedEventHandler"/> event.</param>
     /// <param name="algorithm">The concrete algorithm used for value calculation.</param>
     /// <exception cref="ArgumentNullException">Is any of the parameters is null.</exception>
-    MinimapCreator(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc, MinimapAlgorithm algorithm)
+    public MinimapCreator(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc, IMinimapAlgorithm algorithm)
     {
         if (sequence is null || eventCallbackFunc is null || algorithm is null)
         {
@@ -37,17 +40,21 @@ public class MinimapCreator
         }
         _minimapAlgorithm = algorithm;
         _sequence = sequence;
-        minimapGenerated += eventCallbackFunc;
-        Task.Run(generateMinimap);
+        MinimapGenerated += eventCallbackFunc;
+        Task.Run(GenerateMinimap);
     }
 
-    private void generateMinimap()
+    private void GenerateMinimap()
     {
         
         //TODO: do Work with Sequence
-        lineValues = _minimapAlgorithm.analyzeSequence(_sequence);
-        isGenerated = true;
-        minimapGenerated.Invoke(this, new MinimapGeneratedEventArgs());
+        bool result = _minimapAlgorithm.AnalyzeSequence(_sequence);
+        if (!result)
+        {
+            MinimapGenerated.Invoke(this, new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Failure));
+        }
+        _isGenerated = true;
+        MinimapGenerated.Invoke(this, new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Success));
     }
     
 
@@ -57,14 +64,14 @@ public class MinimapCreator
     /// <param name="line">The line whose value shall be returned.</param>
     /// <returns>The specified line's calculated value.</returns>
     /// <exception cref="NotImplementedException"></exception>
-    public float getMinimapValue(long line)
+    public float GetMinimapValue(long line)
     {
-        if (!isGenerated)
+        if (!_isGenerated)
         {
             throw new NotImplementedException();
         }
 
-        return 0.0f;
+        return _minimapAlgorithm.GetLineValue(line);
     }
     
     
