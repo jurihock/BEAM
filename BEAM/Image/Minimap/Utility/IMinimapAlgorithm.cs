@@ -8,7 +8,7 @@ public interface IMinimapAlgorithm
     /// A concrete implementation of an algorithms which generates values for all lines of a sequence.
     /// </summary>
     /// <param name="sequence"> THe sequence based on which the values are being calculated.</param>
-    /// <returns>A Boolean representing whether the geneartion finished successfully.</returns>
+    /// <returns>A Boolean representing whether the generation finished successfully.</returns>
     bool AnalyzeSequence(Sequence sequence);
 
     /// <summary>
