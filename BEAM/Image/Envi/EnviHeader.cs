@@ -10,8 +10,8 @@ namespace BEAM.Image.Envi;
 /// </summary>
 public sealed class EnviHeader
 {
-    private readonly string Text;
-    private readonly Dictionary<string, string> Values;
+    private readonly string _text;
+    private readonly Dictionary<string, string> _values;
 
     /// <summary>
     /// Creates a new instance from the ENVI header file.
@@ -19,9 +19,9 @@ public sealed class EnviHeader
     /// <param name="filepath">The path of an ENVI header file whose contents are meant to be realised in the new instance.</param>
     public EnviHeader(string filepath)
     {
-        Text = File.ReadAllText(filepath);
+        _text = File.ReadAllText(filepath);
 
-        Values = new Dictionary<string, string>(Text
+        _values = new Dictionary<string, string>(_text
                 .Split(Environment.NewLine)
                 .Select(line => line.Trim())
                 .Where(line => !string.IsNullOrEmpty(line))
@@ -43,7 +43,7 @@ public sealed class EnviHeader
     /// <exception cref="KeyNotFoundException">If no setting with this name could be found.</exception>
     public TValue Get<TValue>(string key, object? def = null)
     {
-        var value = Values.GetValueOrDefault(key) ?? def?.ToString();
+        var value = _values.GetValueOrDefault(key) ?? def?.ToString();
 
         if (value is null)
         {
@@ -64,6 +64,6 @@ public sealed class EnviHeader
 
     public override string ToString()
     {
-        return Text;
+        return _text;
     }
 }
