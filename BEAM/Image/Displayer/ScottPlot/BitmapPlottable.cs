@@ -25,8 +25,6 @@ public sealed class BitmapPlottable : IPlottable
         return new AxisLimits(0, Bitmap.Width, Bitmap.Height, 0);
     }
 
-    private int _i = 0;
-
     public void Render(RenderPack rp)
     {
         using SKPaint paint = new()
