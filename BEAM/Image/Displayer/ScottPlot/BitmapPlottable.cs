@@ -40,14 +40,14 @@ public sealed class BitmapPlottable : IPlottable
         var cropYMin = rp.Plot.Grid.YAxis.Min;
         var cropYMax = rp.Plot.Grid.YAxis.Max;
 
-        var diffX = cropXMin - Math.Floor(cropXMin);
-        var diffY = cropYMin - Math.Floor(cropYMin);
-
         // Clamp to bitmap bounds
         cropXMin = Math.Clamp(cropXMin, 0, Bitmap.Width);
         cropXMax = Math.Clamp(cropXMax, 0, Bitmap.Width);
         cropYMin = Math.Clamp(cropYMin, 0, Bitmap.Height);
         cropYMax = Math.Clamp(cropYMax, 0, Bitmap.Height);
+
+        var diffX = cropXMin - Math.Floor(cropXMin);
+        var diffY = cropYMin - Math.Floor(cropYMin);
 
         if (cropXMin >= cropXMax) return;
         if (cropYMin >= cropYMax) return;
