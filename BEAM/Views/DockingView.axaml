@@ -18,24 +18,6 @@
     </UserControl.Resources>
 
     <np:RootDockGroup x:Name="RootDock" TheDockManager="{StaticResource TheDockManager}">
-        <np:StackDockGroup DockId="StackDock" IsStableGroup="True">
-            <np:DockItem>
-                <StackPanel>
-                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">Hello. It's me.</TextBlock>
-                    <Button Command="{Binding #Root.((vm:DockingViewModel)DataContext).FooCommand}">yayy</Button>
-                </StackPanel>
-            </np:DockItem>
-            <np:DockItem>
-                <StackPanel>
-                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">I was wandering if after all these year you'd like to hear.</TextBlock>
-                </StackPanel>
-            </np:DockItem>
-            <np:DockItem>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">To go over</TextBlock>
-            </np:DockItem>
-            <np:DockItem>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">everything.</TextBlock>
-            </np:DockItem>
-        </np:StackDockGroup>
+        <np:StackDockGroup DockId="StackDock" IsStableGroup="True" />
     </np:RootDockGroup>
 </UserControl>

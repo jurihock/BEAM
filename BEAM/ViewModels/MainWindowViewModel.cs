@@ -148,4 +148,11 @@ public partial class MainWindowViewModel : ViewModelBase
         var statusWindow = new StatusWindow();
         statusWindow.Show();
     }
+
+    [RelayCommand]
+    public void OpenAboutWindow()
+    {
+        var aboutWindow = new AboutWindow();
+        aboutWindow.Show();
+    }
 }

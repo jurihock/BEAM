@@ -1,0 +1,29 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:BEAM.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="BEAM.Views.AboutWindow"
+        x:DataType="viewModels:AboutWindowViewModel"
+        Title="AboutWindow"
+        Width="750"
+        Height="500">
+
+    <StackPanel>
+        <TextBlock Text="Licenses used by BEAM"/>
+        <Separator Background="{DynamicResource ThemeAccentBrush}" Margin="10"></Separator>
+        <ItemsControl ItemsSource="{Binding Licenses}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Expander VerticalAlignment="Top" HorizontalAlignment="Stretch">
+                        <Expander.Header>
+                            <TextBlock Text="{Binding Name}" />
+                        </Expander.Header>
+                        <TextBlock Text="{Binding Licence}" />
+                    </Expander>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</Window>

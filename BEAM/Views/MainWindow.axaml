@@ -45,7 +45,7 @@
             </NativeMenuItem>
             <NativeMenuItem Header="{Binding Help}">
                 <NativeMenu>
-                    <NativeMenuItem Header="{Binding Help}" />
+                    <NativeMenuItem Header="{Binding Help}" Command="{Binding OpenAboutWindowCommand}"/>
                 </NativeMenu>
             </NativeMenuItem>
         </NativeMenu>
