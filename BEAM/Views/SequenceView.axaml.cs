@@ -8,6 +8,7 @@ using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence;
 using BEAM.Profiling;
 using BEAM.ViewModels;
+using ScottPlot;
 using ScottPlot.Avalonia;
 
 namespace BEAM.Views;
@@ -68,11 +69,9 @@ public partial class SequenceView : UserControl
             }
         }
 
+        avaPlot1.Plot.Axes.SquareUnits();
         var plottable = new BitmapPlottable(bitmap);
         avaPlot1.Plot.Add.Plottable(plottable);
-        avaPlot1.Plot.Axes.SquareUnits();
-        avaPlot1.Plot.Axes.InvertY();
-
         avaPlot1.Refresh();
     }
     
