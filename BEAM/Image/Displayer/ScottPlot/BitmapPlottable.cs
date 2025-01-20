@@ -20,13 +20,14 @@ public sealed class BitmapPlottable(Sequence sequence) : IPlottable
 
     public AxisLimits GetAxisLimits()
     {
-        return new AxisLimits(0, sequence.Shape.Width, sequence.Shape.Height - sequence.Shape.Width,
-            sequence.Shape.Height);
+        return new AxisLimits(0, sequence.Shape.Width, 0, sequence.Shape.Width);
     }
 
     public void Render(RenderPack rp)
     {
-        // TODO: FIX SCROLLING PROBLEM
+        rp.Plot.Axes.InvertY();
+
+        // TODO: FIX PANNING PIXELS
         var screenWidth = rp.Canvas.DeviceClipBounds.Width;
         var screenHeight = rp.Canvas.DeviceClipBounds.Height;
 
@@ -35,8 +36,8 @@ public sealed class BitmapPlottable(Sequence sequence) : IPlottable
         var cropYMin = rp.Plot.Grid.YAxis.Min;
         var cropYMax = rp.Plot.Grid.YAxis.Max;
 
-        var bitmap = _image.GetImage((long)cropXMin, (long)cropXMax, sequence.Shape.Height - (long)cropYMax,
-            sequence.Shape.Height - (long)cropYMin, screenWidth, screenHeight);
+        var bitmap = _image.GetImage((long)cropXMin, (long)cropXMax, (long)cropYMax, (long)cropYMin, screenWidth,
+            screenHeight);
 
         cropXMin = Math.Clamp(cropXMin, 0, sequence.Shape.Width);
         cropXMax = Math.Clamp(cropXMax, 0, sequence.Shape.Width);
