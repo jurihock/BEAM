@@ -10,24 +10,18 @@ using BEAM.ImageSequence;
 
 namespace BEAM.IMage.Displayer.Scottplot;
 
-public sealed class BitmapPlottable : IPlottable
+public sealed class BitmapPlottable(Sequence sequence) : IPlottable
 {
     public bool IsVisible { get; set; } = true;
     public IAxes Axes { get; set; } = new Axes();
     public IEnumerable<LegendItem> LegendItems => Enumerable.Empty<LegendItem>();
 
-    public SequenceImage Image;
-    public Sequence Sequence;
-
-    public BitmapPlottable(Sequence sequence)
-    {
-        Sequence = sequence;
-        Image = new SequenceImage(sequence);
-    }
+    private readonly SequenceImage _image = new(sequence);
 
     public AxisLimits GetAxisLimits()
     {
-        return new AxisLimits(0, 4096, 800, 0);
+        return new AxisLimits(0, sequence.Shape.Width, sequence.Shape.Height - sequence.Shape.Width,
+            sequence.Shape.Height);
     }
 
     public void Render(RenderPack rp)
@@ -41,13 +35,13 @@ public sealed class BitmapPlottable : IPlottable
         var cropYMin = rp.Plot.Grid.YAxis.Min;
         var cropYMax = rp.Plot.Grid.YAxis.Max;
 
-        var bitmap = Image.GetImage((long)cropXMin, (long)cropXMax, (long)cropYMin, (long)cropYMax, screenWidth,
-            screenHeight);
+        var bitmap = _image.GetImage((long)cropXMin, (long)cropXMax, sequence.Shape.Height - (long)cropYMax,
+            sequence.Shape.Height - (long)cropYMin, screenWidth, screenHeight);
 
-        cropXMin = Math.Clamp(cropXMin, 0, Sequence.Shape.Width);
-        cropXMax = Math.Clamp(cropXMax, 0, Sequence.Shape.Width);
-        cropYMin = Math.Clamp(cropYMin, 0, Sequence.Shape.Height);
-        cropYMax = Math.Clamp(cropYMax, 0, Sequence.Shape.Height);
+        cropXMin = Math.Clamp(cropXMin, 0, sequence.Shape.Width);
+        cropXMax = Math.Clamp(cropXMax, 0, sequence.Shape.Width);
+        cropYMin = Math.Clamp(cropYMin, 0, sequence.Shape.Height);
+        cropYMax = Math.Clamp(cropYMax, 0, sequence.Shape.Height);
 
         using SKPaint paint = new()
         {
