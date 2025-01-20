@@ -18,7 +18,7 @@ sealed class Program
 
         Timer.TimerEnd += (e) =>
         {
-            Console.WriteLine($"[TIMER]: {e.Name} took {e.Watch.ElapsedMilliseconds}ms.");
+            Console.WriteLine($"[TIMER]: {e.Name} took {e.Watch.Elapsed.Microseconds}µs.");
         };
 #else
         Logger.Init();

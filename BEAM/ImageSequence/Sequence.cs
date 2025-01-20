@@ -17,7 +17,7 @@ public abstract class Sequence(List<string> imagePaths)
     /// Do not use -> set internally on first get
     private long? _singleFileHeight;
 
-    private long SingleImageHeight
+    public long SingleImageHeight
     {
         get
         {
@@ -93,6 +93,14 @@ public abstract class Sequence(List<string> imagePaths)
         _loadedImages[index] = img;
         _loadedImagesMutex.ReleaseMutex();
         return img;
+    }
+
+    public LineImage GetLineImage(long line)
+    {
+        var imgIndex = (int) line / (int) SingleImageHeight;
+        var imgLine = line % SingleImageHeight;
+
+        return new LineImage(GetImage(imgIndex), imgLine);
     }
 
     /// <summary>

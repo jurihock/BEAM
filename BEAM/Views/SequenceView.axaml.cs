@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using BEAM.Image.Bitmap;
+using BEAM.Image.Displayer;
 using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence;
 using BEAM.Profiling;
@@ -22,20 +23,6 @@ public partial class SequenceView : UserControl
 
     private void ScottPlotTest(Sequence sequence)
     {
-        var channels = sequence.GetPixel(0, 0);
-
-        foreach (var channel in channels)
-        {
-            Console.WriteLine(channel);
-        }
-        
-        channels = sequence.GetPixel(0, 201);
-        
-                foreach (var channel in channels)
-                {
-                    Console.WriteLine(channel);
-                }
-        
         var avaPlot1 = this.Find<AvaPlot>("AvaPlot1");
 
         if (avaPlot1 == null)
@@ -54,8 +41,7 @@ public partial class SequenceView : UserControl
         //var panResponse = new ScottPlot.Interactivity.UserActionResponses.MouseDragPan(panButton);
         using var _ = Timer.Start();
 
-        var image = sequence.GetImage(0);
-        var shape = image.Shape;
+        /*var shape = image.Shape;
         var bitmap = new BgraBitmap(shape.Width, shape.Height);
         var bytes = bitmap.GetPixelSpan();
         var pixels = MemoryMarshal.Cast<byte, BGRA>(bytes);
@@ -67,10 +53,10 @@ public partial class SequenceView : UserControl
             {
                 pixels[i * shape.Width + j] = new BGRA() { B = (byte) pixel[j, 0], G = (byte) pixel[j, 1], R = (byte) pixel[j, 2], A = (byte) pixel[j, 3] };
             }
-        }
-
+        }*/
+        avaPlot1.Plot.Axes.InvertY();
         avaPlot1.Plot.Axes.SquareUnits();
-        var plottable = new BitmapPlottable(bitmap);
+        var plottable = new BitmapPlottable(sequence);
         avaPlot1.Plot.Add.Plottable(plottable);
         avaPlot1.Refresh();
     }
