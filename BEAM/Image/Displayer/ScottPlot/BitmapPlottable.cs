@@ -32,6 +32,7 @@ public sealed class BitmapPlottable : IPlottable
 
     public void Render(RenderPack rp)
     {
+        // TODO: FIX SCROLLING PROBLEM
         var screenWidth = rp.Canvas.DeviceClipBounds.Width;
         var screenHeight = rp.Canvas.DeviceClipBounds.Height;
 
