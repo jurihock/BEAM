@@ -20,7 +20,7 @@ namespace BEAM.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
     public static readonly Configuration BaseConfig = Configuration.StandardEnglish();
-    
+
     [ObservableProperty] public partial string File { get; set; } = BaseConfig.FileMenu;
     [ObservableProperty] public partial string Open { get; set; } = BaseConfig.Open;
     [ObservableProperty] public partial string OpenFolder { get; set; } = BaseConfig.OpenFolder;
@@ -44,41 +44,37 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         _logger = Logger.GetInstance();
     }
-    
+
     [RelayCommand]
     public async Task OpenSequence()
     {
         var files = await OpenFilePickerAsync();
 
-        if (files != null)
+        if (files == null) return;
+
+        var list = files.Select(f => f.Path).ToList();
+        try
         {
-            var list = files.Select(f => f.Path).ToList();
-            try
-            {
-                DockingVm.OpenSequenceView(Sequence.Open(list)); 
-            } catch (Exception ex) {}
+            DockingVm.OpenSequenceView(Sequence.Open(list));
         }
-        else
+        catch (Exception ex)
         {
-            _logger?.Warning(LogEvent.FileNotFound);
         }
     }
-    
+
     [RelayCommand]
     public async Task OpenSequenceFromFolder()
     {
         var folder = await OpenFolderPickerAsync();
 
-        if (folder != null)
+        if (folder == null) return;
+
+        try
         {
-            try
-            {
-                DockingVm.OpenSequenceView(Sequence.Open(folder.Path));
-            } catch(Exception ex) {}
+            DockingVm.OpenSequenceView(Sequence.Open(folder.Path));
         }
-        else
+        catch (Exception ex)
         {
-            _logger?.Warning(LogEvent.FileNotFound);
         }
     }
 
@@ -111,13 +107,13 @@ public partial class MainWindowViewModel : ViewModelBase
 
         var files = await provider.OpenFilePickerAsync(new FilePickerOpenOptions()
         {
-            Title = "Open Text File",
-            AllowMultiple = false,
+            Title = "Open Sequence File(s)",
+            AllowMultiple = true,
         });
 
         return files;
     }
-    
+
     [RelayCommand]
     public void AddInfo()
     {
