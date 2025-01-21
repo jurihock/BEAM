@@ -7,6 +7,7 @@ using BEAM.Image.Bitmap;
 using BEAM.Image.Displayer;
 using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence;
+using BEAM.Log;
 using BEAM.Profiling;
 using BEAM.ViewModels;
 using ScottPlot;
@@ -30,6 +31,8 @@ public partial class SequenceView : UserControl
             return;
         }
 
+        _BuildCustomRightClickMenu();
+
         // TODO: CustomMouseActions
         // https://github.com/ScottPlot/ScottPlot/blob/main/src/ScottPlot5/ScottPlot5%20Demos/ScottPlot5%20WinForms%20Demo/Demos/CustomMouseActions.cs
 
@@ -41,26 +44,27 @@ public partial class SequenceView : UserControl
         //var panResponse = new ScottPlot.Interactivity.UserActionResponses.MouseDragPan(panButton);
         using var _ = Timer.Start();
 
-        /*var shape = image.Shape;
-        var bitmap = new BgraBitmap(shape.Width, shape.Height);
-        var bytes = bitmap.GetPixelSpan();
-        var pixels = MemoryMarshal.Cast<byte, BGRA>(bytes);
-        
-        for (int i = 0; i < shape.Height; i++)
-        { 
-            var pixel = sequence.GetPixelLine(i);
-            for (var j = 0; j < shape.Width; j++)
-            {
-                pixels[i * shape.Width + j] = new BGRA() { B = (byte) pixel[j, 0], G = (byte) pixel[j, 1], R = (byte) pixel[j, 2], A = (byte) pixel[j, 3] };
-            }
-        }*/
         avaPlot1.Plot.Axes.InvertY();
         avaPlot1.Plot.Axes.SquareUnits();
         var plottable = new BitmapPlottable(sequence);
         avaPlot1.Plot.Add.Plottable(plottable);
         avaPlot1.Refresh();
     }
-    
+
+    private void _BuildCustomRightClickMenu()
+    {
+        var menu = AvaPlot1.Menu!;
+        menu.Clear();
+        menu.Add("Inspect Pixel", control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+        menu.AddSeparator();
+        menu.Add("Sync to this", control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+        menu.AddSeparator();
+        menu.Add("Configure colors", control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+        menu.Add("Affine Transformation", control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+        menu.AddSeparator();
+        menu.Add("Export sequence", control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+    }
+
     private void StyledElement_OnDataContextChanged(object? sender, EventArgs e)
     {
         var vm = DataContext as SequenceViewModel;
