@@ -36,18 +36,27 @@ public sealed class BitmapPlottable(Sequence sequence) : IPlottable
         var cropYMin = rp.Plot.Grid.YAxis.Min;
         var cropYMax = rp.Plot.Grid.YAxis.Max;
 
-        var bitmap = _image.GetImage((long)cropXMin, (long)cropXMax, (long)cropYMax, (long)cropYMin, screenWidth,
-            screenHeight);
+        var displayWidth = Math.Min(cropXMax - cropXMin, sequence.Shape.Width / (cropXMax - cropXMin) * screenWidth);
+        displayWidth = Math.Min(displayWidth, screenWidth);
+        var displayHeight = Math.Min(cropYMin - cropYMax, sequence.Shape.Height / (cropYMin - cropYMax) * screenHeight);
+        displayHeight = Math.Min(displayHeight, screenHeight);
+
+        using var bitmap = _image.GetImage((long)cropXMin, (long)cropXMax, (long)cropYMax, (long)cropYMin, (int) displayWidth,
+            (int) displayHeight);
 
         cropXMin = Math.Clamp(cropXMin, 0, sequence.Shape.Width);
         cropXMax = Math.Clamp(cropXMax, 0, sequence.Shape.Width);
         cropYMin = Math.Clamp(cropYMin, 0, sequence.Shape.Height);
         cropYMax = Math.Clamp(cropYMax, 0, sequence.Shape.Height);
 
-        using SKPaint paint = new()
-        {
-            FilterQuality = SKFilterQuality.None // WTF
-        };
+        if (cropXMin >= cropXMax) return;
+        if (cropYMax >= cropYMin) return;
+
+        var diffX = cropXMin - Math.Floor(cropXMin);
+        var diffY = cropYMax - Math.Floor(cropYMax);
+
+        using SKPaint paint = new();
+        paint.FilterQuality = SKFilterQuality.None; // WTF
 
         var dest = Axes.GetPixelRect(new CoordinateRect(cropXMin, cropXMax, cropYMax, cropYMin)).ToSKRect();
         rp.Canvas.DrawBitmap(bitmap, dest, paint);

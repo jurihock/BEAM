@@ -22,13 +22,7 @@ public class SequenceImage(Sequence sequence)
 
         width = (int)Math.Clamp(width, 0, endX - startX);
         height = (int)Math.Clamp(height, 0, endLine - startLine);
-
-        /*Console.WriteLine(
-            $"startX: {startX} endX: {endX} startLine: {startLine} endLine: {endLine} Width: {width}, Height: {height}");*/
-
         using var _ = Timer.Start();
-
-        Console.WriteLine($"width={width}, height={height}");
 
         BgraBitmap bitmap = new(width, height);
 
