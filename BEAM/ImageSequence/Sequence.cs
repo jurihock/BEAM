@@ -84,6 +84,15 @@ public abstract class Sequence(List<string> imagePaths) : IImage
         return img.GetPixelLineData(imageLine, channels);
     }
 
+    public LineImage GetPixelLineData(long[]xs, long line, int[] channels)
+    {
+        var imageIdx = line / SingleImageHeight;
+        var imageLine = line % SingleImageHeight;
+
+        var img = GetImage((int) imageIdx);
+        return img.GetPixelLineData(xs, imageLine, channels);
+    }
+
     private Mutex _loadedImagesMutex = new();
     private IImage?[] _loadedImages = new IImage?[imagePaths.Count];
 

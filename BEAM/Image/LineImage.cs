@@ -60,23 +60,23 @@ public class LineImage : IImage
         {
             values[i] = GetPixel(x, y, channels[i]);
         }
+
         return values;
     }
 
     public LineImage GetPixelLineData(long line, int[] channels)
     {
-        if (line != 0)
-            throw new ArgumentOutOfRangeException(nameof(line), line,
-                $"{line} can only be 0 since access to LineImage");
-        return this;
+        throw new NotImplementedException();
+    }
+
+    public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
+    {
+        throw new NotImplementedException();
     }
 
     public LineImage GetPixelLineData(long line)
     {
-        if (line != 0)
-            throw new ArgumentOutOfRangeException(nameof(line), line,
-                $"{line} can only be 0 since access to LineImage");
-        return this;
+        throw new NotImplementedException();
     }
 
     public void Dispose()

@@ -168,6 +168,52 @@ public class EnviImage<T> : ITypedImage<T>, IMemoryImage
         return values;
     }
 
+    public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
+    {
+        var data = new double[xs.Length][];
+        for (var i = 0; i < xs.Length; i++)
+        {
+            data[i] = new double[channels.Length];
+        }
+
+        switch (Layout)
+        {
+            // checking for memory layout -> better cache accesses
+            // iterate over channels last
+            case XyzImageMemoryLayout:
+            case YxzImageMemoryLayout:
+            {
+                for (var x = 0; x < xs.Length; x++)
+                {
+                    for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
+                    {
+                        data[x][channelIdx] = GetPixel(xs[x], line, channels[channelIdx]);
+                    }
+                }
+
+                break;
+            }
+            // iterate over x position last
+            case YzxImageMemoryLayout:
+            case ZyxImageMemoryLayout:
+            {
+                for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
+                {
+                    for (var x = 0; x < xs.Length; x++)
+                    {
+                        data[x][channelIdx] = GetPixel(xs[x], line, channels[channelIdx]);
+                    }
+                }
+
+                break;
+            }
+            default:
+                throw new NotImplementedException($"Efficient pixel data line getter not implemented for  layout type {Layout.GetType()} when using ENVI images");
+        }
+
+        return new LineImage(data);
+    }
+
     public LineImage GetPixelLineData(long line, int[] channels)
     {
         var data = new double[Shape.Width][];

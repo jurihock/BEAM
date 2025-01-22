@@ -91,6 +91,25 @@ public class SkiaImage<T> : IMemoryImage, ITypedImage<T>
         return values;
     }
 
+    public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
+    {
+        var data = new double[xs.Length][];
+        for (var i = 0; i < xs.Length; i++)
+        {
+            data[i] = new double[channels.Length];
+        }
+
+        for (var x = 0; x < xs.Length; x++)
+        {
+            for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
+            {
+                data[x][channelIdx] = GetPixel(xs[x], line, channels[channelIdx]);
+            }
+        }
+
+        return new LineImage(data);
+    }
+
     public LineImage GetPixelLineData(long line, int[] channels)
     {
         var data = new double[Shape.Width][];

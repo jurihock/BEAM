@@ -13,16 +13,12 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-#if DEBUG
         Logger.Init("../../../../BEAM.Tests/loggerTests/testLogs/testLog.log");
 
         Timer.TimerEnd += (e) =>
         {
             Console.WriteLine($"[TIMER]: {e.Name} took {e.Watch.Elapsed.Microseconds}µs.");
         };
-#else
-        Logger.Init();
-#endif
 
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);

@@ -36,4 +36,5 @@ public interface IImage : IDisposable
     double[] GetPixel(long x, long y, int[] channels);
 
     LineImage GetPixelLineData(long line, int[] channels);
+    LineImage GetPixelLineData(long[] xs, long line, int[] channels);
 }

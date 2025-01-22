@@ -16,6 +16,9 @@ public class SequenceImage(Sequence sequence)
     {
         // TODO: change
         SequenceRenderer renderer = new ChannelMapRenderer(0, 255, 2, 1, 0);
+        /*
+        renderer = new HeatMapRendererRB(0, 1, 1);
+        */
 
         startX = Math.Clamp(startX, 0, sequence.Shape.Width);
         endX = Math.Clamp(endX, 0, sequence.Shape.Width);
@@ -29,21 +32,27 @@ public class SequenceImage(Sequence sequence)
 
         Parallel.For(0, height, j =>
         {
-            //using var _abc = Timer.Start($"{j}");
+            var line = startLine + j * (endLine - startLine) / height;
+
+            var xs = new long[width];
+            for (var i = 0; i < width; i++)
+            {
+                xs[i] = startX + i * (endX - startX) / width;
+            }
+
+            var data = renderer.RenderPixels(sequence, xs, line);
+
             var span = bitmap.GetPixelSpan();
             var pixels = MemoryMarshal.Cast<byte, BGRA>(span);
-            var line = startLine + j * (endLine - startLine) / height;
 
             for (var i = 0; i < width; i++)
             {
-                var x = startX + i * (endX - startX) / width;
-                var data = renderer.RenderPixel(sequence, x, line);
                 pixels[j * width + i] = new BGRA()
                 {
-                    R = data[1],
-                    G = data[2],
-                    B = data[3],
-                    A = data[0]
+                    R = data[i, 1],
+                    G = data[i, 2],
+                    B = data[i, 3],
+                    A = data[i, 0]
                 };
             }
         });

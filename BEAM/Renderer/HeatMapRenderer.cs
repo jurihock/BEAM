@@ -23,6 +23,24 @@ public abstract class HeatMapRenderer(int minimumOfIntensityRange, int maximumOf
         return GetColor(sequence.GetPixel(x, y, Channel), MinimumOfIntensityRange, MaximumOfIntensityRange);
     }
 
+    public override byte[,] RenderPixels(Sequence sequence, long[] xs, long y)
+    {
+        var data = new byte[xs.Length, 4];
+        var img = sequence.GetPixelLineData(xs, y, [Channel]);
+
+        // TODO: SIMD
+        for (var i = 0; i < xs.Length; i++)
+        {
+            var color = GetColor(img.GetPixel(i, 0, 0), MinimumOfIntensityRange, MaximumOfIntensityRange);
+            data[i, 0] = color[0];
+            data[i, 1] = color[1];
+            data[i, 2] = color[2];
+            data[i, 3] = color[3];
+        }
+
+        return data;
+    }
+
     /// <summary>
     /// The specific function that converts the intensity of a channel into a Color.
     /// Is implemented by a subclass.

@@ -1,4 +1,6 @@
 using System;
+using System.Numerics;
+using System.Runtime.Intrinsics;
 using BEAM.ImageSequence;
 
 namespace BEAM.Renderer;
@@ -25,21 +27,6 @@ public abstract class SequenceRenderer
         MaximumOfIntensityRange = maximumOfIntensityRange;
     }
 
-    /// <summary>
-    /// Normalizes the intensity of a given intensity to a value between 0 and 1.
-    /// Normalization uses the Minimum- and MaximumOfIntensityRange
-    /// </summary>
-    /// <param name="intensity">The unnormalized intensity of a channel</param>
-    /// <returns>The </returns>
-    protected double NormalizeIntensity(double intensity)
-    {
-        if (intensity > MaximumOfIntensityRange || intensity < MinimumOfIntensityRange)
-        {
-            throw new ArgumentException();
-        }
-        return (intensity - MinimumOfIntensityRange) 
-               / (MaximumOfIntensityRange - MinimumOfIntensityRange);
-    }
-
     public abstract byte[] RenderPixel(Sequence sequence, long x, long y);
+    public abstract byte[,] RenderPixels(Sequence sequence, long[] xs, long y);
 }
