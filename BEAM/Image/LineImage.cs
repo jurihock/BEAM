@@ -1,48 +1,87 @@
 // (c) Paul Stier, 2025
 
 using System;
+using NP.Utilities;
 
 namespace BEAM.Image;
 
-public class LineImage(IContiguousImage baseImage, long line) : IContiguousImage
+/// <summary>
+/// data[x][channel]
+/// </summary>
+public class LineImage : IImage
 {
-    public ImageShape Shape => new(baseImage.Shape.Width, 1, baseImage.Shape.Channels);
+    private readonly double[][] _data;
 
-    public ImageMemoryLayout Layout => baseImage.Layout;
-
-    public double GetAsDouble(long i)
+    /// <summary>
+    /// data[x][channel]
+    /// </summary>
+    /// <param name="data"></param>
+    public LineImage(double[][] data)
     {
-        return baseImage.GetAsDouble(i);
+        _data = data;
+        if (data.IsNullOrEmpty() || data[0].IsNullOrEmpty())
+        {
+            throw new ArgumentException("Line image data cannot be empty");
+        }
     }
 
-    public double GetAsDouble(long x,long y, int z)
+    public ImageShape Shape => new(_data.Length, 1, _data[0].Length);
+
+    public double GetPixel(long x, long y, int channel)
     {
-        return baseImage.GetAsDouble(x, line, z);
+        if (y != 0)
+            throw new ArgumentOutOfRangeException(nameof(y), y, $"{y} can only be 0 since access to LineImage");
+        if (x < 0 || x >= Shape.Width)
+            throw new ArgumentOutOfRangeException(nameof(x), x, $"{x} is out of range [0, {Shape.Width})");
+        if (channel < 0 || channel >= Shape.Channels)
+            throw new ArgumentOutOfRangeException(nameof(channel), channel,
+                $"{channel} is out of range [0, {Shape.Channels})");
+
+        return _data[x][channel];
     }
 
-    public double[] GetPixel(long x, int[] channels)
+    public double[] GetPixel(long x, long y)
     {
-        var result = new double[channels.Length];
+        if (y != 0)
+            throw new ArgumentOutOfRangeException(nameof(y), y, $"{y} can only be 0 since access to LineImage");
+        if (x < 0 || x >= Shape.Width)
+            throw new ArgumentOutOfRangeException(nameof(x), x, $"{x} is out of range [0, {Shape.Width})");
 
+        return _data[x];
+    }
+
+    public double[] GetPixel(long x, long y, int[] channels)
+    {
+        if (y != 0)
+            throw new ArgumentOutOfRangeException(nameof(y), y, $"{y} can only be 0 since access to LineImage");
+
+        var values = new double[channels.Length];
         for (var i = 0; i < channels.Length; i++)
         {
-            result[i] = GetAsDouble(x, line, channels[i]);
+            values[i] = GetPixel(x, y, channels[i]);
         }
-
-        return result;
+        return values;
     }
 
-    public double[,] GetChannels(int[] channels)
+    public LineImage GetPixelLineData(long line, int[] channels)
     {
-        var result = new double[Shape.Width, channels.Length];
-        for (var x = 0; x < Shape.Width; x++)
-        {
-            for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
-            {
-                result[x, channelIdx] = GetAsDouble(x, line, channels[channelIdx]);
-            }
-        }
+        if (line != 0)
+            throw new ArgumentOutOfRangeException(nameof(line), line,
+                $"{line} can only be 0 since access to LineImage");
+        return this;
+    }
 
-        return result;
+    public LineImage GetPixelLineData(long line)
+    {
+        if (line != 0)
+            throw new ArgumentOutOfRangeException(nameof(line), line,
+                $"{line} can only be 0 since access to LineImage");
+        return this;
+    }
+
+    public void Dispose()
+    {
+        // class does not manage additional resources -> no need to dispose
+        GC.SuppressFinalize(this);
     }
 }

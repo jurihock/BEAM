@@ -1,3 +1,4 @@
+using System;
 using BEAM.ImageSequence;
 
 namespace BEAM.AffTrans;
@@ -20,9 +21,11 @@ public class TransformedSequence(Sequence originalSequence, Transformer transfor
 
     public double[,] GetPixelLine(long y)
     {
+        throw new NotImplementedException();
         long transformedY = transformer.TransformY(y);
-        double [,] scaledPixel = originalSequence.GetPixelLine(transformedY);
-        return scaledPixel;
+        // TODO: FIX
+        //double [,] scaledPixel = originalSequence.GetPixelLine(transformedY);
+        //return scaledPixel;
     }
     
 }

@@ -5,16 +5,9 @@ using System.IO.MemoryMappedFiles;
 namespace BEAM.Image.Envi;
 
 /// <summary>
-/// A base class used to cast its generic subclasses to a common type.
-/// </summary>
-public interface IEnviImage : IContiguousImage
-{
-}
-
-/// <summary>
 /// Decodes ENVI image data for the specified filename and value type T.
 /// </summary>
-public class EnviImage<T> : IContiguousImage<T>, IDisposable, IEnviImage
+public class EnviImage<T> : ITypedImage<T>, IMemoryImage
 {
     private MemoryMappedFile? FileMapping { get; set; }
     private MemoryMappedViewAccessor? FileAccessor { get; set; }
@@ -24,46 +17,11 @@ public class EnviImage<T> : IContiguousImage<T>, IDisposable, IEnviImage
     /// This image's dimensions, meaning its length, width and channel count.
     /// </summary>
     public ImageShape Shape { get; init; }
+
     /// <summary>
     /// The orientation pixels are being stored in memory with. 
     /// </summary>
     public ImageMemoryLayout Layout { get; init; }
-
-    /// <summary>
-    /// Gets a specific pixel value's channel by coordinates.
-    /// </summary>
-    /// <param name="x">The pixel's width coordinate.</param>
-    /// <param name="y">The pixel's height coordinate.</param>
-    /// <param name="z">The pixel's channel.</param>
-    public T this[long x, long y, int z] => GetValue(Layout.Flatten(x, y, z));
-    
-    /// <summary>
-    /// Gets a specific pixel value's channel by the pixels position in a flattened one dimensional image, meaning by its position in the raw filestream.
-    /// </summary>
-    /// <param name="i">The pixel's position in a one dimensional array according to the <see cref="ImageMemoryLayout"/>.</param>
-    public T this[long i] => GetValue(i);
-
-    /// <summary>
-    /// Returns a pixel channel's value, converted to a double.
-    /// </summary>
-    /// <param name="i">The pixel's position in a one dimensional array according to the <see cref="ImageMemoryLayout"/>.</param>
-    /// <returns>The specified pixel-channel value as a double.</returns>
-    public double GetAsDouble(long i)
-    {
-        return (double) Convert.ChangeType(this[i], typeof(double))!;
-    }
-
-    /// <summary>
-    /// Returns a pixel channel's value, converted to a double.
-    /// </summary>
-    /// <param name="x">The pixel's width coordinate.</param>
-    /// <param name="y">The pixel's height coordinate.</param>
-    /// <param name="z">The pixel's channel.</param>
-    /// <returns>The specified pixel-channel value as a double.</returns>
-    public double GetAsDouble(long x,long y, int z)
-    {
-        return (double) Convert.ChangeType(this[x, y, z], typeof(double))!;
-    }
 
     /// <summary>
     /// Creates a new instance given the filepath to an envis header and raw file, whose names must match except for their file endings.
@@ -181,6 +139,82 @@ public class EnviImage<T> : IContiguousImage<T>, IDisposable, IEnviImage
             FileAccessor = null;
         }
     }
+
+    public double GetPixel(long x, long y, int channel)
+    {
+        var val = this[x, y, channel];
+        return (double)Convert.ChangeType(val, typeof(double))!;
+    }
+
+    public double[] GetPixel(long x, long y)
+    {
+        var values = new double[Shape.Channels];
+        for (var i = 0; i < Shape.Channels; i++)
+        {
+            values[i] = GetPixel(x, y, i);
+        }
+
+        return values;
+    }
+
+    public double[] GetPixel(long x, long y, int[] channels)
+    {
+        var values = new double[channels.Length];
+        for (var i = 0; i < channels.Length; i++)
+        {
+            values[i] = GetPixel(x, y, channels[i]);
+        }
+
+        return values;
+    }
+
+    public LineImage GetPixelLineData(long line, int[] channels)
+    {
+        var data = new double[Shape.Width][];
+        for (var i = 0; i < Shape.Width; i++)
+        {
+            data[i] = new double[channels.Length];
+        }
+
+        switch (Layout)
+        {
+            // checking for memory layout -> better cache accesses
+            // iterate over channels last
+            case XyzImageMemoryLayout:
+            case YxzImageMemoryLayout:
+            {
+                for (var x = 0; x < Shape.Width; x++)
+                {
+                    for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
+                    {
+                        data[x][channelIdx] = GetPixel(x, line, channels[channelIdx]);
+                    }
+                }
+
+                break;
+            }
+            // iterate over x position last
+            case YzxImageMemoryLayout:
+            case ZyxImageMemoryLayout:
+            {
+                for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
+                {
+                    for (var x = 0; x < Shape.Width; x++)
+                    {
+                        data[x][channelIdx] = GetPixel(x, line, channels[channelIdx]);
+                    }
+                }
+
+                break;
+            }
+            default:
+                throw new NotImplementedException($"Efficient pixel data line getter not implemented for  layout type {Layout.GetType()} when using ENVI images");
+        }
+
+        return new LineImage(data);
+    }
+
+    public T this[long x, long y, int channel] => GetValue(Layout.Flatten(x, y, channel));
 }
 
 /// <summary>
@@ -194,7 +228,7 @@ public static class EnviImage
     /// <param name="filepath">The path to the ENVI file (header and data).</param>
     /// <returns> A generic <see cref="EnviImage{T}"/> cast to its superclass <see cref="IEnviImage"/> which represents the files found under the supplied path.</returns>
     /// <exception cref="FileNotFoundException">If either the header or the raw file were not found in under the supplied path.</exception>
-    public static IEnviImage OpenImage(string filepath)
+    public static IMemoryImage OpenImage(string filepath)
     {
         var filepaths = (
             hdr: Path.ChangeExtension(filepath, ".hdr"),
@@ -217,6 +251,6 @@ public static class EnviImage
 
         var type = datatype.TypeOf();
         var ctor = typeof(EnviImage<>).MakeGenericType([type]).GetConstructor([typeof(string)])!;
-        return (IEnviImage)ctor.Invoke([filepath]);
+        return (IMemoryImage)ctor.Invoke([filepath]);
     }
 }

@@ -10,12 +10,12 @@ public readonly struct ImageShape : IEquatable<ImageShape>
   /// <summary>
   /// Number of available image pixels.
   /// </summary>
-  public int Width { get; }
+  public long Width { get; }
 
   /// <summary>
   /// Number of available image lines.
   /// </summary>
-  public int Height { get; }
+  public long Height { get; }
 
   /// <summary>
   /// Number of available image color channels.
@@ -38,7 +38,7 @@ public readonly struct ImageShape : IEquatable<ImageShape>
   /// <param name="width">The images number of pixels per line.</param>
   /// <param name="height">The images number of vertical lines.</param>
   /// <param name="channels">The number of channels per pixel.</param>
-  public ImageShape(int width, int height, int channels)
+  public ImageShape(long width, long height, int channels)
   {
     Width = width;
     Height = height;
