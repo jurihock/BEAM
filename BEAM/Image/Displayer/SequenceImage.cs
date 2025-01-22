@@ -33,20 +33,21 @@ public class SequenceImage(Sequence sequence)
             var pixels = MemoryMarshal.Cast<byte, BGRA>(span);
             var line = startLine + j * (endLine - startLine) / height;
 
-            var image = sequence.GetLineImage(line);
+            var image = sequence.GetImage((int) (line / sequence.SingleImageHeight));
+            line = line % sequence.SingleImageHeight;
             //var data = image.GetChannels([0, 1, 2, 3]);
 
             var data = new double[4];
             for (var i = 0; i < width; i++)
             {
                 var x = startX + i * (endX - startX) / width;
-                data = image.GetPixel(x, [0, 1, 2, 3]);
+                //data = image.GetPixel(x, [0, 1, 2, 3]);
                 pixels[j * width + i] = new BGRA()
                 {
-                    B = (byte)data[0],
-                    G = (byte)data[1],
-                    R = (byte)data[2],
-                    A = (byte)data[3],
+                    B = (byte)image.GetAsDouble(x, line, 0),
+                    G = (byte)image.GetAsDouble(x, line, 1),
+                    R = (byte)image.GetAsDouble(x, line, 2),
+                    A = 255
                 };
             }
         });
