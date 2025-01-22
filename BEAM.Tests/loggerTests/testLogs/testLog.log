@@ -85,3 +85,5 @@
 14.12.2024 20:46:40 Info: ClosedFile: A File was closed
 14.12.2024 20:46:40 Unspecified Log: This is a test log message
 15.12.2024 10:19:01 Warning --> FileNotFound: 1 Files could not be loaded
+15.12.2024 19:08:18 ERROR! --> ThrownException: Cannot find sequence in extensions: .jpg
+15.12.2024 19:09:03 ERROR! --> ThrownException: Empty sequences are not supported
