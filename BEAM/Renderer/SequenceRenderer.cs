@@ -1,4 +1,5 @@
 using System;
+using BEAM.ImageSequence;
 
 namespace BEAM.Renderer;
 
@@ -13,7 +14,7 @@ public abstract class SequenceRenderer
     /// </summary>
     /// <param name="minimumOfIntensityRange"></param>
     /// <param name="maximumOfIntensityRange"></param>
-    public SequenceRenderer(int minimumOfIntensityRange, int maximumOfIntensityRange)
+    protected SequenceRenderer(int minimumOfIntensityRange, int maximumOfIntensityRange)
     {
         if (maximumOfIntensityRange <= minimumOfIntensityRange)
         {
@@ -30,7 +31,7 @@ public abstract class SequenceRenderer
     /// </summary>
     /// <param name="intensity">The unnormalized intensity of a channel</param>
     /// <returns>The </returns>
-    public double NormalizeIntensity(double intensity)
+    protected double NormalizeIntensity(double intensity)
     {
         if (intensity > MaximumOfIntensityRange || intensity < MinimumOfIntensityRange)
         {
@@ -39,14 +40,6 @@ public abstract class SequenceRenderer
         return (intensity - MinimumOfIntensityRange) 
                / (MaximumOfIntensityRange - MinimumOfIntensityRange);
     }
-    
-    /// <summary>
-    /// Returns an array of size 4. These three values
-    /// equal the A, R, G and B value of the pixel
-    /// A is the transparency value (A = 255 --> not transparent)
-    /// </summary>
-    /// <param name="channels"></param>
-    /// <param name="displayParameters"><\param>
-    /// <returns></returns>
-    public abstract byte[] RenderPixel(double[] channels, double[] displayParameters);
+
+    public abstract byte[] RenderPixel(Sequence sequence, long x, long y);
 }

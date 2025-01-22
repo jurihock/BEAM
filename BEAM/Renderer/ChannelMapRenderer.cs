@@ -1,5 +1,6 @@
 ﻿using System;
 using BEAM.Exceptions;
+using BEAM.ImageSequence;
 
 namespace BEAM.Renderer;
 
@@ -22,22 +23,10 @@ public class ChannelMapRenderer : SequenceRenderer
     int ChannelRed { get; init; }
     int ChannelGreen { get; init; }
     int ChannelBlue { get; init; }
-    
-    /// <summary>
-    /// Given the intensities of all channels of the pixel, three channels are chosen for the R, G and B value.
-    /// The result is the ARGB-color values as a byte array.
-    /// </summary>
-    /// <param name="channels"></param>
-    /// <param name="displayParameters"></param>
-    /// <returns></returns>
-    /// <exception cref="ChannelException"></exception>
-    public override byte[] RenderPixel(double[] channels, double[] displayParameters)
+
+    public override byte[] RenderPixel(Sequence sequence, long x, long y)
     {
-        int channelAmount = channels.Length;
-        if (Math.Max(Math.Max(ChannelBlue, ChannelGreen), ChannelRed) > channelAmount)
-        {
-            throw new ChannelException("Chosen Channels are larger than the number of channels");
-        }
+        var channels = sequence.GetPixel(x, y);
 
         byte[] color =
         [
