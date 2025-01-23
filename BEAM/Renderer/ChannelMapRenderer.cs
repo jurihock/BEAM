@@ -60,7 +60,6 @@ public class ChannelMapRenderer : SequenceRenderer
         var data = new byte[xs.Length, 4];
         var img = sequence.GetPixelLineData(xs, y, [ChannelRed, ChannelGreen, ChannelBlue]);
 
-        using var v = Timer.Start("With");
         for (var x = 0; x < xs.Length; x++)
         {
             var colors = NormailizeIntensity(Vector256.Create([
