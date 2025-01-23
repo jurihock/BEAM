@@ -85,3 +85,64 @@
 14.12.2024 20:46:40 Info: ClosedFile: A File was closed
 14.12.2024 20:46:40 Unspecified Log: This is a test log message
 15.12.2024 10:19:01 Warning --> FileNotFound: 1 Files could not be loaded
+23.01.2025 10:22:43 Info: OpenedFile
+23.01.2025 10:22:43 Info: OpenedFile
+23.01.2025 10:22:44 Info: OpenedFile
+23.01.2025 10:22:44 Info: OpenedFile
+23.01.2025 10:22:44 Info: OpenedFile
+23.01.2025 10:22:44 Info: OpenedFile
+23.01.2025 10:22:44 Warning --> UnknownFileFormat
+23.01.2025 10:22:44 Warning --> UnknownFileFormat
+23.01.2025 10:22:45 Warning --> UnknownFileFormat
+23.01.2025 10:22:45 Warning --> UnknownFileFormat
+23.01.2025 10:22:45 Warning --> UnknownFileFormat
+23.01.2025 10:22:45 Warning --> UnknownFileFormat
+23.01.2025 10:22:46 ERROR! --> FileNotFound
+23.01.2025 10:22:46 ERROR! --> FileNotFound
+23.01.2025 10:22:46 ERROR! --> FileNotFound
+23.01.2025 10:22:46 ERROR! --> FileNotFound
+23.01.2025 10:22:46 ERROR! --> FileNotFound
+23.01.2025 10:22:46 ERROR! --> FileNotFound
+23.01.2025 10:30:15 Info: OpenedFile
+23.01.2025 10:30:16 Info: OpenedFile
+23.01.2025 10:30:16 Info: OpenedFile
+23.01.2025 10:30:16 Info: OpenedFile
+23.01.2025 10:30:16 Info: OpenedFile
+23.01.2025 10:30:17 Info: OpenedFile
+23.01.2025 10:30:17 Info: OpenedFile
+23.01.2025 10:30:17 Info: OpenedFile
+23.01.2025 10:30:18 Warning --> UnknownFileFormat
+23.01.2025 10:30:18 Warning --> UnknownFileFormat
+23.01.2025 10:30:18 Warning --> UnknownFileFormat
+23.01.2025 10:30:18 Warning --> UnknownFileFormat
+23.01.2025 10:30:18 Warning --> UnknownFileFormat
+23.01.2025 10:30:19 Warning --> UnknownFileFormat
+23.01.2025 10:30:19 Warning --> UnknownFileFormat
+23.01.2025 10:30:19 Warning --> UnknownFileFormat
+23.01.2025 10:30:20 Warning --> UnknownFileFormat
+23.01.2025 10:30:20 Warning --> UnknownFileFormat
+23.01.2025 10:30:20 Warning --> UnknownFileFormat
+23.01.2025 10:30:21 ERROR! --> FileNotFound
+23.01.2025 10:30:21 ERROR! --> FileNotFound
+23.01.2025 10:30:21 ERROR! --> FileNotFound
+23.01.2025 10:30:21 ERROR! --> FileNotFound
+23.01.2025 10:30:22 ERROR! --> FileNotFound
+23.01.2025 10:30:22 ERROR! --> FileNotFound
+23.01.2025 10:30:22 ERROR! --> FileNotFound
+23.01.2025 10:30:22 ERROR! --> FileNotFound
+23.01.2025 10:30:22 ERROR! --> FileNotFound
+23.01.2025 10:30:22 ERROR! --> FileNotFound
+23.01.2025 10:30:23 ERROR! --> FileNotFound
+23.01.2025 10:30:23 ERROR! --> FileNotFound
+23.01.2025 10:30:23 ERROR! --> FileNotFound
+23.01.2025 10:30:23 ERROR! --> FileNotFound
+23.01.2025 10:30:23 ERROR! --> FileNotFound
+23.01.2025 10:30:23 ERROR! --> FileNotFound
+23.01.2025 10:30:23 ERROR! --> FileNotFound
+23.01.2025 10:30:24 ERROR! --> FileNotFound
+23.01.2025 10:30:24 ERROR! --> FileNotFound
+23.01.2025 10:30:24 ERROR! --> FileNotFound
+23.01.2025 10:30:24 ERROR! --> FileNotFound
+23.01.2025 10:30:24 ERROR! --> FileNotFound
+23.01.2025 10:30:24 ERROR! --> FileNotFound
+23.01.2025 10:30:24 ERROR! --> FileNotFound

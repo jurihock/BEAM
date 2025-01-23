@@ -25,6 +25,7 @@ public abstract class Sequence(List<string> imagePaths) : IImage
             {
                 return _singleFileHeight.Value;
             }
+
             _singleFileHeight = GetImage(0).Shape.Height;
             return _singleFileHeight.Value;
         }
@@ -43,6 +44,7 @@ public abstract class Sequence(List<string> imagePaths) : IImage
             {
                 return _shape.Value;
             }
+
             _InitializeShape();
             return _shape.Value;
         }
@@ -53,7 +55,7 @@ public abstract class Sequence(List<string> imagePaths) : IImage
         var imageIdx = y / SingleImageHeight;
         var imageLine = y % SingleImageHeight;
 
-        var img = GetImage((int) imageIdx);
+        var img = GetImage((int)imageIdx);
         return img.GetPixel(x, imageLine, channel);
     }
 
@@ -62,7 +64,7 @@ public abstract class Sequence(List<string> imagePaths) : IImage
         var imageIdx = y / SingleImageHeight;
         var imageLine = y % SingleImageHeight;
 
-        var img = GetImage((int) imageIdx);
+        var img = GetImage((int)imageIdx);
         return img.GetPixel(x, imageLine);
     }
 
@@ -71,7 +73,7 @@ public abstract class Sequence(List<string> imagePaths) : IImage
         var imageIdx = y / SingleImageHeight;
         var imageLine = y % SingleImageHeight;
 
-        var img = GetImage((int) imageIdx);
+        var img = GetImage((int)imageIdx);
         return img.GetPixel(x, imageLine, channels);
     }
 
@@ -80,16 +82,16 @@ public abstract class Sequence(List<string> imagePaths) : IImage
         var imageIdx = line / SingleImageHeight;
         var imageLine = line % SingleImageHeight;
 
-        var img = GetImage((int) imageIdx);
+        var img = GetImage((int)imageIdx);
         return img.GetPixelLineData(imageLine, channels);
     }
 
-    public LineImage GetPixelLineData(long[]xs, long line, int[] channels)
+    public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
     {
         var imageIdx = line / SingleImageHeight;
         var imageLine = line % SingleImageHeight;
 
-        var img = GetImage((int) imageIdx);
+        var img = GetImage((int)imageIdx);
         return img.GetPixelLineData(xs, imageLine, channels);
     }
 
@@ -218,7 +220,10 @@ public abstract class Sequence(List<string> imagePaths) : IImage
         if (!Directory.Exists(folder)) throw new UnknownSequenceException($"Cannot find folder: {folder}");
 
         var filePaths = Directory.EnumerateFiles(folder, "*.*", SearchOption.TopDirectoryOnly);
-        return Open(filePaths.ToList());
+
+        var pathList = filePaths.Order().ToList();
+
+        return Open(pathList);
     }
 
     /// <summary>
@@ -274,7 +279,7 @@ public abstract class Sequence(List<string> imagePaths) : IImage
             if (_loadedImages[i] is null) continue;
             _loadedImages[i]!.Dispose();
             _loadedImages[i] = null;
-        }        
+        }
     }
 
     private void Dispose(bool disposing)
