@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.Intrinsics;
 using Avalonia.Media;
 using BEAM.Exceptions;
 
@@ -18,7 +19,8 @@ public class HeatMapRendererRB : HeatMapRenderer
     /// <param name="minimumOfIntensityRange"></param>
     /// <param name="maximumOfIntensityRange"></param>
     /// <param name="channel"></param>
-    public HeatMapRendererRB(int minimumOfIntensityRange, int maximumOfIntensityRange, int channel) : base(minimumOfIntensityRange, maximumOfIntensityRange, channel)
+    public HeatMapRendererRB(int minimumOfIntensityRange, int maximumOfIntensityRange, int channel) : base(
+        minimumOfIntensityRange, maximumOfIntensityRange, channel)
     {
     }
 
@@ -29,21 +31,19 @@ public class HeatMapRendererRB : HeatMapRenderer
             byte[] hot = [255, 255, 0, 0]; // Color Red
             return hot;
         }
-        else if (value < min) // intensity below minimum --> coldest color displayed
+
+        if (value < min) // intensity below minimum --> coldest color displayed
         {
             byte[] cold = [255, 0, 0, 255];
             return cold;
         }
-        else
-        {
-            double range = (max - min);
-            double
-                relative = (value - min) /
-                           range; // calculate the relative intensity inside the range between min and max --> Normalize
-            // the value of the color
-            byte intensity = (byte)Math.Floor(relative * (double)255);
-            byte[] color = [255, intensity, 0, (byte)(255 - intensity)];
-            return color;
-        }
+
+        double range = (max - min);
+        double relative = (value - min) / range; // calculate the relative intensity inside the range between min and max --> Normalize
+        // the value of the color
+        byte intensity = (byte)Math.Floor(relative * (double)255);
+
+        byte[] color = [255, intensity, 0, (byte)(255 - intensity)];
+        return color;
     }
 }

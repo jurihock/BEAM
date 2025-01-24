@@ -1,4 +1,7 @@
 using System;
+using System.Numerics;
+using System.Runtime.Intrinsics;
+using BEAM.ImageSequence;
 
 namespace BEAM.Renderer;
 
@@ -13,7 +16,7 @@ public abstract class SequenceRenderer
     /// </summary>
     /// <param name="minimumOfIntensityRange"></param>
     /// <param name="maximumOfIntensityRange"></param>
-    public SequenceRenderer(int minimumOfIntensityRange, int maximumOfIntensityRange)
+    protected SequenceRenderer(int minimumOfIntensityRange, int maximumOfIntensityRange)
     {
         if (maximumOfIntensityRange <= minimumOfIntensityRange)
         {
@@ -24,29 +27,6 @@ public abstract class SequenceRenderer
         MaximumOfIntensityRange = maximumOfIntensityRange;
     }
 
-    /// <summary>
-    /// Normalizes the intensity of a given intensity to a value between 0 and 1.
-    /// Normalization uses the Minimum- and MaximumOfIntensityRange
-    /// </summary>
-    /// <param name="intensity">The unnormalized intensity of a channel</param>
-    /// <returns>The </returns>
-    public double NormalizeIntensity(double intensity)
-    {
-        if (intensity > MaximumOfIntensityRange || intensity < MinimumOfIntensityRange)
-        {
-            throw new ArgumentException();
-        }
-        return (intensity - MinimumOfIntensityRange) 
-               / (MaximumOfIntensityRange - MinimumOfIntensityRange);
-    }
-    
-    /// <summary>
-    /// Returns an array of size 4. These three values
-    /// equal the A, R, G and B value of the pixel
-    /// A is the transparency value (A = 255 --> not transparent)
-    /// </summary>
-    /// <param name="channels"></param>
-    /// <param name="displayParameters"><\param>
-    /// <returns></returns>
-    public abstract byte[] RenderPixel(double[] channels, double[] displayParameters);
+    public abstract byte[] RenderPixel(Sequence sequence, long x, long y);
+    public abstract byte[,] RenderPixels(Sequence sequence, long[] xs, long y);
 }

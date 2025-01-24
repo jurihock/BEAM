@@ -12,7 +12,7 @@ namespace BEAM.ImageSequence;
 /// <param name="imagePaths">The skia images to use inside the sequence</param>
 public class SkiaSequence(List<string> imagePaths) : Sequence(imagePaths)
 {
-    protected override IContiguousImage LoadImage(int index) => new RgbSkiaImage(imagePaths[index]);
+    protected override IImage LoadImage(int index) => new SkiaImage<byte>(imagePaths[index]);
 
     protected override bool InitializeSequence()
     {

@@ -12,7 +12,7 @@ namespace BEAM.ImageSequence;
 /// Loads and manages an entire sequence.
 /// </summary>
 /// <param name="imagePaths">The paths of the images to use inside the sequence.</param>
-public abstract class Sequence(List<string> imagePaths)
+public abstract class Sequence(List<string> imagePaths) : IImage
 {
     /// Do not use -> set internally on first get
     private long? _singleFileHeight;
@@ -25,39 +25,85 @@ public abstract class Sequence(List<string> imagePaths)
             {
                 return _singleFileHeight.Value;
             }
+
             _singleFileHeight = GetImage(0).Shape.Height;
             return _singleFileHeight.Value;
         }
     }
 
-    /// Do not use -> set internally on first get.
-    private SequenceShape? _shape;
+    private ImageShape? _shape;
 
     /// <summary>
     /// The Shape (width, height, channel count) of the entire sequence.
     /// </summary>
-    public SequenceShape Shape
+    public ImageShape Shape
     {
         get
         {
             if (_shape is not null)
             {
-                return _shape;
+                return _shape.Value;
             }
+
             _InitializeShape();
-            return _shape!;
+            return _shape.Value;
         }
     }
 
+    public double GetPixel(long x, long y, int channel)
+    {
+        var imageIdx = y / SingleImageHeight;
+        var imageLine = y % SingleImageHeight;
+
+        var img = GetImage((int)imageIdx);
+        return img.GetPixel(x, imageLine, channel);
+    }
+
+    public double[] GetPixel(long x, long y)
+    {
+        var imageIdx = y / SingleImageHeight;
+        var imageLine = y % SingleImageHeight;
+
+        var img = GetImage((int)imageIdx);
+        return img.GetPixel(x, imageLine);
+    }
+
+    public double[] GetPixel(long x, long y, int[] channels)
+    {
+        var imageIdx = y / SingleImageHeight;
+        var imageLine = y % SingleImageHeight;
+
+        var img = GetImage((int)imageIdx);
+        return img.GetPixel(x, imageLine, channels);
+    }
+
+    public LineImage GetPixelLineData(long line, int[] channels)
+    {
+        var imageIdx = line / SingleImageHeight;
+        var imageLine = line % SingleImageHeight;
+
+        var img = GetImage((int)imageIdx);
+        return img.GetPixelLineData(imageLine, channels);
+    }
+
+    public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
+    {
+        var imageIdx = line / SingleImageHeight;
+        var imageLine = line % SingleImageHeight;
+
+        var img = GetImage((int)imageIdx);
+        return img.GetPixelLineData(xs, imageLine, channels);
+    }
+
     private Mutex _loadedImagesMutex = new();
-    private IContiguousImage?[] _loadedImages = new IContiguousImage?[imagePaths.Count];
+    private IImage?[] _loadedImages = new IImage?[imagePaths.Count];
 
     /// <summary>
     /// Loads the desired image so that it's data can be accessed randomly.
     /// </summary>
     /// <param name="index">The index of the desired image.</param>
     /// <returns>The loaded image.</returns>
-    protected abstract IContiguousImage LoadImage(int index);
+    protected abstract IImage LoadImage(int index);
 
     /// <summary>
     /// Initializes and validates the sequence.
@@ -71,7 +117,7 @@ public abstract class Sequence(List<string> imagePaths)
     /// <param name="index">The index of the image to load.</param>
     /// <returns>The image with the correct index.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the image index is out of range</exception>
-    public IContiguousImage GetImage(int index)
+    public IImage GetImage(int index)
     {
         if (index < 0 || index >= _loadedImages.Length)
         {
@@ -95,88 +141,6 @@ public abstract class Sequence(List<string> imagePaths)
         return img;
     }
 
-    public LineImage GetLineImage(long line)
-    {
-        var imgIndex = (int) line / (int) SingleImageHeight;
-        var imgLine = line % SingleImageHeight;
-
-        return new LineImage(GetImage(imgIndex), imgLine);
-    }
-
-    /// <summary>
-    /// Returns the value of a single channel of a single pixel.
-    /// </summary>
-    /// <param name="x">The x position of the pixel.</param>
-    /// <param name="y">The line of the pixel.</param>
-    /// <param name="channel">The channel of the image to look into.</param>
-    /// <returns>The pixel value at the desired channel.</returns>
-    public double GetPixel(long x, long y, int channel)
-    {
-        if (x >= Shape.Width || x < 0)
-            throw new ArgumentException($"Pixel row out of range -> is: {x}, Range: [0, {Shape.Width})");
-        if (y >= Shape.Height || y < 0)
-            throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
-
-        long line = y % SingleImageHeight;
-        long imgIndex = y / SingleImageHeight;
-
-        var image = GetImage((int)imgIndex);
-        return image.GetAsDouble(x, line, channel);
-    }
-
-    /// <summary>
-    /// Returns the entire value of a pixel -> all channel values are returned
-    /// </summary>
-    /// <param name="x">The x position of the pixel.</param>
-    /// <param name="y">The line of the pixel.</param>
-    /// <returns>The array containing the values of all channels for the pixel. The size of the array is Shape.Channels.</returns>
-    public double[] GetPixel(long x, long y)
-    {
-        if (x >= Shape.Width || x < 0)
-            throw new ArgumentException($"Pixel row out of range -> is: {x}, Range: [0, {Shape.Width})");
-        if (y >= Shape.Height || y < 0)
-            throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
-
-        long line = y % SingleImageHeight;
-        long imgIndex = y / SingleImageHeight;
-        var image = GetImage((int)imgIndex);
-
-        var channels = new double[Shape.Channels];
-        for (int i = 0; i < channels.Length; i++)
-        {
-            channels[i] = image.GetAsDouble(x, line, i);
-        }
-
-        return channels;
-    }
-
-    /// <summary>
-    /// Returns the pixel data of an entire line.
-    /// </summary>
-    /// <param name="y"></param>
-    /// <returns>A 2d-array with the pixel channel values. Access: [x position, channel index]</returns>
-    public double[,] GetPixelLine(long y)
-    {
-        if (y >= Shape.Height || y < 0)
-            throw new ArgumentException($"Pixel line out of range -> is: {y}, Range: [0, {Shape.Height})");
-
-        long line = y % SingleImageHeight;
-        long imgIndex = y / SingleImageHeight;
-
-        var image = GetImage((int)imgIndex);
-
-        var values = new double[Shape.Width, Shape.Channels];
-        for (int i = 0; i < Shape.Width; i++)
-        {
-            for (int j = 0; j < Shape.Channels; j++)
-            {
-                values[i, j] = image.GetAsDouble(i, line, j);
-            }
-        }
-
-        return values;
-    }
-
     /// <summary>
     /// Calculates the shape of the entire sequence.
     /// Only run once: when Shape is accessed the first tie
@@ -193,7 +157,7 @@ public abstract class Sequence(List<string> imagePaths)
 
         if (length == 1)
         {
-            _shape = new SequenceShape(width, height, channels);
+            _shape = new ImageShape(width, height, channels);
             return;
         }
 
@@ -202,7 +166,7 @@ public abstract class Sequence(List<string> imagePaths)
         var lastImage = GetImage(length - 1);
         height += lastImage.Shape.Height;
 
-        _shape = new SequenceShape(width, height, firstImage.Shape.Channels);
+        _shape = new ImageShape(width, height, firstImage.Shape.Channels);
     }
 
     /// <summary>
@@ -256,7 +220,10 @@ public abstract class Sequence(List<string> imagePaths)
         if (!Directory.Exists(folder)) throw new UnknownSequenceException($"Cannot find folder: {folder}");
 
         var filePaths = Directory.EnumerateFiles(folder, "*.*", SearchOption.TopDirectoryOnly);
-        return Open(filePaths.ToList());
+
+        var pathList = filePaths.Order().ToList();
+
+        return Open(pathList);
     }
 
     /// <summary>
@@ -303,5 +270,35 @@ public abstract class Sequence(List<string> imagePaths)
         }
 
         return (Sequence)ctor.Invoke([paths]);
+    }
+
+    private void ReleaseUnmanagedResources()
+    {
+        for (var i = 0; i < _loadedImages.Length; i++)
+        {
+            if (_loadedImages[i] is null) continue;
+            _loadedImages[i]!.Dispose();
+            _loadedImages[i] = null;
+        }
+    }
+
+    private void Dispose(bool disposing)
+    {
+        ReleaseUnmanagedResources();
+        if (disposing)
+        {
+            _loadedImagesMutex.Dispose();
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~Sequence()
+    {
+        Dispose(false);
     }
 }
