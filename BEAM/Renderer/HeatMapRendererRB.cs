@@ -1,9 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Runtime.Intrinsics;
-using Avalonia.Media;
 using BEAM.Exceptions;
-using BEAM.ImageSequence;
 using IImage = BEAM.Image.IImage;
 
 namespace BEAM.Renderer;

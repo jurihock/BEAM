@@ -1,9 +1,7 @@
-﻿using System;
-using System.Runtime.Intrinsics;
+﻿using System.Runtime.Intrinsics;
 using BEAM.Exceptions;
 using BEAM.Image;
 using BEAM.ImageSequence;
-using BEAM.Profiling;
 
 namespace BEAM.Renderer;
 

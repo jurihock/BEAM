@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using BEAM.Exceptions;
+﻿using BEAM.Exceptions;
 using BEAM.ImageSequence;
 
 namespace BEAM.Renderer;
