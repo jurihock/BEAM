@@ -68,7 +68,8 @@ public class LineImage : IImage
     {
         throw new NotImplementedException();
     }
-
+    //TODO: inconsistent parameter types for overloading
+    //TODO: Naming of parameters: xs = columns? If xs = line, then why line parameter?
     public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
     {
         throw new NotImplementedException();
