@@ -25,15 +25,21 @@ public class ChannelMapRenderer : SequenceRenderer
     public int ChannelRed { get; set; }
     public int ChannelGreen { get; set; }
     public int ChannelBlue { get; set; }
-
+    
+    //TODO: RGBA or ARGB?
+    /// <summary>
+    /// Create the RGBA value for a given pixel of a sequence
+    /// </summary>
+    /// <param name="sequence"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     public override byte[] RenderPixel(Sequence sequence, long x, long y)
     {
-        var channels = sequence.GetPixel(x, y);
-
-        var colors = NormailizeIntensity(Vector256.Create([
-            channels[ChannelRed],
-            channels[ChannelGreen],
-            channels[ChannelBlue],
+        var colors = NormalizeIntensity(Vector256.Create([
+            sequence.GetPixel(x, y, ChannelRed),
+            sequence.GetPixel(x, y, ChannelGreen),
+            sequence.GetPixel(x, y, ChannelBlue),
             0
         ]));
 
@@ -62,7 +68,7 @@ public class ChannelMapRenderer : SequenceRenderer
 
         for (var x = 0; x < xs.Length; x++)
         {
-            var colors = NormailizeIntensity(Vector256.Create([
+            var colors = NormalizeIntensity(Vector256.Create([
                 img.GetPixel(x, 0, ChannelRed),
                 img.GetPixel(x, 0, ChannelGreen),
                 img.GetPixel(x, 0, ChannelBlue),
