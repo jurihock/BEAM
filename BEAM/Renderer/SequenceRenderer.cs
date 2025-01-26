@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.Intrinsics;
 using BEAM.Image;
@@ -11,6 +12,8 @@ public abstract class SequenceRenderer
     protected int MinimumOfIntensityRange { get; init; }
     protected int MaximumOfIntensityRange { get; init; }
     protected int IntensityRange { get; init; }
+    
+    private Dictionary<RenderTypes, SequenceRenderer> _mapRenderTypesToRenderers = new Dictionary<RenderTypes, SequenceRenderer>();
     
     /// <summary>
     /// Set the Minimum- and Maximum values for the intensity values (e.g. 0 - 1 or 0 - 255)
@@ -37,6 +40,24 @@ public abstract class SequenceRenderer
         var multFactor = Vector256.Create<double>(255);
 
         return (intensities - minIntensities) / (maxIntensities - minIntensities) * multFactor;
+    }
+
+    public SequenceRenderer GetRenderer(RenderTypes renderType, int minimumOfIntensityRange,
+        int maximumOfIntensityRange, double[] displayParameters)
+    {
+        SequenceRenderer renderer = _mapRenderTypesToRenderers[renderType].Create(minimumOfIntensityRange, maximumOfIntensityRange, displayParameters);
+
+        return renderer;
+    }
+
+    /// <summary>
+    /// Fill the dictionary with default renderers to map the Enums of RenderTypes to their specific classes.
+    /// </summary>
+    private void InitializeMapRenderTypesToRenderers()
+    {
+        _mapRenderTypesToRenderers.Add(RenderTypes.HeatMapRendererRb, new HeatMapRendererRB(0, 0, 0, 0, 0));
+        _mapRenderTypesToRenderers.Add(RenderTypes.ChannelMapRenderer, new ChannelMapRenderer(0, 0, 0, 0, 0));
+        _mapRenderTypesToRenderers.Add(RenderTypes.ArgMaxRendererGrey, new ArgMaxRendererGrey(0, 0));
     }
     
     public abstract byte[] RenderPixel(Sequence sequence, long x, long y);
