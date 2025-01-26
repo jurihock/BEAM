@@ -72,7 +72,7 @@ public abstract class HeatMapRenderer : SequenceRenderer
     
     public override byte[] RenderPixel(Sequence sequence, long x, long y)
     {
-        return GetColor(sequence.GetPixel(x, y, Channel), MinimumOfIntensityRange, MaximumOfIntensityRange);
+        return GetColor(sequence.GetPixel(x, y, Channel), MaxColdestIntensity, MinHottestIntensity);
     }
 
     public override byte[,] RenderPixels(Sequence sequence, long[] xs, long y)
@@ -83,7 +83,7 @@ public abstract class HeatMapRenderer : SequenceRenderer
         // TODO: SIMD
         for (var i = 0; i < xs.Length; i++)
         {
-            var color = GetColor(img.GetPixel(i, 0, 0), MinimumOfIntensityRange, MaximumOfIntensityRange);
+            var color = GetColor(img.GetPixel(i, 0, 0), MaxColdestIntensity, MinHottestIntensity);
             data[i, 0] = color[0];
             data[i, 1] = color[1];
             data[i, 2] = color[2];
