@@ -43,7 +43,12 @@ public class HeatMapRendererRB : HeatMapRenderer
             byte[] cold = [255, 0, 0, 255]; // Color Blue
             return cold;
         }
-
+        
+        // if max == min, return a mixture of Red and Blue for all pixels, whose intensity = max = min
+        if ((max - min) < 0.001) 
+        {
+            return new byte[] { 255, 127, 0, 127 }; 
+        }
         double range = (max - min);
         double relative = (value - min) / range; // calculate the relative intensity inside the range between min and max --> Normalize
         // the value of the color
