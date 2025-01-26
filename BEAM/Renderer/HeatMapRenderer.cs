@@ -17,20 +17,27 @@ public abstract class HeatMapRenderer : SequenceRenderer
     /// </summary>
     public int Channel { get; set; }
 
-    private double _maxColdestIntensity = 0; // Initialwert von 0
-    private double _minHottestIntensity = 1; // Initialwert von 1
+    private double _relMaxColdestIntensity = 0; // Initialwert von 0
+    private double _relMinHottestIntensity = 1; // Initialwert von 1
+    
+    // The highest absolute intensity that is represented with the coldest color.
+    private double _absMaxColdestIntensity;
+    // The lowest absolute intensity that is represented with the hottest color.
+    private double _absMinHottestIntensity;
 
     /// <summary>
-    /// The highest intensity between 0 and 1 that is represented with the coldest color.
+    /// The highest relative intensity between 0 and 1 that is represented with the coldest color.
+    /// --> value between 0 and 100% of intensity range
     /// </summary>
-    public double MaxColdestIntensity
+    public double RelMaxColdestIntensity
     {
-        get { return _maxColdestIntensity; }
+        get { return _relMaxColdestIntensity; }
         set
         {
-            if (value >= 0 && value <= _minHottestIntensity)
+            if (value >= 0 && value <= _relMinHottestIntensity)
             {
-                _maxColdestIntensity = value;
+                _relMaxColdestIntensity = value;
+                _absMaxColdestIntensity = value * IntensityRange + MinimumOfIntensityRange;
             }
             else
             {
@@ -41,16 +48,18 @@ public abstract class HeatMapRenderer : SequenceRenderer
     }
 
     /// <summary>
-    /// The lowest intensity between 0 and 1 that is represented with the coldest color.
+    /// The lowest relative intensity between 0 and 1 that is represented with the coldest color.
+    /// --> value between 0 and 100% of intensity range
     /// </summary>
-    public double MinHottestIntensity
+    public double RelMinHottestIntensity
     {
-        get { return _minHottestIntensity; }
+        get { return _relMinHottestIntensity; }
         set
         {
-            if (value <= 1 && value >= _maxColdestIntensity)
+            if (value <= 1 && value >= _relMaxColdestIntensity)
             {
-                _minHottestIntensity = value;
+                _relMinHottestIntensity = value;
+                _absMinHottestIntensity = value * IntensityRange + MinimumOfIntensityRange;
             }
             else
             {
@@ -62,28 +71,33 @@ public abstract class HeatMapRenderer : SequenceRenderer
     
     
     protected HeatMapRenderer(int minimumOfIntensityRange, int maximumOfIntensityRange, int channel, 
-        double maxColdestIntensity, double minHottestIntensity)
+        double relMaxColdestIntensity, double relMinHottestIntensity)
         : base(minimumOfIntensityRange, maximumOfIntensityRange)
     {
         Channel = channel;
-        MaxColdestIntensity = maxColdestIntensity;
-        MinHottestIntensity = minHottestIntensity;
+        RelMaxColdestIntensity = relMaxColdestIntensity;
+        RelMinHottestIntensity = relMinHottestIntensity;
     }
     
     public override byte[] RenderPixel(Sequence sequence, long x, long y)
     {
-        return GetColor(sequence.GetPixel(x, y, Channel), MaxColdestIntensity, MinHottestIntensity);
+        
+        return GetColor(sequence.GetPixel(x, y, Channel), 
+            IntensityRange * RelMaxColdestIntensity + MinimumOfIntensityRange, 
+            IntensityRange * RelMinHottestIntensity + MinimumOfIntensityRange);
     }
 
     public override byte[,] RenderPixels(Sequence sequence, long[] xs, long y)
     {
         var data = new byte[xs.Length, 4];
         var img = sequence.GetPixelLineData(xs, y, [Channel]);
-
+        
         // TODO: SIMD
         for (var i = 0; i < xs.Length; i++)
         {
-            var color = GetColor(img.GetPixel(i, 0, 0), MaxColdestIntensity, MinHottestIntensity);
+            var color = GetColor(img.GetPixel(i, 0, 0),
+                _absMinHottestIntensity, 
+                _absMaxColdestIntensity);
             data[i, 0] = color[0];
             data[i, 1] = color[1];
             data[i, 2] = color[2];

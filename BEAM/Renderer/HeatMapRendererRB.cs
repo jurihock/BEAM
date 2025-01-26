@@ -20,13 +20,13 @@ public class HeatMapRendererRB : HeatMapRenderer
     /// </summary>
     /// <param name="minimumOfIntensityRange"></param>
     /// <param name="maximumOfIntensityRange"></param>
-    /// <param name="maxColdestIntensity"></param>
-    /// <param name="minHottestIntensity"></param>
+    /// <param name="relMaxColdestIntensity"></param>
+    /// <param name="relMinHottestIntensity"></param>
     /// <param name="channel"></param>
     public HeatMapRendererRB(int minimumOfIntensityRange, int maximumOfIntensityRange, 
-        int channel, double maxColdestIntensity, double minHottestIntensity) : base(
+        int channel, double relMaxColdestIntensity, double relMinHottestIntensity) : base(
         minimumOfIntensityRange, maximumOfIntensityRange, 
-        channel, maxColdestIntensity, minHottestIntensity)
+        channel, relMaxColdestIntensity, relMinHottestIntensity)
     {
     }
 
