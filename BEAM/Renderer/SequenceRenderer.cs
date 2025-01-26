@@ -27,6 +27,21 @@ public abstract class SequenceRenderer
         MaximumOfIntensityRange = maximumOfIntensityRange;
     }
 
+    protected Vector256<double> NormalizeIntensity(Vector256<double> intensities)
+    {
+        var minIntensities = Vector256.Create<double>(MinimumOfIntensityRange);
+        var maxIntensities = Vector256.Create<double>(MaximumOfIntensityRange);
+        var multFactor = Vector256.Create<double>(255);
+
+        return (intensities - minIntensities) / (maxIntensities - minIntensities) * multFactor;
+    }
+    
     public abstract byte[] RenderPixel(Sequence sequence, long x, long y);
     public abstract byte[,] RenderPixels(Sequence sequence, long[] xs, long y);
+    
+    protected abstract RenderTypes GetRenderType();
+
+    protected abstract SequenceRenderer Create(int minimumOfIntensityRange, int maximumOfIntensityRange, double[] displayParameters);
+
+    protected abstract bool CheckParameters(double[] displayParameters, IImage image);
 }
