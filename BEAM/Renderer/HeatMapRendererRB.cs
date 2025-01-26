@@ -52,4 +52,45 @@ public class HeatMapRendererRB : HeatMapRenderer
         byte[] color = [255, intensity, 0, (byte)(255 - intensity)];
         return color;
     }
+
+    protected override RenderTypes GetRenderType()
+    {
+        return RenderTypes.HeatMapRendererRb;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="minimumOfIntensityRange"></param>
+    /// <param name="maximumOfIntensityRange"></param>
+    /// <param name="displayParameters">
+    /// channel, MaxColdestIntensity, MinHottestIntensity
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="InvalidUserArgumentException"></exception>
+    protected override SequenceRenderer Create(int minimumOfIntensityRange, int maximumOfIntensityRange, double[] displayParameters)
+    {
+        if (!CheckParameters(displayParameters))
+        {
+            throw new InvalidUserArgumentException("Display parameters are invalid.");
+        };
+        return new HeatMapRendererRB(minimumOfIntensityRange, maximumOfIntensityRange, (int)displayParameters[0], displayParameters[1], displayParameters[2]);
+
+    }
+
+    //TODO: Check if channel is in range for given Image, not possible yet, if image not attribute
+    protected override bool CheckParameters(double[] displayParameters, IImage image)
+    {
+        if (displayParameters.Length != 3
+            || displayParameters[0] < 0 // the channel
+            || displayParameters[1] > 1 // maxColdestIntensity
+            || displayParameters[1] < 0
+            || displayParameters[2] < displayParameters[1] // minHottestIntensity
+            || displayParameters[2] > 1)
+        {
+            return false;
+        }
+        
+        return true;
+    }
 }

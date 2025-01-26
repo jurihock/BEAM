@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Intrinsics;
 using BEAM.Exceptions;
+using BEAM.Image;
 using BEAM.ImageSequence;
 using BEAM.Profiling;
 
@@ -82,13 +83,44 @@ public class ChannelMapRenderer : SequenceRenderer
         }
         return data;
     }
-
-    private Vector256<double> NormailizeIntensity(Vector256<double> intensities)
+    
+    protected override RenderTypes GetRenderType()
     {
-        var minIntensities = Vector256.Create<double>(MinimumOfIntensityRange);
-        var maxIntensities = Vector256.Create<double>(MaximumOfIntensityRange);
-        var multFactor = Vector256.Create<double>(255);
+        return RenderTypes.ChannelMapRenderer;
+    }
 
-        return (intensities - minIntensities) / (maxIntensities - minIntensities) * multFactor;
+    protected override SequenceRenderer Create(int minimumOfIntensityRange, int maximumOfIntensityRange, double[] displayParameters)
+    {
+        if (!CheckParameters(displayParameters))
+        {
+            throw new InvalidUserArgumentException("Display parameters are invalid.");
+        };
+        return new ChannelMapRenderer(
+            minimumOfIntensityRange,
+            maximumOfIntensityRange,
+            (int)displayParameters[0],
+            (int)displayParameters[1],
+            (int)displayParameters[2]);
+    }
+
+    //TODO: Check if channels are in range for given Image, not possible yet, if image not attribute
+    /// <summary>
+    /// Verifies that the parameters are valid for the renderer and sequence.
+    /// Returns True, if the parameters are valid, false otherwise.
+    /// </summary>
+    /// <param name="displayParameters"></param>
+    /// <param name="image"></param>
+    /// <returns></returns>
+    protected override bool CheckParameters(double[] displayParameters, IImage image)
+    {
+        if (displayParameters.Length != 3
+            || displayParameters[0] < 0 
+            || displayParameters[1] < 0
+            || displayParameters[2] < 0)
+        {
+            return false;
+        }
+        
+        return true;
     }
 }
