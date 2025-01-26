@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using System.Runtime.Intrinsics;
+using BEAM.Image;
 using BEAM.ImageSequence;
 
 namespace BEAM.Renderer;
