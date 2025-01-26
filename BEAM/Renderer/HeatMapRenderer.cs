@@ -10,14 +10,66 @@ namespace BEAM.Renderer;
 /// It implements the function to Render a pixel.
 /// The concrete function, that converts the channel intensity to a color is implemented by the subclasses.
 /// </summary>
-public abstract class HeatMapRenderer(int minimumOfIntensityRange, int maximumOfIntensityRange, int channel)
-    : SequenceRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
+public abstract class HeatMapRenderer : SequenceRenderer
 {
     /// <summary>
     /// The channel that is used in the HeatMap for the intensity of the HeatMap.
     /// </summary>
-    public int Channel { get; set; } = channel;
+    public int Channel { get; set; }
 
+    private double _maxColdestIntensity = 0; // Initialwert von 0
+    private double _minHottestIntensity = 1; // Initialwert von 1
+
+    /// <summary>
+    /// The highest intensity between 0 and 1 that is represented with the coldest color.
+    /// </summary>
+    public double MaxColdestIntensity
+    {
+        get { return _maxColdestIntensity; }
+        set
+        {
+            if (value >= 0 && value <= _minHottestIntensity)
+            {
+                _maxColdestIntensity = value;
+            }
+            else
+            {
+                throw new InvalidUserArgumentException(
+                    "The lower bound of temperature must be between 0 and upper bound!");
+            }
+        }
+    }
+
+    /// <summary>
+    /// The lowest intensity between 0 and 1 that is represented with the coldest color.
+    /// </summary>
+    public double MinHottestIntensity
+    {
+        get { return _minHottestIntensity; }
+        set
+        {
+            if (value <= 1 && value >= _maxColdestIntensity)
+            {
+                _minHottestIntensity = value;
+            }
+            else
+            {
+                throw new InvalidUserArgumentException("The upper bound of temperature must be between lower bound and 1!");
+            }
+        }
+    }
+
+    
+    
+    protected HeatMapRenderer(int minimumOfIntensityRange, int maximumOfIntensityRange, int channel, 
+        double maxColdestIntensity, double minHottestIntensity)
+        : base(minimumOfIntensityRange, maximumOfIntensityRange)
+    {
+        Channel = channel;
+        MaxColdestIntensity = maxColdestIntensity;
+        MinHottestIntensity = minHottestIntensity;
+    }
+    
     public override byte[] RenderPixel(Sequence sequence, long x, long y)
     {
         return GetColor(sequence.GetPixel(x, y, Channel), MinimumOfIntensityRange, MaximumOfIntensityRange);

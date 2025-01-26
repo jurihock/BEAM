@@ -3,6 +3,8 @@ using System.IO;
 using System.Runtime.Intrinsics;
 using Avalonia.Media;
 using BEAM.Exceptions;
+using BEAM.ImageSequence;
+using IImage = BEAM.Image.IImage;
 
 namespace BEAM.Renderer;
 
@@ -18,9 +20,13 @@ public class HeatMapRendererRB : HeatMapRenderer
     /// </summary>
     /// <param name="minimumOfIntensityRange"></param>
     /// <param name="maximumOfIntensityRange"></param>
+    /// <param name="maxColdestIntensity"></param>
+    /// <param name="minHottestIntensity"></param>
     /// <param name="channel"></param>
-    public HeatMapRendererRB(int minimumOfIntensityRange, int maximumOfIntensityRange, int channel) : base(
-        minimumOfIntensityRange, maximumOfIntensityRange, channel)
+    public HeatMapRendererRB(int minimumOfIntensityRange, int maximumOfIntensityRange, 
+        int channel, double maxColdestIntensity, double minHottestIntensity) : base(
+        minimumOfIntensityRange, maximumOfIntensityRange, 
+        channel, maxColdestIntensity, minHottestIntensity)
     {
     }
 
@@ -34,7 +40,7 @@ public class HeatMapRendererRB : HeatMapRenderer
 
         if (value < min) // intensity below minimum --> coldest color displayed
         {
-            byte[] cold = [255, 0, 0, 255];
+            byte[] cold = [255, 0, 0, 255]; // Color Blue
             return cold;
         }
 
