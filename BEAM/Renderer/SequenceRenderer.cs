@@ -10,6 +10,7 @@ public abstract class SequenceRenderer
 {
     protected int MinimumOfIntensityRange { get; init; }
     protected int MaximumOfIntensityRange { get; init; }
+    protected int IntensityRange { get; init; }
     
     /// <summary>
     /// Set the Minimum- and Maximum values for the intensity values (e.g. 0 - 1 or 0 - 255)
@@ -26,6 +27,7 @@ public abstract class SequenceRenderer
         }
         MinimumOfIntensityRange = minimumOfIntensityRange;
         MaximumOfIntensityRange = maximumOfIntensityRange;
+        IntensityRange = maximumOfIntensityRange - minimumOfIntensityRange;
     }
 
     protected Vector256<double> NormalizeIntensity(Vector256<double> intensities)
