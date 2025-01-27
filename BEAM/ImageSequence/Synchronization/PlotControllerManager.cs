@@ -13,7 +13,7 @@ public static class PlotControllerManager
     private static readonly List<SyncedPlotController> PlotControllers = [];
 
     /// <summary>
-    /// Adds a new synchronization set to the existing ones.
+    /// Registers and thereby stores a new synchronization set.
     /// </summary>
     /// <param name="controller">The new synchronization set.</param>
     /// <returns>A Boolean representing whether the operation was successful or not.
@@ -29,7 +29,7 @@ public static class PlotControllerManager
     }
     
     /// <summary>
-    /// Removes an  already existing and stored synchronization set from the existing ones.
+    /// Removes an already existing and registered synchronization set from the existing ones.
     /// </summary>
     /// <param name="controller">The synchronization set to be removed.</param>
     /// <returns>A Boolean representing whether the operation was successful or not.

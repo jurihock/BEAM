@@ -21,7 +21,7 @@ public class SyncedPlotController
     private List<Manipulator> Manipulators { get; init; } = [];
     
     /// <summary>
-    /// Adds a new manipulator which is meant to sync new attributes between plots.
+    /// Registers and thereby adds a new manipulator which is meant to sync new attributes between plots.
     /// It will start syncing all plots which have already been added.
     /// The manipulator will not be removed if it encounters an error with syncing any plot.
     /// Instead, unsyncing all plots will be attempted.
@@ -51,7 +51,7 @@ public class SyncedPlotController
     /// It will unsync all plots which have already been added by this controller.
     /// The manipulator will not be removed if it encounters an error with unsyncing any plot.
     /// </summary>
-    /// <param name="manipulator">The manipulator which is meant to be removed. </param>
+    /// <param name="manipulator">The manipulator which is meant to be removed.</param>
     /// <returns>A Boolean representing whether the operation was successful.
     /// Removing a not previously added manipulator or the manipulator having issues with removing a plot can be sources of errors.</returns>
     public bool Remove(Manipulator manipulator)
@@ -70,7 +70,7 @@ public class SyncedPlotController
     /// <summary>
     /// Adds a new plot to the set of synchronized plots. It will be synced to all manipulators. 
     /// </summary>
-    /// <param name="plot">The neww plot to be added</param>
+    /// <param name="plot">The new plot to be added.</param>
     /// <returns>A Boolean representing whether the operation was successful.
     /// Adding an already existing plot or the manipulators having issues with adding the plot may be sources of errors.</returns>
     public bool AddPlot(AvaPlot plot)
@@ -88,7 +88,7 @@ public class SyncedPlotController
     /// <summary>
     /// Removes a previously added plot from the set of synchronized plots. It will be no longer synced to any manipulators from this controller.
     /// </summary>
-    /// <param name="plot">The plot which is meant to be removed</param>
+    /// <param name="plot">The plot which is meant to be removed.</param>
     /// <returns>A Boolean representing whether the operation was successful.
     /// Removing a not previously added plot or the manipulators having issues with adding the plot may be sources of errors.</returns>
     public bool RemovePlot(AvaPlot plot)

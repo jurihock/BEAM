@@ -13,17 +13,19 @@ public abstract class Manipulator
     /// Adds a plot to the set of synchronised plots. If only one plot has been added so far,
     /// the already added one will be used as a base for any future added plots.
     /// Meaning: The plots which has been added the longest time age should be used as a base.
+    /// Returns true if plot is null.
     /// </summary>
     /// <param name="avaPlot">The plot which will be synced with the existing ones (if any).</param>
     /// <returns>A Boolean representing whether the operation as successful.</returns>
-    public abstract bool SyncPlot(AvaPlot avaPlot);
+    public abstract bool SyncPlot(AvaPlot? avaPlot);
     
     /// <summary>
-    /// Removes a plot from the set of synchronised plots. 
+    /// Removes a plot from the set of synchronised plots.
+    /// Returns true if plot is null.
     /// </summary>
     /// <param name="avaPlot">The plot which will no longer b synced with the existing ones (if any).</param>
     /// <returns>A Boolean representing whether the operation as successful.</returns>
-    public abstract bool UnsyncPlot(AvaPlot avaPlot);
+    public abstract bool UnsyncPlot(AvaPlot? avaPlot);
 
     /// <summary>
     /// Unsync all plots actions according to the attributes this manipulator observers.
@@ -33,12 +35,7 @@ public abstract class Manipulator
     /// <returns>A Boolean representing whether the operation was successful for every plot. False if it failed during any plot's desynchronization.</returns>
     public bool UnsyncAllPlots(IEnumerable<AvaPlot>? plots)
     {
-        if (plots is null)
-        {
-            return true;
-        }
-
-        return plots.All(UnsyncPlot);
+        return plots is null || plots.All(UnsyncPlot);
     }
     
     /// <summary>
@@ -49,11 +46,6 @@ public abstract class Manipulator
     /// <returns>A Boolean representing whether the operation was successful for every plot. False if it failed during any plot's synchronization.</returns>
     public bool SyncAllPlots(IEnumerable<AvaPlot>? plots)
     {
-        if (plots is null)
-        {
-            return true;
-        }
-
-        return plots.All(SyncPlot);
+        return plots is null || plots.All(SyncPlot);
     }
 }
