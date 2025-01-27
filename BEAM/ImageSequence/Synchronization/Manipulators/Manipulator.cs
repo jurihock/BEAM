@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ScottPlot.Avalonia;
 
 namespace BEAM.ImageSequence.Synchronization.Manipulators;
@@ -37,15 +38,7 @@ public abstract class Manipulator
             return true;
         }
 
-        foreach (AvaPlot plot in plots)
-        {
-            if (!UnsyncPlot(plot))
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return plots.All(UnsyncPlot);
     }
     
     /// <summary>
@@ -60,15 +53,7 @@ public abstract class Manipulator
         {
             return true;
         }
-        
-        foreach (AvaPlot plot in plots)
-        {
-            if (!SyncPlot(plot))
-            {
-                return false;
-            }
-        }
 
-        return true;
+        return plots.All(SyncPlot);
     }
 }

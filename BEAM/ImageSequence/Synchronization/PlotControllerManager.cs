@@ -10,7 +10,7 @@ public static class PlotControllerManager
     /// <summary>
     /// All stored <see cref="SyncedPlotController"/>s. Every one represents a set of synchronized plots.
     /// </summary>
-    private static readonly List<SyncedPlotController> PlotControllers = new List<SyncedPlotController>();
+    private static readonly List<SyncedPlotController> PlotControllers = [];
 
     /// <summary>
     /// Adds a new synchronization set to the existing ones.
