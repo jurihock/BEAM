@@ -17,6 +17,9 @@ namespace BEAM.Image.Displayer;
 // TODO: Disposable
 public class SequenceImage
 {
+    private static readonly long SectionHeight = 1000;
+    private static readonly int MinPreloadedSections = 20;
+
     private static readonly SKPaint Paint = new SKPaint() { FilterQuality = SKFilterQuality.None };
 
     public class SectionPreview(
@@ -46,7 +49,7 @@ public class SequenceImage
                 if (_cancellationToken.Token.IsCancellationRequested) return;
                 if (scaled && Bitmap is not null)
                 {
-                    /*var tmp = CreateTempBitmap(1, 1, SKColors.Gray.WithAlpha(50));
+                    var tmp = CreateTempBitmap(1, 1, SKColors.Gray.WithAlpha(50));
 
                     var infoBmp = new SKBitmap(new SKImageInfo(Bitmap.Width, Bitmap.Height));
                     using var canvas = new SKCanvas(infoBmp);
@@ -54,7 +57,7 @@ public class SequenceImage
                     canvas.DrawBitmap(tmp, new SKRectI(0, 0, Bitmap.Width, Bitmap.Height), Paint);
 
                     if(_cancellationToken.Token.IsCancellationRequested) return;
-                    Bitmap = infoBmp;*/
+                    Bitmap = infoBmp;
                 }
                 else
                 {
@@ -96,26 +99,22 @@ public class SequenceImage
     {
         _avaPlot = avaPlot;
         _sequence = sequence;
-        const int initialHeight = 1000;
-        for (var i = 0; i < 11; i++)
+        for (var i = 0; i < MinPreloadedSections; i++)
         {
-            _sectionPreviews.Add(new SectionPreview(i * initialHeight, this));
-            _sectionPreviews[i].Render(_sequence, 0.25, initialHeight, avaPlot, false);
+            _sectionPreviews.Add(new SectionPreview(i * SectionHeight, this));
+            _sectionPreviews[i].Render(_sequence, 0.25, SectionHeight, avaPlot, false);
         }
     }
 
-    private long? lastMinY, lastMaxY;
-    private int i;
-
     public void Update(long minY, long maxY, int canvasHeight)
     {
-        // TODO: Zooming
-        if (lastMinY is null || lastMaxY is null)
-        {
-            lastMinY = minY;
-            lastMaxY = maxY;
-            return;
-        }
+        var scale = Math.Min((double)canvasHeight / (maxY - minY), 1);
+
+        // make 4 scales
+        scale *= 4;
+        scale = Math.Round(scale);
+        scale /= 4;
+        scale = Math.Max(0.25, scale);
 
         var renderedRange = _GetPreviewYRange();
         var visibleRangeMid = (maxY - minY) / 2 + minY;
@@ -125,7 +124,7 @@ public class SequenceImage
         // preload down
         if ((positionInRenderedRange > 0.66 || renderedRange.max < maxY) && renderedRange.max < _sequence.Shape.Height)
         {
-            while (GetPreviewCount() > 20 && _sectionPreviews[0].YEnd < minY)
+            while (GetPreviewCount() > MinPreloadedSections && _sectionPreviews[0].YEnd < minY)
             {
                 _sectionPreviews[0].Dispose();
                 _sectionPreviews.RemoveAt(0);
@@ -134,39 +133,36 @@ public class SequenceImage
             // add image down below
             var preview = new SectionPreview(renderedRange.max, this);
             _sectionPreviews.Add(preview);
-            var range = Math.Min(1000, _sequence.Shape.Height - renderedRange.max);
+            var range = Math.Min(SectionHeight, _sequence.Shape.Height - renderedRange.max);
             preview.Render(_sequence, 0.25, range, _avaPlot, false);
-
-            renderedRange = _GetPreviewYRange();
-            visibleRangeMid = (maxY - minY) / 2 + minY;
-            positionInRenderedRange =
-                (double)(visibleRangeMid - renderedRange.min) / (renderedRange.max - renderedRange.min);
         }
 
         // preload up
         if ((positionInRenderedRange < 0.33 || renderedRange.min > minY) && renderedRange.min > 0)
         {
-            while (GetPreviewCount() > 20 && _sectionPreviews[^1].YStart > maxY)
+            while (GetPreviewCount() > MinPreloadedSections && _sectionPreviews[^1].YStart > maxY)
             {
                 _sectionPreviews[^1].Dispose();
                 _sectionPreviews.RemoveAt(_sectionPreviews.Count - 1);
             }
 
             // add an image above
-            var start = Math.Max(renderedRange.min - 1000, 0);
+            var start = Math.Max(renderedRange.min - SectionHeight, 0);
             var preview = new SectionPreview(start, this);
             _sectionPreviews.Insert(0, preview);
 
-            var range = Math.Min(1000, renderedRange.min);
+            var range = Math.Min(SectionHeight, renderedRange.min);
             preview.Render(_sequence, 0.25, range, _avaPlot, false);
-            renderedRange = _GetPreviewYRange();
-            visibleRangeMid = (maxY - minY) / 2 + minY;
-            positionInRenderedRange =
-                (double)(visibleRangeMid - renderedRange.min) / (renderedRange.max - renderedRange.min);
         }
 
-        lastMinY = minY;
-        lastMaxY = maxY;
+        // account for zooming
+        foreach (var preview in _sectionPreviews.Where((preview) =>
+                     (preview.YStart >= minY && preview.YStart <= maxY ||
+                      preview.YEnd >= minY && preview.YEnd <= maxY ||
+                      preview.YStart <= minY && preview.YEnd >= maxY) && preview.Scale < scale))
+        {
+            preview.Render(_sequence, scale, preview.YEnd - preview.YStart, _avaPlot, true);
+        }
     }
 
     public SKBitmap GetImage(long startX, long endX, long startLine, long endLine, int width, int height,
