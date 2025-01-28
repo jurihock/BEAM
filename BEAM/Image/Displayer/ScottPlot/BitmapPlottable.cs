@@ -35,9 +35,9 @@ public sealed class BitmapPlottable(Sequence sequence, AvaPlot avaPlot) : IPlott
         using SKPaint paint = new();
         paint.FilterQuality = SKFilterQuality.None;
 
-        for (var i = 0; i < _image.GetPreviewCount(); i++)
+        for (var i = 0; i < _image.GetRenderedPartsCount(); i++)
         {
-            var preview = _image.GetPreview(i);
+            var preview = _image.GetRenderedPart(i);
             if (preview?.Bitmap is null) continue;
 
             var coordinateRect = new CoordinateRect()

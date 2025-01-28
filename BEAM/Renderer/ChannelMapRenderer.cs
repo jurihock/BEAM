@@ -68,7 +68,7 @@ public class ChannelMapRenderer : SequenceRenderer
 
         for (var x = 0; x < xs.Length; x++)
         {
-            if (tokenSource?.IsCancellationRequested ?? false) return data;
+            tokenSource?.Token.ThrowIfCancellationRequested();
             var colors = NormailizeIntensity(Vector256.Create([
                 img.GetPixel(x, 0, ChannelRed),
                 img.GetPixel(x, 0, ChannelGreen),

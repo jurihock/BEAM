@@ -95,7 +95,7 @@ public abstract class HeatMapRenderer : SequenceRenderer
         // TODO: SIMD
         for (var i = 0; i < xs.Length; i++)
         {
-            if (tokenSource?.IsCancellationRequested ?? false) return data;
+            tokenSource?.Token.ThrowIfCancellationRequested();
 
             var color = GetColor(img.GetPixel(i, 0, 0), MinimumOfIntensityRange, MaximumOfIntensityRange);
             data[i, 0] = color[0];
