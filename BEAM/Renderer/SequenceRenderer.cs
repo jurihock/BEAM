@@ -61,7 +61,7 @@ public abstract class SequenceRenderer
     }
 
     public abstract byte[] RenderPixel(Sequence sequence, long x, long y);
-    public abstract byte[,] RenderPixels(Sequence sequence, long[] xs, long y);
+    public abstract byte[,] RenderPixels(Sequence sequence, long[] xs, long y, CancellationTokenSource? tokenSource = null);
 
     protected abstract RenderTypes GetRenderType();
 

@@ -1,4 +1,5 @@
-﻿using BEAM.Exceptions;
+﻿using System.Threading;
+using BEAM.Exceptions;
 using BEAM.ImageSequence;
 
 namespace BEAM.Renderer;
@@ -20,6 +21,7 @@ public abstract class HeatMapRenderer : SequenceRenderer
 
     // The highest absolute intensity that is represented with the coldest color.
     private double _absMaxColdestIntensity;
+
     // The lowest absolute intensity that is represented with the hottest color.
     private double _absMinHottestIntensity;
 
@@ -61,11 +63,11 @@ public abstract class HeatMapRenderer : SequenceRenderer
             }
             else
             {
-                throw new InvalidUserArgumentException("The upper bound of temperature must be between lower bound and 1!");
+                throw new InvalidUserArgumentException(
+                    "The upper bound of temperature must be between lower bound and 1!");
             }
         }
     }
-
 
 
     protected HeatMapRenderer(int minimumOfIntensityRange, int maximumOfIntensityRange, int channel,
@@ -79,13 +81,13 @@ public abstract class HeatMapRenderer : SequenceRenderer
 
     public override byte[] RenderPixel(Sequence sequence, long x, long y)
     {
-
         return GetColor(sequence.GetPixel(x, y, Channel),
             IntensityRange * RelMaxColdestIntensity + MinimumOfIntensityRange,
             IntensityRange * RelMinHottestIntensity + MinimumOfIntensityRange);
     }
 
-    public override byte[,] RenderPixels(Sequence sequence, long[] xs, long y)
+    public override byte[,] RenderPixels(Sequence sequence, long[] xs, long y,
+        CancellationTokenSource? tokenSource = null)
     {
         var data = new byte[xs.Length, 4];
         var img = sequence.GetPixelLineData(xs, y, [Channel]);
@@ -93,6 +95,8 @@ public abstract class HeatMapRenderer : SequenceRenderer
         // TODO: SIMD
         for (var i = 0; i < xs.Length; i++)
         {
+            if (tokenSource?.IsCancellationRequested ?? false) return data;
+
             var color = GetColor(img.GetPixel(i, 0, 0), MinimumOfIntensityRange, MaximumOfIntensityRange);
             data[i, 0] = color[0];
             data[i, 1] = color[1];

@@ -177,8 +177,7 @@ public class SequenceImage
                 xs[i] = startX + i * (endX - startX) / width;
             }
 
-            //var data = renderer.RenderPixels(_sequence, xs, line, tokenSource);
-            var data = renderer.RenderPixels(_sequence, xs, line);
+            var data = renderer.RenderPixels(_sequence, xs, line, tokenSource);
 
             var span = bitmap.GetPixelSpan();
             var pixels = MemoryMarshal.Cast<byte, BGRA>(span);

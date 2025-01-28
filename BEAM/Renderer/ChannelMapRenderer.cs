@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Intrinsics;
+using System.Threading;
 using BEAM.Exceptions;
 using BEAM.Image;
 using BEAM.ImageSequence;
@@ -60,13 +61,14 @@ public class ChannelMapRenderer : SequenceRenderer
     /// <param name="xs"></param>
     /// <param name="y"></param>
     /// <returns>[x, argb]</returns>
-    public override byte[,] RenderPixels(Sequence sequence, long[] xs, long y)
+    public override byte[,] RenderPixels(Sequence sequence, long[] xs, long y, CancellationTokenSource? tokenSource = null)
     {
         var data = new byte[xs.Length, 4];
         var img = sequence.GetPixelLineData(xs, y, [ChannelRed, ChannelGreen, ChannelBlue]);
 
         for (var x = 0; x < xs.Length; x++)
         {
+            if (tokenSource?.IsCancellationRequested ?? false) return data;
             var colors = NormailizeIntensity(Vector256.Create([
                 img.GetPixel(x, 0, ChannelRed),
                 img.GetPixel(x, 0, ChannelGreen),
