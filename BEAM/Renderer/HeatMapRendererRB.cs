@@ -71,7 +71,8 @@ public class HeatMapRendererRB : HeatMapRenderer
     /// <exception cref="InvalidUserArgumentException"></exception>
     protected override SequenceRenderer Create(int minimumOfIntensityRange, int maximumOfIntensityRange, double[] displayParameters)
     {
-        if (!CheckParameters(displayParameters))
+        // TODO remove null
+        if (!CheckParameters(displayParameters, null))
         {
             throw new InvalidUserArgumentException("Display parameters are invalid.");
         };

@@ -24,7 +24,7 @@ public class ChannelMapRenderer : SequenceRenderer
     public int ChannelRed { get; set; }
     public int ChannelGreen { get; set; }
     public int ChannelBlue { get; set; }
-    
+
     //TODO: RGBA or ARGB?
     /// <summary>
     /// Create the RGBA value for a given pixel of a sequence
@@ -67,7 +67,7 @@ public class ChannelMapRenderer : SequenceRenderer
 
         for (var x = 0; x < xs.Length; x++)
         {
-            var colors = NormalizeIntensity(Vector256.Create([
+            var colors = NormailizeIntensity(Vector256.Create([
                 img.GetPixel(x, 0, ChannelRed),
                 img.GetPixel(x, 0, ChannelGreen),
                 img.GetPixel(x, 0, ChannelBlue),
@@ -81,7 +81,7 @@ public class ChannelMapRenderer : SequenceRenderer
         }
         return data;
     }
-    
+
     protected override RenderTypes GetRenderType()
     {
         return RenderTypes.ChannelMapRenderer;
@@ -89,7 +89,8 @@ public class ChannelMapRenderer : SequenceRenderer
 
     protected override SequenceRenderer Create(int minimumOfIntensityRange, int maximumOfIntensityRange, double[] displayParameters)
     {
-        if (!CheckParameters(displayParameters))
+        // TODO remove null
+        if (!CheckParameters(displayParameters, null))
         {
             throw new InvalidUserArgumentException("Display parameters are invalid.");
         };
@@ -112,13 +113,22 @@ public class ChannelMapRenderer : SequenceRenderer
     protected override bool CheckParameters(double[] displayParameters, IImage image)
     {
         if (displayParameters.Length != 3
-            || displayParameters[0] < 0 
+            || displayParameters[0] < 0
             || displayParameters[1] < 0
             || displayParameters[2] < 0)
         {
             return false;
         }
-        
+
         return true;
+    }
+
+    private Vector256<double> NormailizeIntensity(Vector256<double> intensities)
+    {
+        var minIntensities = Vector256.Create<double>(MinimumOfIntensityRange);
+        var maxIntensities = Vector256.Create<double>(MaximumOfIntensityRange);
+        var multFactor = Vector256.Create<double>(255);
+
+        return (intensities - minIntensities) / (maxIntensities - minIntensities) * multFactor;
     }
 }

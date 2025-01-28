@@ -7,32 +7,60 @@ using System.Linq;
 using System.Threading.Tasks;
 using BEAM.Image.Displayer;
 using BEAM.ImageSequence;
+using ScottPlot.Avalonia;
 
 namespace BEAM.IMage.Displayer.Scottplot;
 
-public sealed class BitmapPlottable(Sequence sequence) : IPlottable
+public sealed class BitmapPlottable(Sequence sequence, AvaPlot avaPlot) : IPlottable
 {
     public bool IsVisible { get; set; } = true;
     public IAxes Axes { get; set; } = new Axes();
     public IEnumerable<LegendItem> LegendItems => Enumerable.Empty<LegendItem>();
 
-    private readonly SequenceImage _image = new(sequence);
+    private readonly SequenceImage _image = new(sequence, avaPlot);
 
     public AxisLimits GetAxisLimits()
     {
-        return new AxisLimits(0, sequence.Shape.Width, 0, sequence.Shape.Width);
+        //return new AxisLimits(0, sequence.Shape.Width, 0, sequence.Shape.Width);
+        return new AxisLimits(0, sequence.Shape.Width, sequence.Shape.Width / 2, -sequence.Shape.Width / 2);
     }
 
     public void Render(RenderPack rp)
     {
         rp.Plot.Axes.InvertY();
 
+        // min <-> max flipped since inverted Y axis
+        var minY = rp.Plot.Grid.YAxis.Max;
+        var maxY = rp.Plot.Grid.YAxis.Min;
+        _image.Update((long) minY, (long) maxY, rp.Canvas.DeviceClipBounds.Width, rp.Canvas.DeviceClipBounds.Height);
+
+        // drawing the images
+        using SKPaint paint = new();
+        paint.FilterQuality = SKFilterQuality.None;
+
+        for(var i = 0; i < _image.GetPreviewCount(); i++)
+        {
+            var preview = _image.GetPreview(i);
+
+            var coordinateRect = new CoordinateRect()
+            {
+                Left = 0,
+                Right = sequence.Shape.Width,
+                Top = preview.YPos,
+                Bottom = preview.YPos + preview.RenderHeight,
+            };
+
+            var dest = Axes.GetPixelRect(coordinateRect);
+            rp.Canvas.DrawBitmap(preview.Bitmap, dest.ToSKRect(), paint);
+        }
+
+        /*
         // TODO: FIX PANNING PIXELS
         var screenWidth = rp.Canvas.DeviceClipBounds.Width;
         var screenHeight = rp.Canvas.DeviceClipBounds.Height;
 
         var cropXMin = rp.Plot.Grid.XAxis.Min;
-        var cropXMax = rp.Plot.Grid.XAxis.Max;
+        var cropXMax = rp.Plot.Grid.XAxis.Max;SKP
         var cropYMin = rp.Plot.Grid.YAxis.Min;
         var cropYMax = rp.Plot.Grid.YAxis.Max;
 
