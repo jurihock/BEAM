@@ -1,10 +1,7 @@
-using System;
 using ScottPlot;
 using SkiaSharp;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using BEAM.Image.Displayer;
 using BEAM.ImageSequence;
 using ScottPlot.Avalonia;
@@ -32,22 +29,23 @@ public sealed class BitmapPlottable(Sequence sequence, AvaPlot avaPlot) : IPlott
         // min <-> max flipped since inverted Y axis
         var minY = rp.Plot.Grid.YAxis.Max;
         var maxY = rp.Plot.Grid.YAxis.Min;
-        _image.Update((long) minY, (long) maxY, rp.Canvas.DeviceClipBounds.Width, rp.Canvas.DeviceClipBounds.Height);
+        _image.Update((long)minY, (long)maxY, rp.Canvas.DeviceClipBounds.Height);
 
         // drawing the images
         using SKPaint paint = new();
         paint.FilterQuality = SKFilterQuality.None;
 
-        for(var i = 0; i < _image.GetPreviewCount(); i++)
+        for (var i = 0; i < _image.GetPreviewCount(); i++)
         {
             var preview = _image.GetPreview(i);
+            //if (preview.Bitmap is null) continue;
 
             var coordinateRect = new CoordinateRect()
             {
                 Left = 0,
                 Right = sequence.Shape.Width,
-                Top = preview.YPos,
-                Bottom = preview.YPos + preview.RenderHeight,
+                Top = preview.YStart,
+                Bottom = preview.YEnd,
             };
 
             var dest = Axes.GetPixelRect(coordinateRect);
