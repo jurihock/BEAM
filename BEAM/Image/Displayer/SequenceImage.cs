@@ -134,24 +134,24 @@ public class SequenceImage : IDisposable
         }
     }
 
-    private List<SequencePart> _sectionPreviews = [];
+    private List<SequencePart> _sequenceParts = [];
 
     /// <summary>
     /// Gets a rendered sequence part.
     /// </summary>
     /// <param name="index">The index of the part</param>
     /// <returns>A rendered sequence part</returns>
-    public SequencePart GetRenderedPart(int index) => _sectionPreviews[index];
+    public SequencePart GetRenderedPart(int index) => _sequenceParts[index];
 
     /// <summary>
     /// Gets the amount of sequence parts rendered.
     /// </summary>
     /// <returns></returns>
-    public int GetRenderedPartsCount() => _sectionPreviews.Count;
+    public int GetRenderedPartsCount() => _sequenceParts.Count;
 
     private (long min, long max) _GetPreviewYRange()
     {
-        return (_sectionPreviews[0].YStart, _sectionPreviews[^1].YEnd);
+        return (_sequenceParts[0].YStart, _sequenceParts[^1].YEnd);
     }
 
     private readonly Sequence _sequence;
@@ -169,8 +169,8 @@ public class SequenceImage : IDisposable
         MinPreloadedSections = Math.Min(MinPreloadedSections, (int)(_sequence.Shape.Height / SectionHeight));
         for (var i = 0; i < MinPreloadedSections; i++)
         {
-            _sectionPreviews.Add(new SequencePart(_sequence, this, i * SectionHeight));
-            _sectionPreviews[i].Render(0.25, SectionHeight, avaPlot, false);
+            _sequenceParts.Add(new SequencePart(_sequence, this, i * SectionHeight));
+            _sequenceParts[i].Render(0.25, SectionHeight, avaPlot, false);
         }
     }
 
@@ -201,15 +201,15 @@ public class SequenceImage : IDisposable
         if ((positionInRenderedRange > 0.66 || renderedRange.max < maxY) && renderedRange.max < _sequence.Shape.Height)
         {
             // removes invisible images if necessary
-            while (GetRenderedPartsCount() > MinPreloadedSections && _sectionPreviews[0].YEnd < minY)
+            while (GetRenderedPartsCount() > MinPreloadedSections && _sequenceParts[0].YEnd < minY)
             {
-                _sectionPreviews[0].Dispose();
-                _sectionPreviews.RemoveAt(0);
+                _sequenceParts[0].Dispose();
+                _sequenceParts.RemoveAt(0);
             }
 
             // add image
             var preview = new SequencePart(_sequence, this, renderedRange.max);
-            _sectionPreviews.Add(preview);
+            _sequenceParts.Add(preview);
             var range = Math.Min(SectionHeight, _sequence.Shape.Height - renderedRange.max);
             preview.Render(0.25, range, _avaPlot, false);
         }
@@ -219,23 +219,23 @@ public class SequenceImage : IDisposable
         if ((positionInRenderedRange < 0.33 || renderedRange.min > minY) && renderedRange.min > 0)
         {
             // removes invisible images if necessary
-            while (GetRenderedPartsCount() > MinPreloadedSections && _sectionPreviews[^1].YStart > maxY)
+            while (GetRenderedPartsCount() > MinPreloadedSections && _sequenceParts[^1].YStart > maxY)
             {
-                _sectionPreviews[^1].Dispose();
-                _sectionPreviews.RemoveAt(_sectionPreviews.Count - 1);
+                _sequenceParts[^1].Dispose();
+                _sequenceParts.RemoveAt(_sequenceParts.Count - 1);
             }
 
             // add image
             var start = Math.Max(renderedRange.min - SectionHeight, 0);
             var preview = new SequencePart(_sequence, this, start);
-            _sectionPreviews.Insert(0, preview);
+            _sequenceParts.Insert(0, preview);
 
             var range = Math.Min(SectionHeight, renderedRange.min);
             preview.Render(0.25, range, _avaPlot, false);
         }
 
         // account for zooming
-        foreach (var preview in _sectionPreviews.Where((preview) =>
+        foreach (var preview in _sequenceParts.Where((preview) =>
                      (preview.YStart >= minY && preview.YStart <= maxY ||
                       preview.YEnd >= minY && preview.YEnd <= maxY ||
                       preview.YStart <= minY && preview.YEnd >= maxY) && preview.Scale < scale))
@@ -248,10 +248,10 @@ public class SequenceImage : IDisposable
     public void Dispose()
     {
         // doing cleanup
-        for (var i = _sectionPreviews.Count - 1; i >= 0; i--)
+        for (var i = _sequenceParts.Count - 1; i >= 0; i--)
         {
-            _sectionPreviews[i].Dispose();
-            _sectionPreviews.RemoveAt(i);
+            _sequenceParts[i].Dispose();
+            _sequenceParts.RemoveAt(i);
         }
 
         _sequence.Dispose();
