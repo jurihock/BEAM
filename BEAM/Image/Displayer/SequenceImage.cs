@@ -161,15 +161,17 @@ public class SequenceImage : IDisposable
     /// Creates a new SequenceImage and starts rendering at position 0.
     /// </summary>
     /// <param name="sequence">The sequence used</param>
+    /// <param name="startLine">The line to start the view from</param>
     /// <param name="avaPlot">The plot to refresh on when background rendering is finished</param>
-    public SequenceImage(Sequence sequence, AvaPlot avaPlot)
+    public SequenceImage(Sequence sequence, long startLine, AvaPlot avaPlot)
     {
+        startLine = Math.Clamp(startLine, 0, sequence.Shape.Height);
         _avaPlot = avaPlot;
         _sequence = sequence;
         MinPreloadedSections = Math.Min(MinPreloadedSections, (int)(_sequence.Shape.Height / SectionHeight));
         for (var i = 0; i < MinPreloadedSections; i++)
         {
-            _sequenceParts.Add(new SequencePart(_sequence, this, i * SectionHeight));
+            _sequenceParts.Add(new SequencePart(_sequence, this, i * SectionHeight + startLine));
             _sequenceParts[i].Render(0.25, SectionHeight, avaPlot, false);
         }
     }

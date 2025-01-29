@@ -9,18 +9,18 @@ using ScottPlot.Avalonia;
 
 namespace BEAM.IMage.Displayer.Scottplot;
 
-public sealed class BitmapPlottable(Sequence sequence, AvaPlot avaPlot) : IPlottable
+public sealed class BitmapPlottable(Sequence sequence, AvaPlot avaPlot, long startLine=0) : IPlottable
 {
     public bool IsVisible { get; set; } = true;
     public IAxes Axes { get; set; } = new Axes();
     public IEnumerable<LegendItem> LegendItems => Enumerable.Empty<LegendItem>();
 
-    private readonly SequenceImage _image = new(sequence, avaPlot);
+    private readonly SequenceImage _image = new(sequence, startLine, avaPlot);
 
     public AxisLimits GetAxisLimits()
     {
         //return new AxisLimits(0, sequence.Shape.Width, 0, sequence.Shape.Width);
-        return new AxisLimits(0, sequence.Shape.Width, Math.Floor(sequence.Shape.Width / 2.0), Math.Floor(-sequence.Shape.Width / 2.0));
+        return new AxisLimits(0, sequence.Shape.Width, Math.Floor(sequence.Shape.Width / 2.0) + startLine, Math.Floor(-sequence.Shape.Width / 2.0) + startLine);
     }
 
     public void Render(RenderPack rp)
