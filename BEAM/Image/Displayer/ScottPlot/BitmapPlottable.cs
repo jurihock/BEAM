@@ -9,13 +9,13 @@ using ScottPlot.Avalonia;
 
 namespace BEAM.IMage.Displayer.Scottplot;
 
-public sealed class BitmapPlottable(Sequence sequence, AvaPlot avaPlot, long startLine=0) : IPlottable
+public sealed class BitmapPlottable(Sequence sequence, long startLine=0) : IPlottable
 {
     public bool IsVisible { get; set; } = true;
     public IAxes Axes { get; set; } = new Axes();
     public IEnumerable<LegendItem> LegendItems => Enumerable.Empty<LegendItem>();
 
-    private readonly SequenceImage _image = new(sequence, startLine, avaPlot);
+    public readonly SequenceImage SequenceImage = new(sequence, startLine);
 
     public AxisLimits GetAxisLimits()
     {
@@ -30,15 +30,15 @@ public sealed class BitmapPlottable(Sequence sequence, AvaPlot avaPlot, long sta
         // min <-> max flipped since inverted Y axis
         var minY = rp.Plot.Grid.YAxis.Max;
         var maxY = rp.Plot.Grid.YAxis.Min;
-        _image.Update((long)minY, (long)maxY, rp.Canvas.DeviceClipBounds.Height);
+        SequenceImage.Update((long)minY, (long)maxY, rp.Canvas.DeviceClipBounds.Height);
 
         // drawing the images
         using SKPaint paint = new();
         paint.FilterQuality = SKFilterQuality.None;
 
-        for (var i = 0; i < _image.GetRenderedPartsCount(); i++)
+        for (var i = 0; i < SequenceImage.GetRenderedPartsCount(); i++)
         {
-            var preview = _image.GetRenderedPart(i);
+            var preview = SequenceImage.GetRenderedPart(i);
             if (preview?.Bitmap is null) continue;
 
             var coordinateRect = new CoordinateRect()

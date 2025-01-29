@@ -29,6 +29,8 @@ public class SequenceImage : IDisposable
     /// </summary>
     private int MinPreloadedSections = 20;
 
+    public event EventHandler<RequestRefreshPlotEventArgs> RequestRefreshPlotEvent;
+
     /// <summary>
     /// A class representing a rendered part of a sequence, complete with rendering functionality.
     /// </summary>
@@ -70,7 +72,7 @@ public class SequenceImage : IDisposable
         /// <param name="yRange">The amount of lines to render</param>
         /// <param name="plot">The plot to refresh after rendering has finished</param>
         /// <param name="scaled">Whether the rendering takes place because of a scaling operation of the view.</param>
-        public void Render(double resolutionScale, long yRange, AvaPlot plot, bool scaled)
+        public void Render(double resolutionScale, long yRange, bool scaled)
         {
             // TODO: find a true way to cancel and restart the operation
             _cancellationToken?.Cancel();
@@ -116,7 +118,7 @@ public class SequenceImage : IDisposable
 
                     Bitmap = bmp;
                     _bitmap = bmp;
-                    plot.Refresh();
+                    seqImg.RequestRefreshPlotEvent.Invoke(this, new RequestRefreshPlotEventArgs());
                 }
                 catch (OperationCanceledException)
                 {
@@ -155,7 +157,6 @@ public class SequenceImage : IDisposable
     }
 
     private readonly Sequence _sequence;
-    private readonly AvaPlot _avaPlot;
 
     /// <summary>
     /// Creates a new SequenceImage and starts rendering at position 0.
@@ -163,16 +164,15 @@ public class SequenceImage : IDisposable
     /// <param name="sequence">The sequence used</param>
     /// <param name="startLine">The line to start the view from</param>
     /// <param name="avaPlot">The plot to refresh on when background rendering is finished</param>
-    public SequenceImage(Sequence sequence, long startLine, AvaPlot avaPlot)
+    public SequenceImage(Sequence sequence, long startLine)
     {
         startLine = Math.Clamp(startLine, 0, sequence.Shape.Height);
-        _avaPlot = avaPlot;
         _sequence = sequence;
         MinPreloadedSections = Math.Min(MinPreloadedSections, (int)(_sequence.Shape.Height / SectionHeight));
         for (var i = 0; i < MinPreloadedSections; i++)
         {
             _sequenceParts.Add(new SequencePart(_sequence, this, i * SectionHeight + startLine));
-            _sequenceParts[i].Render(0.25, SectionHeight, avaPlot, false);
+            _sequenceParts[i].Render(0.25, SectionHeight, false);
         }
     }
 
@@ -215,7 +215,7 @@ public class SequenceImage : IDisposable
             var preview = new SequencePart(_sequence, this, renderedRange.max);
             _sequenceParts.Add(preview);
             var range = Math.Min(SectionHeight, _sequence.Shape.Height - renderedRange.max);
-            preview.Render(0.25, range, _avaPlot, false);
+            preview.Render(0.25, range, false);
         }
 
         // basically the same as previous, but for the other side of the view
@@ -235,7 +235,7 @@ public class SequenceImage : IDisposable
             _sequenceParts.Insert(0, preview);
 
             var range = Math.Min(SectionHeight, renderedRange.min);
-            preview.Render(0.25, range, _avaPlot, false);
+            preview.Render(0.25, range, false);
         }
 
         // account for zooming
@@ -245,7 +245,7 @@ public class SequenceImage : IDisposable
                       preview.YStart <= minY && preview.YEnd >= maxY) && preview.Scale < scale))
         {
             // rerender part if scale is not up to date
-            preview.Render(scale, preview.YEnd - preview.YStart, _avaPlot, true);
+            preview.Render(scale, preview.YEnd - preview.YStart, true);
         }
     }
 
