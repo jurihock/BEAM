@@ -290,21 +290,20 @@ public class SequenceImage : IDisposable
 
         BgraBitmap bitmap = new(width, height);
 
-        // using parallelism
+        // calculating all x positions actually processed
+        var xs = new long[width];
+        for (var i = 0; i < width; i++)
+        {
+            xs[i] = startX + i * (endX - startX) / width;
+        }
 
+        // using parallelism to render
         Parallel.For(0, height, j =>
         {
             try
             {
                 // calculating the actual line currently processed
                 var line = startLine + j * (endLine - startLine) / height;
-
-                // calculating all x positions actually processed
-                var xs = new long[width];
-                for (var i = 0; i < width; i++)
-                {
-                    xs[i] = startX + i * (endX - startX) / width;
-                }
 
                 // rendering each pixel using a renderer
                 var data = renderer.RenderPixels(_sequence, xs, line, tokenSource);
@@ -315,7 +314,7 @@ public class SequenceImage : IDisposable
                 // putting the data inside the bitmap
                 for (var i = 0; i < width; i++)
                 {
-                    if (tokenSource?.IsCancellationRequested ?? false) return;
+                    tokenSource?.Token.ThrowIfCancellationRequested();
                     pixels[j * width + i] = new BGRA()
                     {
                         R = data[i, 1],
