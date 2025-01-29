@@ -64,22 +64,26 @@ public class ChannelMapRenderer : SequenceRenderer
     public override byte[,] RenderPixels(Sequence sequence, long[] xs, long y, CancellationTokenSource? tokenSource = null)
     {
         var data = new byte[xs.Length, 4];
-        var img = sequence.GetPixelLineData(xs, y, [ChannelRed, ChannelGreen, ChannelBlue]);
+        var img = sequence.GetPixelLineData(xs, y, [ChannelBlue, ChannelGreen, ChannelRed]);
 
         for (var x = 0; x < xs.Length; x++)
         {
             tokenSource?.Token.ThrowIfCancellationRequested();
             var colors = NormailizeIntensity(Vector256.Create([
-                img.GetPixel(x, 0, ChannelRed),
-                img.GetPixel(x, 0, ChannelGreen),
                 img.GetPixel(x, 0, ChannelBlue),
+                img.GetPixel(x, 0, ChannelGreen),
+                img.GetPixel(x, 0, ChannelRed),
                 0
             ]));
 
-            data[x, 0] = 255;
-            data[x, 1] = (byte)colors[0];
-            data[x, 2] = (byte)colors[1];
-            data[x, 3] = (byte)colors[2];
+            // b
+            data[x, 0] = (byte)colors[0];
+            // g
+            data[x, 1] = (byte)colors[1];
+            // r
+            data[x, 2] = (byte)colors[2];
+            // a
+            data[x, 3] = 255;
         }
         return data;
     }

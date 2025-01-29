@@ -164,18 +164,20 @@ public class SequenceImage : IDisposable
     /// <param name="sequence">The sequence used</param>
     /// <param name="startLine">The line to start the view from</param>
     /// <param name="sectionHeight">The height (in lines) of an individual sequence part.</param>
-    public SequenceImage(Sequence sequence, long startLine, long sectionHeight=1000)
+    public SequenceImage(Sequence sequence, long startLine, long sectionHeight = 1000)
     {
         _sectionHeight = sectionHeight;
         startLine = Math.Clamp(startLine, 0, sequence.Shape.Height);
         _sequence = sequence;
-        _minPreloadedSections = (int) Math.Min(_minPreloadedSections, Math.Floor((double) _sequence.Shape.Height / _sectionHeight));
+        _minPreloadedSections = (int)Math.Min(_minPreloadedSections,
+            Math.Floor((double)_sequence.Shape.Height / _sectionHeight));
         _minPreloadedSections = Math.Max(_minPreloadedSections, 1);
         for (var i = 0; i < _minPreloadedSections; i++)
         {
             _sequenceParts.Add(new SequencePart(_sequence, this, i * _sectionHeight + startLine));
 
-            var height = Math.Min(_sectionHeight, _sequence.Shape.Height - (_sequenceParts.Count > 1 ? _sequenceParts[^1].YEnd : 0));
+            var height = Math.Min(_sectionHeight,
+                _sequence.Shape.Height - (_sequenceParts.Count > 1 ? _sequenceParts[^1].YEnd : 0));
             _sequenceParts[i].Render(0.25, height, false);
         }
     }
@@ -307,35 +309,37 @@ public class SequenceImage : IDisposable
 
         // using parallelism to render
         Parallel.For(0, height, j =>
-        {
-            try
             {
-                // calculating the actual line currently processed
-                var line = startLine + j * (endLine - startLine) / height;
-
-                // rendering each pixel using a renderer
-                var data = renderer.RenderPixels(_sequence, xs, line, tokenSource);
-
-                var span = bitmap.GetPixelSpan();
-                var pixels = MemoryMarshal.Cast<byte, BGRA>(span);
-
-                // putting the data inside the bitmap
-                for (var i = 0; i < width; i++)
+                //for(var j = 0; j < height; j++) {
+                try
                 {
-                    tokenSource?.Token.ThrowIfCancellationRequested();
-                    pixels[j * width + i] = new BGRA()
+                    // calculating the actual line currently processed
+                    var line = startLine + j * (endLine - startLine) / height;
+
+                    // rendering each pixel using a renderer
+                    var data = renderer.RenderPixels(_sequence, xs, line, tokenSource);
+
+                    var span = bitmap.GetPixelSpan();
+                    var pixels = MemoryMarshal.Cast<byte, BGRA>(span);
+
+                    // putting the data inside the bitmap
+                    for (var i = 0; i < width; i++)
                     {
-                        R = data[i, 1],
-                        G = data[i, 2],
-                        B = data[i, 3],
-                        A = data[i, 0]
-                    };
+                        tokenSource?.Token.ThrowIfCancellationRequested();
+                        pixels[j * width + i] = new BGRA()
+                        {
+                            B = data[i, 0],
+                            G = data[i, 1],
+                            R = data[i, 2],
+                            A = data[i, 3],
+                        };
+                    }
+                }
+                catch (OperationCanceledException)
+                {
                 }
             }
-            catch (OperationCanceledException)
-            {
-            }
-        });
+        );
 
 
         return bitmap;
