@@ -19,6 +19,7 @@ public class Transformer
     public (long, long) Transform(long originalX, long originalY)
     {
         //reverse the transformation to find the original coordinates of the sequence
+        // Addition of 0.5 for correct rounding of the result
         long transformedX = 
             (long)((_matrix[1][1] * originalX + -_matrix[0][1] * originalY) * _inverseDeterminant - _shift.X + 0.5);
         long transformedY = 
@@ -26,6 +27,7 @@ public class Transformer
         return (transformedX, transformedY);
     }
     
+    //TODO: Test
     public long TransformX(long originalX)
     {
         //reverse the transformation to find the original coordinates of the sequence
@@ -34,6 +36,7 @@ public class Transformer
         return transformedX;
     }
     
+    // TODO: Test
     public long TransformY(long originalY)
     {
         long transformedY = 

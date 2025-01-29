@@ -1,8 +1,6 @@
 ﻿using System;
-using System.IO;
-using System.Runtime.Intrinsics;
-using Avalonia.Media;
 using BEAM.Exceptions;
+using IImage = BEAM.Image.IImage;
 
 namespace BEAM.Renderer;
 
@@ -18,9 +16,13 @@ public class HeatMapRendererRB : HeatMapRenderer
     /// </summary>
     /// <param name="minimumOfIntensityRange"></param>
     /// <param name="maximumOfIntensityRange"></param>
+    /// <param name="relMaxColdestIntensity"></param>
+    /// <param name="relMinHottestIntensity"></param>
     /// <param name="channel"></param>
-    public HeatMapRendererRB(int minimumOfIntensityRange, int maximumOfIntensityRange, int channel) : base(
-        minimumOfIntensityRange, maximumOfIntensityRange, channel)
+    public HeatMapRendererRB(int minimumOfIntensityRange, int maximumOfIntensityRange, 
+        int channel, double relMaxColdestIntensity, double relMinHottestIntensity) : base(
+        minimumOfIntensityRange, maximumOfIntensityRange, 
+        channel, relMaxColdestIntensity, relMinHottestIntensity)
     {
     }
 
@@ -34,10 +36,15 @@ public class HeatMapRendererRB : HeatMapRenderer
 
         if (value < min) // intensity below minimum --> coldest color displayed
         {
-            byte[] cold = [255, 0, 0, 255];
+            byte[] cold = [255, 0, 0, 255]; // Color Blue
             return cold;
         }
-
+        
+        // if max == min, return a mixture of Red and Blue for all pixels, whose intensity = max = min
+        if ((max - min) < 0.001) 
+        {
+            return new byte[] { 255, 127, 0, 127 }; 
+        }
         double range = (max - min);
         double relative = (value - min) / range; // calculate the relative intensity inside the range between min and max --> Normalize
         // the value of the color
@@ -45,5 +52,47 @@ public class HeatMapRendererRB : HeatMapRenderer
 
         byte[] color = [255, intensity, 0, (byte)(255 - intensity)];
         return color;
+    }
+
+    protected override RenderTypes GetRenderType()
+    {
+        return RenderTypes.HeatMapRendererRb;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="minimumOfIntensityRange"></param>
+    /// <param name="maximumOfIntensityRange"></param>
+    /// <param name="displayParameters">
+    /// channel, MaxColdestIntensity, MinHottestIntensity
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="InvalidUserArgumentException"></exception>
+    protected override SequenceRenderer Create(int minimumOfIntensityRange, int maximumOfIntensityRange, double[] displayParameters)
+    {
+        // TODO remove null
+        if (!CheckParameters(displayParameters, null))
+        {
+            throw new InvalidUserArgumentException("Display parameters are invalid.");
+        };
+        return new HeatMapRendererRB(minimumOfIntensityRange, maximumOfIntensityRange, (int)displayParameters[0], displayParameters[1], displayParameters[2]);
+
+    }
+
+    //TODO: Check if channel is in range for given Image, not possible yet, if image not attribute
+    protected override bool CheckParameters(double[] displayParameters, IImage image)
+    {
+        if (displayParameters.Length != 3
+            || displayParameters[0] < 0 // the channel
+            || displayParameters[1] > 1 // maxColdestIntensity
+            || displayParameters[1] < 0
+            || displayParameters[2] < displayParameters[1] // minHottestIntensity
+            || displayParameters[2] > 1)
+        {
+            return false;
+        }
+        
+        return true;
     }
 }

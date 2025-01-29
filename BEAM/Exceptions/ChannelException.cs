@@ -1,4 +1,5 @@
 ﻿using System;
+using BEAM.Log;
 
 namespace BEAM.Exceptions;
 
@@ -6,7 +7,7 @@ namespace BEAM.Exceptions;
 /// This error is thrown when a channel is referenced that does not exist or when the intensity of
 /// a channel value is unexpected / illegal.
 /// </summary>
-public class ChannelException : Exception
+public class ChannelException : BeamException
 {
     public ChannelException() : base()
     {
@@ -16,7 +17,7 @@ public class ChannelException : Exception
     {
     }
 
-    public ChannelException(string message, Exception inner) : base(message, inner)
+    public ChannelException(LogEvent evt, string message) : base(evt, message)
     {
     }
 }

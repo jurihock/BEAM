@@ -6,7 +6,7 @@ namespace BEAM.Exceptions;
 /// <summary>
 /// Not a BeamException
 /// </summary>
-public class InvalidSequenceException : Exception
+public class InvalidSequenceException : BeamException
 {
     public InvalidSequenceException()
     {
@@ -16,7 +16,7 @@ public class InvalidSequenceException : Exception
     {
     }
 
-    public InvalidSequenceException(string message, Exception innerException) : base(message, innerException)
+    public InvalidSequenceException(LogEvent evt, string message) : base(evt, message)
     {
     }
 }
