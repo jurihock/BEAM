@@ -27,9 +27,9 @@ public class SequenceImage : IDisposable
     /// <summary>
     /// The minimum count of loaded sequence excerpts.
     /// </summary>
-    private int MinPreloadedSections = 20;
+    private int _minPreloadedSections = 20;
 
-    public event EventHandler<RequestRefreshPlotEventArgs> RequestRefreshPlotEvent;
+    public event EventHandler<RequestRefreshPlotEventArgs> RequestRefreshPlotEvent = delegate { };
 
     /// <summary>
     /// A class representing a rendered part of a sequence, complete with rendering functionality.
@@ -163,13 +163,12 @@ public class SequenceImage : IDisposable
     /// </summary>
     /// <param name="sequence">The sequence used</param>
     /// <param name="startLine">The line to start the view from</param>
-    /// <param name="avaPlot">The plot to refresh on when background rendering is finished</param>
     public SequenceImage(Sequence sequence, long startLine)
     {
         startLine = Math.Clamp(startLine, 0, sequence.Shape.Height);
         _sequence = sequence;
-        MinPreloadedSections = Math.Min(MinPreloadedSections, (int)(_sequence.Shape.Height / SectionHeight));
-        for (var i = 0; i < MinPreloadedSections; i++)
+        _minPreloadedSections = Math.Min(_minPreloadedSections, (int)(_sequence.Shape.Height / SectionHeight));
+        for (var i = 0; i < _minPreloadedSections; i++)
         {
             _sequenceParts.Add(new SequencePart(_sequence, this, i * SectionHeight + startLine));
             _sequenceParts[i].Render(0.25, SectionHeight, false);
@@ -205,7 +204,7 @@ public class SequenceImage : IDisposable
         if ((positionInRenderedRange > 0.66 || renderedRange.max < maxY) && renderedRange.max < _sequence.Shape.Height)
         {
             // removes invisible images if necessary
-            while (GetRenderedPartsCount() > MinPreloadedSections && _sequenceParts[0].YEnd < minY)
+            while (GetRenderedPartsCount() > _minPreloadedSections && _sequenceParts[0].YEnd < minY)
             {
                 _sequenceParts[0].Dispose();
                 _sequenceParts.RemoveAt(0);
@@ -223,7 +222,7 @@ public class SequenceImage : IDisposable
         if ((positionInRenderedRange < 0.33 || renderedRange.min > minY) && renderedRange.min > 0)
         {
             // removes invisible images if necessary
-            while (GetRenderedPartsCount() > MinPreloadedSections && _sequenceParts[^1].YStart > maxY)
+            while (GetRenderedPartsCount() > _minPreloadedSections && _sequenceParts[^1].YStart > maxY)
             {
                 _sequenceParts[^1].Dispose();
                 _sequenceParts.RemoveAt(_sequenceParts.Count - 1);
