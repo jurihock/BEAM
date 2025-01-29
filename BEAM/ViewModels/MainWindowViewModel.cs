@@ -8,6 +8,8 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Platform.Storage;
 using BEAM.ImageSequence;
+using BEAM.ImageSequence.Synchronization;
+using BEAM.ImageSequence.Synchronization.Manipulators;
 using BEAM.Log;
 using BEAM.Models;
 using BEAM.Views;
@@ -39,10 +41,14 @@ public partial class MainWindowViewModel : ViewModelBase
     public static int TitleBarHeight => 38;
 
     private Logger? _logger;
+    private SyncedPlotController? _syncedPlotController;
 
     public MainWindowViewModel()
     {
         _logger = Logger.GetInstance();
+        _syncedPlotController = new SyncedPlotController();
+        _syncedPlotController.Register(new MouseManipulator());
+        PlotControllerManager.RegisterController(_syncedPlotController);
     }
 
     [RelayCommand]

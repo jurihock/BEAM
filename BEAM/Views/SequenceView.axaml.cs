@@ -8,6 +8,7 @@ using BEAM.Image.Bitmap;
 using BEAM.Image.Displayer;
 using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence;
+using BEAM.ImageSequence.Synchronization;
 using BEAM.Log;
 using BEAM.Profiling;
 using BEAM.ViewModels;
@@ -37,6 +38,7 @@ public partial class SequenceView : UserControl
 
         //var panButton = ScottPlot.Interactivity.StandardMouseButtons.Middle;
         //var panResponse = new ScottPlot.Interactivity.UserActionResponses.MouseDragPan(panButton);
+        PlotControllerManager.AddPlotToAllControllers(AvaPlot1);
         using var _ = Timer.Start();
 
         AvaPlot1.Plot.Axes.InvertY();

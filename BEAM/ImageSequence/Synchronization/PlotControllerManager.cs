@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using ScottPlot.Avalonia;
 
 namespace BEAM.ImageSequence.Synchronization;
 
@@ -43,5 +45,11 @@ public static class PlotControllerManager
         PlotControllers.Remove(controller);
         return true;
     }
+    
+    public static bool AddPlotToAllControllers(AvaPlot plot)
+    {
+        return PlotControllers.All(controller => controller.AddPlot(plot));
+    }
+    
     //TODO: Alternatively add methods for removing plot from every Controller it is included in here
 }
