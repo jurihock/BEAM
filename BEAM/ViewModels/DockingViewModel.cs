@@ -22,7 +22,7 @@ public partial class DockingViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public void Foo()
+    public void OpenInspectionView()
     {
         OpenDock(new InspectionViewModel());
     }
