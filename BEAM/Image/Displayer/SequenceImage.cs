@@ -169,11 +169,14 @@ public class SequenceImage : IDisposable
         _sectionHeight = sectionHeight;
         startLine = Math.Clamp(startLine, 0, sequence.Shape.Height);
         _sequence = sequence;
-        _minPreloadedSections = Math.Min(_minPreloadedSections, (int)(_sequence.Shape.Height / _sectionHeight));
+        _minPreloadedSections = (int) Math.Min(_minPreloadedSections, Math.Floor((double) _sequence.Shape.Height / _sectionHeight));
+        _minPreloadedSections = Math.Max(_minPreloadedSections, 1);
         for (var i = 0; i < _minPreloadedSections; i++)
         {
             _sequenceParts.Add(new SequencePart(_sequence, this, i * _sectionHeight + startLine));
-            _sequenceParts[i].Render(0.25, _sectionHeight, false);
+
+            var height = Math.Min(_sectionHeight, _sequence.Shape.Height - (_sequenceParts.Count > 1 ? _sequenceParts[^1].YEnd : 0));
+            _sequenceParts[i].Render(0.25, height, false);
         }
     }
 
