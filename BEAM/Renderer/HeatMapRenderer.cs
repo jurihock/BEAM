@@ -16,8 +16,8 @@ public abstract class HeatMapRenderer : SequenceRenderer
     /// </summary>
     public int Channel { get; set; }
 
-    private double _relMaxColdestIntensity = 0; // Initialwert von 0
-    private double _relMinHottestIntensity = 1; // Initialwert von 1
+    private double _relMaxColdestIntensity = 0; // initial value
+    private double _relMinHottestIntensity = 1; // initial value
 
     // The highest absolute intensity that is represented with the coldest color.
     private double _absMaxColdestIntensity;
