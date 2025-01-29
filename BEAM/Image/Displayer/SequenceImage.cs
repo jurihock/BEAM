@@ -23,10 +23,11 @@ public class SequenceImage : IDisposable
     /// The height (in lines) of the sub images.
     /// </summary>
     private const long SectionHeight = 1000;
+
     /// <summary>
     /// The minimum count of loaded sequence excerpts.
     /// </summary>
-    private const int MinPreloadedSections = 20;
+    private int MinPreloadedSections = 20;
 
     /// <summary>
     /// A class representing a rendered part of a sequence, complete with rendering functionality.
@@ -42,18 +43,19 @@ public class SequenceImage : IDisposable
         /// The rendered Bitmap of the sequence.
         /// </summary>
         public SKBitmap? Bitmap { get; private set; }
+
         private SKBitmap? _bitmap;
 
         /// <summary>
         /// The start of the excerpt of the rendered sequence.
         /// </summary>
         public long YStart { get; } = yStart;
-        
+
         /// <summary>
         /// The end of the excerpt of the rendered sequence.
         /// </summary>
         public long YEnd { get; private set; }
-        
+
         /// <summary>
         /// The used scale when rendering the corresponding part of the sequence.
         /// </summary>
@@ -133,7 +135,7 @@ public class SequenceImage : IDisposable
     }
 
     private List<SequencePart> _sectionPreviews = [];
-    
+
     /// <summary>
     /// Gets a rendered sequence part.
     /// </summary>
@@ -164,6 +166,7 @@ public class SequenceImage : IDisposable
     {
         _avaPlot = avaPlot;
         _sequence = sequence;
+        MinPreloadedSections = Math.Min(MinPreloadedSections, (int)(_sequence.Shape.Height / SectionHeight));
         for (var i = 0; i < MinPreloadedSections; i++)
         {
             _sectionPreviews.Add(new SequencePart(_sequence, this, i * SectionHeight));
@@ -288,37 +291,45 @@ public class SequenceImage : IDisposable
         BgraBitmap bitmap = new(width, height);
 
         // using parallelism
+
         Parallel.For(0, height, j =>
         {
-            // calculating the actual line currently processed
-            var line = startLine + j * (endLine - startLine) / height;
-
-            // calculating all x positions actually processed
-            var xs = new long[width];
-            for (var i = 0; i < width; i++)
+            try
             {
-                xs[i] = startX + i * (endX - startX) / width;
-            }
+                // calculating the actual line currently processed
+                var line = startLine + j * (endLine - startLine) / height;
 
-            // rendering each pixel using a renderer
-            var data = renderer.RenderPixels(_sequence, xs, line, tokenSource);
-
-            var span = bitmap.GetPixelSpan();
-            var pixels = MemoryMarshal.Cast<byte, BGRA>(span);
-
-            // putting the data inside the bitmap
-            for (var i = 0; i < width; i++)
-            {
-                if (tokenSource?.IsCancellationRequested ?? false) return;
-                pixels[j * width + i] = new BGRA()
+                // calculating all x positions actually processed
+                var xs = new long[width];
+                for (var i = 0; i < width; i++)
                 {
-                    R = data[i, 1],
-                    G = data[i, 2],
-                    B = data[i, 3],
-                    A = data[i, 0]
-                };
+                    xs[i] = startX + i * (endX - startX) / width;
+                }
+
+                // rendering each pixel using a renderer
+                var data = renderer.RenderPixels(_sequence, xs, line, tokenSource);
+
+                var span = bitmap.GetPixelSpan();
+                var pixels = MemoryMarshal.Cast<byte, BGRA>(span);
+
+                // putting the data inside the bitmap
+                for (var i = 0; i < width; i++)
+                {
+                    if (tokenSource?.IsCancellationRequested ?? false) return;
+                    pixels[j * width + i] = new BGRA()
+                    {
+                        R = data[i, 1],
+                        G = data[i, 2],
+                        B = data[i, 3],
+                        A = data[i, 0]
+                    };
+                }
+            }
+            catch (OperationCanceledException)
+            {
             }
         });
+
 
         return bitmap;
     }
