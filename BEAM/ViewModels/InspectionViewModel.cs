@@ -1,12 +1,30 @@
+using System.Threading.Tasks;
 using BEAM.Docking;
+using BEAM.Views.AnalysisView;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 
 namespace BEAM.ViewModels;
 
-public class InspectionViewModel : ViewModelBase, IDockBase
+
+public partial class InspectionViewModel : ViewModelBase, IDockBase
 { 
     private SequenceViewModel CurrentSequence { get; set; }
+
+    /// <summary>
+    /// The current AnalysisView displayed
+    /// </summary>
+    public AbstractAnalysisView CurrentAnalysisView
+    {
+        get =>_currentAnalysisView;
+        set => _currentAnalysisView = value;
+    }
+
+    /// <summary>
+    /// Set the AnalysisView to a default value
+    /// </summary>
+    private AbstractAnalysisView _currentAnalysisView = new BarPlotAnalysisView();
     
     public string Name { get; } = "Inspect";
     
@@ -14,5 +32,12 @@ public class InspectionViewModel : ViewModelBase, IDockBase
     {
         CurrentSequence = startSequence;
     }
-    
+
+
+    // [RelayCommand]
+    // public async Task SetAnalysisView(AbstractAnalysisView abstractAnalysisView)
+    // {
+    //     abstractAnalysisView = new AnalysisViewPlotBars();
+    // }
+
 }
