@@ -73,7 +73,7 @@ public partial class SequenceView : UserControl
         var menu = AvaPlot1.Menu!;
         menu.Clear();
         menu.Add("Inspect Pixel",
-            control => vm.OpenInspectionViewCommand.Execute(null));
+            control => vm.OpenInspectionViewCommand.Execute(vm));
         menu.AddSeparator();
         menu.Add("Sync to this",
             control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));

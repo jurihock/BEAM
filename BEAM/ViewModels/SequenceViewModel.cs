@@ -19,9 +19,9 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     }
 
     [RelayCommand]
-    public async Task OpenInspectionView()
+    public async Task OpenInspectionView(SequenceViewModel sequenceViewModel)
     {
-        DockingVm.OpenDock(new InspectionViewModel());
+        DockingVm.OpenDock(new InspectionViewModel(sequenceViewModel));
     }
     
     public string Name { get; } = "Eine tolle Sequence";
