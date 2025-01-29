@@ -1,3 +1,4 @@
+using System;
 using ScottPlot;
 using SkiaSharp;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ public sealed class BitmapPlottable(Sequence sequence, AvaPlot avaPlot) : IPlott
     public AxisLimits GetAxisLimits()
     {
         //return new AxisLimits(0, sequence.Shape.Width, 0, sequence.Shape.Width);
-        return new AxisLimits(0, sequence.Shape.Width, sequence.Shape.Width / 2, -sequence.Shape.Width / 2);
+        return new AxisLimits(0, sequence.Shape.Width, Math.Floor(sequence.Shape.Width / 2.0), Math.Floor(-sequence.Shape.Width / 2.0));
     }
 
     public void Render(RenderPack rp)
