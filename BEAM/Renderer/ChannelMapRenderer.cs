@@ -89,10 +89,11 @@ public class ChannelMapRenderer : SequenceRenderer
 
     protected override SequenceRenderer Create(int minimumOfIntensityRange, int maximumOfIntensityRange, double[] displayParameters)
     {
+        /*
         if (!CheckParameters(displayParameters))
         {
             throw new InvalidUserArgumentException("Display parameters are invalid.");
-        };
+        };*/
         return new ChannelMapRenderer(
             minimumOfIntensityRange,
             maximumOfIntensityRange,
