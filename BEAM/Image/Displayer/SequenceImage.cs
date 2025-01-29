@@ -22,7 +22,7 @@ public class SequenceImage : IDisposable
     /// <summary>
     /// The height (in lines) of the sub images.
     /// </summary>
-    private const long SectionHeight = 1000;
+    private long _sectionHeight;
 
     /// <summary>
     /// The minimum count of loaded sequence excerpts.
@@ -163,15 +163,17 @@ public class SequenceImage : IDisposable
     /// </summary>
     /// <param name="sequence">The sequence used</param>
     /// <param name="startLine">The line to start the view from</param>
-    public SequenceImage(Sequence sequence, long startLine)
+    /// <param name="sectionHeight">The height (in lines) of an individual sequence part.</param>
+    public SequenceImage(Sequence sequence, long startLine, long sectionHeight=1000)
     {
+        _sectionHeight = sectionHeight;
         startLine = Math.Clamp(startLine, 0, sequence.Shape.Height);
         _sequence = sequence;
-        _minPreloadedSections = Math.Min(_minPreloadedSections, (int)(_sequence.Shape.Height / SectionHeight));
+        _minPreloadedSections = Math.Min(_minPreloadedSections, (int)(_sequence.Shape.Height / _sectionHeight));
         for (var i = 0; i < _minPreloadedSections; i++)
         {
-            _sequenceParts.Add(new SequencePart(_sequence, this, i * SectionHeight + startLine));
-            _sequenceParts[i].Render(0.25, SectionHeight, false);
+            _sequenceParts.Add(new SequencePart(_sequence, this, i * _sectionHeight + startLine));
+            _sequenceParts[i].Render(0.25, _sectionHeight, false);
         }
     }
 
@@ -213,7 +215,7 @@ public class SequenceImage : IDisposable
             // add image
             var preview = new SequencePart(_sequence, this, renderedRange.max);
             _sequenceParts.Add(preview);
-            var range = Math.Min(SectionHeight, _sequence.Shape.Height - renderedRange.max);
+            var range = Math.Min(_sectionHeight, _sequence.Shape.Height - renderedRange.max);
             preview.Render(0.25, range, false);
         }
 
@@ -229,11 +231,11 @@ public class SequenceImage : IDisposable
             }
 
             // add image
-            var start = Math.Max(renderedRange.min - SectionHeight, 0);
+            var start = Math.Max(renderedRange.min - _sectionHeight, 0);
             var preview = new SequencePart(_sequence, this, start);
             _sequenceParts.Insert(0, preview);
 
-            var range = Math.Min(SectionHeight, renderedRange.min);
+            var range = Math.Min(_sectionHeight, renderedRange.min);
             preview.Render(0.25, range, false);
         }
 
