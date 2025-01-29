@@ -21,16 +21,21 @@ public partial class DockingViewModel : ViewModelBase
         Items.Add(viewModel);
     }
 
-    [RelayCommand]
-    public void OpenInspectionView()
-    {
-        OpenDock(new InspectionViewModel());
-    }
-
-
-    [RelayCommand]
-    public void OpenSequenceView(Sequence sequence)
-    {
-        OpenDock(new SequenceViewModel(sequence));
-    }
+    // [RelayCommand]
+    // public void OpenView(IDockBase viewModel)
+    // {
+    //     OpenDock(viewModel);
+    // }
+    //
+    // [RelayCommand]
+    // public void OpenInspectionView()
+    // {
+    //     OpenDock(new InspectionViewModel());
+    // }
+    //
+    // [RelayCommand]
+    // public void OpenSequenceView(Sequence sequence)
+    // {
+    //     OpenDock(new SequenceViewModel(sequence));
+    // }
 }

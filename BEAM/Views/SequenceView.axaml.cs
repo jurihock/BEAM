@@ -68,10 +68,12 @@ public partial class SequenceView : UserControl
 
     private void _BuildCustomRightClickMenu()
     {
+        var vm = (SequenceViewModel)DataContext;
+        
         var menu = AvaPlot1.Menu!;
         menu.Clear();
         menu.Add("Inspect Pixel",
-            control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+            control => vm.OpenInspectionViewCommand.Execute(null));
         menu.AddSeparator();
         menu.Add("Sync to this",
             control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
