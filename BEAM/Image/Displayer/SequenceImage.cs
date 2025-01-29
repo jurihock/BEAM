@@ -195,7 +195,9 @@ public class SequenceImage : IDisposable
         // determines the position (in percent) of the current visible area vs the already rendered view
         // used to decide whether to preload parts
         var renderedRange = _GetPreviewYRange();
+        // midpoint of the visible range
         var visibleRangeMid = (maxY - minY) / 2 + minY;
+        // position of the midpoint of the visible range inside the currently rendered range in percent
         var positionInRenderedRange =
             (double)(visibleRangeMid - renderedRange.min) / (renderedRange.max - renderedRange.min);
 
