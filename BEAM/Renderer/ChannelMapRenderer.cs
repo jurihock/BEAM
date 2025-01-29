@@ -114,15 +114,10 @@ public class ChannelMapRenderer : SequenceRenderer
     /// <returns></returns>
     protected override bool CheckParameters(double[] displayParameters, IImage image)
     {
-        if (displayParameters.Length != 3
-            || displayParameters[0] < 0
-            || displayParameters[1] < 0
-            || displayParameters[2] < 0)
-        {
-            return false;
-        }
-
-        return true;
+        return displayParameters.Length == 3
+               && !(displayParameters[0] < 0)
+               && !(displayParameters[1] < 0)
+               && !(displayParameters[2] < 0);
     }
 
     private Vector256<double> NormailizeIntensity(Vector256<double> intensities)
