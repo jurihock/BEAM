@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia;
 using BEAM.Docking;
@@ -15,7 +16,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     
     public Sequence Sequence { get;}
     
-    private InspectionViewModel _CurrentInspectionViewModel = null;
+    private List<InspectionViewModel> _ConnectedInspectionViewModels = new();
     public SequenceViewModel(Sequence sequence, DockingViewModel dockingVm)
     {
         Sequence = sequence;
@@ -25,19 +26,23 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public async Task UpdateInspectionViewModel((long X, long Y) posSeq)
     {
-        if (_CurrentInspectionViewModel == null)
+        if (_ConnectedInspectionViewModels.Count == 0)
             return;
         if (posSeq.Y > Sequence.Shape.Height || posSeq.Y < 0 || posSeq.X > Sequence.Shape.Width || posSeq.X < 0)
             return;
         double[] pixelData = Sequence.GetPixel(posSeq.X, posSeq.Y);
-        _CurrentInspectionViewModel.UpdatePixelData(pixelData);
+        foreach (var inspectionViewModel in _ConnectedInspectionViewModels)
+        {
+            inspectionViewModel.UpdatePixelData(pixelData);
+        }
     }
 
     [RelayCommand]
     public async Task OpenInspectionView(SequenceViewModel sequenceViewModel)
     {
-        _CurrentInspectionViewModel = new InspectionViewModel(sequenceViewModel);
-        DockingVm.OpenDock(_CurrentInspectionViewModel);
+        InspectionViewModel inspectionViewModel = new InspectionViewModel(sequenceViewModel);
+        _ConnectedInspectionViewModels.Add(inspectionViewModel);
+        DockingVm.OpenDock(inspectionViewModel);
     }
     
     public string Name { get; } = "Eine tolle Sequence";
