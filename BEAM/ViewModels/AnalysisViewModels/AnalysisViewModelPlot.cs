@@ -1,6 +1,6 @@
 ﻿namespace BEAM.ViewModels.AnalysisViewModels;
 
-public class AnalysisViewModelPlot : ViewModelBase
+public abstract class AnalysisViewModelPlot : ViewModelBase
 {
-    
+    public abstract void Update();
 }

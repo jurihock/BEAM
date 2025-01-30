@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using BEAM.Image.Bitmap;
@@ -87,11 +88,26 @@ public partial class SequenceView : UserControl
         menu.Add("Export sequence",
             control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
     }
+    
+    
+    private void PointerPressedHandler (object sender, PointerPressedEventArgs args)
+    {
+        var point = args.GetCurrentPoint(sender as Control);
+        var x = point.Position.X;
+        var y = point.Position.Y;
 
+        Coordinates CoordInPlot = AvaPlot1.Plot.GetCoordinates(new Pixel (x, y));
+        
+        var vm = (SequenceViewModel?)DataContext;
+        vm.UpdateInspectionViewModel(((long) CoordInPlot.X, (long) CoordInPlot.Y));
+    }
+    
     private void StyledElement_OnDataContextChanged(object? sender, EventArgs e)
     {
         var vm = DataContext as SequenceViewModel;
 
         FillPlot(vm.Sequence);
     }
+    
+    
 }

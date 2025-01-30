@@ -1,4 +1,7 @@
+using System;
 using System.Threading.Tasks;
+using Avalonia.Controls;
+using Avalonia.Input;
 using BEAM.Docking;
 using BEAM.Views.AnalysisView;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -32,7 +35,12 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         CurrentSequence = startSequence;
     }
-
+    
+    public void UpdatePixelData(double[] pixelData)
+    {
+        _currentAnalysisView.Update(pixelData);
+    }
+    
 
     // [RelayCommand]
     // public async Task SetAnalysisView(AbstractAnalysisView abstractAnalysisView)

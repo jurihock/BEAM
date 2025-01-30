@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using BEAM.ViewModels.AnalysisViewModels;
+using ExCSS;
 using ScottPlot.Avalonia;
 
 namespace BEAM.Views.AnalysisView;
@@ -12,13 +13,15 @@ namespace BEAM.Views.AnalysisView;
 /// </summary>
 public partial class BarPlotAnalysisView : AbstractAnalysisView
 {
+    
     public BarPlotAnalysisView()
     {
         InitializeComponent();
-        DataContext = new AnalysisViewModelPlot();
+        //DataContext = new AnalysisViewModelPlot();
         //default values for testing
-        FillPlot([1.4, 2.5, 3.4, 4.0, 50]);
+        //FillPlot([1.4, 2.5, 3.4, 4.0, 50]);
     }
+    
 
     /// <summary>
     /// Displays the given parameters as a bar chart
@@ -27,9 +30,16 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
     private void FillPlot(double[] dataHeights)
     {
         AvaPlot resultPlot = this.Find<AvaPlot>("AvaPlotAnalysis");
+        resultPlot.Plot.Clear();
         resultPlot.Plot.Add.Bars(dataHeights);
         
         resultPlot.Plot.Axes.Margins(bottom:0);
         resultPlot.Refresh();
+    }
+
+    public override void Update(double[] newData)
+    {
+        
+        FillPlot(newData);
     }
 }

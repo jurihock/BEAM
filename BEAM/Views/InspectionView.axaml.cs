@@ -1,5 +1,7 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using BEAM.ViewModels;
 using ScottPlot.Avalonia;
@@ -12,6 +14,8 @@ public partial class InspectionView : UserControl
     {
         InitializeComponent();
     }
+    
+    
 
     // public void FillAnalysisView()
     // {
