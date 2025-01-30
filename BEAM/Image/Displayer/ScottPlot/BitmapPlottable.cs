@@ -20,7 +20,7 @@ public sealed class BitmapPlottable(Sequence sequence, long startLine=0) : IPlot
     public AxisLimits GetAxisLimits()
     {
         //return new AxisLimits(0, sequence.Shape.Width, 0, sequence.Shape.Width);
-        return new AxisLimits(0, sequence.Shape.Width, Math.Floor(sequence.Shape.Width / 2.0) + startLine, Math.Floor(-sequence.Shape.Width / 2.0) + startLine);
+        return new AxisLimits(0, sequence.Shape.Width, Math.Floor(sequence.Shape.Width / 2.0) + startLine, -Math.Floor(sequence.Shape.Width / 2.0) + startLine);
     }
 
     public void Render(RenderPack rp)
