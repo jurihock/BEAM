@@ -39,6 +39,7 @@ public sealed class BitmapPlottable(Sequence sequence, long startLine=0) : IPlot
         for (var i = 0; i < SequenceImage.GetRenderedPartsCount(); i++)
         {
             var preview = SequenceImage.GetRenderedPart(i);
+            // TODO: fix bug where Bitmap is null
             if (preview?.Bitmap is null) continue;
 
             var coordinateRect = new CoordinateRect()
@@ -46,7 +47,7 @@ public sealed class BitmapPlottable(Sequence sequence, long startLine=0) : IPlot
                 Left = 0,
                 Right = sequence.Shape.Width,
                 Top = preview.YStart,
-                Bottom = preview.YEnd,
+                Bottom = preview.YEnd
             };
 
             var dest = Axes.GetPixelRect(coordinateRect);
