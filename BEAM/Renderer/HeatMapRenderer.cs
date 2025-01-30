@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.Threading;
 using BEAM.Exceptions;
 using BEAM.ImageSequence;
 
@@ -10,20 +9,85 @@ namespace BEAM.Renderer;
 /// It implements the function to Render a pixel.
 /// The concrete function, that converts the channel intensity to a color is implemented by the subclasses.
 /// </summary>
-public abstract class HeatMapRenderer(int minimumOfIntensityRange, int maximumOfIntensityRange, int channel)
-    : SequenceRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
+public abstract class HeatMapRenderer : SequenceRenderer
 {
     /// <summary>
     /// The channel that is used in the HeatMap for the intensity of the HeatMap.
     /// </summary>
-    public int Channel { get; set; } = channel;
+    public int Channel { get; set; }
+
+    private double _relMaxColdestIntensity = 0; // initial value
+    private double _relMinHottestIntensity = 1; // initial value
+
+    // The highest absolute intensity that is represented with the coldest color.
+    private double _absMaxColdestIntensity;
+
+    // The lowest absolute intensity that is represented with the hottest color.
+    private double _absMinHottestIntensity;
+
+    /// <summary>
+    /// The highest relative intensity between 0 and 1 that is represented with the coldest color.
+    /// --> value between 0 and 100% of intensity range
+    /// </summary>
+    public double RelMaxColdestIntensity
+    {
+        get { return _relMaxColdestIntensity; }
+        set
+        {
+            if (value >= 0 && value <= _relMinHottestIntensity)
+            {
+                _relMaxColdestIntensity = value;
+                _absMaxColdestIntensity = value * IntensityRange + MinimumOfIntensityRange;
+            }
+            else
+            {
+                throw new InvalidUserArgumentException(
+                    "The lower bound of temperature must be between 0 and upper bound!");
+            }
+        }
+    }
+
+    /// <summary>
+    /// The lowest relative intensity between 0 and 1 that is represented with the coldest color.
+    /// --> value between 0 and 100% of intensity range
+    /// </summary>
+    public double RelMinHottestIntensity
+    {
+        get { return _relMinHottestIntensity; }
+        set
+        {
+            if (value <= 1 && value >= _relMaxColdestIntensity)
+            {
+                _relMinHottestIntensity = value;
+                _absMinHottestIntensity = value * IntensityRange + MinimumOfIntensityRange;
+            }
+            else
+            {
+                throw new InvalidUserArgumentException(
+                    "The upper bound of temperature must be between lower bound and 1!");
+            }
+        }
+    }
+
+
+    protected HeatMapRenderer(int minimumOfIntensityRange, int maximumOfIntensityRange, int channel,
+        double relMaxColdestIntensity, double relMinHottestIntensity)
+        : base(minimumOfIntensityRange, maximumOfIntensityRange)
+    {
+        Channel = channel;
+        RelMaxColdestIntensity = relMaxColdestIntensity;
+        RelMinHottestIntensity = relMinHottestIntensity;
+    }
 
     public override byte[] RenderPixel(Sequence sequence, long x, long y)
     {
-        return GetColor(sequence.GetPixel(x, y, Channel), MinimumOfIntensityRange, MaximumOfIntensityRange);
+        return GetColor(sequence.GetPixel(x, y, Channel),
+            IntensityRange * RelMaxColdestIntensity + MinimumOfIntensityRange,
+            IntensityRange * RelMinHottestIntensity + MinimumOfIntensityRange);
     }
 
-    public override byte[,] RenderPixels(Sequence sequence, long[] xs, long y)
+    public override byte[,] RenderPixels(Sequence sequence, long[] xs, long y,
+        CancellationTokenSource? tokenSource = null)
     {
         var data = new byte[xs.Length, 4];
         var img = sequence.GetPixelLineData(xs, y, [Channel]);
@@ -31,6 +95,8 @@ public abstract class HeatMapRenderer(int minimumOfIntensityRange, int maximumOf
         // TODO: SIMD
         for (var i = 0; i < xs.Length; i++)
         {
+            tokenSource?.Token.ThrowIfCancellationRequested();
+
             var color = GetColor(img.GetPixel(i, 0, 0), MinimumOfIntensityRange, MaximumOfIntensityRange);
             data[i, 0] = color[0];
             data[i, 1] = color[1];

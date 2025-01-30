@@ -1,8 +1,8 @@
-﻿using System;
-using System.Runtime.Intrinsics;
+﻿using System.Runtime.Intrinsics;
+using System.Threading;
 using BEAM.Exceptions;
+using BEAM.Image;
 using BEAM.ImageSequence;
-using BEAM.Profiling;
 
 namespace BEAM.Renderer;
 
@@ -26,14 +26,20 @@ public class ChannelMapRenderer : SequenceRenderer
     public int ChannelGreen { get; set; }
     public int ChannelBlue { get; set; }
 
+    //TODO: RGBA or ARGB?
+    /// <summary>
+    /// Create the RGBA value for a given pixel of a sequence
+    /// </summary>
+    /// <param name="sequence"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     public override byte[] RenderPixel(Sequence sequence, long x, long y)
     {
-        var channels = sequence.GetPixel(x, y);
-
-        var colors = NormailizeIntensity(Vector256.Create([
-            channels[ChannelRed],
-            channels[ChannelGreen],
-            channels[ChannelBlue],
+        var colors = NormalizeIntensity(Vector256.Create([
+            sequence.GetPixel(x, y, ChannelRed),
+            sequence.GetPixel(x, y, ChannelGreen),
+            sequence.GetPixel(x, y, ChannelBlue),
             0
         ]));
 
@@ -55,26 +61,67 @@ public class ChannelMapRenderer : SequenceRenderer
     /// <param name="xs"></param>
     /// <param name="y"></param>
     /// <returns>[x, argb]</returns>
-    public override byte[,] RenderPixels(Sequence sequence, long[] xs, long y)
+    public override byte[,] RenderPixels(Sequence sequence, long[] xs, long y, CancellationTokenSource? tokenSource = null)
     {
         var data = new byte[xs.Length, 4];
-        var img = sequence.GetPixelLineData(xs, y, [ChannelRed, ChannelGreen, ChannelBlue]);
+        var img = sequence.GetPixelLineData(xs, y, [ChannelBlue, ChannelGreen, ChannelRed]);
 
         for (var x = 0; x < xs.Length; x++)
         {
+            tokenSource?.Token.ThrowIfCancellationRequested();
             var colors = NormailizeIntensity(Vector256.Create([
-                img.GetPixel(x, 0, ChannelRed),
-                img.GetPixel(x, 0, ChannelGreen),
                 img.GetPixel(x, 0, ChannelBlue),
+                img.GetPixel(x, 0, ChannelGreen),
+                img.GetPixel(x, 0, ChannelRed),
                 0
             ]));
 
-            data[x, 0] = 255;
-            data[x, 1] = (byte)colors[0];
-            data[x, 2] = (byte)colors[1];
-            data[x, 3] = (byte)colors[2];
+            // b
+            data[x, 0] = (byte)colors[0];
+            // g
+            data[x, 1] = (byte)colors[1];
+            // r
+            data[x, 2] = (byte)colors[2];
+            // a
+            data[x, 3] = 255;
         }
         return data;
+    }
+
+    protected override RenderTypes GetRenderType()
+    {
+        return RenderTypes.ChannelMapRenderer;
+    }
+
+    protected override SequenceRenderer Create(int minimumOfIntensityRange, int maximumOfIntensityRange, double[] displayParameters)
+    {
+        // TODO remove null
+        if (!CheckParameters(displayParameters, null))
+        {
+            throw new InvalidUserArgumentException("Display parameters are invalid.");
+        };
+        return new ChannelMapRenderer(
+            minimumOfIntensityRange,
+            maximumOfIntensityRange,
+            (int)displayParameters[0],
+            (int)displayParameters[1],
+            (int)displayParameters[2]);
+    }
+
+    //TODO: Check if channels are in range for given Image, not possible yet, if image not attribute
+    /// <summary>
+    /// Verifies that the parameters are valid for the renderer and sequence.
+    /// Returns True, if the parameters are valid, false otherwise.
+    /// </summary>
+    /// <param name="displayParameters"></param>
+    /// <param name="image"></param>
+    /// <returns></returns>
+    protected override bool CheckParameters(double[] displayParameters, IImage image)
+    {
+        return displayParameters.Length == 3
+               && !(displayParameters[0] < 0)
+               && !(displayParameters[1] < 0)
+               && !(displayParameters[2] < 0);
     }
 
     private Vector256<double> NormailizeIntensity(Vector256<double> intensities)
