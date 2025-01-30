@@ -68,7 +68,8 @@ public partial class SequenceView : UserControl
 
     private void _BuildCustomRightClickMenu()
     {
-        var vm = (SequenceViewModel)DataContext;
+        var vm = (SequenceViewModel?)DataContext;
+        if(vm == null) {return;}
         
         var menu = AvaPlot1.Menu!;
         menu.Clear();
