@@ -2,8 +2,10 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using BEAM.ViewModels.AnalysisViewModels;
 using ExCSS;
+using ScottPlot;
 using ScottPlot.Avalonia;
 
 namespace BEAM.Views.AnalysisView;
@@ -13,7 +15,8 @@ namespace BEAM.Views.AnalysisView;
 /// </summary>
 public partial class BarPlotAnalysisView : AbstractAnalysisView
 {
-    
+    public bool ShowLabels { get; set; } = true;
+    private bool _showLabels = true;
     public BarPlotAnalysisView()
     {
         InitializeComponent();
@@ -31,15 +34,24 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
     {
         AvaPlot resultPlot = this.Find<AvaPlot>("AvaPlotAnalysis");
         resultPlot.Plot.Clear();
-        resultPlot.Plot.Add.Bars(dataHeights);
+        var barPlot = resultPlot.Plot.Add.Bars(dataHeights);
         
-        resultPlot.Plot.Axes.Margins(bottom:0);
+        if (_showLabels)
+        {
+            foreach (var bar in barPlot.Bars)
+            {
+                bar.Label = bar.Value.ToString();
+            }
+            barPlot.ValueLabelStyle.Bold = true;
+            barPlot.ValueLabelStyle.FontSize = 18;
+        }
+
+        resultPlot.Plot.Axes.Margins(bottom:0, top:.2f);
         resultPlot.Refresh();
     }
 
     public override void Update(double[] newData)
     {
-        
         FillPlot(newData);
     }
 }
