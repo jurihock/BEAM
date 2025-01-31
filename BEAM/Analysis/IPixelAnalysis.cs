@@ -1,6 +1,7 @@
 ﻿using BEAM.Datatypes;
 using BEAM.ImageSequence;
 using BEAM.ViewModels;
+using BEAM.Views.AnalysisView;
 
 namespace BEAM.Analysis;
 
@@ -10,6 +11,6 @@ namespace BEAM.Analysis;
 /// </summary>
 public interface IPixelAnalysis
 {
-    public Avalonia.Controls.Control analysePixel(Sequence sequence, Coordinate2D position);
-    public Avalonia.Controls.Control analysePixel(SequenceViewModel viewModel, Coordinate2D position);
+    public AbstractAnalysisView analysePixel(Sequence sequence, Coordinate2D position);
+    public AbstractAnalysisView analysePixel(SequenceViewModel viewModel, Coordinate2D position);
 }

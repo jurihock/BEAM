@@ -2,6 +2,7 @@
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
 using BEAM.ViewModels;
+using BEAM.Views.AnalysisView;
 
 namespace BEAM.Analysis;
 
@@ -11,9 +12,9 @@ namespace BEAM.Analysis;
 /// </summary>
 public interface IRegionAnalysis
 {
-    public Avalonia.Controls.Control analyseRegion(Sequence sequence, Shape region);
-    public Avalonia.Controls.Control analyseRegion(SequenceViewModel viewModel, Shape region);
+    public AbstractAnalysisView analyseRegion(Sequence sequence, Shape region);
+    public AbstractAnalysisView analyseRegion(SequenceViewModel viewModel, Shape region);
 
-    public Avalonia.Controls.Control analyseRegion(long posX, long posY, long width, long height,
+    public AbstractAnalysisView analyseRegion(long posX, long posY, long width, long height,
         SequenceViewModel viewModel);
 }

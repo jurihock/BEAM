@@ -11,6 +11,8 @@ using ExCSS;
 using ScottPlot;
 using ScottPlot.Avalonia;
 using ScottPlot.AxisRules;
+using ScottPlot.Plottables;
+using Rectangle = BEAM.Datatypes.Rectangle;
 
 namespace BEAM.Views.AnalysisView;
 
