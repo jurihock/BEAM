@@ -11,6 +11,8 @@ using ExCSS;
 using ScottPlot;
 using ScottPlot.Avalonia;
 using ScottPlot.AxisRules;
+using ScottPlot.Plottables;
+using Rectangle = BEAM.Datatypes.Rectangle;
 
 namespace BEAM.Views.AnalysisView;
 
@@ -36,10 +38,6 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
         // AvaPlotAnalysis.Plot.Axes.Rules.Add(lockedHorizontalRule);
 
         // AvaPlotAnalysis.Plot.HideAxesAndGrid();
-
-        //DataContext = new AnalysisViewModelPlot();
-        //default values for testing
-        //FillPlot([1.4, 2.5, 3.4, 4.0, 50]);
     }
 
 
@@ -53,6 +51,11 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
 
 
         var barPlot = AvaPlotAnalysis.Plot.Add.Bars(dataHeights);
+
+        _WriteLabels(barPlot);
+        
+        AvaPlotAnalysis.Plot.Axes.SetLimitsX(-1, dataHeights.Length);
+        AvaPlotAnalysis.Plot.Axes.SetLimitsY(0, dataHeights.Max() + 40);
 
         // if (_showLabels)
         // {
@@ -111,6 +114,23 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
         
         AvaPlotAnalysis.Plot.Axes.Margins(bottom: 0, top: .2f);
         AvaPlotAnalysis.Refresh();
+    }
+
+    private void _WriteLabels(BarPlot barPlot)
+    {
+        if (!_showLabels)
+        {
+            return;
+        }
+
+        foreach (var bar in barPlot.Bars)
+        {
+            bar.Label = bar.Value.ToString();
+        }
+
+        barPlot.ValueLabelStyle.Bold = true;
+        barPlot.ValueLabelStyle.FontSize = 18;
+    
     }
 
     public override void Update(Rectangle rectangle, Sequence sequence)
