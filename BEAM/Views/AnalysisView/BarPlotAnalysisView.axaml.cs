@@ -7,6 +7,7 @@ using BEAM.ViewModels.AnalysisViewModels;
 using ExCSS;
 using ScottPlot;
 using ScottPlot.Avalonia;
+using ScottPlot.Plottables;
 
 namespace BEAM.Views.AnalysisView;
 
@@ -20,9 +21,6 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
     public BarPlotAnalysisView()
     {
         InitializeComponent();
-        //DataContext = new AnalysisViewModelPlot();
-        //default values for testing
-        //FillPlot([1.4, 2.5, 3.4, 4.0, 50]);
     }
     
 
@@ -36,18 +34,24 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
         resultPlot.Plot.Clear();
         var barPlot = resultPlot.Plot.Add.Bars(dataHeights);
         
-        if (_showLabels)
-        {
-            foreach (var bar in barPlot.Bars)
-            {
-                bar.Label = bar.Value.ToString();
-            }
-            barPlot.ValueLabelStyle.Bold = true;
-            barPlot.ValueLabelStyle.FontSize = 18;
-        }
-
+        AddLabels(barPlot);
+        
         resultPlot.Plot.Axes.Margins(bottom:0, top:.2f);
         resultPlot.Refresh();
+    }
+
+    private void AddLabels(BarPlot plot)
+    {
+        if (!_showLabels)
+        {
+            return;
+        }
+        foreach (var bar in plot.Bars)
+        {
+            bar.Label = bar.Value.ToString();
+        }
+        plot.ValueLabelStyle.Bold = true;
+        plot.ValueLabelStyle.FontSize = 18;
     }
 
     public override void Update(double[] newData)
