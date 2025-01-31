@@ -54,16 +54,18 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
 
         var barPlot = AvaPlotAnalysis.Plot.Add.Bars(dataHeights);
 
-        // if (_showLabels)
-        // {
-        //     foreach (var bar in barPlot.Bars)
-        //     {
-        //         bar.Label = bar.Value.ToString();
-        //     }
-        //
-        //     // barPlot.ValueLabelStyle.Bold = true;
-        //     // barPlot.ValueLabelStyle.FontSize = 18;
-        // }
+        if (_showLabels && dataHeights.Length <= 4)
+        {
+            foreach (var bar in barPlot.Bars)
+            {
+                bar.Label = bar.Value.ToString();
+            }
+        
+            barPlot.ValueLabelStyle.Bold = true;
+            barPlot.ValueLabelStyle.FontSize = 18;
+        }
+
+        AvaPlotAnalysis.Plot.Benchmark.IsVisible = false;
 
         // AvaPlotAnalysis.Plot.Axes.SetLimitsX(-1, dataHeights.Length);
 
