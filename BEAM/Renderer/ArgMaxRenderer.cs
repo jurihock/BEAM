@@ -1,4 +1,5 @@
-﻿using BEAM.Exceptions;
+﻿using System.Threading;
+using BEAM.Exceptions;
 using BEAM.ImageSequence;
 
 namespace BEAM.Renderer;
@@ -22,7 +23,7 @@ public abstract class ArgMaxRenderer(int minimumOfIntensityRange, int maximumOfI
     }
 
     //TODO: implement. Currently do not understand LineImage
-    public override byte[,] RenderPixels(Sequence sequence, long[] xs, long y)
+    public override byte[,] RenderPixels(Sequence sequence, long[] xs, long y, CancellationTokenSource? tokenSource = null)
     {
         throw new System.NotImplementedException();
     }
