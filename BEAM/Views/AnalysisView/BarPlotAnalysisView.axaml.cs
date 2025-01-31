@@ -26,14 +26,14 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
     {
         InitializeComponent();
 
-        var limits = AvaPlotAnalysis.Plot.Axes.GetLimits();
-        var lockedVerticalRule = new LockedVertical(AvaPlotAnalysis.Plot.Axes.Left, limits.Bottom, limits.Top);
-        var lockedHorizontalRule = new LockedHorizontal(AvaPlotAnalysis.Plot.Axes.Bottom, limits.Left, limits.Right);
-
-        AvaPlotAnalysis.Plot.Axes.Bottom.TickGenerator = new ScottPlot.TickGenerators.NumericFixedInterval(1);
-
-        AvaPlotAnalysis.Plot.Axes.Rules.Add(lockedVerticalRule);
-        AvaPlotAnalysis.Plot.Axes.Rules.Add(lockedHorizontalRule);
+        // var limits = AvaPlotAnalysis.Plot.Axes.GetLimits();
+        // var lockedVerticalRule = new LockedVertical(AvaPlotAnalysis.Plot.Axes.Left, limits.Bottom, limits.Top);
+        // var lockedHorizontalRule = new LockedHorizontal(AvaPlotAnalysis.Plot.Axes.Bottom, limits.Left, limits.Right);
+        //
+        // AvaPlotAnalysis.Plot.Axes.Bottom.TickGenerator = new ScottPlot.TickGenerators.NumericFixedInterval(1);
+        //
+        // AvaPlotAnalysis.Plot.Axes.Rules.Add(lockedVerticalRule);
+        // AvaPlotAnalysis.Plot.Axes.Rules.Add(lockedHorizontalRule);
 
         // AvaPlotAnalysis.Plot.HideAxesAndGrid();
 
@@ -54,29 +54,61 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
 
         var barPlot = AvaPlotAnalysis.Plot.Add.Bars(dataHeights);
 
-        if (_showLabels)
-        {
-            foreach (var bar in barPlot.Bars)
-            {
-                bar.Label = bar.Value.ToString();
-            }
+        // if (_showLabels)
+        // {
+        //     foreach (var bar in barPlot.Bars)
+        //     {
+        //         bar.Label = bar.Value.ToString();
+        //     }
+        //
+        //     // barPlot.ValueLabelStyle.Bold = true;
+        //     // barPlot.ValueLabelStyle.FontSize = 18;
+        // }
 
-            barPlot.ValueLabelStyle.Bold = true;
-            barPlot.ValueLabelStyle.FontSize = 18;
+        // AvaPlotAnalysis.Plot.Axes.SetLimitsX(-1, dataHeights.Length);
+
+        var yAxisLimit = dataHeights.Max();
+        if (yAxisLimit < 1)
+        {
+            yAxisLimit = 1;
         }
 
-        AvaPlotAnalysis.Plot.Axes.SetLimitsX(-1, dataHeights.Length);
-        AvaPlotAnalysis.Plot.Axes.SetLimitsY(0, dataHeights.Max() + 40);
-
+        double yAxisLimitBuffer = yAxisLimit * 0.15;
+        
+        AvaPlotAnalysis.Plot.Axes.SetLimitsY(0, yAxisLimit + yAxisLimitBuffer);
+        
+        AvaPlotAnalysis.Plot.Axes.SetLimitsX(-0.9, dataHeights.Length - 1 + 0.9);
+        
+        //
         var limits = AvaPlotAnalysis.Plot.Axes.GetLimits();
         var lockedVerticalRule = new LockedVertical(AvaPlotAnalysis.Plot.Axes.Left, limits.Bottom, limits.Top);
-        var lockedHorizontalRule = new LockedHorizontal(AvaPlotAnalysis.Plot.Axes.Bottom, limits.Left, limits.Right);
+        
+        // var lockedHorizontalRule = new LockedHorizontal(AvaPlotAnalysis.Plot.Axes.Bottom, limits.Left, limits.Right);
+        //
+        var bottomTickGen = new ScottPlot.TickGenerators.NumericAutomatic
+        {
+            IntegerTicksOnly = true
+        };
 
-        AvaPlotAnalysis.Plot.Axes.Bottom.TickGenerator = new ScottPlot.TickGenerators.NumericFixedInterval(1);
+        var maximumBoundary = new MaximumBoundary(AvaPlotAnalysis.Plot.Axes.Bottom, AvaPlotAnalysis.Plot.Axes.Left, limits);
 
+        AvaPlotAnalysis.Plot.Axes.Rules.Add(maximumBoundary);
+        
+        AvaPlotAnalysis.Plot.Axes.Bottom.TickGenerator = bottomTickGen;
+        
+        //
         AvaPlotAnalysis.Plot.Axes.Rules.Add(lockedVerticalRule);
-        AvaPlotAnalysis.Plot.Axes.Rules.Add(lockedHorizontalRule);
+        // AvaPlotAnalysis.Plot.Axes.Rules.Add(lockedHorizontalRule);
 
+        var minSpanRule = new MinimumSpan(AvaPlotAnalysis.Plot.Axes.Bottom,
+            AvaPlotAnalysis.Plot.Axes.Left, 4, 0.5 * (yAxisLimit + yAxisLimitBuffer));
+        
+        var maxSpanRule = new MaximumSpan(AvaPlotAnalysis.Plot.Axes.Bottom,
+            AvaPlotAnalysis.Plot.Axes.Left, dataHeights.Length + 2, yAxisLimit + yAxisLimitBuffer);
+        
+        AvaPlotAnalysis.Plot.Axes.Rules.Add(minSpanRule);
+        AvaPlotAnalysis.Plot.Axes.Rules.Add(maxSpanRule);
+        
         AvaPlotAnalysis.Plot.Axes.Margins(bottom: 0, top: .2f);
         AvaPlotAnalysis.Refresh();
     }

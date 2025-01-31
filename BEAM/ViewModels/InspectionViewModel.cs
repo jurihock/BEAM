@@ -41,7 +41,6 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         [
             new CoordinateAnalysisView(),
             new BarPlotAnalysisView(),
-            new BarPlotAnalysisView()
         ];
     }
 
