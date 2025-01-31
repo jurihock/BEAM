@@ -60,6 +60,8 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
         var limits = AvaPlotAnalysis.Plot.Axes.GetLimits(); 
         var lockedVerticalRule = new LockedVertical(AvaPlotAnalysis.Plot.Axes.Left, limits.Bottom, limits.Top);
         var lockedHorizontalRule = new LockedHorizontal(AvaPlotAnalysis.Plot.Axes.Bottom, limits.Left, limits.Right);
+
+        AvaPlotAnalysis.Plot.Axes.Bottom.TickGenerator = new ScottPlot.TickGenerators.NumericFixedInterval(1);
         
         AvaPlotAnalysis.Plot.Axes.Rules.Add(lockedVerticalRule);
         AvaPlotAnalysis.Plot.Axes.Rules.Add(lockedHorizontalRule);
