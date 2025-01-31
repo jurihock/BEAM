@@ -104,6 +104,8 @@ public partial class SequenceView : UserControl
         var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
     
         var vm = (SequenceViewModel?)DataContext;
+        vm.clickedCursorPosition = CoordInPlot;
+        
         vm.UpdateInspectionViewModel(new Rectangle(CoordInPlot, CoordInPlot));
     }
 

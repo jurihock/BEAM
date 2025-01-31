@@ -15,6 +15,7 @@ namespace BEAM.ViewModels;
 public partial class SequenceViewModel : ViewModelBase, IDockBase
 {
     [ObservableProperty] public partial DockingViewModel DockingVm { get; set; } = new();
+    [ObservableProperty] public partial Coordinate2D clickedCursorPosition { get; set; } = new();
 
     public Sequence Sequence { get; }
 
@@ -57,6 +58,8 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         InspectionViewModel inspectionViewModel = new InspectionViewModel();
         _ConnectedInspectionViewModels.Add(inspectionViewModel);
         DockingVm.OpenDock(inspectionViewModel);
+        
+        inspectionViewModel.Update(new Rectangle(clickedCursorPosition, clickedCursorPosition), this);
     }
 
     public string Name { get; } = "Eine tolle Sequence";
