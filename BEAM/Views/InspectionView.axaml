@@ -6,19 +6,21 @@
              xmlns:aav="clr-namespace:BEAM.Views.AnalysisView"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:InspectionViewModel"
+             x:Name="Inspection"
              x:Class="BEAM.Views.InspectionView">
-    
-    <Design.DataContext>
-            <vm:InspectionViewModel />
-        </Design.DataContext>
-    
-    <Panel>
-        <Grid ColumnDefinitions="*, Auto">
-            <UserControl Content="{Binding CurrentAnalysisView}" Name="AnalysisView" Grid.Column="0"/> 
-        </Grid>
-    </Panel>
-    
-    
-    
-</UserControl>
 
+    <Design.DataContext>
+        <vm:InspectionViewModel />
+    </Design.DataContext>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Width="{Binding #Inspection.Width}" Height="{Binding #Inspection.Height}" Padding="0">
+        <ItemsControl ItemsSource="{Binding openAnalysisViews}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
+
+
+</UserControl>

@@ -25,8 +25,6 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         Sequence = sequence;
         DockingVm = dockingVm;
     }
-    
-    
 
     [RelayCommand]
     public async Task UpdateInspectionViewModel(Rectangle coordRectangle)

@@ -1,4 +1,6 @@
 ﻿using Avalonia.Controls;
+using BEAM.Datatypes;
+using BEAM.ImageSequence;
 
 namespace BEAM.Views.AnalysisView;
 
@@ -8,5 +10,5 @@ namespace BEAM.Views.AnalysisView;
 /// </summary>
 public abstract class AbstractAnalysisView : UserControl
 {
-    public abstract void Update(double[] newData);
+    public abstract void Update(Rectangle rectangle, Sequence sequence);
 }
