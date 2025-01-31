@@ -1,4 +1,6 @@
-﻿namespace BEAM.ViewModels.AnalysisViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace BEAM.ViewModels.AnalysisViewModels;
 
 public abstract class AnalysisViewModelPlot : ViewModelBase
 {

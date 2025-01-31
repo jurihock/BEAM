@@ -10,7 +10,7 @@ public class PixelAnalysisChannel : IPixelAnalysis
 {
     public Control analysePixel(Sequence sequence, Coordinate2D position)
     {
-        double[] colors = sequence.GetPixel(position.Column, position.Row);
+        double[] colors = sequence.GetPixel((long) position.Column, (long) position.Row);
         return null;
     }
 

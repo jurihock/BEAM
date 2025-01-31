@@ -12,9 +12,13 @@
             <vm:InspectionViewModel />
         </Design.DataContext>
     
-    <Grid ColumnDefinitions="*, Auto">
-        <UserControl Content="{Binding CurrentAnalysisView}" Name="AnalysisView" Grid.Column="0"/> 
-    </Grid>
+    <Panel>
+        <Grid ColumnDefinitions="*, Auto">
+            <UserControl Content="{Binding CurrentAnalysisView}" Name="AnalysisView" Grid.Column="0"/> 
+        </Grid>
+    </Panel>
+    
+    
     
 </UserControl>
 

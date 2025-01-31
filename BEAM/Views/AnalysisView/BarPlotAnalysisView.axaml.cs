@@ -39,7 +39,6 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
 
     public override void Update(double[] newData)
     {
-        
         FillPlot(newData);
     }
 }

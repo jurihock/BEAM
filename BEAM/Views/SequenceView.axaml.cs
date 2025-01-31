@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
+using BEAM.Datatypes;
 using BEAM.Image.Bitmap;
 using BEAM.Image.Displayer;
 using BEAM.IMage.Displayer.Scottplot;
@@ -70,8 +71,11 @@ public partial class SequenceView : UserControl
     private void _BuildCustomRightClickMenu()
     {
         var vm = (SequenceViewModel?)DataContext;
-        if(vm == null) {return;}
-        
+        if (vm == null)
+        {
+            return;
+        }
+
         var menu = AvaPlot1.Menu!;
         menu.Clear();
         menu.Add("Inspect Pixel",
@@ -88,26 +92,35 @@ public partial class SequenceView : UserControl
         menu.Add("Export sequence",
             control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
     }
-    
-    
-    private void PointerPressedHandler (object sender, PointerPressedEventArgs args)
+
+    private void PointerPressedHandler(object sender, PointerPressedEventArgs args)
     {
         var point = args.GetCurrentPoint(sender as Control);
         var x = point.Position.X;
         var y = point.Position.Y;
-
-        Coordinates CoordInPlot = AvaPlot1.Plot.GetCoordinates(new Pixel (x, y));
-        
-        var vm = (SequenceViewModel?)DataContext;
-        vm.UpdateInspectionViewModel(((long) CoordInPlot.X, (long) CoordInPlot.Y));
-    }
     
+        var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
+    
+        var vm = (SequenceViewModel?)DataContext;
+        vm.UpdateInspectionViewModel(new Rectangle(CoordInPlot, CoordInPlot));
+    }
+
     private void StyledElement_OnDataContextChanged(object? sender, EventArgs e)
     {
         var vm = DataContext as SequenceViewModel;
 
         FillPlot(vm.Sequence);
     }
-    
-    
+
+    // private void InputElement_OnPointerMoved(object? sender, PointerEventArgs e)
+    // {
+    //     var point = e.GetCurrentPoint(sender as Control);
+    //     var x = point.Position.X;
+    //     var y = point.Position.Y;
+    //
+    //     Coordinates CoordInPlot = AvaPlot1.Plot.GetCoordinates(new Pixel(x, y));
+    //
+    //     var vm = (SequenceViewModel?)DataContext;
+    //     vm.UpdateInspectionViewModel(((long)CoordInPlot.X, (long)CoordInPlot.Y));
+    // }
 }
