@@ -54,7 +54,7 @@ public class HeatMapRendererRB : HeatMapRenderer
         return color;
     }
 
-    protected override RenderTypes GetRenderType()
+    public override RenderTypes GetRenderType()
     {
         return RenderTypes.HeatMapRendererRb;
     }
@@ -94,5 +94,10 @@ public class HeatMapRendererRB : HeatMapRenderer
         }
         
         return true;
+    }
+
+    public override object Clone()
+    {
+        return new HeatMapRendererRB(MinimumOfIntensityRange, MaximumOfIntensityRange, Channel, RelMinHottestIntensity, RelMinHottestIntensity);
     }
 }

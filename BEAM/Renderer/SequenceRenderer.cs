@@ -4,10 +4,11 @@ using System.Runtime.Intrinsics;
 using BEAM.Image;
 using System.Threading;
 using BEAM.ImageSequence;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BEAM.Renderer;
 
-public abstract class SequenceRenderer
+public abstract class SequenceRenderer : ObservableObject, ICloneable
 {
     protected int MinimumOfIntensityRange { get; init; }
     protected int MaximumOfIntensityRange { get; init; }
@@ -68,9 +69,12 @@ public abstract class SequenceRenderer
     public abstract byte[] RenderPixel(Sequence sequence, long x, long y);
     public abstract byte[,] RenderPixels(Sequence sequence, long[] xs, long y, CancellationTokenSource? tokenSource = null);
 
-    protected abstract RenderTypes GetRenderType();
+    public abstract RenderTypes GetRenderType();
 
     protected abstract SequenceRenderer Create(int minimumOfIntensityRange, int maximumOfIntensityRange, double[] displayParameters);
 
     protected abstract bool CheckParameters(double[] displayParameters, IImage image);
+
+    public abstract string GetName();
+    public abstract object Clone();
 }

@@ -117,4 +117,6 @@ public abstract class HeatMapRenderer : SequenceRenderer
     /// <returns>The ARGB values of the final Color to be displayed.
     /// (A, R, G, B) each color from 0 - 255. A = 0 : fully transparent</returns>
     protected abstract byte[] GetColor(double value, double min, double max);
+
+    public override string GetName() => "Heatmap";
 }

@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using BEAM.Image.Bitmap;
@@ -78,8 +79,7 @@ public partial class SequenceView : UserControl
         menu.Add("Sync to this",
             control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
         menu.AddSeparator();
-        menu.Add("Configure colors",
-            control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+        menu.Add("Configure colors", control => _OpenColorsPopup());
         menu.Add("Affine Transformation",
             control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
         menu.AddSeparator();
@@ -92,5 +92,13 @@ public partial class SequenceView : UserControl
         var vm = DataContext as SequenceViewModel;
 
         FillPlot(vm.Sequence);
+    }
+
+    private void _OpenColorsPopup()
+    {
+        ColorSettingsPopup popup = new(DataContext as SequenceViewModel);
+        var v = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+
+        popup.ShowDialog(v.MainWindow);
     }
 }

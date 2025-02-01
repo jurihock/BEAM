@@ -56,4 +56,6 @@ public abstract class ArgMaxRenderer(int minimumOfIntensityRange, int maximumOfI
     }
     
     protected abstract byte[] GetColor(int channelNumber, int amountChannels);
+
+    public override string GetName() => "ArgMax";
 }
