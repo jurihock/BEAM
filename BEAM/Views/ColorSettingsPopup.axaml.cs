@@ -15,6 +15,10 @@ public partial class ColorSettingsPopup : Window
     public ColorSettingsPopup(SequenceViewModel sequenceViewModel)
     {
         DataContext = new ColorSettingsPopupViewModel(sequenceViewModel);
+        AddHandler(KeyDownEvent, (sender, e) =>
+        {
+            if (e.Key == Key.Escape) Close();
+        });
         InitializeComponent();
     }
 
