@@ -98,10 +98,10 @@ public abstract class HeatMapRenderer : SequenceRenderer
             tokenSource?.Token.ThrowIfCancellationRequested();
 
             var color = GetColor(img.GetPixel(i, 0, 0), MinimumOfIntensityRange, MaximumOfIntensityRange);
-            data[i, 0] = color[0];
-            data[i, 1] = color[1];
-            data[i, 2] = color[2];
-            data[i, 3] = color[3];
+            data[i, 0] = color[1];
+            data[i, 1] = color[2];
+            data[i, 2] = color[3];
+            data[i, 3] = color[0];
         }
 
         return data;
