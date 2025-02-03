@@ -26,10 +26,16 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
 
     private int _selection;
 
+    [ObservableProperty] private int _min;
+    [ObservableProperty] private int _max;
+
     public ColorSettingsPopupViewModel(SequenceViewModel sequenceViewModel)
     {
         _sequenceViewModel = sequenceViewModel;
         _editedRenderers = _sequenceViewModel.Renderers.Select(r => (SequenceRenderer)r.Clone()).ToArray();
+
+        Min = sequenceViewModel.CurrentRenderer.MinimumOfIntensityRange;
+        Max = sequenceViewModel.CurrentRenderer.MaximumOfIntensityRange;
 
         _selection = _sequenceViewModel.RendererSelection;
 
@@ -82,6 +88,12 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
     [RelayCommand]
     private void Save()
     {
+        foreach (var renderer in _editedRenderers)
+        {
+            renderer.MinimumOfIntensityRange = Min;
+            renderer.MaximumOfIntensityRange = Max;
+        }
+
         _sequenceViewModel.RendererSelection = _selection;
         _sequenceViewModel.Renderers = _editedRenderers;
     }

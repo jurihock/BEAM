@@ -23,9 +23,9 @@
             <TextBlock Grid.Column="0" VerticalAlignment="Center">Value Range:</TextBlock>
 
             <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
-                <TextBox TextChanged="NumberTextChanging" VerticalAlignment="Center"></TextBox>
+                <TextBox TextChanged="NumberTextChanging" VerticalAlignment="Center" Text="{Binding Min}"/>
                 <TextBlock VerticalAlignment="Center" Margin="10 0">to</TextBlock>
-                <TextBox TextChanged="NumberTextChanging" VerticalAlignment="Center"></TextBox>
+                <TextBox TextChanged="NumberTextChanging" VerticalAlignment="Center" Text="{Binding Max}"/>
             </StackPanel>
 
             <GridSplitter Grid.RowSpan="2" Margin="10 0" Grid.Row="0" Grid.Column="1" ResizeDirection="Columns"
