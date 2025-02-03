@@ -32,5 +32,5 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         ];
     }
 
-    public string Name { get; } = "Eine tolle Sequence";
+    public string Name => Sequence.GetName;
 }
