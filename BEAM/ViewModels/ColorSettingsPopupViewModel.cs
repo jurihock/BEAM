@@ -4,11 +4,15 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Layout;
+using BEAM.Controls;
 using BEAM.Renderer;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace BEAM.ViewModels;
@@ -19,6 +23,7 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
     private SequenceViewModel _sequenceViewModel;
 
     private SequenceRenderer[] _editedRenderers;
+
     private int _selection;
 
     public ColorSettingsPopupViewModel(SequenceViewModel sequenceViewModel)
@@ -44,86 +49,34 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
             Content = renderer.GetName(),
             IsChecked = (_selection == index),
         };
+        button.IsCheckedChanged += (s, e) =>
+        {
+            var btn = (RadioButton)s!;
+            if (btn.IsChecked ?? false) _selection = index;
+        };
+
         return button;
     }
 
-    private StackPanel _BuildPanel(SequenceRenderer renderer)
+    private static StackPanel _BuildPanel(SequenceRenderer renderer)
     {
         var panel = new StackPanel() { Margin = new Thickness(30, 0, 0, 0) };
 
-        switch (renderer.GetRenderType())
+        switch (renderer)
         {
-            case RenderTypes.HeatMapRendererRb:
-                _FillHeatmapRenderer(panel, (renderer as HeatMapRendererRB)!);
+            case HeatMapRenderer htmRenderer:
+                panel.Children.Add(new HeatMapConfigControlView(htmRenderer));
                 break;
-            case RenderTypes.ChannelMapRenderer:
-                _FillChanelMapRenderer(panel, (renderer as ChannelMapRenderer)!);
+            case ChannelMapRenderer chmRenderer:
+                panel.Children.Add(new ChannelMapConfigControlView(chmRenderer));
                 break;
-            case RenderTypes.ArgMaxRendererGrey:
-                _FillArgMaxRenderer(panel, (renderer as ArgMaxRendererGrey)!);
+            case ArgMaxRenderer:
                 break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(renderer));
         }
 
         return panel;
-    }
-
-    private void _ChannelMapRendererChannelInput(StackPanel panel, SequenceRenderer renderer, string channelName,
-        string propPath)
-    {
-        var channelPanel = new StackPanel()
-        {
-            Orientation = Orientation.Horizontal,
-            Margin = new Thickness(0, 5),
-        };
-        var input = new TextBox() { VerticalAlignment = VerticalAlignment.Center };
-        var binding = new Binding() { Source = renderer, Path = propPath };
-        input.Bind(TextBox.TextProperty, binding);
-        channelPanel.Children.Add(input);
-
-        channelPanel.Children.Add(new TextBlock()
-        {
-            VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Thickness(10, 0),
-            Text = $"-> {channelName}"
-        });
-
-        panel.Children.Add(channelPanel);
-    }
-
-    private void _FillChanelMapRenderer(StackPanel panel, ChannelMapRenderer renderer)
-    {
-        _ChannelMapRendererChannelInput(panel, renderer, "Red", nameof(renderer.ChannelRed));
-        _ChannelMapRendererChannelInput(panel, renderer, "Green", nameof(renderer.ChannelGreen));
-        _ChannelMapRendererChannelInput(panel, renderer, "Blue", nameof(renderer.ChannelBlue));
-    }
-
-    private void _FillHeatmapRenderer(StackPanel panel, HeatMapRenderer renderer)
-    {
-        panel.Orientation = Orientation.Horizontal;
-        panel.Children.Add(new TextBlock()
-        {
-            VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Thickness(10, 0),
-            Text = "Channel:"
-        });
-
-        var input = new TextBox()
-        {
-            VerticalAlignment = VerticalAlignment.Center,
-        };
-        var binding = new Binding()
-        {
-            Source = renderer,
-            Path = nameof(renderer.Channel)
-        };
-        input.Bind(TextBox.TextProperty, binding);
-        panel.Children.Add(input);
-    }
-
-    private void _FillArgMaxRenderer(StackPanel panel, ArgMaxRenderer renderer)
-    {
     }
 
     [RelayCommand]
