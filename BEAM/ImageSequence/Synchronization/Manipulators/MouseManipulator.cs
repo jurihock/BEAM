@@ -15,8 +15,13 @@ public class MouseManipulator : Manipulator
     
     private List<AvaPlot> _avaPlots = [];
     
-    public override bool SyncPlot(AvaPlot avaPlot)
+    public override bool SyncPlot(AvaPlot? avaPlot)
     {
+        if (avaPlot == null)
+        {
+            return false;
+        }
+        
         _avaPlots.Add(avaPlot);
         
         avaPlot.PointerEntered += (s, e) =>
@@ -127,8 +132,8 @@ public class MouseManipulator : Manipulator
         return true;
     }
 
-    public override bool UnsyncPlot(AvaPlot avaPlot)
+    public override bool UnsyncPlot(AvaPlot? avaPlot)
     {
-        return true;
+        return avaPlot != null && _avaPlots.Remove(avaPlot);
     }
 }
