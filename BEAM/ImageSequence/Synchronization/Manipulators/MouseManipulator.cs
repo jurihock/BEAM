@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Interactivity;
 using BEAM.Log;
+using NP.Ava.Visuals;
+using ScottPlot;
 using ScottPlot.Avalonia;
 
 namespace BEAM.ImageSequence.Synchronization.Manipulators;
@@ -78,12 +80,12 @@ public class MouseManipulator : Manipulator
 
         avaPlot.PointerWheelChanged += (s, e) =>
         {
-            EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
-                    plot.RaiseEvent(e);
+                    plot.Plot.Axes.SetLimits(avaPlot.Plot.Axes.GetLimits());
+                    plot.Refresh();
                 }
             }
         };

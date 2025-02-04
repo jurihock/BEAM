@@ -48,8 +48,8 @@ public partial class SequenceView : UserControl
         AvaPlot1.Plot.Add.Plottable(plottable);
 
         plottable.SequenceImage.RequestRefreshPlotEvent += (sender, args) => AvaPlot1.Refresh();
-
         AvaPlot1.Refresh();
+        
     }
 
     private void _ApplyDarkMode()
