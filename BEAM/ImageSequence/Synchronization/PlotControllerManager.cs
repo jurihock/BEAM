@@ -50,6 +50,9 @@ public static class PlotControllerManager
     {
         return PlotControllers.All(controller => controller.AddPlot(plot));
     }
-    
-    //TODO: Alternatively add methods for removing plot from every Controller it is included in here
+
+    public static bool RemovePlotFromAllControllers(AvaPlot plot)
+    {
+        return PlotControllers.All(controller => controller.RemovePlot(plot));
+    }
 }
