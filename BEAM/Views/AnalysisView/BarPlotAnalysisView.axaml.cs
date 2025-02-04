@@ -119,8 +119,8 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
     }
 
 
-    public override void Update()
+    public override void Update(IPlottable newPlot)
     {
-        throw new NotImplementedException();
+        FillPlot(new double[]{1,1,1,1});
     }
 }

@@ -24,7 +24,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 {
     // [ObservableProperty] public partial SequenceViewModel currentSequenceViewModel { get; set; }
     
-    public InspectionView openAnalysisView { get; }
+    public BarPlotAnalysisView openAnalysisView { get; }
     private Sequence _currentSequence;
     private IPixelAnalysis _currentPixelAnalysis;
     
@@ -45,7 +45,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 
     public InspectionViewModel()
     {
-        openAnalysisView = new InspectionView();
+        openAnalysisView = new BarPlotAnalysisView();
         _currentPixelAnalysis = new PixelAnalysisChannel();
     }
 

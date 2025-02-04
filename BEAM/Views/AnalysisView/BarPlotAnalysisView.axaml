@@ -6,7 +6,6 @@
              xmlns:scott="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:AnalysisViewModelPlot"
-             Height="600"
              x:Class="BEAM.Views.AnalysisView.BarPlotAnalysisView">
              
     <scott:AvaPlot x:Name="AvaPlotAnalysis"/>
