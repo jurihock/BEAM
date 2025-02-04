@@ -3,6 +3,7 @@ using BEAM.Datatypes;
 using BEAM.ImageSequence;
 using BEAM.ViewModels;
 using BEAM.Views.AnalysisView;
+using ScottPlot;
 
 namespace BEAM.Analysis;
 
@@ -12,9 +13,9 @@ namespace BEAM.Analysis;
 /// </summary>
 public interface IRegionAnalysis
 {
-    public AbstractAnalysisView analyseRegion(Sequence sequence, Shape region);
-    public AbstractAnalysisView analyseRegion(SequenceViewModel viewModel, Shape region);
+    public Plot analyseRegion(Sequence sequence, Shape region);
+    public Plot analyseRegion(SequenceViewModel viewModel, Shape region);
 
-    public AbstractAnalysisView analyseRegion(long posX, long posY, long width, long height,
+    public Plot analyseRegion(long posX, long posY, long width, long height,
         SequenceViewModel viewModel);
 }

@@ -5,12 +5,17 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
+using BEAM.Analysis;
 using BEAM.Datatypes;
 using BEAM.Docking;
+using BEAM.ImageSequence;
+using BEAM.Views;
 using BEAM.Views.AnalysisView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ScottPlot;
+using ScottPlot.Plottables;
+using Rectangle = BEAM.Datatypes.Rectangle;
 
 
 namespace BEAM.ViewModels;
@@ -19,7 +24,10 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 {
     // [ObservableProperty] public partial SequenceViewModel currentSequenceViewModel { get; set; }
     
-    public ObservableCollection<AbstractAnalysisView> openAnalysisViews { get; set; }
+    public InspectionView openAnalysisView { get; }
+    private Sequence _currentSequence;
+    private IPixelAnalysis _currentPixelAnalysis;
+    
 
     /// <summary>
     /// Set the AnalysisView to a default value
@@ -37,21 +45,21 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 
     public InspectionViewModel()
     {
-        openAnalysisViews =
-        [
-            new CoordinateAnalysisView(),
-            new BarPlotAnalysisView(),
-        ];
+        openAnalysisView = new InspectionView();
+        _currentPixelAnalysis = new PixelAnalysisChannel();
     }
 
     public string Name { get; } = "Inspect";
 
     public void Update(Rectangle coordRectangle, SequenceViewModel sequence)
     {
-        foreach (var analysisView in openAnalysisViews)
-        {
-            analysisView.Update(coordRectangle, sequence.Sequence);
-        }
+        
+    }
+    
+    public void Update(Coordinate2D point, SequenceViewModel sequence)
+    {
+        IPlottable result = _currentPixelAnalysis.analysePixel(_currentSequence, point);
+        openAnalysisView.Update(result);
     }
     
     // [RelayCommand]

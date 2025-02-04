@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using BEAM.Analysis;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
 using BEAM.ViewModels.AnalysisViewModels;
@@ -117,10 +118,9 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
         AvaPlotAnalysis.Refresh();
     }
 
-    public override void Update(Rectangle rectangle, Sequence sequence)
+
+    public override void Update()
     {
-        var pixelData = sequence.GetPixel((long)rectangle.BottomRight.Column, (long)rectangle.BottomRight.Row);
-        FillPlot(pixelData);
-        Console.WriteLine("test");
+        throw new NotImplementedException();
     }
 }

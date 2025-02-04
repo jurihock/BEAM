@@ -2,6 +2,7 @@
 using BEAM.ImageSequence;
 using BEAM.ViewModels;
 using BEAM.Views.AnalysisView;
+using ScottPlot;
 
 namespace BEAM.Analysis;
 
@@ -11,6 +12,6 @@ namespace BEAM.Analysis;
 /// </summary>
 public interface IPixelAnalysis
 {
-    public AbstractAnalysisView analysePixel(Sequence sequence, Coordinate2D position);
-    public AbstractAnalysisView analysePixel(SequenceViewModel viewModel, Coordinate2D position);
+    public IPlottable analysePixel(Sequence sequence, Coordinate2D position);
+    public IPlottable analysePixel(SequenceViewModel viewModel, Coordinate2D position);
 }
