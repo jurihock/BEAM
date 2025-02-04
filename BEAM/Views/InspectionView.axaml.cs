@@ -19,15 +19,16 @@ public partial class InspectionView : UserControl
     public InspectionView()
     {
         InitializeComponent();
+        AnalysisPlot.Plot.Add.Bars(new double[]{1,2,3,4});
     }
 
     public void Update(IPlottable newPlot)
     {
         Console.WriteLine("ClickUpdated Landed in View");
-        analysisPlot.Plot.Clear();
+        //AnalysisPlot.Plot.Clear();
         //analysisPlot.Plot.Add.Plottable(newPlot);
-        analysisPlot.Plot.Add.Bars(new double[] { 4, 4, 4, 4 });
-        analysisPlot.Refresh();
+        AnalysisPlot.Plot.Add.Bars(new double[] { 4, 4, 4, 4 });
+        AnalysisPlot.Refresh();
     }
 
 
