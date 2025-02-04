@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using BEAM.Log;
 using NP.Ava.Visuals;
@@ -80,14 +81,11 @@ public class MouseManipulator : Manipulator
 
         avaPlot.PointerWheelChanged += (s, e) =>
         {
-            if (EventSourceMapper.IsSource(e, avaPlot))
-            {
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.Plot.Axes.SetLimits(avaPlot.Plot.Axes.GetLimits());
                     plot.Refresh();
                 }
-            }
         };
 
         avaPlot.Tapped += (s, e) =>

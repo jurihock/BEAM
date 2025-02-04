@@ -2,6 +2,7 @@
 29.01.2025 20:37:14 Warning --> UnknownFileFormat
 29.01.2025 20:37:14 Warning --> UnknownFileFormat
 29.01.2025 20:37:14 Warning --> UnknownFileFormat
+29.01.2025 21:47:32 ERROR! --> FileNotFound
 2/4/2025 2:57:11 PM ERROR! --> ThrownException: Empty sequences are not supported
 2/4/2025 2:57:50 PM Unspecified Log: 496, 303|303
 2/4/2025 2:57:50 PM Unspecified Log: 496, 303|303
@@ -652,3 +653,4 @@
 2/4/2025 3:12:12 PM Warning --> BasicMessage: Not implemented yet!
 2/4/2025 3:39:15 PM ERROR! --> FileNotFound
 2/4/2025 4:26:18 PM Warning --> BasicMessage: Not implemented yet!
+04.02.2025 19:06:35 ERROR! --> ThrownException: Empty sequences are not supported
