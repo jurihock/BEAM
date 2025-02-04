@@ -10,7 +10,7 @@
              x:Name="Inspection"
              x:Class="BEAM.Views.InspectionView">
     
-    <scott:AvaPlot Name="AvaPlot1"/>
+    <scott:AvaPlot Name="analysisPlot"/>
 
 
 </UserControl>

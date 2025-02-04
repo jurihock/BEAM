@@ -28,27 +28,15 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     }
 
     [RelayCommand]
-    public async Task UpdateInspectionViewModel(Rectangle coordRectangle)
+    public async Task UpdateInspectionViewModel(Coordinate2D point)
     {
-        var topLeftX = coordRectangle.TopLeft.Column;
-        var topLeftY = coordRectangle.TopLeft.Row;
-        var bottomRightX = coordRectangle.BottomRight.Column;
-        var bottomRightY = coordRectangle.BottomRight.Row;
-        
-        if (_ConnectedInspectionViewModels.Count == 0)
-            return;
-        if ( topLeftY > Sequence.Shape.Height || topLeftY < 0 || topLeftX > Sequence.Shape.Width ||
-            topLeftX < 0)
-            return;
-        if (!coordRectangle.BottomRight.Equals(coordRectangle.TopLeft))
-        {
-            if (bottomRightY > Sequence.Shape.Height || bottomRightY < 0 || bottomRightX > Sequence.Shape.Width ||
-                bottomRightX < 0)
-                return;
-        }
+        Console.WriteLine("ClickUpdated Arrived in ViewModel");
+        int c = 0;
         foreach (var inspectionViewModel in _ConnectedInspectionViewModels)
         {
-            inspectionViewModel.Update(coordRectangle, this);
+            inspectionViewModel.Update(point, this);
+            Console.WriteLine(c);
+            c++;
         }
     }
 
@@ -59,7 +47,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         _ConnectedInspectionViewModels.Add(inspectionViewModel);
         DockingVm.OpenDock(inspectionViewModel);
         
-        inspectionViewModel.Update(new Rectangle(clickedCursorPosition, clickedCursorPosition), this);
+        inspectionViewModel.Update(clickedCursorPosition, this);
     }
 
     public string Name { get; } = "Eine tolle Sequence";

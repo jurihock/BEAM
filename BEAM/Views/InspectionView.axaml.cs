@@ -7,6 +7,7 @@ using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using BEAM.Analysis;
 using BEAM.ViewModels;
+using NP.Utilities;
 using ScottPlot;
 using ScottPlot.Avalonia;
 using ScottPlot.Statistics;
@@ -15,18 +16,17 @@ namespace BEAM.Views;
 
 public partial class InspectionView : UserControl
 {
-    AvaPlot analysisPlot;
     public InspectionView()
     {
         InitializeComponent();
-        analysisPlot = this.Find<AvaPlot>("AvaPlot1");
-        analysisPlot.Plot.Add.Bars(new double[] { 1, 2, 3, 4, 5 });
     }
 
     public void Update(IPlottable newPlot)
     {
+        Console.WriteLine("ClickUpdated Landed in View");
         analysisPlot.Plot.Clear();
-        analysisPlot.Plot.Add.Plottable(newPlot);
+        //analysisPlot.Plot.Add.Plottable(newPlot);
+        analysisPlot.Plot.Add.Bars(new double[] { 4, 4, 4, 4 });
         analysisPlot.Refresh();
     }
 

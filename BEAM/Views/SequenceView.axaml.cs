@@ -97,6 +97,9 @@ public partial class SequenceView : UserControl
 
     private void PointerPressedHandler(object sender, PointerPressedEventArgs args)
     {
+        
+        Console.WriteLine("Click detected");
+        
         var point = args.GetCurrentPoint(sender as Control);
         var x = point.Position.X;
         var y = point.Position.Y;
@@ -105,8 +108,7 @@ public partial class SequenceView : UserControl
     
         var vm = (SequenceViewModel?)DataContext;
         vm.clickedCursorPosition = CoordInPlot;
-        
-        vm.UpdateInspectionViewModel(new Rectangle(CoordInPlot, CoordInPlot));
+        vm.UpdateInspectionViewModel(CoordInPlot);
     }
 
     private void StyledElement_OnDataContextChanged(object? sender, EventArgs e)

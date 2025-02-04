@@ -56,9 +56,11 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         
     }
     
-    public void Update(Coordinate2D point, SequenceViewModel sequence)
+    public void Update(Coordinate2D point, SequenceViewModel sequenceViewModel)
     {
-        IPlottable result = _currentPixelAnalysis.analysePixel(_currentSequence, point);
+        Console.WriteLine("ClickUpdated Arrived in InspectionViewModel");
+
+        IPlottable result = _currentPixelAnalysis.analysePixel(sequenceViewModel.Sequence, point);
         openAnalysisView.Update(result);
     }
     
