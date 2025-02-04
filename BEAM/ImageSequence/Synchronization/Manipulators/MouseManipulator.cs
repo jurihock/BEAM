@@ -10,11 +10,21 @@ using ScottPlot.Avalonia;
 
 namespace BEAM.ImageSequence.Synchronization.Manipulators;
 
+/// <summary>
+/// A class used to share mouse events between a group of Avaplots.
+/// </summary>
 public class MouseManipulator : Manipulator
 {
-    
+    /// <summary>
+    /// The list of the plots, which will share mouse events.
+    /// </summary>
     private List<AvaPlot> _avaPlots = [];
     
+    /// <summary>
+    /// Synchronizes a plot with all the other plots, which are already registered.
+    /// </summary>
+    /// <param name="avaPlot">The AvaPlot, which will be synchronized.</param>
+    /// <returns>A Boolean, indicating, if the given AvaPlot was successfully synchronized.</returns>
     public override bool SyncPlot(AvaPlot? avaPlot)
     {
         if (avaPlot == null)
@@ -132,6 +142,11 @@ public class MouseManipulator : Manipulator
         return true;
     }
 
+    /// <summary>
+    /// Removes an AvaPlot, so that it is no longer synchronized with the other plots.
+    /// </summary>
+    /// <param name="avaPlot">The AvaPlot, which synchronization will be removed.</param>
+    /// <returns>A Boolean indicating, if the plot was removed successfully.</returns>
     public override bool UnsyncPlot(AvaPlot? avaPlot)
     {
         return avaPlot != null && _avaPlots.Remove(avaPlot);
