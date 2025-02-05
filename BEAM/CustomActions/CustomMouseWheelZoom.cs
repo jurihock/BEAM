@@ -1,9 +1,16 @@
 using System;
 using ScottPlot;
 using ScottPlot.Interactivity;
+using ScottPlot.Interactivity.UserActions;
 
 namespace BEAM.CustomActions;
 
+/// <summary>
+/// A class used to implement the custom mouse wheel zoom functionality, wanted by the project.
+/// Using the Mouse Wheel scrolls through the plot, while holding the Control key and scrolling zooms in and out.
+/// </summary>
+/// <param name="horizontalLockKey">The Key, which locks the Zooming to the horizontal axis.</param>
+/// <param name="verticalLockKey">The Key, which locks the zooming to the vertical axis.</param>
 public class CustomMouseWheelZoom(Key horizontalLockKey, Key verticalLockKey) : IUserActionResponse
 {
     /// <summary>
@@ -27,6 +34,9 @@ public class CustomMouseWheelZoom(Key horizontalLockKey, Key verticalLockKey) : 
     /// </summary>
     public double ZoomFraction { get; set; } = 0.15;
     
+    /// <summary>
+    /// Fraction of the axis range to change when scrolling.
+    /// </summary>
     public double ScrollFraction { get; set; } = 0.075;
 
     private double ZoomInFraction => 1 + ZoomFraction;
@@ -36,7 +46,7 @@ public class CustomMouseWheelZoom(Key horizontalLockKey, Key verticalLockKey) : 
     {
         if (keys.IsPressed(StandardKeys.Control))
         {
-            if (userInput is ScottPlot.Interactivity.UserActions.MouseWheelUp mouseDownInput)
+            if (userInput is MouseWheelUp mouseDownInput)
             {
                 double xFrac = keys.IsPressed(LockHorizontalKey) ? 1 : ZoomInFraction;
                 double yFrac = keys.IsPressed(LockVerticalKey) ? 1 : ZoomInFraction;
@@ -44,7 +54,7 @@ public class CustomMouseWheelZoom(Key horizontalLockKey, Key verticalLockKey) : 
                 return new ResponseInfo() { RefreshNeeded = true };
             }
 
-            if (userInput is ScottPlot.Interactivity.UserActions.MouseWheelDown mouseUpInput)
+            if (userInput is MouseWheelDown mouseUpInput)
             {
                 double xFrac = keys.IsPressed(LockHorizontalKey) ? 1 : ZoomOutFraction;
                 double yFrac = keys.IsPressed(LockVerticalKey) ? 1 : ZoomOutFraction;
@@ -56,7 +66,7 @@ public class CustomMouseWheelZoom(Key horizontalLockKey, Key verticalLockKey) : 
         }
         else
         {
-            if (userInput is ScottPlot.Interactivity.UserActions.MouseWheelUp mouseDownInput)
+            if (userInput is MouseWheelUp mouseDownInput)
             {
                 var YSize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
                 var pixel = new Pixel(mouseDownInput.Pixel.X, mouseDownInput.Pixel.Y + ScrollFraction * YSize);
@@ -64,7 +74,7 @@ public class CustomMouseWheelZoom(Key horizontalLockKey, Key verticalLockKey) : 
                 return new ResponseInfo() { RefreshNeeded = true };
             }
             
-            if (userInput is ScottPlot.Interactivity.UserActions.MouseWheelDown mouseUpInput)
+            if (userInput is MouseWheelDown mouseUpInput)
             {
                 var YSize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
                 var pixel = new Pixel(mouseUpInput.Pixel.X, mouseUpInput.Pixel.Y - ScrollFraction * YSize);

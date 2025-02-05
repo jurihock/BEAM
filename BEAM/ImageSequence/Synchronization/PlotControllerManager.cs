@@ -46,11 +46,21 @@ public static class PlotControllerManager
         return true;
     }
     
+    /// <summary>
+    /// Adds a plot to all stored synchronization sets.
+    /// </summary>
+    /// <param name="plot">The AvaPlot, which will be added.</param>
+    /// <returns>A Boolean indicating, whether the plot was added successfully.</returns>
     public static bool AddPlotToAllControllers(AvaPlot plot)
     {
         return PlotControllers.All(controller => controller.AddPlot(plot));
     }
 
+    /// <summary>
+    /// Removes a plot from all stored synchronization sets.
+    /// </summary>
+    /// <param name="plot">The AvaPlot, which will be removed.</param>
+    /// <returns>A Boolean indicating, whether the plot was removed successfully.</returns>
     public static bool RemovePlotFromAllControllers(AvaPlot plot)
     {
         return PlotControllers.All(controller => controller.RemovePlot(plot));
