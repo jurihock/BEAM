@@ -37,20 +37,12 @@ public partial class SequenceView : UserControl
 
         //var panButton = ScottPlot.Interactivity.StandardMouseButtons.Middle;
         //var panResponse = new ScottPlot.Interactivity.UserActionResponses.MouseDragPan(panButton);
+        
+        // Remove the standard MouseWheelZoom and replace it with the wanted custom functionality
         AvaPlot1.UserInputProcessor.RemoveAll<MouseWheelZoom>();
-        AvaPlot1.UserInputProcessor.UserActionResponses.Add(new CustomMouseWheelZoom(StandardKeys.Shift, StandardKeys.Control));
-        AvaPlot1.PointerWheelChanged += (sender, e) =>
-        {
-            if (e.KeyModifiers == KeyModifiers.Control)
-            { 
-                var pixel = new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y); 
-                AvaPlot1.Plot.Axes.Zoom(pixel, 1 + 0.15 * e.Delta.X, 1 + 0.15 * e.Delta.Y);
-            }
-            else
-            {
-                AvaPlot1.Plot.Axes.ZoomIn(1 + 0.15 * e.Delta.X, 1 + 0.15 * e.Delta.Y);
-            }
-        };
+        AvaPlot1.UserInputProcessor.UserActionResponses.Add(new CustomMouseWheelZoom(StandardKeys.Shift,
+            StandardKeys.Control));
+        
         PlotControllerManager.AddPlotToAllControllers(AvaPlot1);
         using var _ = Timer.Start();
 
