@@ -68,16 +68,16 @@ public class CustomMouseWheelZoom(Key horizontalLockKey, Key verticalLockKey) : 
         {
             if (userInput is MouseWheelUp mouseDownInput)
             {
-                var YSize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
-                var pixel = new Pixel(mouseDownInput.Pixel.X, mouseDownInput.Pixel.Y + ScrollFraction * YSize);
+                var ySize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
+                var pixel = new Pixel(mouseDownInput.Pixel.X, mouseDownInput.Pixel.Y + ScrollFraction * ySize);
                 MouseAxisManipulation.DragPan(plot, mouseDownInput.Pixel, pixel);
                 return new ResponseInfo() { RefreshNeeded = true };
             }
             
             if (userInput is MouseWheelDown mouseUpInput)
             {
-                var YSize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
-                var pixel = new Pixel(mouseUpInput.Pixel.X, mouseUpInput.Pixel.Y - ScrollFraction * YSize);
+                var ySize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
+                var pixel = new Pixel(mouseUpInput.Pixel.X, mouseUpInput.Pixel.Y - ScrollFraction * ySize);
                 MouseAxisManipulation.DragPan(plot, mouseUpInput.Pixel, pixel);
                 return new ResponseInfo() { RefreshNeeded = true };
             }

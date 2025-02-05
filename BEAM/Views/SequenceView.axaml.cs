@@ -18,6 +18,8 @@ namespace BEAM.Views;
 
 public partial class SequenceView : UserControl
 {
+
+    private double oldScrollValue = 0.0;
     public SequenceView()
     {
         InitializeComponent();
@@ -42,6 +44,20 @@ public partial class SequenceView : UserControl
         AvaPlot1.UserInputProcessor.RemoveAll<MouseWheelZoom>();
         AvaPlot1.UserInputProcessor.UserActionResponses.Add(new CustomMouseWheelZoom(StandardKeys.Shift,
             StandardKeys.Control));
+        
+        Bar1.Scroll += (s, e) =>
+        {
+            var plot = AvaPlot1.Plot;
+            var ySize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
+            var top = (e.NewValue / 100.0) * sequence.Shape.Height - 100.0;
+            AvaPlot1.Plot.Axes.SetLimitsY(top, top + ySize);
+            AvaPlot1.Refresh();
+        };
+
+        AvaPlot1.PointerWheelChanged += (s, e) =>
+        {
+            Bar1.Value = ((AvaPlot1.Plot.Axes.GetLimits().Bottom + 100.0) / sequence.Shape.Height) * 100;
+        };
         
         PlotControllerManager.AddPlotToAllControllers(AvaPlot1);
         using var _ = Timer.Start();
