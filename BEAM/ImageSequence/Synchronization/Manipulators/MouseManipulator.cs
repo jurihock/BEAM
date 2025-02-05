@@ -72,6 +72,11 @@ public class MouseManipulator : Manipulator
 
         avaPlot.PointerPressed += (s, e) =>
         {
+            // check for right click -> only opens context push menu (scottplot intern)
+            if (e.GetCurrentPoint(avaPlot).Properties.IsRightButtonPressed)
+            {
+                return;
+            }
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
