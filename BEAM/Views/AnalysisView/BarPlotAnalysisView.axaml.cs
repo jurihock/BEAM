@@ -28,6 +28,9 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
     public BarPlotAnalysisView()
     {
         InitializeComponent();
+        
+        AvaPlotAnalysis.Plot.Add.Bars(new double[]{1,1,1,1,1});
+
 
         // var limits = AvaPlotAnalysis.Plot.Axes.GetLimits();
         // var lockedVerticalRule = new LockedVertical(AvaPlotAnalysis.Plot.Axes.Left, limits.Bottom, limits.Top);
@@ -119,8 +122,9 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
     }
 
 
-    public override void Update()
+    public override void Update(IPlottable newPlot)
     {
-        throw new NotImplementedException();
+        Console.WriteLine("BarView");
+        FillPlot(new double[]{1,1,1,1});
     }
 }
