@@ -105,7 +105,20 @@ public partial class SequenceView : UserControl
         var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
     
         var vm = (SequenceViewModel?)DataContext;
-        vm.clickedCursorPosition = CoordInPlot;
+        vm.pressedPointerPosition = CoordInPlot;
+    }
+    
+    private void PointerReleasedHandler(object? sender, PointerReleasedEventArgs args)
+    {
+        
+        var point = args.GetCurrentPoint(sender as Control);
+        var x = point.Position.X;
+        var y = point.Position.Y;
+    
+        var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
+    
+        var vm = (SequenceViewModel?)DataContext;
+        vm.releasedPointerPosition = CoordInPlot;
         vm.UpdateInspectionViewModel(CoordInPlot);
     }
 

@@ -25,8 +25,15 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     // [ObservableProperty] public partial SequenceViewModel currentSequenceViewModel { get; set; }
 
     [ObservableProperty] private Plot _currentPlot;
-    private Sequence _currentSequence;
+    private SequenceViewModel _currentSequenceViewModel;
     private IPixelAnalysis _currentPixelAnalysis;
+    public List<IPixelAnalysis> AnalysisList { get; } = new List<IPixelAnalysis>
+    {
+        new PixelAnalysisChannel(),
+        new HistogramAnalysis()
+    };
+
+    public List<SequenceViewModel> ExistingSequenceViewModels { get; } = new List<SequenceViewModel>();
 
     /// <summary>
     /// The current AnalysisView displayed
@@ -37,9 +44,11 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     //     set => _currentAnalysisView = value;
     // }
 
-    public InspectionViewModel()
+    public InspectionViewModel(SequenceViewModel sequenceViewModel)
     {
-        _currentPixelAnalysis = new PixelAnalysisChannel();
+        _currentPixelAnalysis = AnalysisList[0];
+        _currentSequenceViewModel = sequenceViewModel;
+        ExistingSequenceViewModels.Add(sequenceViewModel);
     }
 
     public string Name { get; } = "Inspect";
@@ -51,10 +60,21 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     
     public void Update(Coordinate2D point, SequenceViewModel sequenceViewModel)
     {
-        Console.WriteLine("ClickUpdated Arrived in InspectionViewModel");
-
         Plot result = _currentPixelAnalysis.analysePixel(sequenceViewModel.Sequence, point);
         CurrentPlot = result;
+    }
+    
+    [RelayCommand]
+    public async Task Clone()
+    {
+        _currentSequenceViewModel.OpenInspectionViewCommand.Execute(null);
+    }
+    
+    [RelayCommand]
+    public async Task ChangeAnalysis(int index)
+    {
+        Console.WriteLine("Changed Analysis to: " + AnalysisList[index]);
+        _currentPixelAnalysis = AnalysisList[index];
     }
     
     // [RelayCommand]

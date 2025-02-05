@@ -15,7 +15,9 @@ namespace BEAM.ViewModels;
 public partial class SequenceViewModel : ViewModelBase, IDockBase
 {
     [ObservableProperty] public partial DockingViewModel DockingVm { get; set; } = new();
-    [ObservableProperty] public partial Coordinate2D clickedCursorPosition { get; set; } = new();
+    [ObservableProperty] public partial Coordinate2D pressedPointerPosition { get; set; } = new();
+    [ObservableProperty] public partial Coordinate2D releasedPointerPosition { get; set; } = new();
+
 
     public Sequence Sequence { get; }
 
@@ -30,6 +32,8 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public async Task UpdateInspectionViewModel(Coordinate2D point)
     {
+        Console.WriteLine("Rectangle is detected:" + pressedPointerPosition.Column + ", " + releasedPointerPosition.Column);
+        
         foreach (var inspectionViewModel in _ConnectedInspectionViewModels)
         {
             inspectionViewModel.Update(point, this);
@@ -39,12 +43,17 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public async Task OpenInspectionView()
     {
-        InspectionViewModel inspectionViewModel = new InspectionViewModel();
+        InspectionViewModel inspectionViewModel = new InspectionViewModel(this);
         _ConnectedInspectionViewModels.Add(inspectionViewModel);
         DockingVm.OpenDock(inspectionViewModel);
         
-        inspectionViewModel.Update(clickedCursorPosition, this);
+        inspectionViewModel.Update(pressedPointerPosition, this);
     }
 
     public string Name { get; } = "Eine tolle Sequence";
+
+    public override string ToString()
+    {
+        return Name;
+    }
 }

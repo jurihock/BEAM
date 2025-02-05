@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics.X86;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using BEAM.Analysis;
 using BEAM.ViewModels;
 using NP.Utilities;
@@ -25,7 +28,6 @@ public partial class InspectionView : UserControl
     }
     public void FillPlot(Plot newPlot)
     {
-        Console.WriteLine("ClickUpdated Landed in View " + counter);
         var vm = DataContext as InspectionViewModel;
         AnalysisPlot.Reset(newPlot);
         AnalysisPlot.Refresh();
@@ -36,5 +38,17 @@ public partial class InspectionView : UserControl
         var vm = DataContext as InspectionViewModel;
         vm.PropertyChanged += (s, e) => FillPlot(vm.CurrentPlot);
         FillPlot(vm.CurrentPlot);        
+    }
+    
+    public void CloneButton_Clicked(object sender, RoutedEventArgs e)
+    {
+        var vm = DataContext as InspectionViewModel;
+        vm.Clone();
+    }
+    
+    public void AnalysisPicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var vm = DataContext as InspectionViewModel;
+        vm.ChangeAnalysis(AnalysisPicker.SelectedIndex);
     }
 }

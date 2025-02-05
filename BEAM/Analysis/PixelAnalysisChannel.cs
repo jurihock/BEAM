@@ -24,4 +24,9 @@ public class PixelAnalysisChannel : IPixelAnalysis
     {
         throw new System.NotImplementedException();
     }
+
+    public override string ToString()
+    {
+        return "Pixel Channel Analysis";
+    }
 }
