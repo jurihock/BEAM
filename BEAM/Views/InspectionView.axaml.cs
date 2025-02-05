@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Runtime.Intrinsics.X86;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -16,28 +17,20 @@ namespace BEAM.Views;
 
 public partial class InspectionView : UserControl
 {
+    private int counter = 0;
     public InspectionView()
     {
         InitializeComponent();
         AnalysisPlot.Plot.Add.Bars(new double[]{1,2,3,4});
+        this.DataContextChanged += (s, e) => Update();
     }
-
-    public void Update(IPlottable newPlot)
+    public void Update()
     {
-        Console.WriteLine("ClickUpdated Landed in View");
-        //AnalysisPlot.Plot.Clear();
-        //analysisPlot.Plot.Add.Plottable(newPlot);
-        AnalysisPlot.Plot.Add.Bars(new double[] { 4, 4, 4, 4 });
+        Console.WriteLine("ClickUpdated Landed in View " + counter);
+        var vm = DataContext as InspectionViewModel;
+        AnalysisPlot.Plot.Clear();
+        //AnalysisPlot.Plot.Add.Bars(new double[]{1,2,3,4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
+        AnalysisPlot.Plot.Add.Plottable(vm.CurrentPlot);
         AnalysisPlot.Refresh();
     }
-
-
-
-    // public void FillAnalysisView()
-    // {
-    //     var vm = DataContext as InspectionViewModel;
-    //     vm.SetAnalysisViewCommand.Execute(null);
-    // }
-    
-    
 }

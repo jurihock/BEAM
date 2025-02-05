@@ -23,16 +23,10 @@ namespace BEAM.ViewModels;
 public partial class InspectionViewModel : ViewModelBase, IDockBase
 {
     // [ObservableProperty] public partial SequenceViewModel currentSequenceViewModel { get; set; }
-    
-    public InspectionView openAnalysisView { get; }
+
+    [ObservableProperty] private IPlottable _currentPlot;
     private Sequence _currentSequence;
     private IPixelAnalysis _currentPixelAnalysis;
-    
-
-    /// <summary>
-    /// Set the AnalysisView to a default value
-    /// </summary>
-    // private AbstractAnalysisView _currentAnalysisView = new BarPlotAnalysisView();
 
     /// <summary>
     /// The current AnalysisView displayed
@@ -45,7 +39,6 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 
     public InspectionViewModel()
     {
-        openAnalysisView = new InspectionView();
         _currentPixelAnalysis = new PixelAnalysisChannel();
     }
 
@@ -61,7 +54,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         Console.WriteLine("ClickUpdated Arrived in InspectionViewModel");
 
         IPlottable result = _currentPixelAnalysis.analysePixel(sequenceViewModel.Sequence, point);
-        openAnalysisView.Update(result);
+        CurrentPlot = new Plot().Add.Plottable(result);
     }
     
     // [RelayCommand]
