@@ -30,13 +30,9 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public async Task UpdateInspectionViewModel(Coordinate2D point)
     {
-        Console.WriteLine("ClickUpdated Arrived in ViewModel");
-        int c = 0;
         foreach (var inspectionViewModel in _ConnectedInspectionViewModels)
         {
             inspectionViewModel.Update(point, this);
-            Console.WriteLine(c);
-            c++;
         }
     }
 

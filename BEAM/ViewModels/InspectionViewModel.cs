@@ -24,7 +24,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 {
     // [ObservableProperty] public partial SequenceViewModel currentSequenceViewModel { get; set; }
 
-    [ObservableProperty] private IPlottable _currentPlot;
+    [ObservableProperty] private Plot _currentPlot;
     private Sequence _currentSequence;
     private IPixelAnalysis _currentPixelAnalysis;
 
@@ -53,8 +53,8 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         Console.WriteLine("ClickUpdated Arrived in InspectionViewModel");
 
-        IPlottable result = _currentPixelAnalysis.analysePixel(sequenceViewModel.Sequence, point);
-        CurrentPlot = new Plot().Add.Plottable(result);
+        Plot result = _currentPixelAnalysis.analysePixel(sequenceViewModel.Sequence, point);
+        CurrentPlot = result;
     }
     
     // [RelayCommand]

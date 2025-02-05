@@ -98,8 +98,6 @@ public partial class SequenceView : UserControl
     private void PointerPressedHandler(object sender, PointerPressedEventArgs args)
     {
         
-        Console.WriteLine("Click detected");
-        
         var point = args.GetCurrentPoint(sender as Control);
         var x = point.Position.X;
         var y = point.Position.Y;

@@ -28,9 +28,10 @@ public partial class InspectionView : UserControl
     {
         Console.WriteLine("ClickUpdated Landed in View " + counter);
         var vm = DataContext as InspectionViewModel;
-        AnalysisPlot.Plot.Clear();
-        //AnalysisPlot.Plot.Add.Bars(new double[]{1,2,3,4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
-        AnalysisPlot.Plot.Add.Plottable(vm.CurrentPlot);
+        //AnalysisPlot.Plot.Clear();
+        //AnalysisPlot.Plot.Add.Bars(new double[]{DateTime.Now.Second});
+        //AnalysisPlot.Plot.Add.Plottable(vm.CurrentPlot);
+        AnalysisPlot.Reset(vm.CurrentPlot);
         AnalysisPlot.Refresh();
     }
 }
