@@ -122,6 +122,7 @@ public class SequenceImage : IDisposable
                 }
                 catch (OperationCanceledException)
                 {
+                    // emtpy since just killing the task
                 }
             }, _cancellationToken.Token);
         }
