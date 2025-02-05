@@ -73,6 +73,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public async Task ChangeAnalysis(int index)
     {
+        if(index >= AnalysisList.Count) return;
         Console.WriteLine("Changed Analysis to: " + AnalysisList[index]);
         _currentPixelAnalysis = AnalysisList[index];
     }
