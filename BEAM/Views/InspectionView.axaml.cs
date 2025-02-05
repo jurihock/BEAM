@@ -21,17 +21,20 @@ public partial class InspectionView : UserControl
     public InspectionView()
     {
         InitializeComponent();
-        AnalysisPlot.Plot.Add.Bars(new double[]{1,2,3,4});
-        this.DataContextChanged += (s, e) => Update();
+        this.DataContextChanged += DataContextChangedHandling;
     }
-    public void Update()
+    public void FillPlot(Plot newPlot)
     {
         Console.WriteLine("ClickUpdated Landed in View " + counter);
         var vm = DataContext as InspectionViewModel;
-        //AnalysisPlot.Plot.Clear();
-        //AnalysisPlot.Plot.Add.Bars(new double[]{DateTime.Now.Second});
-        //AnalysisPlot.Plot.Add.Plottable(vm.CurrentPlot);
-        AnalysisPlot.Reset(vm.CurrentPlot);
+        AnalysisPlot.Reset(newPlot);
         AnalysisPlot.Refresh();
+    }
+
+    private void DataContextChangedHandling(object? sender, EventArgs eventArgs)
+    {
+        var vm = DataContext as InspectionViewModel;
+        vm.PropertyChanged += (s, e) => FillPlot(vm.CurrentPlot);
+        FillPlot(vm.CurrentPlot);        
     }
 }
