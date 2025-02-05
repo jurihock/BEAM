@@ -77,6 +77,7 @@ public class MouseManipulator : Manipulator
             {
                 return;
             }
+            
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
@@ -101,11 +102,11 @@ public class MouseManipulator : Manipulator
 
         avaPlot.PointerWheelChanged += (s, e) =>
         {
-                foreach (var plot in _avaPlots.Where(p => p != avaPlot))
-                {
-                    plot.Plot.Axes.SetLimits(avaPlot.Plot.Axes.GetLimits());
-                    plot.Refresh();
-                }
+            foreach (var plot in _avaPlots.Where(p => p != avaPlot))
+            {
+                plot.Plot.Axes.SetLimits(avaPlot.Plot.Axes.GetLimits());
+                plot.Refresh();
+            }   
         };
 
         avaPlot.Tapped += (s, e) =>
