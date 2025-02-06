@@ -9,6 +9,8 @@ using BEAM.Datatypes;
 using BEAM.Image.Bitmap;
 using BEAM.Image.Displayer;
 using BEAM.IMage.Displayer.Scottplot;
+using BEAM.Image.Minimap;
+using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
 using BEAM.Log;
 using BEAM.Profiling;
@@ -121,7 +123,7 @@ public partial class SequenceView : UserControl
         vm.releasedPointerPosition = CoordInPlot;
         vm.UpdateInspectionViewModel(CoordInPlot);
     }
-
+    
     private void StyledElement_OnDataContextChanged(object? sender, EventArgs e)
     {
         var vm = DataContext as SequenceViewModel;
