@@ -24,7 +24,7 @@ public static class ScrollingSynchronizer
             {
                 if (view != sequenceView)
                 {
-                    view.UpdateScrolling(sequenceView.Bar1.Value);
+                    view.UpdateScrolling(sequenceView.AvaPlot1);
                 }
             }
         }

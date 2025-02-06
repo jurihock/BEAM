@@ -11,6 +11,7 @@ using BEAM.Log;
 using BEAM.Profiling;
 using BEAM.ViewModels;
 using ScottPlot;
+using ScottPlot.Avalonia;
 using ScottPlot.Interactivity;
 using ScottPlot.Interactivity.UserActionResponses;
 
@@ -59,7 +60,7 @@ public partial class SequenceView : UserControl
 
         AvaPlot1.PointerWheelChanged += (s, e) =>
         {
-            Bar1.Value = ((AvaPlot1.Plot.Axes.GetLimits().Bottom + 100.0) / sequence.Shape.Height) * 100;
+            UpdateScrollBar();
             ScrollingSynchronizer.synchronize(this);
         };
         
@@ -176,8 +177,16 @@ public partial class SequenceView : UserControl
         Bar1.Value = val;
     }
 
+    public void UpdateScrolling(AvaPlot otherPlot)
+    {
+        AvaPlot1.Plot.Axes.SetLimits(otherPlot.Plot.Axes.GetLimits());
+        AvaPlot1.Refresh();
+        UpdateScrollBar();
+    }
+    
     public void UpdateScrollBar()
     {
-        Bar1.Value = ((AvaPlot1.Plot.Axes.GetLimits().Bottom + 100.0) / _sequence.Shape.Height) * 100;
+        var val =  ((AvaPlot1.Plot.Axes.GetLimits().Bottom + 100.0) / _sequence.Shape.Height) * 100;
+        Bar1.Value = val <= 0.0 ? 0.0 : double.Min(val, 100.0);
     }
 }
