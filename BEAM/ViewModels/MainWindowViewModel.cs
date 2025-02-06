@@ -33,6 +33,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] public partial string Help { get; set; } = BaseConfig.Help;
     [ObservableProperty] public partial string View { get; set; } = BaseConfig.View;
     [ObservableProperty] public partial string Synchro { get; set; } = BaseConfig.Synchro;
+    [ObservableProperty] public partial string ActivateSynchro { get; set; } = BaseConfig.ActivateSynchro;
     [ObservableProperty] public partial string DeactivateSynchro { get; set; } = BaseConfig.DeactivateSynchro;
     [ObservableProperty] public partial string ViewOpenStatusWindow { get; set; } = BaseConfig.ViewOpenStatusWindow;
 
@@ -158,6 +159,13 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         var aboutWindow = new AboutWindow();
         aboutWindow.Show();
+    }
+    
+    [RelayCommand]
+    public void ActivateSynchronization()
+    {
+        _syncedPlotController?.activate();
+        ScrollingSynchronizer.IsSynchronizing = true;
     }
     
     [RelayCommand]
