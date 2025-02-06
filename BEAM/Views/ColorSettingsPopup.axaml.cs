@@ -22,13 +22,6 @@ public partial class ColorSettingsPopup : Window
         InitializeComponent();
     }
 
-    private void NumberTextChanging(object? sender, TextChangedEventArgs e)
-    {
-        var regex = "[^0-9]";
-        if (sender is not TextBox textBox) return;
-        textBox.Text = Regex.Replace(textBox.Text, regex, "");
-    }
-
     private void Close(object? sender, RoutedEventArgs e)
     {
         Close();

@@ -106,7 +106,7 @@ public partial class SequenceView : UserControl
 
     private void _OpenTransformPopup()
     {
-        AffineTransformationPopup popup = new();
+        AffineTransformationPopup popup = new(DataContext as SequenceViewModel);
         var v = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
         popup.ShowDialog(v.MainWindow);
     }
