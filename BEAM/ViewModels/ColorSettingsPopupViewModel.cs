@@ -60,7 +60,6 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
 
     private StackPanel _BuildPanel(SequenceRenderer renderer)
     {
-        // TODO: remove panel
         var panel = new StackPanel() { Margin = new Thickness(30, 0, 0, 0) };
 
         switch (renderer)
