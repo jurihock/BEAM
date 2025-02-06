@@ -21,6 +21,7 @@ public partial class SequenceView : UserControl
 {
 
     private Sequence _sequence;
+    private int i = 0;
     public SequenceView()
     {
         InitializeComponent();
@@ -186,7 +187,7 @@ public partial class SequenceView : UserControl
     
     public void UpdateScrollBar()
     {
-        var val =  ((AvaPlot1.Plot.Axes.GetLimits().Bottom + 100.0) / _sequence.Shape.Height) * 100;
+        var val =  ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / _sequence.Shape.Height) * 100;
         Bar1.Value = val <= 0.0 ? 0.0 : double.Min(val, 100.0);
     }
 }
