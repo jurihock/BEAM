@@ -72,9 +72,9 @@ public partial class ChannelMapRenderer : SequenceRenderer
         {
             tokenSource?.Token.ThrowIfCancellationRequested();
             var colors = NormailizeIntensity(Vector256.Create([
-                img.GetPixel(x, 0, ChannelBlue),
-                img.GetPixel(x, 0, ChannelGreen),
-                img.GetPixel(x, 0, ChannelRed),
+                img.GetPixel(x, 0, 0),
+                img.GetPixel(x, 0, 1),
+                img.GetPixel(x, 0, 2),
                 0
             ]));
 
