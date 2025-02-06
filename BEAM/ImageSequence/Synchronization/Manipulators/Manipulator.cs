@@ -48,4 +48,8 @@ public abstract class Manipulator
     {
         return plots is null || plots.All(SyncPlot);
     }
+
+    public abstract void activate();
+    
+    public abstract void deactivate();
 }

@@ -7,6 +7,7 @@ using BEAM.Log;
 using NP.Ava.Visuals;
 using ScottPlot;
 using ScottPlot.Avalonia;
+using Svg;
 
 namespace BEAM.ImageSequence.Synchronization.Manipulators;
 
@@ -19,6 +20,8 @@ public class MouseManipulator : Manipulator
     /// The list of the plots, which will share mouse events.
     /// </summary>
     private List<AvaPlot> _avaPlots = [];
+
+    private bool _isSynchronizing = false;
     
     /// <summary>
     /// Synchronizes a plot with all the other plots, which are already registered.
@@ -36,6 +39,11 @@ public class MouseManipulator : Manipulator
         
         avaPlot.PointerEntered += (s, e) =>
         {
+            if (!_isSynchronizing)
+            {
+                return;
+            }
+            
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
@@ -48,6 +56,11 @@ public class MouseManipulator : Manipulator
 
         avaPlot.PointerExited += (s, e) =>
         {
+            if (!_isSynchronizing)
+            {
+                return;
+            }
+            
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
@@ -60,6 +73,11 @@ public class MouseManipulator : Manipulator
 
         avaPlot.PointerMoved += (s, e) =>
         {
+            if (!_isSynchronizing)
+            {
+                return;
+            }
+            
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
@@ -72,6 +90,11 @@ public class MouseManipulator : Manipulator
 
         avaPlot.PointerPressed += (s, e) =>
         {
+            if (!_isSynchronizing)
+            {
+                return;
+            }
+            
             // check for right click -> only opens context push menu (scottplot intern)
             if (e.GetCurrentPoint(avaPlot).Properties.IsRightButtonPressed)
             {
@@ -90,6 +113,11 @@ public class MouseManipulator : Manipulator
 
         avaPlot.PointerReleased += (s, e) =>
         {
+            if (!_isSynchronizing)
+            {
+                return;
+            }
+            
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
@@ -102,15 +130,26 @@ public class MouseManipulator : Manipulator
 
         avaPlot.PointerWheelChanged += (s, e) =>
         {
+            if (!_isSynchronizing)
+            {
+                return;
+            }
+            
             foreach (var plot in _avaPlots.Where(p => p != avaPlot))
             {
                 plot.Plot.Axes.SetLimits(avaPlot.Plot.Axes.GetLimits());
                 plot.Refresh();
+                ScrollingSynchronizer.UpdateOwnScrollBar(plot);
             }   
         };
 
         avaPlot.Tapped += (s, e) =>
         {
+            if (!_isSynchronizing)
+            {
+                return;
+            }
+            
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
@@ -123,6 +162,11 @@ public class MouseManipulator : Manipulator
 
         avaPlot.DoubleTapped += (s, e) =>
         {
+            if (!_isSynchronizing)
+            {
+                return;
+            }
+            
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
@@ -135,12 +179,18 @@ public class MouseManipulator : Manipulator
 
         avaPlot.Holding += (s, e) =>
         {
+            if (!_isSynchronizing)
+            {
+                return;
+            }
+            
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
+                    //ScrollingSynchronizer.UpdateOwnScrollBar(plot);
                 }
             }
         };
@@ -156,5 +206,15 @@ public class MouseManipulator : Manipulator
     public override bool UnsyncPlot(AvaPlot? avaPlot)
     {
         return avaPlot != null && _avaPlots.Remove(avaPlot);
+    }
+    
+    public override void activate()
+    {
+        _isSynchronizing = true;
+    }
+    
+    public override void deactivate()
+    {
+        _isSynchronizing = false;
     }
 }

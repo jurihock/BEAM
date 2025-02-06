@@ -102,4 +102,20 @@ public class SyncedPlotController
 
         return Manipulators.All(manipulator => manipulator.UnsyncPlot(plot));
     }
+
+    public void activate()
+    {
+        foreach (var manipulator in Manipulators)
+        {
+            manipulator.activate();
+        }
+    }
+    
+    public void deactivate()
+    {
+        foreach (var manipulator in Manipulators)
+        {
+            manipulator.deactivate();
+        }
+    }
 }

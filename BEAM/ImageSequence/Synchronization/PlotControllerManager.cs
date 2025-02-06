@@ -65,4 +65,20 @@ public static class PlotControllerManager
     {
         return PlotControllers.All(controller => controller.RemovePlot(plot));
     }
+
+    public static void activateSynchronization()
+    {
+        foreach (var controller in PlotControllers)
+        {
+            controller.activate();
+        }
+    }
+    
+    public static void deactivateSynchronization()
+    {
+        foreach (var controller in PlotControllers)
+        {
+            controller.deactivate();
+        }
+    }
 }
