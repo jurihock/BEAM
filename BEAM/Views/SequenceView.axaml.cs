@@ -75,8 +75,7 @@ public partial class SequenceView : UserControl
             control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
         menu.AddSeparator();
         menu.Add("Configure colors", control => _OpenColorsPopup());
-        menu.Add("Affine Transformation",
-            control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+        menu.Add("Affine Transformation", control => _OpenTransformPopup());
         menu.AddSeparator();
         menu.Add("Export sequence",
             control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
@@ -103,6 +102,13 @@ public partial class SequenceView : UserControl
             _plottable.ChangeRenderer(vm.CurrentRenderer);
             AvaPlot1.Refresh();
         };
+    }
+
+    private void _OpenTransformPopup()
+    {
+        AffineTransformationPopup popup = new();
+        var v = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+        popup.ShowDialog(v.MainWindow);
     }
 
     private void _OpenColorsPopup()
