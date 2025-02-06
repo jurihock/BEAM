@@ -5,6 +5,7 @@ using Avalonia;
 using BEAM.Datatypes;
 using BEAM.Docking;
 using BEAM.ImageSequence;
+using BEAM.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ScottPlot;
@@ -36,7 +37,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         
         foreach (var inspectionViewModel in _ConnectedInspectionViewModels)
         {
-            inspectionViewModel.Update(point, this);
+            inspectionViewModel.Update(pressedPointerPosition, releasedPointerPosition, this);
         }
     }
 
@@ -47,7 +48,12 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         _ConnectedInspectionViewModels.Add(inspectionViewModel);
         DockingVm.OpenDock(inspectionViewModel);
         
-        inspectionViewModel.Update(pressedPointerPosition, this);
+        inspectionViewModel.Update(pressedPointerPosition, releasedPointerPosition, this);
+    }
+    
+    public List<IDockBase> GetDockedItems()
+    {
+        return new List<IDockBase>(DockingVm.Items);
     }
 
     public string Name { get; } = "Eine tolle Sequence";

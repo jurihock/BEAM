@@ -9,24 +9,21 @@ using ScottPlot.Plottables;
 
 namespace BEAM.Analysis;
 
-public class PixelAnalysisChannel : IPixelAnalysis
+public class PixelAnalysisChannel : Analysis
 {
-    public Plot analysePixel(Sequence sequence, Coordinate2D position)
+    public override Plot Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint, Sequence sequence)
     {
-        double[] channels = sequence.GetPixel((long)position.Column, (long)position.Row);
+        double[] channels = sequence.GetPixel((long)pointerPressedPoint.Column, (long)pointerReleasedPoint.Row);
 
         Plot plot = new Plot();
         plot.Add.Bars(channels);
+        plot.Title("Pixel Channel Analysis");
         return plot;
-    }
-
-    public Plot analysePixel(SequenceViewModel viewModel, Coordinate2D position)
-    {
-        throw new System.NotImplementedException();
     }
 
     public override string ToString()
     {
         return "Pixel Channel Analysis";
+
     }
 }

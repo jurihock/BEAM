@@ -50,5 +50,12 @@ public partial class InspectionView : UserControl
     {
         var vm = DataContext as InspectionViewModel;
         vm.ChangeAnalysis(AnalysisPicker.SelectedIndex);
+        AnalysisPlot.Refresh();
+    }
+    
+    public void SequencePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var vm = DataContext as InspectionViewModel;
+        vm.ChangeSequence(SequencePicker.SelectedIndex);
     }
 }

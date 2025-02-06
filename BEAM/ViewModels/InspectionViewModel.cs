@@ -26,14 +26,14 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 
     [ObservableProperty] private Plot _currentPlot;
     private SequenceViewModel _currentSequenceViewModel;
-    private IPixelAnalysis _currentPixelAnalysis;
-    public List<IPixelAnalysis> AnalysisList { get; } = new List<IPixelAnalysis>
+    private Analysis.Analysis _currentPixelAnalysis;
+    public List<Analysis.Analysis> AnalysisList { get; private set;  } = new()
     {
         new PixelAnalysisChannel(),
-        new HistogramAnalysis()
+        new CirclePlot()
     };
 
-    public List<SequenceViewModel> ExistingSequenceViewModels { get; } = new List<SequenceViewModel>();
+    public List<SequenceViewModel> ExistingSequenceViewModels { get; set; } = new();
 
     /// <summary>
     /// The current AnalysisView displayed
@@ -49,18 +49,14 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         _currentPixelAnalysis = AnalysisList[0];
         _currentSequenceViewModel = sequenceViewModel;
         ExistingSequenceViewModels.Add(sequenceViewModel);
-    }
-
-    public string Name { get; } = "Inspect";
-
-    public void Update(Rectangle coordRectangle, SequenceViewModel sequence)
-    {
-        
+        _currentSequenceViewModel.DockingVm.Items.CollectionChanged += DockingItemsChanged;
     }
     
-    public void Update(Coordinate2D point, SequenceViewModel sequenceViewModel)
+
+    public string Name { get; } = "Inspect";
+    public void Update(Coordinate2D pressedPoint, Coordinate2D releasedPoint, SequenceViewModel sequenceViewModel)
     {
-        Plot result = _currentPixelAnalysis.analysePixel(sequenceViewModel.Sequence, point);
+        Plot result = _currentPixelAnalysis.Analyze(pressedPoint, releasedPoint, sequenceViewModel.Sequence);
         CurrentPlot = result;
     }
     
@@ -73,11 +69,33 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public async Task ChangeAnalysis(int index)
     {
-        if(index >= AnalysisList.Count) return;
-        Console.WriteLine("Changed Analysis to: " + AnalysisList[index]);
         _currentPixelAnalysis = AnalysisList[index];
+        Console.WriteLine("Changed Analysis to: " + _currentPixelAnalysis);
+        
+
+    }
+
+    [RelayCommand]
+    public async Task ChangeSequence(int index)
+    {
+        _currentSequenceViewModel = ExistingSequenceViewModels[index];
+        Console.WriteLine("Changed Sequence to: " + _currentSequenceViewModel);
+
     }
     
+    private void DockingItemsChanged(object sender, EventArgs e)
+    {
+        var dockingvm = _currentSequenceViewModel.DockingVm;
+        ExistingSequenceViewModels.Clear();
+        foreach (var item in dockingvm.Items)
+        {
+            if (item is SequenceViewModel sequenceViewModel)
+            {
+                ExistingSequenceViewModels.Add(sequenceViewModel);
+            }
+        }
+    }
+
     // [RelayCommand]
     // public async Task SetAnalysisView(AbstractAnalysisView abstractAnalysisView)
     // {
