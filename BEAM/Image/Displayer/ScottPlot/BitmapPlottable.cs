@@ -32,6 +32,15 @@ public sealed class BitmapPlottable(ISequence sequence, SequenceRenderer rendere
 
     public void Render(RenderPack rp)
     {
+        // Drawing offset for transformed sequence
+        var xOffset = 0.0;
+        var yOffset = 0.0;
+        if (sequence is TransformedSequence transformedSequence)
+        {
+            xOffset = transformedSequence.DrawOffsetX;
+            yOffset = transformedSequence.DrawOffsetY;
+        }
+
         rp.Plot.Axes.InvertY();
 
         // min <-> max flipped since inverted Y axis
@@ -51,10 +60,10 @@ public sealed class BitmapPlottable(ISequence sequence, SequenceRenderer rendere
 
             var coordinateRect = new CoordinateRect()
             {
-                Left = 0,
-                Right = sequence.Shape.Width,
-                Top = preview.YStart,
-                Bottom = preview.YEnd
+                Left = xOffset,
+                Right = sequence.Shape.Width + xOffset,
+                Top = preview.YStart + yOffset,
+                Bottom = preview.YEnd + yOffset
             };
 
             var dest = Axes.GetPixelRect(coordinateRect);

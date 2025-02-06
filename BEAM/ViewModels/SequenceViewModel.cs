@@ -2,8 +2,6 @@ using System;
 using BEAM.Docking;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 
 namespace BEAM.ViewModels;
 
@@ -11,14 +9,15 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 {
     public EventHandler<RenderersUpdatedEventArgs> RenderersUpdated = delegate { };
 
-    public ISequence Sequence { get; }
+    public TransformedSequence Sequence { get; }
 
     public SequenceRenderer[] Renderers;
     public int RendererSelection;
 
     public SequenceViewModel(ISequence sequence)
     {
-        Sequence = sequence;
+        Sequence = new TransformedSequence(sequence);
+
         var (min, max) = sequence switch
         {
             SkiaSequence => (0, 255),
