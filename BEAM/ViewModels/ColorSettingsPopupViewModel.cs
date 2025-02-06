@@ -21,15 +21,15 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
 
     private List<ISaveControl> _controls = [];
 
-    [ObservableProperty] private int _min;
-    [ObservableProperty] private int _max;
+    [ObservableProperty] private decimal _min;
+    [ObservableProperty] private decimal _max;
 
     public ColorSettingsPopupViewModel(SequenceViewModel sequenceViewModel)
     {
         _sequenceViewModel = sequenceViewModel;
 
-        Min = sequenceViewModel.CurrentRenderer.MinimumOfIntensityRange;
-        Max = sequenceViewModel.CurrentRenderer.MaximumOfIntensityRange;
+        Min = (decimal) sequenceViewModel.CurrentRenderer.MinimumOfIntensityRange;
+        Max = (decimal) sequenceViewModel.CurrentRenderer.MaximumOfIntensityRange;
 
         _selection = _sequenceViewModel.RendererSelection;
 
@@ -92,8 +92,8 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
 
         foreach (var renderer in _sequenceViewModel.Renderers)
         {
-            renderer.MinimumOfIntensityRange = Min;
-            renderer.MaximumOfIntensityRange = Max;
+            renderer.MinimumOfIntensityRange = (double) Min;
+            renderer.MaximumOfIntensityRange = (double) Max;
         }
 
         _sequenceViewModel.RendererSelection = _selection;

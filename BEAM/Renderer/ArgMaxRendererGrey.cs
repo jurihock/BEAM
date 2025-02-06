@@ -7,7 +7,7 @@ namespace BEAM.Renderer;
 /// </summary>
 /// <param name="minimumOfIntensityRange"></param>
 /// <param name="maximumOfIntensityRange"></param>
-public class ArgMaxRendererGrey(int minimumOfIntensityRange, int maximumOfIntensityRange) : ArgMaxRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
+public class ArgMaxRendererGrey(double minimumOfIntensityRange, double maximumOfIntensityRange) : ArgMaxRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
 {
     public override RenderTypes GetRenderType()
     {

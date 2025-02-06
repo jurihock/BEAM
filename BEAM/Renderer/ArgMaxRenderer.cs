@@ -10,7 +10,7 @@ namespace BEAM.Renderer;
 /// </summary>
 /// <param name="minimumOfIntensityRange"></param>
 /// <param name="maximumOfIntensityRange"></param>
-public abstract class ArgMaxRenderer(int minimumOfIntensityRange, int maximumOfIntensityRange)
+public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maximumOfIntensityRange)
     : SequenceRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
 {
     public override byte[] RenderPixel(Sequence sequence, long x, long y)

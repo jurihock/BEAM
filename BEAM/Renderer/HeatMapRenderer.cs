@@ -70,7 +70,7 @@ public abstract class HeatMapRenderer : SequenceRenderer
     }
 
 
-    protected HeatMapRenderer(int minimumOfIntensityRange, int maximumOfIntensityRange, int channel,
+    protected HeatMapRenderer(double minimumOfIntensityRange, double maximumOfIntensityRange, int channel,
         double relMaxColdestIntensity, double relMinHottestIntensity)
         : base(minimumOfIntensityRange, maximumOfIntensityRange)
     {

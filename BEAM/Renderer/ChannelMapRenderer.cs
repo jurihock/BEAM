@@ -14,7 +14,7 @@ namespace BEAM.Renderer;
 /// </summary>
 public partial class ChannelMapRenderer : SequenceRenderer
 {
-    public ChannelMapRenderer(int minimumOfIntensityRange, int maximumOfIntensityRange,
+    public ChannelMapRenderer(double minimumOfIntensityRange, double maximumOfIntensityRange,
         int channelRed, int channelGreen, int channelBlue)
         : base(minimumOfIntensityRange, maximumOfIntensityRange)
     {

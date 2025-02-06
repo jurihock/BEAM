@@ -10,10 +10,10 @@ namespace BEAM.Renderer;
 
 public abstract partial class SequenceRenderer : ObservableObject, ICloneable
 {
-    [ObservableProperty] private int _minimumOfIntensityRange;
-    [ObservableProperty] private int _maximumOfIntensityRange;
+    [ObservableProperty] private double _minimumOfIntensityRange;
+    [ObservableProperty] private double _maximumOfIntensityRange;
 
-    protected int IntensityRange => MaximumOfIntensityRange - MinimumOfIntensityRange;
+    protected double IntensityRange => MaximumOfIntensityRange - MinimumOfIntensityRange;
 
     private Dictionary<RenderTypes, SequenceRenderer> _mapRenderTypesToRenderers = new();
 
@@ -28,7 +28,7 @@ public abstract partial class SequenceRenderer : ObservableObject, ICloneable
     /// </summary>
     /// <param name="minimumOfIntensityRange"></param>
     /// <param name="maximumOfIntensityRange"></param>
-    protected SequenceRenderer(int minimumOfIntensityRange, int maximumOfIntensityRange)
+    protected SequenceRenderer(double minimumOfIntensityRange, double maximumOfIntensityRange)
     {
         if (maximumOfIntensityRange <= minimumOfIntensityRange)
         {
