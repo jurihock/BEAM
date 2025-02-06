@@ -72,9 +72,9 @@ public abstract partial class SequenceRenderer : ObservableObject, ICloneable
         _mapRenderTypesToRenderers.Add(RenderTypes.ArgMaxRendererGrey, new ArgMaxRendererGrey(0, 0));
     }
 
-    public abstract byte[] RenderPixel(Sequence sequence, long x, long y);
+    public abstract byte[] RenderPixel(ISequence sequence, long x, long y);
 
-    public abstract byte[,] RenderPixels(Sequence sequence, long[] xs, long y,
+    public abstract byte[,] RenderPixels(ISequence sequence, long[] xs, long y,
         CancellationTokenSource? tokenSource = null);
 
     public abstract RenderTypes GetRenderType();

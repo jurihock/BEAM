@@ -79,14 +79,14 @@ public abstract class HeatMapRenderer : SequenceRenderer
         RelMinHottestIntensity = relMinHottestIntensity;
     }
 
-    public override byte[] RenderPixel(Sequence sequence, long x, long y)
+    public override byte[] RenderPixel(ISequence sequence, long x, long y)
     {
         return GetColor(sequence.GetPixel(x, y, Channel),
             IntensityRange * RelMaxColdestIntensity + MinimumOfIntensityRange,
             IntensityRange * RelMinHottestIntensity + MinimumOfIntensityRange);
     }
 
-    public override byte[,] RenderPixels(Sequence sequence, long[] xs, long y,
+    public override byte[,] RenderPixels(ISequence sequence, long[] xs, long y,
         CancellationTokenSource? tokenSource = null)
     {
         var data = new byte[xs.Length, 4];

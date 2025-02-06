@@ -11,12 +11,12 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 {
     public EventHandler<RenderersUpdatedEventArgs> RenderersUpdated = delegate { };
 
-    public Sequence Sequence { get; }
+    public ISequence Sequence { get; }
 
     public SequenceRenderer[] Renderers;
     public int RendererSelection;
 
-    public SequenceViewModel(Sequence sequence)
+    public SequenceViewModel(ISequence sequence)
     {
         Sequence = sequence;
         var (min, max) = sequence switch
@@ -39,7 +39,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         };
     }
 
-    public string Name => Sequence.GetName;
+    public string Name => Sequence.GetName();
 
     public SequenceRenderer CurrentRenderer => Renderers[RendererSelection];
 }

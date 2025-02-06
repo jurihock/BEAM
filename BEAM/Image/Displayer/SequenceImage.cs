@@ -37,7 +37,7 @@ public class SequenceImage : IDisposable
     /// <param name="sequence">The sequence to render from</param>
     /// <param name="seqImg">The SequenceImage class which manages this object</param>
     /// <param name="yStart">The position where to place this sequence part inside a sequence</param>
-    public class SequencePart(Sequence sequence, SequenceImage seqImg, long yStart) : IDisposable
+    public class SequencePart(ISequence sequence, SequenceImage seqImg, long yStart) : IDisposable
     {
         private static readonly SKPaint Paint = new() { FilterQuality = SKFilterQuality.None };
 
@@ -157,7 +157,7 @@ public class SequenceImage : IDisposable
         return (_sequenceParts[0].YStart, _sequenceParts[^1].YEnd);
     }
 
-    private readonly Sequence _sequence;
+    private readonly ISequence _sequence;
     private long _startLine;
 
     public SequenceRenderer Renderer { get; set; }
@@ -168,7 +168,7 @@ public class SequenceImage : IDisposable
     /// <param name="sequence">The sequence used</param>
     /// <param name="startLine">The line to start the view from</param>
     /// <param name="sectionHeight">The height (in lines) of an individual sequence part.</param>
-    public SequenceImage(Sequence sequence, long startLine, SequenceRenderer renderer, long sectionHeight = 1000)
+    public SequenceImage(ISequence sequence, long startLine, SequenceRenderer renderer, long sectionHeight = 1000)
     {
         _sectionHeight = sectionHeight;
         _startLine = Math.Clamp(startLine, 0, sequence.Shape.Height);

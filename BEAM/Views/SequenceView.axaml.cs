@@ -19,7 +19,7 @@ namespace BEAM.Views;
 
 public partial class SequenceView : UserControl
 {
-    private Sequence _sequence;
+    private ISequence _sequence;
     private BitmapPlottable _plottable;
 
     public SequenceView()

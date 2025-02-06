@@ -3,7 +3,7 @@ using BEAM.ImageSequence;
 
 namespace BEAM.AffTrans;
 
-public class TransformedSequence(Sequence originalSequence, Transformer transformer) 
+public class TransformedSequence(ISequence originalSequence, Transformer transformer)
 {
     public double [] GetPixel(long x, long y)
     {

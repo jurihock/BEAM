@@ -35,7 +35,7 @@ public partial class ChannelMapRenderer : SequenceRenderer
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    public override byte[] RenderPixel(Sequence sequence, long x, long y)
+    public override byte[] RenderPixel(ISequence sequence, long x, long y)
     {
         var colors = NormalizeIntensity(Vector256.Create([
             sequence.GetPixel(x, y, ChannelRed),
@@ -62,7 +62,7 @@ public partial class ChannelMapRenderer : SequenceRenderer
     /// <param name="xs"></param>
     /// <param name="y"></param>
     /// <returns>[x, argb]</returns>
-    public override byte[,] RenderPixels(Sequence sequence, long[] xs, long y,
+    public override byte[,] RenderPixels(ISequence sequence, long[] xs, long y,
         CancellationTokenSource? tokenSource = null)
     {
         var data = new byte[xs.Length, 4];

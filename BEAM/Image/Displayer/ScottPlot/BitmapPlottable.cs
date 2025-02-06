@@ -10,7 +10,7 @@ using ScottPlot.Avalonia;
 
 namespace BEAM.IMage.Displayer.Scottplot;
 
-public sealed class BitmapPlottable(Sequence sequence, SequenceRenderer renderer, long startLine = 0) : IPlottable
+public sealed class BitmapPlottable(ISequence sequence, SequenceRenderer renderer, long startLine = 0) : IPlottable
 {
     public bool IsVisible { get; set; } = true;
     public IAxes Axes { get; set; } = new Axes();

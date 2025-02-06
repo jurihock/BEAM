@@ -13,7 +13,7 @@ namespace BEAM.Renderer;
 public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maximumOfIntensityRange)
     : SequenceRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
 {
-    public override byte[] RenderPixel(Sequence sequence, long x, long y)
+    public override byte[] RenderPixel(ISequence sequence, long x, long y)
     {
         var channels = sequence.GetPixel(x, y);
         var argMaxChannel = ArgMax(channels);
@@ -23,7 +23,7 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
     }
 
     //TODO: implement. Currently do not understand LineImage
-    public override byte[,] RenderPixels(Sequence sequence, long[] xs, long y, CancellationTokenSource? tokenSource = null)
+    public override byte[,] RenderPixels(ISequence sequence, long[] xs, long y, CancellationTokenSource? tokenSource = null)
     {
         throw new System.NotImplementedException();
     }
