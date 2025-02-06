@@ -9,11 +9,12 @@ namespace BEAM.ViewModels;
 
 public partial class SequenceViewModel : ViewModelBase, IDockBase
 {
+    public EventHandler<RenderersUpdatedEventArgs> RenderersUpdated = delegate { };
+
     public Sequence Sequence { get; }
 
-    [ObservableProperty] private SequenceRenderer[] renderers;
-
-    [ObservableProperty] private int rendererSelection;
+    public SequenceRenderer[] Renderers;
+    public int RendererSelection;
 
     public SequenceViewModel(Sequence sequence)
     {
@@ -30,6 +31,12 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             new HeatMapRendererRB(min, max, 0, 0.1, 0.9),
             new ArgMaxRendererGrey(min, max)
         ];
+
+        RendererSelection = sequence switch
+        {
+            SkiaSequence => 0,
+            _ => 1
+        };
     }
 
     public string Name => Sequence.GetName;

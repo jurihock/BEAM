@@ -9,19 +9,19 @@
     <StackPanel>
         <!-- RED -->
         <StackPanel Orientation="Horizontal" Margin="0 5">
-            <TextBox Text="{Binding Renderer.ChannelRed}" />
+            <NumericUpDown Value="{Binding ChannelRed}" FormatString="N0" Minimum="{Binding MinChannel}" Maximum="{Binding MaxChannel}" MinWidth="110" ParsingNumberStyle="Integer" />
             <TextBlock VerticalAlignment="Center" Margin="10 0">-></TextBlock>
             <TextBlock VerticalAlignment="Center">Red</TextBlock>
         </StackPanel>
         <!-- Green -->
         <StackPanel Orientation="Horizontal" Margin="0 5">
-            <TextBox Text="{Binding Renderer.ChannelGreen}" />
+            <NumericUpDown Value="{Binding ChannelGreen}" FormatString="N0" Minimum="{Binding MinChannel}" Maximum="{Binding MaxChannel}" MinWidth="110" ParsingNumberStyle="Integer" />
             <TextBlock VerticalAlignment="Center" Margin="10 0">-></TextBlock>
             <TextBlock VerticalAlignment="Center">Green</TextBlock>
         </StackPanel>
         <!-- Blue -->
         <StackPanel Orientation="Horizontal" Margin="0 5">
-            <TextBox Text="{Binding Renderer.ChannelBlue}" />
+            <NumericUpDown Value="{Binding ChannelBlue}" FormatString="N0" Minimum="{Binding MinChannel}" Maximum="{Binding MaxChannel}" MinWidth="110" ParsingNumberStyle="Integer" />
             <TextBlock VerticalAlignment="Center" Margin="10 0">-></TextBlock>
             <TextBlock VerticalAlignment="Center">Blue</TextBlock>
         </StackPanel>

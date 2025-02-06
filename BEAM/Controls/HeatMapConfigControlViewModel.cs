@@ -2,14 +2,20 @@
 
 using BEAM.Renderer;
 using BEAM.ViewModels;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BEAM.Controls;
 
-public class HeatMapConfigControlViewModel : ViewModelBase
+public partial class HeatMapConfigControlViewModel(HeatMapRenderer renderer, SequenceViewModel model)
+    : ViewModelBase, ISaveControl
 {
-    public HeatMapRenderer Renderer { get; set; }
-    public HeatMapConfigControlViewModel(HeatMapRenderer renderer)
+    [ObservableProperty] public partial decimal Channel { get; set; } = renderer.Channel;
+    [ObservableProperty] public partial decimal Min { get; set; } = 0;
+
+    [ObservableProperty] public partial decimal Max { get; set; } = model.Sequence.Shape.Channels - 1;
+
+    public void Save()
     {
-        Renderer = renderer;
+        renderer.Channel = (int)Channel;
     }
 }

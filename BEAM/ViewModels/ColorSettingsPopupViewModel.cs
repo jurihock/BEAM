@@ -1,19 +1,14 @@
 // (c) Paul Stier, 2025
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data;
-using Avalonia.Layout;
 using BEAM.Controls;
 using BEAM.Renderer;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 
 namespace BEAM.ViewModels;
 
@@ -22,9 +17,9 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
     public ObservableCollection<Control> RendererSelectionControls { get; } = [];
     private SequenceViewModel _sequenceViewModel;
 
-    private SequenceRenderer[] _editedRenderers;
-
     private int _selection;
+
+    private List<ISaveControl> _controls = [];
 
     [ObservableProperty] private int _min;
     [ObservableProperty] private int _max;
@@ -32,16 +27,15 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
     public ColorSettingsPopupViewModel(SequenceViewModel sequenceViewModel)
     {
         _sequenceViewModel = sequenceViewModel;
-        _editedRenderers = _sequenceViewModel.Renderers.Select(r => (SequenceRenderer)r.Clone()).ToArray();
 
         Min = sequenceViewModel.CurrentRenderer.MinimumOfIntensityRange;
         Max = sequenceViewModel.CurrentRenderer.MaximumOfIntensityRange;
 
         _selection = _sequenceViewModel.RendererSelection;
 
-        for (var index = 0; index < _editedRenderers.Length; index++)
+        for (var index = 0; index < sequenceViewModel.Renderers.Length; index++)
         {
-            var renderer = _editedRenderers[index];
+            var renderer = sequenceViewModel.Renderers[index];
             RendererSelectionControls.Add(_BuildSelectionButton(renderer, index));
             RendererSelectionControls.Add(_BuildPanel(renderer));
         }
@@ -64,17 +58,22 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
         return button;
     }
 
-    private static StackPanel _BuildPanel(SequenceRenderer renderer)
+    private StackPanel _BuildPanel(SequenceRenderer renderer)
     {
+        // TODO: remove panel
         var panel = new StackPanel() { Margin = new Thickness(30, 0, 0, 0) };
 
         switch (renderer)
         {
             case HeatMapRenderer htmRenderer:
-                panel.Children.Add(new HeatMapConfigControlView(htmRenderer));
+                var hmView = new HeatMapConfigControlView(htmRenderer, _sequenceViewModel);
+                panel.Children.Add(hmView);
+                _controls.Add(hmView);
                 break;
             case ChannelMapRenderer chmRenderer:
-                panel.Children.Add(new ChannelMapConfigControlView(chmRenderer));
+                var chmView = new ChannelMapConfigControlView(chmRenderer, _sequenceViewModel);
+                panel.Children.Add(chmView);
+                _controls.Add(chmView);
                 break;
             case ArgMaxRenderer:
                 break;
@@ -85,16 +84,21 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
         return panel;
     }
 
-    [RelayCommand]
-    private void Save()
+    public bool Save()
     {
-        foreach (var renderer in _editedRenderers)
+        foreach (var control in _controls)
+        {
+            control.Save();
+        }
+
+        foreach (var renderer in _sequenceViewModel.Renderers)
         {
             renderer.MinimumOfIntensityRange = Min;
             renderer.MaximumOfIntensityRange = Max;
         }
 
         _sequenceViewModel.RendererSelection = _selection;
-        _sequenceViewModel.Renderers = _editedRenderers;
+        _sequenceViewModel.RenderersUpdated.Invoke(this, new RenderersUpdatedEventArgs());
+        return true;
     }
 }

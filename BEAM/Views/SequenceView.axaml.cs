@@ -97,13 +97,12 @@ public partial class SequenceView : UserControl
         AvaPlot1.Refresh();
 
         // Changed the sequence view -> full rerender
-        vm.PropertyChanged += (_, args) =>
+        vm.RenderersUpdated += (_, args) =>
         {
             _plottable.SequenceImage.Reset();
             _plottable.ChangeRenderer(vm.CurrentRenderer);
             AvaPlot1.Refresh();
         };
-
     }
 
     private void _OpenColorsPopup()

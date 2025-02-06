@@ -33,4 +33,14 @@ public partial class ColorSettingsPopup : Window
     {
         Close();
     }
+
+    private void TrySave(object? sender, RoutedEventArgs e)
+    {
+        if (((DataContext as ColorSettingsPopupViewModel)!).Save())
+        {
+            Close();
+        }
+
+        // If execution is here -> Save failed, hints in controls
+    }
 }
