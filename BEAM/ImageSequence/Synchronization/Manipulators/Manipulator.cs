@@ -49,7 +49,13 @@ public abstract class Manipulator
         return plots is null || plots.All(SyncPlot);
     }
 
+    /// <summary>
+    /// This method is used to activate the synchronization between all plots.
+    /// </summary>
     public abstract void activate();
     
+    /// <summary>
+    /// This method is used to deactivate the synchronization between all plots.
+    /// </summary>
     public abstract void deactivate();
 }

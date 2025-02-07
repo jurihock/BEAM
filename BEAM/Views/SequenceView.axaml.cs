@@ -53,6 +53,7 @@ public partial class SequenceView : UserControl
         {
             var plot = AvaPlot1.Plot;
             var ySize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
+            // Minus 100 to allow to scroll higher than the sequence for a better inspection of the start.
             var top = (e.NewValue / 100.0) * sequence.Shape.Height - 100.0;
             AvaPlot1.Plot.Axes.SetLimitsY(top, top + ySize);
             AvaPlot1.Refresh();
@@ -168,6 +169,10 @@ public partial class SequenceView : UserControl
         FillPlot(vm.Sequence);
     }
 
+    /// <summary>
+    /// This method updates the value of the Scrollbar and display the corresponding position in the sequence.
+    /// </summary>
+    /// <param name="val">The new value of the ScrollBar</param>
     public void UpdateScrolling(double val)
     {
         var plot = AvaPlot1.Plot;
@@ -178,6 +183,11 @@ public partial class SequenceView : UserControl
         Bar1.Value = val;
     }
 
+    /// <summary>
+    /// This method updates the displayed position in the sequence to that of another AvaPlot and
+    /// sets the corresponding value for the ScrollBar.
+    /// </summary>
+    /// <param name="otherPlot">The AvaPlot, which limits will be used to set the display limits of this sequence.</param>
     public void UpdateScrolling(AvaPlot otherPlot)
     {
         AvaPlot1.Plot.Axes.SetLimits(otherPlot.Plot.Axes.GetLimits());
@@ -185,6 +195,9 @@ public partial class SequenceView : UserControl
         UpdateScrollBar();
     }
     
+    /// <summary>
+    /// This method updates the value of the Scrollbar, setting it to the value corresponding to the displayed position in the sequence.
+    /// </summary>
     public void UpdateScrollBar()
     {
         var val =  ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / _sequence.Shape.Height) * 100;

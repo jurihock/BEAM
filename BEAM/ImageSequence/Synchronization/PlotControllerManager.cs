@@ -70,7 +70,7 @@ public static class PlotControllerManager
     {
         foreach (var controller in PlotControllers)
         {
-            controller.activate();
+            controller.Activate();
         }
     }
     
@@ -78,7 +78,7 @@ public static class PlotControllerManager
     {
         foreach (var controller in PlotControllers)
         {
-            controller.deactivate();
+            controller.Deactivate();
         }
     }
 }

@@ -208,11 +208,17 @@ public class MouseManipulator : Manipulator
         return avaPlot != null && _avaPlots.Remove(avaPlot);
     }
     
+    /// <summary>
+    /// This method is used to activate the synchronization between all plots.
+    /// </summary>
     public override void activate()
     {
         _isSynchronizing = true;
     }
     
+    /// <summary>
+    /// This method is used to deactivate the synchronization between all plots.
+    /// </summary>
     public override void deactivate()
     {
         _isSynchronizing = false;

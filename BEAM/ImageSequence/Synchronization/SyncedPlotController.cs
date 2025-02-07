@@ -103,7 +103,10 @@ public class SyncedPlotController
         return Manipulators.All(manipulator => manipulator.UnsyncPlot(plot));
     }
 
-    public void activate()
+    /// <summary>
+    /// This method is used to activate the synchronization between all manipulators.
+    /// </summary>
+    public void Activate()
     {
         foreach (var manipulator in Manipulators)
         {
@@ -111,7 +114,10 @@ public class SyncedPlotController
         }
     }
     
-    public void deactivate()
+    /// <summary>
+    /// This method is used to deactivate the synchronization between all manipulators.
+    /// </summary>
+    public void Deactivate()
     {
         foreach (var manipulator in Manipulators)
         {

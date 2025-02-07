@@ -164,14 +164,14 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     public void ActivateSynchronization()
     {
-        _syncedPlotController?.activate();
+        _syncedPlotController?.Activate();
         ScrollingSynchronizer.IsSynchronizing = true;
     }
     
     [RelayCommand]
     public void DeactivateSynchronization()
     {
-        _syncedPlotController?.deactivate();
+        _syncedPlotController?.Deactivate();
         ScrollingSynchronizer.IsSynchronizing = false;
     }
 }
