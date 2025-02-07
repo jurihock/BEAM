@@ -124,30 +124,6 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public void AddInfo()
-    {
-        _logger?.Info(LogEvent.OpenedFile);
-    }
-
-    [RelayCommand]
-    public void AddWarning()
-    {
-        _logger?.Warning(LogEvent.UnknownFileFormat);
-    }
-
-    [RelayCommand]
-    public void AddError()
-    {
-        _logger?.Error(LogEvent.FileNotFound);
-    }
-
-    [RelayCommand]
-    public void ClearLog()
-    {
-        _logger?.ClearStatusBar();
-    }
-
-    [RelayCommand]
     public void OpenStatusWindow()
     {
         var statusWindow = new StatusWindow();

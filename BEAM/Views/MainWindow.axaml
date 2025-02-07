@@ -66,12 +66,6 @@
         <views:StatusBar DockPanel.Dock="Bottom"/>
 
         <DockPanel LastChildFill="True">
-            <StackPanel Name="TestStatusBar" Margin="10" Orientation="Horizontal" VerticalAlignment="Top" DockPanel.Dock="Top">
-                <Button Command="{Binding AddError}">Add Error</Button>
-                <Button Command="{Binding AddWarning}">Add Warning</Button>
-                <Button Command="{Binding AddInfo}">Add Info</Button>
-                <Button Command="{Binding ClearLog}">Flush Status Bar</Button>
-            </StackPanel>
             <views:DockingView x:Name="DockView" />
         </DockPanel>
 
