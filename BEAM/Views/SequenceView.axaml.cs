@@ -148,7 +148,7 @@ public partial class SequenceView : UserControl
         menu.Add("Sync to this",
             control =>
             {
-                ScrollingSynchronizer.IsSynchronizing = true;
+                ScrollingSynchronizer.activateSynchronization();
                 ScrollingSynchronizer.synchronize(this);
                 PlotControllerManager.activateSynchronization();
             });

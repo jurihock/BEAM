@@ -12,10 +12,26 @@ public static class ScrollingSynchronizer
     /// <summary>
     /// Used to signal, whether the ScrollBars are supposed to be synchronized.
     /// </summary>
-    public static bool IsSynchronizing = false;
+    private static bool _isSynchronizing = false;
     
     private static readonly List<SequenceView> Sequences = new List<SequenceView>();
     private static readonly Dictionary<AvaPlot, SequenceView> ViewMapping = new Dictionary<AvaPlot, SequenceView>();
+
+    /// <summary>
+    /// This method is used to activate the synchronization.
+    /// </summary>
+    public static void activateSynchronization()
+    {
+        _isSynchronizing = true;
+    }
+
+    /// <summary>
+    /// This method is used to deactivate the synchronization.
+    /// </summary>
+    public static void deactivateSynchronization()
+    {
+        _isSynchronizing = false;
+    }
     
     /// <summary>
     /// Adds a Sequence to the synchronization.
@@ -33,7 +49,7 @@ public static class ScrollingSynchronizer
     /// <param name="sequenceView">The SequenceView containing the sequence, which values will be used for all the stored sequences.</param>
     public static void synchronize(SequenceView sequenceView)
     {
-        if (IsSynchronizing)
+        if (_isSynchronizing)
         {
             foreach (var view in Sequences)
             {
