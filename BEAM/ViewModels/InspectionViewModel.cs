@@ -25,6 +25,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     // [ObservableProperty] public partial SequenceViewModel currentSequenceViewModel { get; set; }
 
     [ObservableProperty] private Plot _currentPlot;
+    
     private SequenceViewModel _currentSequenceViewModel;
     private Analysis.Analysis _currentPixelAnalysis;
     public List<Analysis.Analysis> AnalysisList { get; private set;  } = new()

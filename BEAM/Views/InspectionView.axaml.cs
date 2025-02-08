@@ -14,22 +14,35 @@ using BEAM.ViewModels;
 using NP.Utilities;
 using ScottPlot;
 using ScottPlot.Avalonia;
+using ScottPlot.AxisRules;
 using ScottPlot.Statistics;
 
 namespace BEAM.Views;
 
 public partial class InspectionView : UserControl
 {
-    private int counter = 0;
     public InspectionView()
     {
         InitializeComponent();
         this.DataContextChanged += DataContextChangedHandling;
     }
-    public void FillPlot(Plot newPlot)
+    
+    
+    private void FillPlot(Plot newPlot)
     {
-        var vm = DataContext as InspectionViewModel;
-        AnalysisPlot.Reset(newPlot);
+        AnalysisPlot.Plot.Clear();
+        
+        //TODO: Copy Rules from given Plot to new Plot (Does not work yet)
+        AnalysisPlot.Plot.Axes.SetLimits(newPlot.Axes.GetLimits());
+        AnalysisPlot.Plot.Axes.Rules.Clear();
+        for(int i = 0; i < newPlot.Axes.Rules.Count; i++)
+        {
+            AnalysisPlot.Plot.Axes.Rules.Add(newPlot.Axes.Rules[i]);
+        }
+        
+        AnalysisPlot.Plot.Add.Plottable(newPlot.PlottableList[0]);
+        //AnalysisPlot.Reset(newPlot); //TODO: Causes Error when clicking inside the Plot?
+        //TODO: Caused AccessViolationException one?!
         AnalysisPlot.Refresh();
     }
 
