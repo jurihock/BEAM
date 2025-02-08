@@ -15,7 +15,6 @@ public partial class CutSequencePopupViewModel : ViewModelBase
     {
         _sequenceViewModel = model;
         maxOffset = _sequenceViewModel.Sequence.Shape.Height - 1;
-        Console.WriteLine(maxOffset);
     }
     
     public bool Save()
