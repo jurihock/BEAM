@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using BEAM.ViewModels;
@@ -11,6 +12,10 @@ public partial class AffineTransformationPopup : Window
     public AffineTransformationPopup(SequenceViewModel model)
     {
         DataContext = new AffineTransformationPopupViewModel(model);
+        AddHandler(KeyDownEvent, (sender, e) =>
+        {
+            if (e.Key == Key.Escape) Close();
+        });
         InitializeComponent();
     }
 
