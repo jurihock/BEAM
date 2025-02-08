@@ -1,19 +1,22 @@
 using System;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Input;
+using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using BEAM.CustomActions;
+using BEAM.Datatypes;
+using BEAM.Image.Bitmap;
+using BEAM.Image.Displayer;
 using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence;
-using BEAM.ImageSequence.Synchronization;
 using BEAM.Log;
 using BEAM.Profiling;
 using BEAM.ViewModels;
 using ScottPlot;
 using ScottPlot.Avalonia;
-using ScottPlot.Interactivity;
-using ScottPlot.Interactivity.UserActionResponses;
 
 namespace BEAM.Views;
 
@@ -143,7 +146,7 @@ public partial class SequenceView : UserControl
         var menu = AvaPlot1.Menu!;
         menu.Clear();
         menu.Add("Inspect Pixel",
-            control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+            control => vm.OpenInspectionViewCommand.Execute(null));
         menu.AddSeparator();
         menu.Add("Sync to this",
             control =>
@@ -160,6 +163,33 @@ public partial class SequenceView : UserControl
         menu.AddSeparator();
         menu.Add("Export sequence",
             control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+    }
+
+    private void PointerPressedHandler(object sender, PointerPressedEventArgs args)
+    {
+        
+        var point = args.GetCurrentPoint(sender as Control);
+        var x = point.Position.X;
+        var y = point.Position.Y;
+    
+        var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
+    
+        var vm = (SequenceViewModel?)DataContext;
+        vm.pressedPointerPosition = CoordInPlot;
+    }
+    
+    private void PointerReleasedHandler(object? sender, PointerReleasedEventArgs args)
+    {
+        
+        var point = args.GetCurrentPoint(sender as Control);
+        var x = point.Position.X;
+        var y = point.Position.Y;
+    
+        var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
+    
+        var vm = (SequenceViewModel?)DataContext;
+        vm.releasedPointerPosition = CoordInPlot;
+        vm.UpdateInspectionViewModel(CoordInPlot);
     }
 
     private void StyledElement_OnDataContextChanged(object? sender, EventArgs e)

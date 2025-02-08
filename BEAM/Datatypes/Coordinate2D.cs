@@ -1,3 +1,5 @@
+using ScottPlot;
+
 namespace BEAM.Datatypes;
 
 /// <summary>
@@ -5,8 +7,28 @@ namespace BEAM.Datatypes;
 /// </summary>
 /// <param name="row"></param>
 /// <param name="column"></param>
-public readonly struct Coordinate2D(int row, int column)
+public readonly struct Coordinate2D
 {
-    public long Row { get; init; } = row;
-    public long Column { get; init; } = column;
+    public double Row { get; init; }
+    public double Column { get; init; }
+    
+    public Coordinate2D(int row, int column)
+    {
+        Row = row;
+        Column = column;
+    }
+   
+    public Coordinate2D(long row, long column)
+        {
+            Row = row;
+            Column = column;
+        }
+    
+
+    public Coordinate2D(Coordinates coordinates)
+    {
+        Row = coordinates.Y;
+        Column = coordinates.X;
+    }
+    
 }

@@ -10,6 +10,7 @@ namespace BEAM.ViewModels;
 public partial class DockingViewModel : ViewModelBase
 {
     public ObservableCollection<IDockBase> Items = [];
+    
 
     /// <summary>
     /// Opens a new dock window with the matching view to the model
@@ -21,16 +22,21 @@ public partial class DockingViewModel : ViewModelBase
         Items.Add(viewModel);
     }
 
-    [RelayCommand]
-    public void Foo()
-    {
-        OpenDock(new InspectionViewModel());
-    }
-
-
-    [RelayCommand]
-    public void OpenSequenceView(Sequence sequence)
-    {
-        OpenDock(new SequenceViewModel(sequence));
-    }
+    // [RelayCommand]
+    // public void OpenView(IDockBase viewModel)
+    // {
+    //     OpenDock(viewModel);
+    // }
+    //
+    // [RelayCommand]
+    // public void OpenInspectionView()
+    // {
+    //     OpenDock(new InspectionViewModel());
+    // }
+    //
+    // [RelayCommand]
+    // public void OpenSequenceView(Sequence sequence)
+    // {
+    //     OpenDock(new SequenceViewModel(sequence));
+    // }
 }

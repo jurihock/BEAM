@@ -64,7 +64,7 @@ public partial class MainWindowViewModel : ViewModelBase
         var list = files.Select(f => f.Path).ToList();
         try
         {
-            DockingVm.OpenSequenceView(Sequence.Open(list));
+            DockingVm.OpenDock(new SequenceViewModel(Sequence.Open(list), DockingVm));
         }
         catch (Exception ex)
         {
@@ -80,12 +80,46 @@ public partial class MainWindowViewModel : ViewModelBase
 
         try
         {
-            DockingVm.OpenSequenceView(Sequence.Open(folder.Path));
+            DockingVm.OpenDock(new SequenceViewModel(Sequence.Open(folder.Path), DockingVm));
         }
         catch (Exception ex)
         {
         }
     }
+
+    [RelayCommand]
+    private async Task OpenSequenceFromDrop(IEnumerable<IStorageItem>? files)
+    {
+        var data = files;
+        List<Uri> list = new();
+        foreach (var file in data)
+        {
+            var path = file.Path;
+            if (Directory.Exists(path.AbsolutePath))
+            {
+                try
+                {
+                    DockingVm.OpenDock(new SequenceViewModel(Sequence.Open(path), DockingVm));
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+            else
+            {
+                list.Add(path);
+            }
+        }
+
+        try
+        {
+            DockingVm.OpenDock(new SequenceViewModel(Sequence.Open(list), DockingVm));
+        }
+        catch (Exception exception)
+        {
+        }
+    }
+
 
     [RelayCommand]
     public void ExitBeam()

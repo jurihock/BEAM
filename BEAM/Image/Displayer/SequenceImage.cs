@@ -286,9 +286,7 @@ public class SequenceImage : IDisposable
     {
         // TODO: change
         SequenceRenderer renderer = new ChannelMapRenderer(0, 255, 2, 1, 0);
-        /*
-        renderer = new HeatMapRendererRB(0, 1, 1);
-        */
+        //renderer = new HeatMapRendererRB(0, 1, 1, 0, 1);
 
         // clamping all values
         startX = Math.Clamp(startX, 0, _sequence.Shape.Width);

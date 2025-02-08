@@ -3,8 +3,38 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BEAM.ViewModels"
+             xmlns:scott="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:InspectionViewModel"
+             x:Name="Inspection"
              x:Class="BEAM.Views.InspectionView">
-    This is a very BEAUTIFUL Inspection Dock!
+    
+    <Grid RowDefinitions="Auto, *">
+        <scott:AvaPlot Name="AnalysisPlot" Grid.Row="1"/>
+        
+         <Grid ColumnDefinitions="Auto, 3*, Auto" Grid.Row="0">
+             
+             <Button Content="Clone" Click="CloneButton_Clicked" Grid.Column="0"/>
+        
+             <ComboBox x:Name="AnalysisPicker" 
+                       ItemsSource="{Binding AnalysisList}"
+                       Width="300" MaxDropDownHeight="200" 
+                       SelectedIndex="0"  Grid.Column="1" SelectionChanged="AnalysisPicker_SelectionChanged">
+            </ComboBox>
+            
+            <ComboBox x:Name="SequencePicker" ItemsSource="{Binding ExistingSequenceViewModels}" 
+                      SelectedIndex="0" Width="300" MaxDropDownHeight="200" Grid.Column="2" SelectionChanged="SequencePicker_SelectionChanged">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+             
+             
+             
+         </Grid>
+    </Grid>
+
+
 </UserControl>
