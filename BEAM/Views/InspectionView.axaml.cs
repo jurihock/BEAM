@@ -27,7 +27,10 @@ public partial class InspectionView : UserControl
         this.DataContextChanged += DataContextChangedHandling;
     }
     
-    
+    /// <summary>
+    /// Updates the Plot with the given new plot.
+    /// </summary>
+    /// <param name="newPlot">The new plot to be displayed</param>
     private void FillPlot(Plot newPlot)
     {
         AnalysisPlot.Plot.Clear();
