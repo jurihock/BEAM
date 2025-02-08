@@ -12,11 +12,14 @@ using BEAM.Image.Bitmap;
 using BEAM.Image.Displayer;
 using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence;
+using BEAM.ImageSequence.Synchronization;
 using BEAM.Log;
 using BEAM.Profiling;
 using BEAM.ViewModels;
 using ScottPlot;
 using ScottPlot.Avalonia;
+using ScottPlot.Interactivity;
+using ScottPlot.Interactivity.UserActionResponses;
 
 namespace BEAM.Views;
 
@@ -143,6 +146,7 @@ public partial class SequenceView : UserControl
 
     private void _BuildCustomRightClickMenu()
     {
+        var vm = DataContext as SequenceViewModel;
         var menu = AvaPlot1.Menu!;
         menu.Clear();
         menu.Add("Inspect Pixel",
