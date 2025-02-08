@@ -33,11 +33,17 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public async Task UpdateInspectionViewModel(Coordinate2D point)
     {
-        Console.WriteLine("Rectangle is detected:" + pressedPointerPosition.Column + ", " + releasedPointerPosition.Column);
+        Console.WriteLine("Rectangle is detected:" + pressedPointerPosition + ", " + releasedPointerPosition);
+
+        if (!_arePointsValid(pressedPointerPosition, releasedPointerPosition))
+        {
+            Console.WriteLine("Rectangle is not valid");
+            return;
+        }
         
         foreach (var inspectionViewModel in _ConnectedInspectionViewModels)
         {
-            inspectionViewModel.Update(pressedPointerPosition, releasedPointerPosition, this);
+            inspectionViewModel.Update(pressedPointerPosition, releasedPointerPosition);
         }
     }
 
@@ -48,13 +54,22 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         _ConnectedInspectionViewModels.Add(inspectionViewModel);
         DockingVm.OpenDock(inspectionViewModel);
         
-        inspectionViewModel.Update(pressedPointerPosition, releasedPointerPosition, this);
+        inspectionViewModel.Update(pressedPointerPosition, releasedPointerPosition);
     }
     
-    public List<IDockBase> GetDockedItems()
+    private bool _arePointsValid(Coordinate2D point1, Coordinate2D point2)
     {
-        return new List<IDockBase>(DockingVm.Items);
+        if(point1.Column < 0 || point1.Row < 0 || point2.Column < 0 || point2.Row < 0)
+            return false;
+        if(point1.Column > Sequence.Shape.Width 
+           || point1.Row > Sequence.Shape.Height 
+           || point2.Column > Sequence.Shape.Width 
+           || point2.Row > Sequence.Shape.Height)
+            return false;
+        return true;
     }
+    
+    
 
     public string Name { get; } = "Eine tolle Sequence";
 

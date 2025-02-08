@@ -25,9 +25,13 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     // [ObservableProperty] public partial SequenceViewModel currentSequenceViewModel { get; set; }
 
     [ObservableProperty] private Plot _currentPlot;
+    [ObservableProperty] private bool _keepData  = false;
+
     
     private SequenceViewModel _currentSequenceViewModel;
-    private Analysis.Analysis _currentPixelAnalysis;
+    private Analysis.Analysis _currentAnalysis;
+    private (Coordinate2D pressed, Coordinate2D released) _pointerRectanglePosition;
+
     public List<Analysis.Analysis> AnalysisList { get; private set;  } = new()
     {
         new PixelAnalysisChannel(),
@@ -47,17 +51,19 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 
     public InspectionViewModel(SequenceViewModel sequenceViewModel)
     {
-        _currentPixelAnalysis = AnalysisList[0];
+        _currentAnalysis = AnalysisList[0];
         _currentSequenceViewModel = sequenceViewModel;
         ExistingSequenceViewModels.Add(sequenceViewModel);
         _currentSequenceViewModel.DockingVm.Items.CollectionChanged += DockingItemsChanged;
     }
     
 
-    public string Name { get; } = "Inspect";
-    public void Update(Coordinate2D pressedPoint, Coordinate2D releasedPoint, SequenceViewModel sequenceViewModel)
+    public string Name { get; } = "Inspection Window";
+    public void Update(Coordinate2D pressedPoint, Coordinate2D releasedPoint)
     {
-        Plot result = _currentPixelAnalysis.Analyze(pressedPoint, releasedPoint, sequenceViewModel.Sequence);
+        if(_keepData) return;
+        _pointerRectanglePosition = (pressedPoint, releasedPoint);
+        Plot result = _currentAnalysis.Analyze(pressedPoint, releasedPoint, _currentSequenceViewModel.Sequence);
         CurrentPlot = result;
     }
     
@@ -68,11 +74,12 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     }
     
     [RelayCommand]
-    public async Task ChangeAnalysis(int index)
+    public Task ChangeAnalysis(int index)
     {
-        _currentPixelAnalysis = AnalysisList[index];
-        Console.WriteLine("Changed Analysis to: " + _currentPixelAnalysis);
-        
+        _currentAnalysis = AnalysisList[index];
+        Console.WriteLine("Changed Analysis to: " + _currentAnalysis);
+        _currentPlot = _currentAnalysis.Analyze(_pointerRectanglePosition.pressed, _pointerRectanglePosition.released, _currentSequenceViewModel.Sequence);
+        return Task.CompletedTask;
 
     }
 
@@ -95,6 +102,13 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
                 ExistingSequenceViewModels.Add(sequenceViewModel);
             }
         }
+    }
+    
+    [RelayCommand]
+    public async Task CheckBoxChanged(bool? isChecked)
+    {
+        _keepData = isChecked ?? false;
+        Console.WriteLine("Now data is accepted is: " + isChecked);
     }
 
     // [RelayCommand]
