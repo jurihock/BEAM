@@ -11,7 +11,8 @@ public partial class CutSequencePopupViewModel(SequenceViewModel model) : ViewMo
 
     public bool Save()
     {
-        _sequenceViewModel.Sequence = new TransformedSequence(new CutSequence(Offset, _sequenceViewModel.Sequence));
+        _sequenceViewModel.Sequence = new TransformedSequence(new CutSequence(_sequenceViewModel.Sequence.GetName(),
+                                        Offset, _sequenceViewModel.Sequence));
         _sequenceViewModel.CutSequence(this, new RenderersUpdatedEventArgs(Offset));
         return true;
     }

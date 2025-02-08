@@ -108,6 +108,10 @@ public partial class SequenceView : UserControl
             _plottable = new BitmapPlottable(vm.Sequence, vm.CurrentRenderer);
             AvaPlot1.Plot.Add.Plottable(_plottable);
             _plottable.SequenceImage.Reset();
+            var oldLimits = AvaPlot1.Plot.Axes.GetLimits();
+            var ySize = oldLimits.Bottom - oldLimits.Top;
+            var newLimits = new AxisLimits(oldLimits.Left, oldLimits.Right, -ySize / 3, 2 * ySize /  3);
+            AvaPlot1.Plot.Axes.SetLimits(newLimits);
             AvaPlot1.Refresh();
         };
     }

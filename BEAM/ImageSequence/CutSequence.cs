@@ -4,7 +4,7 @@ using BEAM.Image;
 
 namespace BEAM.ImageSequence;
 
-public class CutSequence(List<string> imagePaths, string name, long offset, DiskSequence originalSequence) : DiskSequence(imagePaths, name)
+public class CutSequence(string name, long offset, ISequence originalSequence) : ISequence
 {
     
     private ImageShape? _shape;
@@ -39,27 +39,6 @@ public class CutSequence(List<string> imagePaths, string name, long offset, Disk
         return name;
     }
 
-    protected internal override IImage LoadImage(int index)
-    {
-        var singleImageHeight = originalSequence.SingleImageHeight;
-        return originalSequence.LoadImage((int)( index + offset / singleImageHeight));
-    }
-
-    protected internal override bool InitializeSequence()
-    {
-        return originalSequence.InitializeSequence();
-    }
-
-    public new IImage GetImage(int index)
-    {
-        if (index < 0 || index >= originalSequence.getLoadedImageCount() - offset / originalSequence.SingleImageHeight)
-        {
-            throw new ArgumentOutOfRangeException(nameof(index), "Index is out of range [0, amount of images)");
-        }
-
-        return originalSequence.GetImage((int)( index + offset / originalSequence.SingleImageHeight));
-    }
-
     public ImageShape Shape
     {
         get
@@ -79,6 +58,11 @@ public class CutSequence(List<string> imagePaths, string name, long offset, Disk
         var originalShape = originalSequence.Shape;
         _shape = new ImageShape(originalShape.Width, originalShape.Height - offset, originalShape.Channels);
     }
-    
-    
+
+
+    public void Dispose()
+    {
+        originalSequence.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }
