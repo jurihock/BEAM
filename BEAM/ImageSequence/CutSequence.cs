@@ -4,6 +4,12 @@ using BEAM.Image;
 
 namespace BEAM.ImageSequence;
 
+/// <summary>
+/// This class is used to represent a sequence, from which a certain portion at the beginning is cut off.
+/// </summary>
+/// <param name="name">The name of the sequence</param>
+/// <param name="offset">The offset in the sequence, which content before, will be cut</param>
+/// <param name="originalSequence">The original Sequence</param>
 public class CutSequence(string name, long offset, ISequence originalSequence) : ISequence
 {
     

@@ -14,8 +14,12 @@
     <StackPanel Orientation="Vertical" Margin="20, 10, 20, 0">
         <TextBlock FontWeight="Bold">Configure index from which the sequence will be cut</TextBlock>
         <Separator Background="{DynamicResource ThemeAccentBrush}" Margin="0 10"></Separator>
-        <TextBlock VerticalAlignment="Center" Margin="10 0">Starting index of new Sequence</TextBlock>
-        <NumericUpDown Value="{Binding Offset}" MinWidth="110" ParsingNumberStyle="Integer" Minimum="0" Maximum="{Binding MaxOffset}"/>
+        
+        <StackPanel Orientation="Horizontal">
+            <TextBlock VerticalAlignment="Center" Margin="10 0">Starting index of new Sequence:</TextBlock>
+            <NumericUpDown Value="{Binding Offset}" MinWidth="300" HorizontalContentAlignment="Right" HorizontalAlignment="Right" ParsingNumberStyle="Integer" Minimum="0" Maximum="{Binding MaxOffset}"/>
+        </StackPanel>
+        
         <StackPanel Margin="0 10" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Click="Close">Cancel</Button>
             <Button Click="TrySave" Margin="10 0 0 0"
