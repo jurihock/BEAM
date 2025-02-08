@@ -33,8 +33,6 @@ public partial class InspectionView : UserControl
     /// <param name="newPlot">The new plot to be displayed</param>
     private void FillPlot(Plot newPlot)
     {
-        AnalysisPlot.Plot.Clear();
-        
         newPlot.PlotControl = AnalysisPlot;
         AnalysisPlot.Reset(newPlot);
         //TODO: Caused AccessViolationException sometimes?!
@@ -45,7 +43,9 @@ public partial class InspectionView : UserControl
     {
         var vm = DataContext as InspectionViewModel;
         vm.PropertyChanged += (s, e) => FillPlot(vm.CurrentPlot);
-        FillPlot(vm.CurrentPlot);        
+        FillPlot(vm.CurrentPlot);
+        SequencePicker.SelectedIndex = 0;
+        AnalysisPicker.SelectedIndex = 0;
     }
     
     public void CloneButton_Clicked(object sender, RoutedEventArgs e)
@@ -58,8 +58,7 @@ public partial class InspectionView : UserControl
     {
         var vm = DataContext as InspectionViewModel;
         vm.ChangeAnalysis(AnalysisPicker.SelectedIndex);
-        AnalysisPlot.Reset(vm.CurrentPlot);
-        AnalysisPlot.Refresh();
+        FillPlot(vm.CurrentPlot);
     }
     
     public void SequencePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)

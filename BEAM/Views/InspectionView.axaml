@@ -18,11 +18,11 @@
         
              <ComboBox x:Name="AnalysisPicker" 
                        ItemsSource="{Binding AnalysisList}" MinWidth="200" MaxDropDownHeight="200" 
-                       SelectedIndex="0"  Grid.Column="1" SelectionChanged="AnalysisPicker_SelectionChanged">
+                       SelectedIndex="-1" Grid.Column="1" SelectionChanged="AnalysisPicker_SelectionChanged">
             </ComboBox>
             
             <ComboBox x:Name="SequencePicker" ItemsSource="{Binding ExistingSequenceViewModels}" 
-                      MinWidth="200" SelectedIndex="0" MaxDropDownHeight="200" Grid.Column="2" SelectionChanged="SequencePicker_SelectionChanged">
+                      MinWidth="200" SelectedIndex="-1" MaxDropDownHeight="200" Grid.Column="2" SelectionChanged="SequencePicker_SelectionChanged">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}" />

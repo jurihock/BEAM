@@ -80,15 +80,15 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         Console.WriteLine("Changed Analysis to: " + _currentAnalysis);
         _currentPlot = _currentAnalysis.Analyze(_pointerRectanglePosition.pressed, _pointerRectanglePosition.released, _currentSequenceViewModel.Sequence);
         return Task.CompletedTask;
-
     }
 
     [RelayCommand]
     public async Task ChangeSequence(int index)
     {
+        _currentSequenceViewModel.UnregisterInspectionViewModel(this);
         _currentSequenceViewModel = ExistingSequenceViewModels[index];
+        _currentSequenceViewModel.RegisterInspectionViewModel(this);
         Console.WriteLine("Changed Sequence to: " + _currentSequenceViewModel);
-
     }
     
     private void DockingItemsChanged(object sender, EventArgs e)
