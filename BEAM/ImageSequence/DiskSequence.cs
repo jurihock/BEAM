@@ -108,14 +108,23 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     /// </summary>
     /// <param name="index">The index of the desired image.</param>
     /// <returns>The loaded image.</returns>
-    protected abstract IImage LoadImage(int index);
+    protected internal abstract IImage LoadImage(int index);
 
     /// <summary>
     /// Initializes and validates the sequence.
     /// </summary>
     /// <returns>True if the sequence has been initialised, false if an error occured (then see log)</returns>
-    protected abstract bool InitializeSequence();
-
+    protected internal abstract bool InitializeSequence();
+    
+    /// <summary>
+    /// A method to get the amount of loaded images in the sequence.
+    /// </summary>
+    /// <returns>A long representing the amount of images loaded in the sequence</returns>
+    public long getLoadedImageCount()
+    {
+        return _loadedImages.Length;
+    }
+    
     /// <summary>
     /// Returns the desired image. Loads the image into main memory on-demand if necessary.
     /// </summary>

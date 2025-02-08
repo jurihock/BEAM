@@ -14,9 +14,9 @@ namespace BEAM.ImageSequence;
 /// <param name="imagePaths">The envi images to use inside the sequence.</param>
 public class EnviSequence(List<string> imagePaths, string name) : DiskSequence(imagePaths, name)
 {
-    protected override IImage LoadImage(int index) => EnviImage.OpenImage(imagePaths[index]);
+    protected internal override IImage LoadImage(int index) => EnviImage.OpenImage(imagePaths[index]);
 
-    protected override bool InitializeSequence()
+    protected internal override bool InitializeSequence()
     {
         var removed = imagePaths.RemoveAll(path =>
             !(Path.GetExtension(path).Equals(".raw") || Path.GetExtension(path).Equals(".hdr")));
