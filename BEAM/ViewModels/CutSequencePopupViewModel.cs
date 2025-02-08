@@ -19,6 +19,10 @@ public partial class CutSequencePopupViewModel : ViewModelBase
     
     public bool Save()
     {
+        if (Offset < 0 || Offset > maxOffset)
+        {
+            return false;
+        }   
         _sequenceViewModel.Sequence = new TransformedSequence(new CutSequence(_sequenceViewModel.Sequence.GetName(),
                                         Offset, _sequenceViewModel.Sequence));
         _sequenceViewModel.CutSequence(this, new RenderersUpdatedEventArgs(Offset));
