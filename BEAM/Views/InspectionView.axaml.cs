@@ -36,7 +36,7 @@ public partial class InspectionView : UserControl
         AnalysisPlot.Plot.Clear();
         
         newPlot.PlotControl = AnalysisPlot;
-        AnalysisPlot.Reset(newPlot); //TODO: Causes Error when clicking inside the Plot
+        AnalysisPlot.Reset(newPlot);
         //TODO: Caused AccessViolationException sometimes?!
         AnalysisPlot.Refresh();
     }
@@ -58,6 +58,7 @@ public partial class InspectionView : UserControl
     {
         var vm = DataContext as InspectionViewModel;
         vm.ChangeAnalysis(AnalysisPicker.SelectedIndex);
+        AnalysisPlot.Reset(vm.CurrentPlot);
         AnalysisPlot.Refresh();
     }
     
@@ -65,5 +66,11 @@ public partial class InspectionView : UserControl
     {
         var vm = DataContext as InspectionViewModel;
         vm.ChangeSequence(SequencePicker.SelectedIndex);
+    }
+    
+    public void CheckBox_Changed(object sender, RoutedEventArgs e)
+    {
+        var vm = DataContext as InspectionViewModel;
+        vm.CheckBoxChanged(KeepDataCheckBox.IsChecked);
     }
 }
