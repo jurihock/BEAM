@@ -77,9 +77,19 @@ public partial class SequenceView : UserControl
         menu.Add("Configure colors", control => _OpenColorsPopup());
         menu.Add("Affine Transformation", control => _OpenTransformPopup());
         menu.AddSeparator();
-        menu.Add("Cut Sequence",  control => _OpenCutPopup());
+        menu.Add("Cut Sequence", control => _OpenCutPopup());
         menu.Add("Export sequence",
             control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+    }
+
+    private void _SetPlottable(BitmapPlottable plottable)
+    {
+        if (_plottable is not null) AvaPlot1.Plot.Remove(_plottable);
+
+        _plottable = plottable;
+        AvaPlot1.Plot.Add.Plottable(_plottable);
+        _plottable.SequenceImage.RequestRefreshPlotEvent += (sender, args) => AvaPlot1.Refresh();
+        AvaPlot1.Refresh();
     }
 
     private void StyledElement_OnDataContextChanged(object? sender, EventArgs e)
@@ -87,13 +97,7 @@ public partial class SequenceView : UserControl
         var vm = DataContext as SequenceViewModel;
 
         PreparePlot();
-
-        _plottable = new BitmapPlottable(vm.Sequence, vm.CurrentRenderer);
-        AvaPlot1.Plot.Add.Plottable(_plottable);
-
-        _plottable.SequenceImage.RequestRefreshPlotEvent += (sender, args) => AvaPlot1.Refresh();
-
-        AvaPlot1.Refresh();
+        _SetPlottable(new BitmapPlottable(vm.Sequence, vm.CurrentRenderer));
 
         // Changed the sequence view -> full rerender
         vm.RenderersUpdated += (_, args) =>
@@ -102,16 +106,14 @@ public partial class SequenceView : UserControl
             _plottable.ChangeRenderer(vm.CurrentRenderer);
             AvaPlot1.Refresh();
         };
-        
+
         vm.CutSequence += (_, args) =>
         {
-            AvaPlot1.Plot.Remove(_plottable);
-            _plottable = new BitmapPlottable(vm.Sequence, vm.CurrentRenderer);
-            AvaPlot1.Plot.Add.Plottable(_plottable);
-            _plottable.SequenceImage.Reset();
+            _SetPlottable(new BitmapPlottable(vm.Sequence, vm.CurrentRenderer));
+
             var oldLimits = AvaPlot1.Plot.Axes.GetLimits();
             var ySize = oldLimits.Bottom - oldLimits.Top;
-            var newLimits = new AxisLimits(oldLimits.Left, oldLimits.Right, -ySize / 3, 2 * ySize /  3);
+            var newLimits = new AxisLimits(oldLimits.Left, oldLimits.Right, -ySize / 3, 2 * ySize / 3);
             AvaPlot1.Plot.Axes.SetLimits(newLimits);
             AvaPlot1.Refresh();
         };
@@ -131,7 +133,7 @@ public partial class SequenceView : UserControl
 
         popup.ShowDialog(v.MainWindow);
     }
-    
+
     private void _OpenCutPopup()
     {
         CutSequencePopup popup = new(DataContext as SequenceViewModel);
