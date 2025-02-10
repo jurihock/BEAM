@@ -1,19 +1,21 @@
 using System;
-using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Input;
 using Avalonia.Styling;
-using BEAM.Image.Bitmap;
-using BEAM.Image.Displayer;
+using BEAM.CustomActions;
 using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence;
+using BEAM.ImageSequence.Synchronization;
 using BEAM.Log;
 using BEAM.Profiling;
 using BEAM.ViewModels;
 using ScottPlot;
 using ScottPlot.Avalonia;
+using ScottPlot.Interactivity;
+using ScottPlot.Interactivity.UserActionResponses;
 
 namespace BEAM.Views;
 
@@ -41,9 +43,77 @@ public partial class SequenceView : UserControl
 
         //var panButton = ScottPlot.Interactivity.StandardMouseButtons.Middle;
         //var panResponse = new ScottPlot.Interactivity.UserActionResponses.MouseDragPan(panButton);
+
+        // Remove the standard MouseWheelZoom and replace it with the wanted custom functionality
+        ScrollingSynchronizer.addSequence(this);
+        AvaPlot1.UserInputProcessor.RemoveAll<MouseWheelZoom>();
+        AvaPlot1.UserInputProcessor.UserActionResponses.Add(new CustomMouseWheelZoom(StandardKeys.Shift,
+            StandardKeys.Control));
+
+        Bar1.Scroll += (s, e) =>
+        {
+            var plot = AvaPlot1.Plot;
+            var ySize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
+            // Minus 100 to allow to scroll higher than the sequence for a better inspection of the start.
+            var top = (e.NewValue / 100.0) * sequence.Shape.Height - 100.0;
+            AvaPlot1.Plot.Axes.SetLimitsY(top, top + ySize);
+            AvaPlot1.Refresh();
+            ScrollingSynchronizer.synchronize(this);
+        };
+
+        AvaPlot1.PointerWheelChanged += (s, e) =>
+        {
+            UpdateScrollBar();
+            ScrollingSynchronizer.synchronize(this);
+        };
+
+        addScrollBarUpdating();
+
+        PlotControllerManager.AddPlotToAllControllers(AvaPlot1);
+        using var _ = Timer.Start();
+
         AvaPlot1.Plot.Axes.InvertY();
         AvaPlot1.Plot.Axes.SquareUnits();
         AvaPlot1.Refresh();
+
+    }
+
+    private void addScrollBarUpdating()
+    {
+        AvaPlot1.PointerEntered += (s, e) =>
+        {
+            UpdateScrollBar();
+        };
+
+        AvaPlot1.PointerExited += (s, e) =>
+        {
+            UpdateScrollBar();
+        };
+
+        AvaPlot1.PointerMoved += (s, e) =>
+        {
+            UpdateScrollBar();
+        };
+
+        AvaPlot1.PointerPressed += (s, e) =>
+        {
+            UpdateScrollBar();
+        };
+
+        AvaPlot1.PointerReleased += (s, e) =>
+        {
+            UpdateScrollBar();
+        };
+
+        AvaPlot1.PointerCaptureLost += (s, e) =>
+        {
+            UpdateScrollBar();
+        };
+
+        AvaPlot1.PointerWheelChanged += (s, e) =>
+        {
+            UpdateScrollBar();
+        };
     }
 
     private void _ApplyDarkMode()
@@ -72,7 +142,12 @@ public partial class SequenceView : UserControl
             control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
         menu.AddSeparator();
         menu.Add("Sync to this",
-            control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+            control =>
+            {
+                ScrollingSynchronizer.activateSynchronization();
+                ScrollingSynchronizer.synchronize(this);
+                PlotControllerManager.activateSynchronization();
+            });
         menu.AddSeparator();
         menu.Add("Configure colors", control => _OpenColorsPopup());
         menu.Add("Affine Transformation", control => _OpenTransformPopup());
@@ -117,5 +192,40 @@ public partial class SequenceView : UserControl
         var v = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
 
         popup.ShowDialog(v.MainWindow);
+    }
+
+    /// <summary>
+    /// This method updates the value of the Scrollbar and display the corresponding position in the sequence.
+    /// </summary>
+    /// <param name="val">The new value of the ScrollBar</param>
+    public void UpdateScrolling(double val)
+    {
+        var plot = AvaPlot1.Plot;
+        var ySize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
+        var top = (val / 100.0) * _sequence.Shape.Height - 100.0;
+        AvaPlot1.Plot.Axes.SetLimitsY(top, top + ySize);
+        AvaPlot1.Refresh();
+        Bar1.Value = val;
+    }
+
+    /// <summary>
+    /// This method updates the displayed position in the sequence to that of another AvaPlot and
+    /// sets the corresponding value for the ScrollBar.
+    /// </summary>
+    /// <param name="otherPlot">The AvaPlot, which limits will be used to set the display limits of this sequence.</param>
+    public void UpdateScrolling(AvaPlot otherPlot)
+    {
+        AvaPlot1.Plot.Axes.SetLimits(otherPlot.Plot.Axes.GetLimits());
+        AvaPlot1.Refresh();
+        UpdateScrollBar();
+    }
+
+    /// <summary>
+    /// This method updates the value of the Scrollbar, setting it to the value corresponding to the displayed position in the sequence.
+    /// </summary>
+    public void UpdateScrollBar()
+    {
+        var val =  ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / _sequence.Shape.Height) * 100;
+        Bar1.Value = val <= 0.0 ? 0.0 : double.Min(val, 100.0);
     }
 }

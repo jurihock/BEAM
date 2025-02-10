@@ -148,7 +148,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
 
     /// <summary>
     /// Calculates the shape of the entire sequence.
-    /// Only run once: when Shape is accessed the first tie
+    /// Only run once: when Shape is accessed the first time
     /// </summary>
     private void _InitializeShape()
     {
