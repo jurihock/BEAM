@@ -55,7 +55,7 @@ public partial class SequenceView : UserControl
             var plot = AvaPlot1.Plot;
             var ySize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
             // Minus 100 to allow to scroll higher than the sequence for a better inspection of the start.
-            var top = (e.NewValue / 100.0) * sequence.Shape.Height - 100.0;
+            var top = (e.NewValue / 100.0) * _sequence.Shape.Height - 100.0;
             AvaPlot1.Plot.Axes.SetLimitsY(top, top + ySize);
             AvaPlot1.Refresh();
             ScrollingSynchronizer.synchronize(this);

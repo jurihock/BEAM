@@ -16,7 +16,7 @@ public abstract class Minimap
     /// <summary>
     /// The sequence based on which the minimap is based.
     /// </summary>
-    protected readonly Sequence Sequence;
+    protected readonly ISequence Sequence;
     protected virtual bool IsGenerated { get; set; } = false;
     /// <summary>
     /// Cancellation Token for the generation process. Any subclass should use this Token for its Threads
@@ -45,7 +45,7 @@ public abstract class Minimap
     /// <param name="eventCallbackFunc">A function which is invoked once the minimap has finished generating its values.
     /// This is being done through the <see cref="MinimapGeneratedEventHandler"/> event.</param>
     /// <exception cref="ArgumentNullException">If any of the parameters is null.</exception>
-    public Minimap(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc )
+    public Minimap(ISequence sequence, MinimapGeneratedEventHandler eventCallbackFunc )
     {
         ArgumentNullException.ThrowIfNull(sequence);
         ArgumentNullException.ThrowIfNull(eventCallbackFunc);
