@@ -10,6 +10,7 @@ namespace BEAM.ViewModels;
 public partial class DockingViewModel : ViewModelBase
 {
     public ObservableCollection<IDockBase> Items = [];
+    
 
     /// <summary>
     /// Opens a new dock window with the matching view to the model

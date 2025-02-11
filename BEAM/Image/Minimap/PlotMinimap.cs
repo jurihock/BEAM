@@ -1,9 +1,13 @@
 using System;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 using BEAM.Docking;
 using BEAM.Image.Minimap.MinimapAlgorithms;
 using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
+using BEAM.ViewModels.Minimap;
+using BEAM.Views.Minimap;
+using ScottPlot;
 
 namespace BEAM.Image.Minimap;
 
@@ -19,7 +23,7 @@ public class PlotMinimap : Minimap
     /// </summary>
     private static readonly IMinimapAlgorithm DefaultAlgorithm = new DummyMinimapAlgorithm();
     private bool _isGenerated;
-    
+    private MinimapPlotViewModel viewModel;
 
     /// <summary>
     /// The underlying algorithm used to calculate values for pixel lines. These values will later be displayed in the plot.
@@ -67,7 +71,18 @@ public class PlotMinimap : Minimap
             OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Failure));
             return;
         }
+
+        Plot plot = new Plot();
+        double[]values = new double[Sequence.Shape.Height / 5];
+        for (int i = 0; i < Sequence.Shape.Height / 5; i++)
+        {
+            values[i] = _minimapAlgorithm.GetLineValue(i * 5);
+        }
+
+        plot.Add.Bars(values);
+        viewModel = new MinimapPlotViewModel(plot);
         _isGenerated = true;
+        Console.WriteLine("Hello World");
         OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Success));
     }
     
@@ -92,6 +107,6 @@ public class PlotMinimap : Minimap
 
     public override IDockBase GetDock()
     {
-        return DisplayedMinimap.DataContext as MinimapPlotViewModel;
+        return viewModel;
     }
 }

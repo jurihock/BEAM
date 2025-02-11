@@ -25,7 +25,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     public Sequence Sequence { get; }
 
     private List<InspectionViewModel> _ConnectedInspectionViewModels = new();
-    private Minimap _minimap;
+    private Image.Minimap.Minimap _minimap;
 
     public SequenceViewModel(Sequence sequence, DockingViewModel dockingVm)
     {
@@ -50,7 +50,8 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     public void OnMinimapGenerated(object sender, MinimapGeneratedEventArgs e)
     {
         Console.WriteLine("hello");
-        
+        Dispatcher.UIThread.InvokeAsync(() => DockingVm.OpenDock(e.Minimap.GetDock()));
+        Console.WriteLine("asdasd");
     }
 
     [RelayCommand]
