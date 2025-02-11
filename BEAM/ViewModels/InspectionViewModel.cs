@@ -1,21 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Threading.Tasks;
-using Avalonia.Controls;
-using Avalonia.Input;
 using BEAM.Analysis;
 using BEAM.Datatypes;
 using BEAM.Docking;
-using BEAM.ImageSequence;
-using BEAM.Views;
-using BEAM.Views.AnalysisView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ScottPlot;
-using ScottPlot.Plottables;
-using Rectangle = BEAM.Datatypes.Rectangle;
 
 
 namespace BEAM.ViewModels;
@@ -35,7 +26,8 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     public List<Analysis.Analysis> AnalysisList { get; private set;  } = new()
     {
         new PixelAnalysisChannel(),
-        new CirclePlot()
+        new CirclePlot(),
+        new RegionAnalysisStandardDeviationOfChannels()
     };
 
     public List<SequenceViewModel> ExistingSequenceViewModels { get; set; } = new();

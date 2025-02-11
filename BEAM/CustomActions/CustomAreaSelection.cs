@@ -45,13 +45,11 @@ public class CustomAreaSelection(MouseButton button) : IUserActionResponse
             plot.MoveToTop(SelectionRectangle);
             MouseDownCoordinates = plot.GetCoordinates(buttonAction.Pixel.X, buttonAction.Pixel.Y);
         }
-        
         // If the targeted position is not in the Graph?
         if (MouseDownCoordinates == Coordinates.NaN)
         {
             return ResponseInfo.NoActionRequired;
         }
-
         // If the mouse is moved, adapt the rectangle
         if (userAction is IMouseAction mouseMoveAction && userAction is not IMouseButtonAction && MouseIsDown)
         {

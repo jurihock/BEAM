@@ -56,6 +56,7 @@ public partial class SequenceView : UserControl
         AvaPlot1.UserInputProcessor.RemoveAll<MouseDragZoom>(); // Remove option to zoom with right key
         AvaPlot1.UserInputProcessor.UserActionResponses.Add(new CustomMouseWheelZoom(StandardKeys.Shift,
             StandardKeys.Control));
+        // Add ability to select area with right mouse button pressed
         AvaPlot1.UserInputProcessor.UserActionResponses.Add(new CustomAreaSelection(StandardMouseButtons.Right));
         
         Bar1.Scroll += (s, e) =>
