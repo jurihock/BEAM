@@ -20,6 +20,7 @@ using ScottPlot;
 using ScottPlot.Avalonia;
 using ScottPlot.Interactivity;
 using ScottPlot.Interactivity.UserActionResponses;
+using MouseButton = ScottPlot.Interactivity.MouseButton;
 
 namespace BEAM.Views;
 
@@ -52,8 +53,10 @@ public partial class SequenceView : UserControl
         _sequence = sequence;
         ScrollingSynchronizer.addSequence(this);
         AvaPlot1.UserInputProcessor.RemoveAll<MouseWheelZoom>();
+        AvaPlot1.UserInputProcessor.RemoveAll<MouseDragZoom>(); // Remove option to zoom with right key
         AvaPlot1.UserInputProcessor.UserActionResponses.Add(new CustomMouseWheelZoom(StandardKeys.Shift,
             StandardKeys.Control));
+        AvaPlot1.UserInputProcessor.UserActionResponses.Add(new CustomAreaSelection(StandardMouseButtons.Right));
         
         Bar1.Scroll += (s, e) =>
         {
