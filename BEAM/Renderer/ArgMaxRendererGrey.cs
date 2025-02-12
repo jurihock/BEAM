@@ -42,11 +42,16 @@ public class ArgMaxRendererGrey(double minimumOfIntensityRange, double maximumOf
         int intensity = (int) ((double)channelNumber / (double)amountChannels * 255);
         byte[] color =
         [
-            255,
             (byte)intensity,
             (byte)intensity,
-            (byte)intensity
+            (byte)intensity,
+            255
         ];
         return color;
+    }
+
+    public override string GetName()
+    {
+        return $"{base.GetName()} (Gray Scale)";
     }
 }

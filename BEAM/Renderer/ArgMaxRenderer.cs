@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using BEAM.Exceptions;
 using BEAM.ImageSequence;
+using Timer = BEAM.Profiling.Timer;
 
 namespace BEAM.Renderer;
 
@@ -18,14 +19,36 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
         var channels = sequence.GetPixel(x, y);
         var argMaxChannel = ArgMax(channels);
         var color = GetColor(argMaxChannel, channels.Length);
-        
+
         return color;
     }
 
-    //TODO: implement. Currently do not understand LineImage
-    public override byte[,] RenderPixels(ISequence sequence, long[] xs, long y, CancellationTokenSource? tokenSource = null)
+    public override byte[,] RenderPixels(ISequence sequence, long[] xs, long y,
+        CancellationTokenSource? tokenSource = null)
     {
-        throw new System.NotImplementedException();
+        var channels = new int[sequence.Shape.Channels];
+        for (var i = 0; i < sequence.Shape.Channels; i++)
+        {
+            channels[i] = i;
+        }
+
+        var line = sequence.GetPixelLineData(xs, y, channels);
+        var data = new byte[xs.Length, 4];
+
+        for (var x = 0; x < xs.Length; x++)
+        {
+            tokenSource?.Token.ThrowIfCancellationRequested();
+
+            var index = ArgMax(line.GetPixel(x, 0));
+            var color = GetColor(index, channels.Length);
+
+            data[x, 0] = color[0];
+            data[x, 1] = color[1];
+            data[x, 2] = color[2];
+            data[x, 3] = 255;
+        }
+
+        return data;
     }
 
     /// <summary>
@@ -40,7 +63,7 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
         {
             throw new ChannelException("Channels must be greater than 0.");
         }
-        
+
         double maxIntensity = MinimumOfIntensityRange;
         int maxPosition = 0;
         for (int i = 0; i < channels.Length; i++)
@@ -54,7 +77,7 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
 
         return maxPosition;
     }
-    
+
     protected abstract byte[] GetColor(int channelNumber, int amountChannels);
 
     public override string GetName() => "ArgMax";
