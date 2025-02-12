@@ -12,5 +12,6 @@ public partial class MinimapPlotViewModel : ViewModelBase, IDockBase
     public MinimapPlotViewModel(Plot plot)
     {
         _currentPlot = plot;
+        CurrentPlot = plot;
     }
 }

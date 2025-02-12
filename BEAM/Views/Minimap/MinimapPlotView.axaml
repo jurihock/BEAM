@@ -2,16 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:BEAM.ViewModels"
-             xmlns:aav="clr-namespace:BEAM.Views.AnalysisView"
              xmlns:scott="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
              xmlns:minimap="clr-namespace:BEAM.ViewModels.Minimap"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="minimap:MinimapPlotViewModel"
              x:Name="Minimap"
              x:Class="BEAM.Views.Minimap.MinimapPlotView">
-    <Design.DataContext>
-        <minimap:MinimapPlotViewModel/>
-    </Design.DataContext>
-    <scott:AvaPlot Name="AvaPlot1"></scott:AvaPlot>
+    <scott:AvaPlot Name="MinimapPlot"></scott:AvaPlot>
 </UserControl>
