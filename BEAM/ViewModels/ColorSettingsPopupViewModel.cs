@@ -97,7 +97,7 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
         }
 
         _sequenceViewModel.RendererSelection = _selection;
-        _sequenceViewModel.RenderersUpdated.Invoke(this, new RenderersUpdatedEventArgs());
+        _sequenceViewModel.RenderersUpdated.Invoke(this, new RenderersUpdatedEventArgs(0));
         return true;
     }
 }

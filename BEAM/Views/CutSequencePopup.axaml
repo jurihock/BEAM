@@ -1,0 +1,31 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:beam="clr-namespace:BEAM"
+        xmlns:viewModels="clr-namespace:BEAM.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="BEAM.Views.CutSequencePopup"
+        x:DataType="viewModels:CutSequencePopupViewModel"
+        Title="CutSequencePopup">
+    <Design.DataContext>
+        <viewModels:CutSequencePopupViewModel />
+    </Design.DataContext>
+    <StackPanel Orientation="Vertical" Margin="20, 10, 20, 0">
+        <TextBlock FontWeight="Bold">Configure index from which the sequence will be cut</TextBlock>
+        <Separator Background="{DynamicResource ThemeAccentBrush}" Margin="0 10"></Separator>
+        
+        <Grid>
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10 0">Starting index of new Sequence:</TextBlock>
+            <NumericUpDown Value="{Binding Offset}" MinWidth="300" HorizontalAlignment="Right" ParsingNumberStyle="Integer" Minimum="0" Maximum="{Binding MaxOffset}"/>
+        </Grid>
+        
+        <StackPanel Margin="0 10" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Click="Close">Cancel</Button>
+            <Button Click="TrySave" Margin="10 0 0 0"
+                    Background="{DynamicResource Accent}" Foreground="{DynamicResource AccentForeground}">
+                Save
+            </Button>
+        </StackPanel>
+    </StackPanel>
+</Window>

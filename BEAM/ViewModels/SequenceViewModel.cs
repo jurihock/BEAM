@@ -1,5 +1,6 @@
 using System;
 using BEAM.Docking;
+using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
 
@@ -8,8 +9,9 @@ namespace BEAM.ViewModels;
 public partial class SequenceViewModel : ViewModelBase, IDockBase
 {
     public EventHandler<RenderersUpdatedEventArgs> RenderersUpdated = delegate { };
+    public EventHandler<RenderersUpdatedEventArgs> CutSequence = delegate { };
 
-    public TransformedSequence Sequence { get; }
+    public TransformedSequence Sequence { get; set; }
 
     public SequenceRenderer[] Renderers;
     public int RendererSelection;
