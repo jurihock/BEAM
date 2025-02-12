@@ -22,12 +22,24 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     [ObservableProperty] public partial Coordinate2D releasedPointerPosition { get; set; } = new();
 
     
+    public EventHandler<EventArgs> MinimapHasGenerated = delegate { };
+    
 
 
     public Sequence Sequence { get; }
 
     private List<InspectionViewModel> _ConnectedInspectionViewModels = new();
     private Image.Minimap.Minimap _minimap;
+
+    public Image.Minimap.Minimap Minimap
+    {
+        get
+        {
+            return _minimap;
+        } 
+    }
+    
+    
 
     public SequenceViewModel(Sequence sequence, DockingViewModel dockingVm)
     {
@@ -51,9 +63,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     
     public void OnMinimapGenerated(object sender, MinimapGeneratedEventArgs e)
     {
-        Console.WriteLine("hello");
-        //Dispatcher.UIThread.InvokeAsync(() => DockingVm.OpenDock(e.Minimap.GetDock()));
-        Console.WriteLine("asdasd");
+        MinimapHasGenerated.Invoke(this, EventArgs.Empty);
     }
 
     [RelayCommand]
@@ -67,6 +77,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     }
 
     public string Name { get; } = "Eine tolle Sequence";
+
     public void OnClose()
     {
         _minimap.StopGeneration();

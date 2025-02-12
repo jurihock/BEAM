@@ -17,6 +17,8 @@
     <Grid ColumnDefinitions="*, Auto, Auto">
         <scott:AvaPlot Name="AvaPlot1" Grid.Column="0"/>
         <ScrollBar Name="Bar" Orientation="Vertical" Visibility="Visible" AllowAutoHide="False" Grid.Column="1" />
-        <ContentControl Name="MinimapHost" Grid.Column="2"/>
+        <ContentControl Grid.Column="2"
+                        Content="{Binding ExternalPlotView, 
+                                RelativeSource={RelativeSource AncestorType=UserControl}}" />
     </Grid>
 </UserControl>

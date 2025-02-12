@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
+using Avalonia.Threading;
 using BEAM.Datatypes;
 using BEAM.Image.Bitmap;
 using BEAM.Image.Displayer;
@@ -23,15 +24,11 @@ namespace BEAM.Views;
 
 public partial class SequenceView : UserControl
 {
+    
     public SequenceView()
     {
         InitializeComponent();
-        var vm = (SequenceViewModel?)DataContext;
-        if (vm == null)
-        {
-            Console.WriteLine("Could not fetch DataContext");
-            return;
-        }
+        
     }
 
     private void FillPlot(Sequence sequence)
@@ -134,7 +131,11 @@ public partial class SequenceView : UserControl
     private void StyledElement_OnDataContextChanged(object? sender, EventArgs e)
     {
         var vm = DataContext as SequenceViewModel;
-
+        if (vm == null)
+        {
+            return;
+        }
+        vm.MinimapHasGenerated += OnMinimapGenerated;
         FillPlot(vm.Sequence);
     }
 
@@ -150,8 +151,13 @@ public partial class SequenceView : UserControl
     //     vm.UpdateInspectionViewModel(((long)CoordInPlot.X, (long)CoordInPlot.Y));
     // }
 
-    private void OnMinimapGenerated()
+    private void OnMinimapGenerated(object? sender, EventArgs e)
     {
-        
+        Console.WriteLine("Ready to view");
+        /*Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            var vm = DataContext as SequenceViewModel;
+            MinimapHost.Content = vm.Minimap.GetDock();
+        });*/
     }
 }
