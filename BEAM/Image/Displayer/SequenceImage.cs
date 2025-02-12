@@ -113,7 +113,7 @@ public class SequenceImage : IDisposable
                     // TODO: make independent of seqImg
                     var bmp = seqImg.GetImage(0, sequence.Shape.Width,
                         YStart, YStart + yRange,
-                        (int)(width * resolutionScale), (int)(height * resolutionScale),
+                        (int) Math.Ceiling(width * resolutionScale), (int)Math.Ceiling(height * resolutionScale),
                         _cancellationToken);
 
                     Bitmap = bmp;
@@ -173,9 +173,11 @@ public class SequenceImage : IDisposable
         _sectionHeight = sectionHeight;
         _startLine = Math.Clamp(startLine, 0, sequence.Shape.Height);
         _sequence = sequence;
+
         _minPreloadedSections = (int)Math.Min(_minPreloadedSections,
             Math.Floor((double)_sequence.Shape.Height / _sectionHeight));
         _minPreloadedSections = Math.Max(_minPreloadedSections, 1);
+
         Renderer = renderer;
 
         _InitPreviews();
