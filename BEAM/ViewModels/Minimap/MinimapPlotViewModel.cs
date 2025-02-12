@@ -8,6 +8,10 @@ public partial class MinimapPlotViewModel : ViewModelBase, IDockBase
 {
     [ObservableProperty] private Plot _currentPlot;
     public string Name { get; } = "Minimap View";
+    public void OnClose()
+    {
+        throw new System.NotImplementedException();
+    }
 
     public MinimapPlotViewModel(Plot plot)
     {

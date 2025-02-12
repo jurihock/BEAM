@@ -52,6 +52,10 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     }
 
     public string Name { get; } = "Inspect";
+    public void OnClose()
+    {
+        throw new NotImplementedException();
+    }
 
     public void Update(Rectangle coordRectangle, SequenceViewModel sequence)
     {

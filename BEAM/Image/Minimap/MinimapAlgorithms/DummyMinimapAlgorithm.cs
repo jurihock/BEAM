@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Animation;
 using BEAM.ImageSequence;
@@ -8,7 +9,7 @@ namespace BEAM.Image.Minimap.MinimapAlgorithms;
 public class DummyMinimapAlgorithm : IMinimapAlgorithm
 {
     private Random random = new Random();
-    public bool AnalyzeSequence(Sequence sequence)
+    public bool AnalyzeSequence(Sequence sequence, CancellationToken ctx)
     {
         for(int i = 0; i < 10000; i++)
         {

@@ -17,13 +17,15 @@ namespace BEAM.Image.Minimap;
 /// </summary>
 public class PlotMinimap : Minimap
 {
+    private int _compactionFactor = 100;
     /// <summary>
     /// The default minimap algorithm which will be used if this class is instantiated
     /// without a specific algorithm through its base class constructor.
     /// </summary>
-    private static readonly IMinimapAlgorithm DefaultAlgorithm = new DummyMinimapAlgorithm();
+    private static readonly IMinimapAlgorithm DefaultAlgorithm = new PixelSumAlgorithm(100);
     private bool _isGenerated;
     private MinimapPlotViewModel viewModel;
+
 
     /// <summary>
     /// The underlying algorithm used to calculate values for pixel lines. These values will later be displayed in the plot.
@@ -63,20 +65,22 @@ public class PlotMinimap : Minimap
     {
         
         //TODO: do Work with Sequence
-        bool result = _minimapAlgorithm.AnalyzeSequence(Sequence);
+        bool result = _minimapAlgorithm.AnalyzeSequence(Sequence, this.CancellationTokenSource.Token);
+        Console.WriteLine("Returned " + result);
         if (!result)
         {
-            
+            Console.WriteLine("Returend false");
             // TODO: Should event also contain caller?
             OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Failure));
             return;
         }
 
         Plot plot = new Plot();
-        double[]values = new double[Sequence.Shape.Height / 5];
-        for (int i = 0; i < Sequence.Shape.Height / 5; i++)
+        double[]values = new double[Sequence.Shape.Height / 100];
+        for (int i = 0; i < Sequence.Shape.Height / 100; i++)
         {
-            values[i] = _minimapAlgorithm.GetLineValue(i * 5);
+            values[i] = _minimapAlgorithm.GetLineValue(i * 100);
+            Console.WriteLine("Line " + i + " Value: " + values[i]);
         }
 
         plot.Add.Bars(values);

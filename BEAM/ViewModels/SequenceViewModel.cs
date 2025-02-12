@@ -21,6 +21,8 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     [ObservableProperty] public partial Coordinate2D pressedPointerPosition { get; set; } = new();
     [ObservableProperty] public partial Coordinate2D releasedPointerPosition { get; set; } = new();
 
+    
+
 
     public Sequence Sequence { get; }
 
@@ -50,7 +52,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     public void OnMinimapGenerated(object sender, MinimapGeneratedEventArgs e)
     {
         Console.WriteLine("hello");
-        Dispatcher.UIThread.InvokeAsync(() => DockingVm.OpenDock(e.Minimap.GetDock()));
+        //Dispatcher.UIThread.InvokeAsync(() => DockingVm.OpenDock(e.Minimap.GetDock()));
         Console.WriteLine("asdasd");
     }
 
@@ -65,6 +67,11 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     }
 
     public string Name { get; } = "Eine tolle Sequence";
+    public void OnClose()
+    {
+        _minimap.StopGeneration();
+        Console.WriteLine("Stopped it");
+    }
 
     public override string ToString()
     {

@@ -14,8 +14,9 @@
         <vm:SequenceViewModel/>
     </Design.DataContext>
 
-    <Grid ColumnDefinitions="*, Auto">
+    <Grid ColumnDefinitions="*, Auto, Auto">
         <scott:AvaPlot Name="AvaPlot1" Grid.Column="0"/>
         <ScrollBar Name="Bar" Orientation="Vertical" Visibility="Visible" AllowAutoHide="False" Grid.Column="1" />
+        <ContentControl Name="MinimapHost" Grid.Column="2"/>
     </Grid>
 </UserControl>

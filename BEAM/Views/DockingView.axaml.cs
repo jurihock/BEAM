@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using BEAM.Docking;
+using BEAM.Exceptions;
 using BEAM.ViewModels;
 using NP.Ava.UniDock;
 using NP.Ava.UniDockService;
@@ -27,6 +28,7 @@ public partial class DockingView : UserControl
 
         _dockManager = (DockManager)this.FindResource("TheDockManager")!;
         _dockManager.DockItemsViewModels = [];
+        _dockManager.DockItemRemovedEvent += OnDockItemRemoved;
     }
 
     private int _i = 0;
@@ -48,5 +50,18 @@ public partial class DockingView : UserControl
             IsSelected = false,
         };
         _dockManager.DockItemsViewModels!.Add(model);
+    }
+    
+    private void OnDockItemRemoved(DockItemViewModelBase dockItem)
+    {
+        try
+        {
+            IDockBase dock = (IDockBase)dockItem.Content!;
+            dock.OnClose();
+        }
+        catch
+        {
+            throw new CriticalBeamException("An Item was closed through the docking library, yet its viewmodel did not implement IDockBase");
+        }
     }
 }

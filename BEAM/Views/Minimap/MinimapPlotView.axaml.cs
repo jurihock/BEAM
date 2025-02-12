@@ -28,7 +28,7 @@ public partial class MinimapPlotView : UserControl
     
     private void DataContextChangedHandling(object? sender, EventArgs eventArgs)
     {
-        var vm = DataContext as InspectionViewModel;
+        var vm = DataContext as MinimapPlotViewModel;
         FillPlot(vm.CurrentPlot);        
     }
 

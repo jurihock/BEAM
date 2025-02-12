@@ -1,3 +1,4 @@
+using System.Threading;
 using BEAM.ImageSequence;
 
 namespace BEAM.Image.Minimap.MinimapAlgorithms;
@@ -12,8 +13,9 @@ public interface IMinimapAlgorithm
     /// A concrete implementation of an algorithms which generates values for all lines of a sequence.
     /// </summary>
     /// <param name="sequence"> The sequence based on which the values are being calculated.</param>
+    /// <param name="ctx"> The cancellation token which is used to cancel the generation process.</param>
     /// <returns> A Boolean representing whether the generation finished successfully.</returns>
-    bool AnalyzeSequence(Sequence sequence);
+    bool AnalyzeSequence(Sequence sequence, CancellationToken ctx);
 
     /// <summary>
     /// Returns the algorithm calculation based value for a specific line. Commonly used for plotting.
@@ -21,4 +23,5 @@ public interface IMinimapAlgorithm
     /// <param name="line">The line whose value shall be returned.</param>
     /// <returns>The specified line's calculated value.</returns>
     float GetLineValue(long line);
+    
 }

@@ -15,6 +15,7 @@ using BEAM.ImageSequence;
 using BEAM.Log;
 using BEAM.Profiling;
 using BEAM.ViewModels;
+using CommunityToolkit.Mvvm.ComponentModel;
 using ScottPlot;
 using ScottPlot.Avalonia;
 
@@ -25,6 +26,12 @@ public partial class SequenceView : UserControl
     public SequenceView()
     {
         InitializeComponent();
+        var vm = (SequenceViewModel?)DataContext;
+        if (vm == null)
+        {
+            Console.WriteLine("Could not fetch DataContext");
+            return;
+        }
     }
 
     private void FillPlot(Sequence sequence)
@@ -142,4 +149,9 @@ public partial class SequenceView : UserControl
     //     var vm = (SequenceViewModel?)DataContext;
     //     vm.UpdateInspectionViewModel(((long)CoordInPlot.X, (long)CoordInPlot.Y));
     // }
+
+    private void OnMinimapGenerated()
+    {
+        
+    }
 }
