@@ -11,6 +11,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Folder Include="Assets\Images\" />
         <Folder Include="Models\" />
         <AvaloniaResource Include="Assets\**" />
     </ItemGroup>

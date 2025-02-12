@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Input;
 using Avalonia.Styling;
 using BEAM.CustomActions;
+using BEAM.Image.Displayer.ScottPlot;
 using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence;
 using BEAM.ImageSequence.Synchronization;
@@ -70,50 +71,27 @@ public partial class SequenceView : UserControl
         addScrollBarUpdating();
 
         PlotControllerManager.AddPlotToAllControllers(AvaPlot1);
-        using var _ = Timer.Start();
 
         AvaPlot1.Plot.Axes.InvertY();
         AvaPlot1.Plot.Axes.SquareUnits();
         AvaPlot1.Refresh();
-
     }
 
     private void addScrollBarUpdating()
     {
-        AvaPlot1.PointerEntered += (s, e) =>
-        {
-            UpdateScrollBar();
-        };
+        AvaPlot1.PointerEntered += (s, e) => { UpdateScrollBar(); };
 
-        AvaPlot1.PointerExited += (s, e) =>
-        {
-            UpdateScrollBar();
-        };
+        AvaPlot1.PointerExited += (s, e) => { UpdateScrollBar(); };
 
-        AvaPlot1.PointerMoved += (s, e) =>
-        {
-            UpdateScrollBar();
-        };
+        AvaPlot1.PointerMoved += (s, e) => { UpdateScrollBar(); };
 
-        AvaPlot1.PointerPressed += (s, e) =>
-        {
-            UpdateScrollBar();
-        };
+        AvaPlot1.PointerPressed += (s, e) => { UpdateScrollBar(); };
 
-        AvaPlot1.PointerReleased += (s, e) =>
-        {
-            UpdateScrollBar();
-        };
+        AvaPlot1.PointerReleased += (s, e) => { UpdateScrollBar(); };
 
-        AvaPlot1.PointerCaptureLost += (s, e) =>
-        {
-            UpdateScrollBar();
-        };
+        AvaPlot1.PointerCaptureLost += (s, e) => { UpdateScrollBar(); };
 
-        AvaPlot1.PointerWheelChanged += (s, e) =>
-        {
-            UpdateScrollBar();
-        };
+        AvaPlot1.PointerWheelChanged += (s, e) => { UpdateScrollBar(); };
     }
 
     private void _ApplyDarkMode()
@@ -162,6 +140,10 @@ public partial class SequenceView : UserControl
         _sequence = vm.Sequence;
 
         PreparePlot();
+
+        var isDark = Application.Current!.ActualThemeVariant == ThemeVariant.Dark;
+        var checkerBoard = new CheckerboardPlottable(isDark);
+        AvaPlot1.Plot.Add.Plottable(checkerBoard);
 
         _plottable = new BitmapPlottable(_sequence, vm.CurrentRenderer);
         AvaPlot1.Plot.Add.Plottable(_plottable);
@@ -225,7 +207,7 @@ public partial class SequenceView : UserControl
     /// </summary>
     public void UpdateScrollBar()
     {
-        var val =  ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / _sequence.Shape.Height) * 100;
+        var val = ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / _sequence.Shape.Height) * 100;
         Bar1.Value = val <= 0.0 ? 0.0 : double.Min(val, 100.0);
     }
 }

@@ -1,5 +1,6 @@
 using SkiaSharp;
 using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace BEAM.Image.Skia;
@@ -13,9 +14,9 @@ namespace BEAM.Image.Skia;
 /// </summary>
 public class SkiaImage<T> : IMemoryImage, ITypedImage<T>
 {
-    private SKBitmap? Data { get; set; }
-    private Func<long, T> GetValue { get; init; }
-    private Func<int, int> GetColor { get; init; }
+    protected SKBitmap? Data { get; set; }
+    protected Func<long, T> GetValue { get; init; }
+    protected Func<int, int> GetColor { get; init; }
 
     /// <summary>
     /// This image's dimensions, meaning its length, width and channel count.
@@ -23,14 +24,11 @@ public class SkiaImage<T> : IMemoryImage, ITypedImage<T>
     public ImageShape Shape { get; init; }
 
     /// <summary>
-    /// Creates a new Skia image from a supported file found under the supplied path.
-    /// Supported files: .png
+    /// Creates a new Skia image from a base SKBitmap.
     /// </summary>
-    /// <param name="filepath">The path to the picture.</param>
-    public SkiaImage(string filepath)
+    /// <param name="bmp">The base bitmap</param>
+    public SkiaImage(SKBitmap bmp)
     {
-        var bmp = SKBitmap.Decode(filepath);
-
         var width = bmp.Width;
         var height = bmp.Height;
         var channels = bmp.BytesPerPixel / bmp.ColorType.SizeOf();
@@ -41,6 +39,23 @@ public class SkiaImage<T> : IMemoryImage, ITypedImage<T>
 
         Shape = new ImageShape(width, height, channels);
         Layout = new YxzImageMemoryLayout(Shape);
+    }
+
+    /// <summary>
+    /// Creates a new Skia image from a supported file found under the supplied path.
+    /// </summary>
+    /// <param name="stream">The file stream to decode the bitmap from</param>
+    public SkiaImage(Stream stream) : this(SKBitmap.Decode(stream))
+    {
+    }
+
+    /// <summary>
+    /// Creates a new Skia image from a supported file found under the supplied path.
+    /// Supported files: .png
+    /// </summary>
+    /// <param name="filepath">The path to the picture.</param>
+    public SkiaImage(string filepath) : this(SKBitmap.Decode(filepath))
+    {
     }
 
     public void Dispose()
