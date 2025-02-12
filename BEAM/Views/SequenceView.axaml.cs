@@ -53,10 +53,11 @@ public partial class SequenceView : UserControl
 
         Bar1.Scroll += (s, e) =>
         {
+            var vm = (DataContext as SequenceViewModel)!;
             var plot = AvaPlot1.Plot;
             var ySize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
             // Minus 100 to allow to scroll higher than the sequence for a better inspection of the start.
-            var top = (e.NewValue / 100.0) * _sequence.Shape.Height - 100.0;
+            var top = (e.NewValue / 100.0) * vm.Sequence.Shape.Height - 100.0;
             AvaPlot1.Plot.Axes.SetLimitsY(top, top + ySize);
             AvaPlot1.Refresh();
             ScrollingSynchronizer.synchronize(this);
@@ -224,9 +225,10 @@ public partial class SequenceView : UserControl
     /// <param name="val">The new value of the ScrollBar</param>
     public void UpdateScrolling(double val)
     {
+        var vm = (DataContext as SequenceViewModel)!;
         var plot = AvaPlot1.Plot;
         var ySize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
-        var top = (val / 100.0) * _sequence.Shape.Height - 100.0;
+        var top = (val / 100.0) * vm.Sequence.Shape.Height - 100.0;
         AvaPlot1.Plot.Axes.SetLimitsY(top, top + ySize);
         AvaPlot1.Refresh();
         Bar1.Value = val;
@@ -249,7 +251,8 @@ public partial class SequenceView : UserControl
     /// </summary>
     public void UpdateScrollBar()
     {
-        var val =  ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / _sequence.Shape.Height) * 100;
+        var vm = (DataContext as SequenceViewModel)!;
+        var val =  ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / vm.Sequence.Shape.Height) * 100;
         Bar1.Value = val <= 0.0 ? 0.0 : double.Min(val, 100.0);
     }
 }
