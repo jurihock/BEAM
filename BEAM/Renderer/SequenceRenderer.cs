@@ -74,8 +74,7 @@ public abstract partial class SequenceRenderer : ObservableObject, ICloneable
 
     public abstract byte[] RenderPixel(ISequence sequence, long x, long y);
 
-    public abstract byte[,] RenderPixels(ISequence sequence, long[] xs, long y,
-        CancellationTokenSource? tokenSource = null);
+    public abstract byte[,] RenderPixels(ISequence sequence, long[] xs, long y);
 
     public abstract RenderTypes GetRenderType();
 

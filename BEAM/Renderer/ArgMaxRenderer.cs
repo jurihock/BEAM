@@ -23,7 +23,7 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
     }
 
     //TODO: implement. Currently do not understand LineImage
-    public override byte[,] RenderPixels(ISequence sequence, long[] xs, long y, CancellationTokenSource? tokenSource = null)
+    public override byte[,] RenderPixels(ISequence sequence, long[] xs, long y)
     {
         throw new System.NotImplementedException();
     }
