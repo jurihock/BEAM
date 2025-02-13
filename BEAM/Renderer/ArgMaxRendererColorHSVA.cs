@@ -44,4 +44,9 @@ public class ArgMaxRendererColorHSVA(double minimumOfIntensityRange, double maxi
         var color = new HueColorLutAlpha();
         return color[intensity, 1];
     }
+
+    public override string GetName()
+    {
+        return $"{base.GetName()} (Color HSV)";
+    }
 }

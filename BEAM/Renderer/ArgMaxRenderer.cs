@@ -35,7 +35,7 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
         }
 
         var line = sequence.GetPixelLineData(xs, y, channels);
-        var data = new byte[xs.Length, 4];
+        var data = new BGRA[xs.Length];
 
         for (var x = 0; x < xs.Length; x++)
         {
