@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using BEAM.Datatypes.Color;
 using BEAM.Exceptions;
 using BEAM.ImageSequence;
@@ -23,10 +24,24 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
         return color;
     }
 
-    //TODO: implement. Currently do not understand LineImage
     public override BGRA[] RenderPixels(ISequence sequence, long[] xs, long y, CancellationTokenSource? tokenSource = null)
     {
-        throw new System.NotImplementedException();
+        var data = new BGRA[xs.Length];
+        // TODO: Update to sequence.GetChannelAmount
+        var amountChannels = sequence.GetPixel(0, 0).Length;
+        var channels = Enumerable.Range(0, amountChannels).ToArray();
+        
+        var img = sequence.GetPixelLineData(xs, y, channels);
+
+        for (var i = 0; i < xs.Length; i++)
+        {
+            tokenSource?.Token.ThrowIfCancellationRequested();
+            var channel = ArgMax(img.GetPixel(i, 0));
+            var color = GetColor(channel, amountChannels);
+            data[i] = color;
+        }
+
+        return data;
     }
 
     /// <summary>

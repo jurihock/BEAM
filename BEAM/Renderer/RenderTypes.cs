@@ -7,5 +7,6 @@ public enum RenderTypes
 {
     HeatMapRendererRb,
     ChannelMapRenderer,
-    ArgMaxRendererGrey
+    ArgMaxRendererGrey,
+    ArgMaxRendererColorHsva
 }

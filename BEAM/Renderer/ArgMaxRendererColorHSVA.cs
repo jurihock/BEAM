@@ -8,16 +8,16 @@ namespace BEAM.Renderer;
 /// </summary>
 /// <param name="minimumOfIntensityRange"></param>
 /// <param name="maximumOfIntensityRange"></param>
-public class ArgMaxRendererGrey(double minimumOfIntensityRange, double maximumOfIntensityRange) : ArgMaxRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
+public class ArgMaxRendererColorHSVA(double minimumOfIntensityRange, double maximumOfIntensityRange) : ArgMaxRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
 {
     public override RenderTypes GetRenderType()
     {
-        return RenderTypes.ArgMaxRendererGrey;
+        return RenderTypes.ArgMaxRendererColorHsva;
     }
 
     protected override SequenceRenderer Create(int minimumOfIntensityRange, int maximumOfIntensityRange, double[] displayParameters)
     {
-        return new ArgMaxRendererGrey(minimumOfIntensityRange, maximumOfIntensityRange);
+        return new ArgMaxRendererColorHSVA(minimumOfIntensityRange, maximumOfIntensityRange);
     }
 
     protected override bool CheckParameters(double[] displayParameters, IImage image)
@@ -27,7 +27,7 @@ public class ArgMaxRendererGrey(double minimumOfIntensityRange, double maximumOf
 
     public override object Clone()
     {
-        return new ArgMaxRendererGrey(minimumOfIntensityRange, maximumOfIntensityRange);
+        return new ArgMaxRendererColorHSVA(minimumOfIntensityRange, maximumOfIntensityRange);
     }
 
     /// <summary>
@@ -40,8 +40,8 @@ public class ArgMaxRendererGrey(double minimumOfIntensityRange, double maximumOf
     {
         //calculate the relative position of the given channel in all channels
         // and map it to an int intensity between 0 and 255 for the RGB values.
-        int intensity = (int) ((double)(channelNumber + 1) / (double)amountChannels * 255);
-        var color = new BGRA() {B = (byte)intensity, G = (byte)intensity, R = (byte)intensity, A = 255};
-        return color;
+        var intensity = ((double)(channelNumber + 1) / (double)amountChannels); // in [0, 1]
+        var color = new HueColorLutAlpha();
+        return color[intensity, 1];
     }
 }
