@@ -3,6 +3,7 @@ using System.Threading;
 using BEAM.Datatypes.Color;
 using BEAM.Exceptions;
 using BEAM.ImageSequence;
+using Timer = BEAM.Profiling.Timer;
 
 namespace BEAM.Renderer;
 
@@ -24,21 +25,27 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
         return color;
     }
 
-    public override BGRA[] RenderPixels(ISequence sequence, long[] xs, long y, CancellationTokenSource? tokenSource = null)
+    public override BGRA[] RenderPixels(ISequence sequence, long[] xs, long y,
+        CancellationTokenSource? tokenSource = null)
     {
-        var data = new BGRA[xs.Length];
-        // TODO: Update to sequence.GetChannelAmount
-        var amountChannels = sequence.GetPixel(0, 0).Length;
-        var channels = Enumerable.Range(0, amountChannels).ToArray();
-        
-        var img = sequence.GetPixelLineData(xs, y, channels);
+        var channels = new int[sequence.Shape.Channels];
+        for (var i = 0; i < sequence.Shape.Channels; i++)
+        {
+            channels[i] = i;
+        }
 
-        for (var i = 0; i < xs.Length; i++)
+        var line = sequence.GetPixelLineData(xs, y, channels);
+        var data = new byte[xs.Length, 4];
+
+        for (var x = 0; x < xs.Length; x++)
         {
             tokenSource?.Token.ThrowIfCancellationRequested();
-            var channel = ArgMax(img.GetPixel(i, 0));
-            var color = GetColor(channel, amountChannels);
-            data[i] = color;
+
+            var index = ArgMax(line.GetPixel(x, 0));
+            var color = GetColor(index, channels.Length);
+
+            data[x] = color;
+            //data[x, 3] = 255;
         }
 
         return data;
@@ -56,7 +63,7 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
         {
             throw new ChannelException("Channels must be greater than 0.");
         }
-        
+
         double maxIntensity = MinimumOfIntensityRange;
         int maxPosition = 0;
         for (int i = 0; i < channels.Length; i++)

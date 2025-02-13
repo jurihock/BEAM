@@ -103,11 +103,13 @@ public class SequenceImage : IDisposable
 
                         _cancellationToken.Token.ThrowIfCancellationRequested();
                         Bitmap = infoBmp;
+                        seqImg.RequestRefreshPlotEvent.Invoke(this, new RequestRefreshPlotEventArgs());
                     }
                     else
                     {
                         _bitmap = CreateTempBitmap(1, 1, SKColors.Gray);
                         Bitmap = _bitmap;
+                        seqImg.RequestRefreshPlotEvent.Invoke(this, new RequestRefreshPlotEventArgs());
                     }
 
                     // rerendering the sequence part

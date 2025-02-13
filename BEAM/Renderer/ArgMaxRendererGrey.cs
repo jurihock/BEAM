@@ -44,4 +44,9 @@ public class ArgMaxRendererGrey(double minimumOfIntensityRange, double maximumOf
         var color = new BGRA() {B = (byte)intensity, G = (byte)intensity, R = (byte)intensity, A = 255};
         return color;
     }
+
+    public override string GetName()
+    {
+        return $"{base.GetName()} (Gray Scale)";
+    }
 }
