@@ -14,8 +14,4 @@ public class InvalidUserArgumentException : BeamException
     public InvalidUserArgumentException(string message) : base(message)
     {
     }
-
-    public InvalidUserArgumentException(LogEvent evt, string message) : base(evt, message)
-    {
-    }
 }

@@ -97,7 +97,6 @@ public partial class ChannelMapRenderer : SequenceRenderer
     protected override SequenceRenderer Create(int minimumOfIntensityRange, int maximumOfIntensityRange,
         double[] displayParameters)
     {
-        // TODO remove null
         if (!CheckParameters(displayParameters))
         {
             throw new InvalidUserArgumentException("Display parameters are invalid.");

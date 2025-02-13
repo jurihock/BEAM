@@ -11,8 +11,4 @@ public class UnknownSequenceException : BeamException
     public UnknownSequenceException(string message) : base(message)
     {
     }
-
-    public UnknownSequenceException(LogEvent evt, string message) : base(evt, message)
-    {
-    }
 }
