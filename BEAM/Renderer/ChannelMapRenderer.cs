@@ -98,7 +98,7 @@ public partial class ChannelMapRenderer : SequenceRenderer
         double[] displayParameters)
     {
         // TODO remove null
-        if (!CheckParameters(displayParameters, null))
+        if (!CheckParameters(displayParameters))
         {
             throw new InvalidUserArgumentException("Display parameters are invalid.");
         }
@@ -118,9 +118,8 @@ public partial class ChannelMapRenderer : SequenceRenderer
     /// Returns True, if the parameters are valid, false otherwise.
     /// </summary>
     /// <param name="displayParameters"></param>
-    /// <param name="image"></param>
     /// <returns></returns>
-    protected override bool CheckParameters(double[] displayParameters, IImage image)
+    protected override bool CheckParameters(double[] displayParameters)
     {
         return displayParameters.Length == 3
                && !(displayParameters[0] < 0)

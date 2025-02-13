@@ -81,7 +81,7 @@ public abstract partial class SequenceRenderer : ObservableObject, ICloneable
     protected abstract SequenceRenderer Create(int minimumOfIntensityRange, int maximumOfIntensityRange,
         double[] displayParameters);
 
-    protected abstract bool CheckParameters(double[] displayParameters, IImage image);
+    protected abstract bool CheckParameters(double[] displayParameters);
 
     public abstract string GetName();
     public abstract object Clone();
