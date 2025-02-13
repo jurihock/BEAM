@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a color in HSV format
 /// </summary>
-public struct HSVA
+public struct HSV
 {
-    public double H, S, V, A; // [0, 1]
+    public double H, S, V; // [0, 1]
 }

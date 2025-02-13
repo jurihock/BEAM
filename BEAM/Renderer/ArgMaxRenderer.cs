@@ -16,7 +16,7 @@ namespace BEAM.Renderer;
 public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maximumOfIntensityRange)
     : SequenceRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
 {
-    public override BGRA RenderPixel(ISequence sequence, long x, long y)
+    public override BGR RenderPixel(ISequence sequence, long x, long y)
     {
         var channels = sequence.GetPixel(x, y);
         var argMaxChannel = ArgMax(channels);
@@ -25,7 +25,7 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
         return color;
     }
 
-    public override BGRA[] RenderPixels(ISequence sequence, long[] xs, long y,
+    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y,
         CancellationTokenSource? tokenSource = null)
     {
         var channels = new int[sequence.Shape.Channels];
@@ -35,7 +35,7 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
         }
 
         var line = sequence.GetPixelLineData(xs, y, channels);
-        var data = new BGRA[xs.Length];
+        var data = new BGR[xs.Length];
 
         for (var x = 0; x < xs.Length; x++)
         {
@@ -78,7 +78,7 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
         return maxPosition;
     }
     
-    protected abstract BGRA GetColor(int channelNumber, int amountChannels);
+    protected abstract BGR GetColor(int channelNumber, int amountChannels);
 
     public override string GetName() => "ArgMax";
 }

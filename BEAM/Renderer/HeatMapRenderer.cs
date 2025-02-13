@@ -80,17 +80,17 @@ public abstract class HeatMapRenderer : SequenceRenderer
         RelMinHottestIntensity = relMinHottestIntensity;
     }
 
-    public override BGRA RenderPixel(ISequence sequence, long x, long y)
+    public override BGR RenderPixel(ISequence sequence, long x, long y)
     {
         return GetColor(sequence.GetPixel(x, y, Channel),
             IntensityRange * RelMaxColdestIntensity + MinimumOfIntensityRange,
             IntensityRange * RelMinHottestIntensity + MinimumOfIntensityRange);
     }
 
-    public override BGRA[] RenderPixels(ISequence sequence, long[] xs, long y,
+    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y,
         CancellationTokenSource? tokenSource = null)
     {
-        var data = new BGRA[xs.Length];
+        var data = new BGR[xs.Length];
         var img = sequence.GetPixelLineData(xs, y, [Channel]);
 
         // TODO: SIMD
@@ -114,7 +114,7 @@ public abstract class HeatMapRenderer : SequenceRenderer
     /// <param name="max">The lowest intensity of the channel, that is displayed as the highest intensity.</param>
     /// <returns>The ARGB values of the final Color to be displayed.
     /// (A, R, G, B) each color from 0 - 255. A = 0 : fully transparent</returns>
-    protected abstract BGRA GetColor(double value, double min, double max);
+    protected abstract BGR GetColor(double value, double min, double max);
 
     public override string GetName() => "Heatmap";
 }

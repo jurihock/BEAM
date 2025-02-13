@@ -9,22 +9,20 @@ namespace BEAM.Datatypes.Color;
 /// </summary>
 public static class ColorExtensions
 {
-    private const double TOLERANCE = 0.0001;
+    private const double Tolerance = 0.0001;
     
-    public static HSVA ToHSVA(this BGRA bgra)
+    public static HSV ToHsv(this BGR bgr)
     {
         // adapted from https://gist.github.com/mjackson/5311256
         // see also     https://www.cs.rit.edu/~ncs/color/t_convert.html
 
-        double r = bgra.R;
-        double g = bgra.G;
-        double b = bgra.B;
-        double a = bgra.A;
+        double r = bgr.R;
+        double g = bgr.G;
+        double b = bgr.B;
 
         r /= 255;
         g /= 255;
         b /= 255;
-        a /= 255;
 
         var max = Math.Max(r, Math.Max(g, b));
         var min = Math.Min(r, Math.Min(g, b));
@@ -37,21 +35,21 @@ public static class ColorExtensions
 
         s = max == 0 ? 0 : d / max;
 
-        if (Math.Abs(max - min) < TOLERANCE)
+        if (Math.Abs(max - min) < Tolerance)
         {
             h = 0;
         }
         else
         {
-            if (Math.Abs(r - max) < TOLERANCE)
+            if (Math.Abs(r - max) < Tolerance)
             {
                 h = (g - b) / d + (g < b ? 6 : 0);
             }
-            else if (Math.Abs(g - max) < TOLERANCE)
+            else if (Math.Abs(g - max) < Tolerance)
             {
                 h = (b - r) / d + 2;
             }
-            else if (Math.Abs(b - max) < TOLERANCE)
+            else if (Math.Abs(b - max) < Tolerance)
             {
                 h = (r - g) / d + 4;
             }
@@ -63,18 +61,17 @@ public static class ColorExtensions
         s = Math.Clamp(s, 0, 1);
         v = Math.Clamp(v, 0, 1);
 
-        return new HSVA { H = h, S = s, V = v , A = a};
+        return new HSV { H = h, S = s, V = v};
     }
 
-    public static BGRA ToBGRA(this HSVA hsva)
+    public static BGR ToBgr(this HSV hsv)
     {
         // adapted from https://gist.github.com/mjackson/5311256
         // see also     https://www.cs.rit.edu/~ncs/color/t_convert.html
 
-        double h = hsva.H;
-        double s = hsva.S;
-        double v = hsva.V;
-        double a = hsva.A;
+        var h = hsv.H;
+        var s = hsv.S;
+        var v = hsv.V;
 
         double r = 0;
         double g = 0;
@@ -99,13 +96,11 @@ public static class ColorExtensions
         r *= 255;
         g *= 255;
         b *= 255;
-        a *= 255;
 
         r = Math.Clamp(r, 0, 255);
         g = Math.Clamp(g, 0, 255);
         b = Math.Clamp(b, 0, 255);
-        a = Math.Clamp(b, 0, 255);
 
-        return new BGRA { R = (byte)r, G = (byte)g, B = (byte)b , A = (byte)a};
+        return new BGR { R = (byte)r, G = (byte)g, B = (byte)b};
     }
 }

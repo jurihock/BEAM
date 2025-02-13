@@ -27,22 +27,22 @@ public class HeatMapRendererRB : HeatMapRenderer
     {
     }
 
-    protected override BGRA GetColor(double value, double min, double max)
+    protected override BGR GetColor(double value, double min, double max)
     {
         if (value > max) // intensity above maximum --> hottest color displayed
         {
-            return new BGRA(){R = 255, A = 255}; // Color Red;
+            return new BGR(){R = 255}; // Color Red;
         }
 
         if (value < min) // intensity below minimum --> coldest color displayed
         {
-            return new BGRA(){B = 255, A = 255}; // Color Blue
+            return new BGR(){B = 255}; // Color Blue
         }
         
         // if max == min, return a mixture of Red and Blue for all pixels, whose intensity = max = min
         if ((max - min) < 0.001) 
         {
-            return new BGRA() { B = 127, R = 127, A = 255 };
+            return new BGR() { B = 127, R = 127 };
         }
         
         double range = (max - min);
@@ -50,7 +50,7 @@ public class HeatMapRendererRB : HeatMapRenderer
         // the value of the color
         byte intensity = (byte)Math.Floor(relative * (double)255);
 
-        var color = new BGRA() {A = 255, R = intensity, B = (byte)(255 - intensity)};
+        var color = new BGR() {R = intensity, B = (byte)(255 - intensity)};
         return color;
     }
 

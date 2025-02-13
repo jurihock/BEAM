@@ -353,7 +353,7 @@ public class SequenceImage : IDisposable
                             B = data[i].B,
                             G = data[i].G,
                             R = data[i].R,
-                            A = data[i].A,
+                            A = 255,
                         };
                     }
                 }

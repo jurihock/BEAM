@@ -31,17 +31,17 @@ public class ArgMaxRendererGrey(double minimumOfIntensityRange, double maximumOf
     }
 
     /// <summary>
-    /// Converts the channel position of the channel with the highest intensity into an BGRA value.
+    /// Converts the channel position of the channel with the highest intensity into an BGR value.
     /// </summary>
     /// <param name="channelNumber"></param>
     /// <param name="amountChannels"></param>
     /// <returns></returns>
-    protected override BGRA GetColor(int channelNumber, int amountChannels)
+    protected override BGR GetColor(int channelNumber, int amountChannels)
     {
         //calculate the relative position of the given channel in all channels
         // and map it to an int intensity between 0 and 255 for the RGB values.
         int intensity = (int) ((double)(channelNumber + 1) / (double)amountChannels * 255);
-        var color = new BGRA() {B = (byte)intensity, G = (byte)intensity, R = (byte)intensity, A = 255};
+        var color = new BGR() {B = (byte)intensity, G = (byte)intensity, R = (byte)intensity};
         return color;
     }
 

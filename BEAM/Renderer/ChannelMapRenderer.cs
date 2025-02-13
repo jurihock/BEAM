@@ -36,7 +36,7 @@ public partial class ChannelMapRenderer : SequenceRenderer
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    public override BGRA RenderPixel(ISequence sequence, long x, long y)
+    public override BGR RenderPixel(ISequence sequence, long x, long y)
     {
         var colors = NormalizeIntensity(Vector256.Create([
             sequence.GetPixel(x, y, ChannelBlue),
@@ -45,12 +45,11 @@ public partial class ChannelMapRenderer : SequenceRenderer
             0
         ]));
 
-        BGRA color = new BGRA()
+        BGR color = new BGR()
         {
             B = (byte)colors[0], // b
             G = (byte)colors[1], // g
             R = (byte)colors[2], // r
-            A = 255 // a
         };
 
         return color;
@@ -63,10 +62,10 @@ public partial class ChannelMapRenderer : SequenceRenderer
     /// <param name="xs"></param>
     /// <param name="y"></param>
     /// <returns>[x, argb]</returns>
-    public override BGRA[] RenderPixels(ISequence sequence, long[] xs, long y,
+    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y,
         CancellationTokenSource? tokenSource = null)
     {
-        var data = new BGRA[xs.Length];
+        var data = new BGR[xs.Length];
         var img = sequence.GetPixelLineData(xs, y, [ChannelBlue, ChannelGreen, ChannelRed]);
 
         for (var x = 0; x < xs.Length; x++)
@@ -79,12 +78,11 @@ public partial class ChannelMapRenderer : SequenceRenderer
                 0
             ]));
 
-            data[x] = new BGRA()
+            data[x] = new BGR()
             {
                 B = (byte)colors[0], // b
                 G = (byte)colors[1], // g
                 R = (byte)colors[2], // r
-                A = 255 // a
             };
             
             

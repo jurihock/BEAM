@@ -15,9 +15,9 @@ public class ArgMaxRendererColorHSVA(double minimumOfIntensityRange, double maxi
         return RenderTypes.ArgMaxRendererColorHsva;
     }
 
-    protected override SequenceRenderer Create(int minimumOfIntensityRange, int maximumOfIntensityRange, double[] displayParameters)
+    protected override SequenceRenderer Create(int minIntensityRange, int maximumOfIntensityRange, double[] displayParameters)
     {
-        return new ArgMaxRendererColorHSVA(minimumOfIntensityRange, maximumOfIntensityRange);
+        return new ArgMaxRendererColorHSVA(minIntensityRange, maximumOfIntensityRange);
     }
 
     protected override bool CheckParameters(double[] displayParameters, IImage image)
@@ -36,13 +36,13 @@ public class ArgMaxRendererColorHSVA(double minimumOfIntensityRange, double maxi
     /// <param name="channelNumber"></param>
     /// <param name="amountChannels"></param>
     /// <returns></returns>
-    protected override BGRA GetColor(int channelNumber, int amountChannels)
+    protected override BGR GetColor(int channelNumber, int amountChannels)
     {
         //calculate the relative position of the given channel in all channels
         // and map it to an int intensity between 0 and 255 for the RGB values.
         var intensity = ((double)(channelNumber + 1) / (double)amountChannels); // in [0, 1]
-        var color = new HueColorLutAlpha();
-        return color[intensity, 1];
+        var color = new HueColorLut();
+        return color[intensity];
     }
 
     public override string GetName()
