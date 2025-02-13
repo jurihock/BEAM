@@ -41,57 +41,41 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public static int TitleBarHeight => 38;
 
-    private Logger? _logger;
     private SyncedPlotController? _syncedPlotController;
 
     public MainWindowViewModel()
     {
-        _logger = Logger.GetInstance();
         _syncedPlotController = new SyncedPlotController();
         _syncedPlotController.Register(new MouseManipulator());
         PlotControllerManager.RegisterController(_syncedPlotController);
     }
 
     [RelayCommand]
-    public async Task OpenSequence()
+    private async Task OpenSequence()
     {
         var files = await OpenFilePickerAsync();
-
         if (files == null) return;
 
         var list = files.Select(f => f.Path).ToList();
-        try
-        {
-            DockingVm.OpenSequenceView(DiskSequence.Open(list));
-        }
-        catch (Exception ex)
-        {
-        }
+        DockingVm.OpenSequenceView(DiskSequence.Open(list));
     }
 
     [RelayCommand]
-    public async Task OpenSequenceFromFolder()
+    private async Task OpenSequenceFromFolder()
     {
         var folder = await OpenFolderPickerAsync();
-
+        
         if (folder == null) return;
-
-        try
-        {
-            DockingVm.OpenSequenceView(DiskSequence.Open(folder.Path));
-        }
-        catch (Exception ex)
-        {
-        }
+        DockingVm.OpenSequenceView(DiskSequence.Open(folder.Path));
     }
 
     [RelayCommand]
-    public void ExitBeam()
+    private void ExitBeam()
     {
         Environment.Exit(0);
     }
 
-    private async Task<IStorageFolder?> OpenFolderPickerAsync()
+    private static async Task<IStorageFolder?> OpenFolderPickerAsync()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
             desktop.MainWindow?.StorageProvider is not { } provider)
@@ -106,7 +90,7 @@ public partial class MainWindowViewModel : ViewModelBase
         return folder?.Count >= 1 ? folder[0] : null;
     }
 
-    private async Task<IReadOnlyList<IStorageFile>?> OpenFilePickerAsync()
+    private static async Task<IReadOnlyList<IStorageFile>?> OpenFilePickerAsync()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
             desktop.MainWindow?.StorageProvider is not { } provider)
@@ -122,28 +106,28 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public void OpenStatusWindow()
+    private void OpenStatusWindow()
     {
         var statusWindow = new StatusWindow();
         statusWindow.Show();
     }
 
     [RelayCommand]
-    public void OpenAboutWindow()
+    private void OpenAboutWindow()
     {
         var aboutWindow = new AboutWindow();
         aboutWindow.Show();
     }
-    
+
     [RelayCommand]
-    public void ActivateSynchronization()
+    private void ActivateSynchronization()
     {
         _syncedPlotController?.Activate();
         ScrollingSynchronizer.activateSynchronization();
     }
-    
+
     [RelayCommand]
-    public void DeactivateSynchronization()
+    private void DeactivateSynchronization()
     {
         _syncedPlotController?.Deactivate();
         ScrollingSynchronizer.deactivateSynchronization();

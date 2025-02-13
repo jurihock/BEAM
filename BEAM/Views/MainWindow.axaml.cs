@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -12,8 +13,6 @@ namespace BEAM.Views;
 
 public partial class MainWindow : Window
 {
-    private DockingViewModel _dockingViewModel = new();
-
     public MainWindow()
     {
         InitializeComponent();
@@ -28,42 +27,14 @@ public partial class MainWindow : Window
         AddHandler(DragDrop.DropEvent, OnDrop);
     }
 
-    private static void OnDrop(object? sender, DragEventArgs e)
+    private void OnDrop(object? sender, DragEventArgs e)
     {
-        Console.WriteLine("Dropped");
+        var vm = (MainWindowViewModel)DataContext!;
 
         var data = e.Data.GetFiles();
         if (data is null) return;
 
-        var vm = (MainWindowViewModel)((MainWindow)sender!).DataContext!;
-        List<Uri> list = [];
-
-        foreach (var file in data)
-        {
-            var path = file.Path;
-            if (Directory.Exists(path.AbsolutePath))
-            {
-                Console.WriteLine("False");
-                try
-                {
-                    vm.DockingVm.OpenSequenceView(DiskSequence.Open(path));
-                }
-                catch (Exception ex)
-                {
-                }
-            }
-            else
-            {
-                list.Add(path);
-            }
-        }
-
-        try
-        {
-            vm.DockingVm.OpenSequenceView(DiskSequence.Open(list));
-        }
-        catch (Exception exception)
-        {
-        }
+        var list = data.Select(f => f.Path).ToList();
+        vm.DockingVm.OpenSequenceView(DiskSequence.Open(list));
     }
 }
