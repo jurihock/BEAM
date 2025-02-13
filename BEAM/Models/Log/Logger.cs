@@ -104,23 +104,19 @@ public partial class Logger : ObservableObject, ILog
     
     private void CreateNewLogFile(string pathToLogFile)
     {
-        using (FileStream fs = new FileStream(pathToLogFile, FileMode.CreateNew))
-        {
-            using (BinaryWriter w = new BinaryWriter(fs))
-            {
-                w.Write("New log file created at: " + DateTime.Now + "\n");
-            }
-        }
-            
+        using var fs = new FileStream(pathToLogFile, FileMode.CreateNew);
+        using var w = new BinaryWriter(fs);
+
+        w.Write("New log file created at: " + DateTime.Now + "\n");
     }
     
     private void Write(string message)
     {
-        using (StreamWriter outputFile = new StreamWriter(_pathToLogFile, true))
+        using (var outputFile = new StreamWriter(_pathToLogFile, true))
         {
             outputFile.WriteLine(DateTime.Now + " " +message);
         }
-        _LogEntries.Add(new Models.Log.LogEntry(_logLevel, Enum.GetName(_logEvent), message));
+        _LogEntries.Add(new LogEntry(_logLevel, Enum.GetName(_logEvent)!, message));
     }
     
     public void ClearStatusBar()
