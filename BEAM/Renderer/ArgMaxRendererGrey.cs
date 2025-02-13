@@ -26,7 +26,7 @@ public class ArgMaxRendererGrey(double minimumOfIntensityRange, double maximumOf
 
     public override object Clone()
     {
-        return new ArgMaxRendererGrey(minimumOfIntensityRange, maximumOfIntensityRange);
+        return new ArgMaxRendererGrey(MinimumOfIntensityRange, MaximumOfIntensityRange);
     }
 
     /// <summary>

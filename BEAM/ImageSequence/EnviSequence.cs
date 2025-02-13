@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using BEAM.Image;
 using BEAM.Image.Envi;
-using BEAM.Log;
+using BEAM.Models.Log;
 
 namespace BEAM.ImageSequence;
 
@@ -14,18 +14,19 @@ namespace BEAM.ImageSequence;
 /// <param name="imagePaths">The envi images to use inside the sequence.</param>
 public class EnviSequence(List<string> imagePaths, string name) : DiskSequence(imagePaths, name)
 {
-    protected internal override IImage LoadImage(int index) => EnviImage.OpenImage(imagePaths[index]);
+    private readonly List<string> _imagePaths = imagePaths;
+    protected internal override IImage LoadImage(int index) => EnviImage.OpenImage(_imagePaths[index]);
 
     protected internal override bool InitializeSequence()
     {
-        var removed = imagePaths.RemoveAll(path =>
+        var removed = _imagePaths.RemoveAll(path =>
             !(Path.GetExtension(path).Equals(".raw") || Path.GetExtension(path).Equals(".hdr")));
 
         List<string> missingHdrFiles = [];
-        foreach (var path in imagePaths.Where(p => Path.GetExtension(p).Equals(".raw")))
+        foreach (var path in _imagePaths.Where(p => Path.GetExtension(p).Equals(".raw")))
         {
             var hdr = Path.ChangeExtension(path, ".hdr");
-            if (!imagePaths.Contains(hdr))
+            if (!_imagePaths.Contains(hdr))
             {
                 missingHdrFiles.Add(Path.GetFileName(hdr));
             }
@@ -37,7 +38,7 @@ public class EnviSequence(List<string> imagePaths, string name) : DiskSequence(i
             return false;
         }
 
-        imagePaths.RemoveAll(path => !Path.GetExtension(path).Equals(".hdr"));
+        _imagePaths.RemoveAll(path => !Path.GetExtension(path).Equals(".hdr"));
 
         if (removed > 0)
         {

@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using BEAM.Log;
+using BEAM.Models.Log;
 
 namespace BEAM.Exceptions;
 

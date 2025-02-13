@@ -5,16 +5,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Input;
 using Avalonia.Platform.Storage;
 using BEAM.ImageSequence;
 using BEAM.ImageSequence.Synchronization;
 using BEAM.ImageSequence.Synchronization.Manipulators;
-using BEAM.Log;
 using BEAM.Models;
+using BEAM.Models.Log;
 using BEAM.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Input;
 
 namespace BEAM.ViewModels;

@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using BEAM.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace BEAM.Log;
+namespace BEAM.Models.Log;
 
 public partial class Logger : ObservableObject, ILog
 {
@@ -15,7 +13,7 @@ public partial class Logger : ObservableObject, ILog
     private LogLevel _logLevel;
     private LogEvent _logEvent;
 
-    private ObservableCollection<LogEntry> _LogEntries;
+    private ObservableCollection<Models.Log.LogEntry> _LogEntries;
 
     private Logger(string pathToLogFile)
     {
@@ -122,7 +120,7 @@ public partial class Logger : ObservableObject, ILog
         {
             outputFile.WriteLine(DateTime.Now + " " +message);
         }
-        _LogEntries.Add(new LogEntry(_logLevel, Enum.GetName(_logEvent), message));
+        _LogEntries.Add(new Models.Log.LogEntry(_logLevel, Enum.GetName(_logEvent), message));
     }
     
     public void ClearStatusBar()
@@ -130,7 +128,7 @@ public partial class Logger : ObservableObject, ILog
         _LogEntries.Clear();
     }
     
-    public ObservableCollection<LogEntry> GetLogEntries()
+    public ObservableCollection<Models.Log.LogEntry> GetLogEntries()
     {
         return _LogEntries;
     }

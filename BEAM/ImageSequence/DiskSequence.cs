@@ -46,7 +46,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
             }
 
             _InitializeShape();
-            return _shape.Value;
+            return _shape!.Value;
         }
     }
 

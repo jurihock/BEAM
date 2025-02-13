@@ -21,7 +21,7 @@ public partial class MainWindow : Window
         DataContextChanged += (sender, args) =>
         {
             if (!IsInitialized) return;
-            var viewmodel = (MainWindowViewModel)DataContext;
+            var viewmodel = (MainWindowViewModel)DataContext!;
             DockView.DataContext = viewmodel.DockingVm;
         };
 
@@ -31,9 +31,13 @@ public partial class MainWindow : Window
     private static void OnDrop(object? sender, DragEventArgs e)
     {
         Console.WriteLine("Dropped");
+
         var data = e.Data.GetFiles();
-        var vm = (MainWindowViewModel)((MainWindow)sender!).DataContext;
-        List<Uri> list = new();
+        if (data is null) return;
+
+        var vm = (MainWindowViewModel)((MainWindow)sender!).DataContext!;
+        List<Uri> list = [];
+
         foreach (var file in data)
         {
             var path = file.Path;
