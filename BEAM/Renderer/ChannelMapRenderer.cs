@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Intrinsics;
 using System.Threading;
+using BEAM.Datatypes.Color;
 using BEAM.Exceptions;
 using BEAM.Image;
 using BEAM.ImageSequence;
@@ -35,22 +36,22 @@ public partial class ChannelMapRenderer : SequenceRenderer
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    public override byte[] RenderPixel(ISequence sequence, long x, long y)
+    public override BGRA RenderPixel(ISequence sequence, long x, long y)
     {
         var colors = NormalizeIntensity(Vector256.Create([
-            sequence.GetPixel(x, y, ChannelRed),
-            sequence.GetPixel(x, y, ChannelGreen),
             sequence.GetPixel(x, y, ChannelBlue),
+            sequence.GetPixel(x, y, ChannelGreen),
+            sequence.GetPixel(x, y, ChannelRed),
             0
         ]));
 
-        byte[] color =
-        [
-            255,
-            (byte)colors[0],
-            (byte)colors[1],
-            (byte)colors[2]
-        ];
+        BGRA color = new BGRA()
+        {
+            B = (byte)colors[0], // b
+            G = (byte)colors[1], // g
+            R = (byte)colors[2], // r
+            A = 255 // a
+        };
 
         return color;
     }
@@ -62,10 +63,10 @@ public partial class ChannelMapRenderer : SequenceRenderer
     /// <param name="xs"></param>
     /// <param name="y"></param>
     /// <returns>[x, argb]</returns>
-    public override byte[,] RenderPixels(ISequence sequence, long[] xs, long y,
+    public override BGRA[] RenderPixels(ISequence sequence, long[] xs, long y,
         CancellationTokenSource? tokenSource = null)
     {
-        var data = new byte[xs.Length, 4];
+        var data = new BGRA[xs.Length];
         var img = sequence.GetPixelLineData(xs, y, [ChannelBlue, ChannelGreen, ChannelRed]);
 
         for (var x = 0; x < xs.Length; x++)
@@ -78,14 +79,15 @@ public partial class ChannelMapRenderer : SequenceRenderer
                 0
             ]));
 
-            // b
-            data[x, 0] = (byte)colors[0];
-            // g
-            data[x, 1] = (byte)colors[1];
-            // r
-            data[x, 2] = (byte)colors[2];
-            // a
-            data[x, 3] = 255;
+            data[x] = new BGRA()
+            {
+                B = (byte)colors[0], // b
+                G = (byte)colors[1], // g
+                R = (byte)colors[2], // r
+                A = 255 // a
+            };
+            
+            
         }
 
         return data;

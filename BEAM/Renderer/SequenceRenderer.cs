@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Runtime.Intrinsics;
 using BEAM.Image;
 using System.Threading;
+using BEAM.Datatypes.Color;
+using BEAM.Image.Bitmap;
 using BEAM.ImageSequence;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -72,9 +74,9 @@ public abstract partial class SequenceRenderer : ObservableObject, ICloneable
         _mapRenderTypesToRenderers.Add(RenderTypes.ArgMaxRendererGrey, new ArgMaxRendererGrey(0, 0));
     }
 
-    public abstract byte[] RenderPixel(ISequence sequence, long x, long y);
+    public abstract BGRA RenderPixel(ISequence sequence, long x, long y);
 
-    public abstract byte[,] RenderPixels(ISequence sequence, long[] xs, long y,
+    public abstract BGRA[] RenderPixels(ISequence sequence, long[] xs, long y,
         CancellationTokenSource? tokenSource = null);
 
     public abstract RenderTypes GetRenderType();

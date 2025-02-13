@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using BEAM.Datatypes.Color;
 
 namespace BEAM.Image.Bitmap;
 

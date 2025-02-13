@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using BEAM.Datatypes.Color;
 using BEAM.Image.Bitmap;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
@@ -346,11 +347,11 @@ public class SequenceImage : IDisposable
                     {
                         tokenSource?.Token.ThrowIfCancellationRequested();
                         pixels[j * width + i] = new BGRA()
-                        {
-                            B = data[i, 0],
-                            G = data[i, 1],
-                            R = data[i, 2],
-                            A = data[i, 3],
+                        { // TODO: Implement Copy method for colors
+                            B = data[i].B,
+                            G = data[i].G,
+                            R = data[i].R,
+                            A = data[i].A,
                         };
                     }
                 }

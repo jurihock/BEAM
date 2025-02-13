@@ -1,4 +1,5 @@
-﻿using BEAM.Image;
+﻿using BEAM.Datatypes.Color;
+using BEAM.Image;
 
 namespace BEAM.Renderer;
 
@@ -30,23 +31,17 @@ public class ArgMaxRendererGrey(double minimumOfIntensityRange, double maximumOf
     }
 
     /// <summary>
-    /// Converts the channel position of the channel with the highest intensity into an ARGB value.
+    /// Converts the channel position of the channel with the highest intensity into an BGRA value.
     /// </summary>
     /// <param name="channelNumber"></param>
     /// <param name="amountChannels"></param>
     /// <returns></returns>
-    protected override byte[] GetColor(int channelNumber, int amountChannels)
+    protected override BGRA GetColor(int channelNumber, int amountChannels)
     {
         //calculate the relative position of the given channel in all channels
         // and map it to an int intensity between 0 and 255 for the RGB values.
         int intensity = (int) ((double)channelNumber / (double)amountChannels * 255);
-        byte[] color =
-        [
-            255,
-            (byte)intensity,
-            (byte)intensity,
-            (byte)intensity
-        ];
+        var color = new BGRA() {B = (byte)intensity, G = (byte)intensity, R = (byte)intensity, A = 255};
         return color;
     }
 }

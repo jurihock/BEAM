@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using BEAM.Datatypes.Color;
 using BEAM.Exceptions;
 using BEAM.ImageSequence;
 
@@ -13,7 +14,7 @@ namespace BEAM.Renderer;
 public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maximumOfIntensityRange)
     : SequenceRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
 {
-    public override byte[] RenderPixel(ISequence sequence, long x, long y)
+    public override BGRA RenderPixel(ISequence sequence, long x, long y)
     {
         var channels = sequence.GetPixel(x, y);
         var argMaxChannel = ArgMax(channels);
@@ -23,7 +24,7 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
     }
 
     //TODO: implement. Currently do not understand LineImage
-    public override byte[,] RenderPixels(ISequence sequence, long[] xs, long y, CancellationTokenSource? tokenSource = null)
+    public override BGRA[] RenderPixels(ISequence sequence, long[] xs, long y, CancellationTokenSource? tokenSource = null)
     {
         throw new System.NotImplementedException();
     }
@@ -55,7 +56,7 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
         return maxPosition;
     }
     
-    protected abstract byte[] GetColor(int channelNumber, int amountChannels);
+    protected abstract BGRA GetColor(int channelNumber, int amountChannels);
 
     public override string GetName() => "ArgMax";
 }
