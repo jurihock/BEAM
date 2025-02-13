@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
+using BEAM.Exceptions;
 using BEAM.ImageSequence;
 using BEAM.ImageSequence.Synchronization;
 using BEAM.ImageSequence.Synchronization.Manipulators;
@@ -57,16 +58,34 @@ public partial class MainWindowViewModel : ViewModelBase
         if (files == null) return;
 
         var list = files.Select(f => f.Path).ToList();
-        DockingVm.OpenSequenceView(DiskSequence.Open(list));
+
+        try
+        {
+            DockingVm.OpenSequenceView(DiskSequence.Open(list));
+        }
+        catch (UnknownSequenceException)
+        {
+            Logger.GetInstance().Error(LogEvent.OpenedFile,
+                $"Cannot open files since no suitable sequence type found. (Supported sequences: {string.Join(", ", DiskSequence.SupportedSequences)})");
+        }
     }
 
     [RelayCommand]
     private async Task OpenSequenceFromFolder()
     {
         var folder = await OpenFolderPickerAsync();
-        
+
         if (folder == null) return;
-        DockingVm.OpenSequenceView(DiskSequence.Open(folder.Path));
+
+        try
+        {
+            DockingVm.OpenSequenceView(DiskSequence.Open(folder.Path));
+        }
+        catch (UnknownSequenceException)
+        {
+            Logger.GetInstance().Error(LogEvent.OpenedFile,
+                $"Cannot open folder since no suitable sequence type found. (Supported sequences: {string.Join(", ", DiskSequence.SupportedSequences)})");
+        }
     }
 
     [RelayCommand]

@@ -183,6 +183,8 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
         _shape = new ImageShape(width, height, firstImage.Shape.Channels);
     }
 
+    public static List<string> SupportedSequences = ["PNG", "ENVI"];
+
     /// <summary>
     /// The supported file types and their respective Sequence type
     /// </summary>

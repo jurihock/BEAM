@@ -5,8 +5,10 @@ using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using BEAM.Exceptions;
 using BEAM.ImageSequence;
 using BEAM.Models;
+using BEAM.Models.Log;
 using BEAM.ViewModels;
 
 namespace BEAM.Views;
@@ -35,6 +37,15 @@ public partial class MainWindow : Window
         if (data is null) return;
 
         var list = data.Select(f => f.Path).ToList();
-        vm.DockingVm.OpenSequenceView(DiskSequence.Open(list));
+
+        try
+        {
+            vm.DockingVm.OpenSequenceView(DiskSequence.Open(list));
+        }
+        catch (UnknownSequenceException)
+        {
+            Logger.GetInstance().Error(LogEvent.OpenedFile,
+                $"Cannot open dragged-in files since no suitable sequence type found. (Supported sequences: {string.Join(", ", DiskSequence.SupportedSequences)})");
+        }
     }
 }
