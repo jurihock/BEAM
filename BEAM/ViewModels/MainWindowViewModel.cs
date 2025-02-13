@@ -55,7 +55,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private async Task OpenSequence()
     {
         var files = await OpenFilePickerAsync();
-        if (files == null) return;
+        if (files == null || files.Count == 0) return;
 
         var list = files.Select(f => f.Path).ToList();
 
