@@ -14,41 +14,40 @@ namespace BEAM.ImageSequence;
 /// <param name="imagePaths">The skia images to use inside the sequence</param>
 public class SkiaSequence(List<string> imagePaths, string name) : DiskSequence(imagePaths, name)
 {
-    private readonly List<string> _imagePaths = imagePaths;
-    protected internal override IImage LoadImage(int index) => new SkiaImage<byte>(_imagePaths[index]);
+    protected internal override IImage LoadImage(int index) => new SkiaImage<byte>(ImagePaths[index]);
 
     protected internal override bool InitializeSequence()
     {
-        var removed = _imagePaths.RemoveAll(path => !Path.GetExtension(path).Equals(".png"));
+        var removed = ImagePaths.RemoveAll(path => !Path.GetExtension(path).Equals(".png"));
         if (removed > 0)
             Logger.GetInstance().Info(LogEvent.Sequence, $"{removed} file(s) were not loaded into the sequence.");
 
         List<string> invalidImgs = [];
 
         // check all used images heights
-        var firstImg = SKCodec.Create(_imagePaths[0]);
+        var firstImg = SKCodec.Create(ImagePaths[0]);
         var firstImgWidth = firstImg.Info.Width;
         var firstImgHeight = firstImg.Info.Height;
 
         // iterate over all remaining images (last image can have any height), but not any width
-        foreach (var se in _imagePaths.Skip(1).Reverse().Skip(1).Reverse().Where(path =>
+        foreach (var se in ImagePaths.Skip(1).Reverse().Skip(1).Reverse().Where(path =>
                  {
                      var codec = SKCodec.Create(path);
                      return codec.Info.Width != firstImgWidth || codec.Info.Height != firstImgHeight;
                  }).ToList())
         {
-            _imagePaths.Remove(se);
+            ImagePaths.Remove(se);
             invalidImgs.Add(se);
         }
 
-        if (_imagePaths.Count > 1)
+        if (ImagePaths.Count > 1)
         {
             // check if last image has correct width
-            var lastImg = SKCodec.Create(_imagePaths[^1]);
+            var lastImg = SKCodec.Create(ImagePaths[^1]);
             if (lastImg.Info.Width != firstImgWidth)
             {
-                invalidImgs.Add(_imagePaths[^1]);
-                _imagePaths.Remove(_imagePaths[^1]);
+                invalidImgs.Add(ImagePaths[^1]);
+                ImagePaths.Remove(ImagePaths[^1]);
             }
         }
 

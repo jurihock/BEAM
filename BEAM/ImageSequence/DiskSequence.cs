@@ -14,6 +14,8 @@ namespace BEAM.ImageSequence;
 /// <param name="imagePaths">The paths of the images to use inside the sequence.</param>
 public abstract class DiskSequence(List<string> imagePaths, string name) : ISequence
 {
+    protected List<string> ImagePaths = imagePaths;
+
     /// Do not use -> set internally on first get
     private long? _singleFileHeight;
 
@@ -161,7 +163,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     /// </summary>
     private void _InitializeShape()
     {
-        int length = imagePaths.Count;
+        int length = ImagePaths.Count;
 
         var firstImage = GetImage(0);
         long width = firstImage.Shape.Width;
