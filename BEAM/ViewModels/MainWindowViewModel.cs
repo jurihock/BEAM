@@ -68,6 +68,14 @@ public partial class MainWindowViewModel : ViewModelBase
             Logger.GetInstance().Error(LogEvent.OpenedFile,
                 $"Cannot open files since no suitable sequence type found. (Supported sequences: {string.Join(", ", DiskSequence.SupportedSequences)})");
         }
+        catch (EmptySequenceException)
+        {
+            Logger.GetInstance().Info(LogEvent.OpenedFile, "The sequence to be opened is empty");
+        }
+        catch (InvalidSequenceException)
+        {
+            // not handled, since the sequence will write a log message
+        }
     }
 
     [RelayCommand]
@@ -85,6 +93,14 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             Logger.GetInstance().Error(LogEvent.OpenedFile,
                 $"Cannot open folder since no suitable sequence type found. (Supported sequences: {string.Join(", ", DiskSequence.SupportedSequences)})");
+        }
+        catch (EmptySequenceException)
+        {
+            Logger.GetInstance().Info(LogEvent.OpenedFile, "The sequence to be opened is empty");
+        }
+        catch (InvalidSequenceException)
+        {
+            // not handled, since the sequence will write a log message
         }
     }
 
@@ -106,7 +122,7 @@ public partial class MainWindowViewModel : ViewModelBase
             AllowMultiple = false,
         });
 
-        return folder?.Count >= 1 ? folder[0] : null;
+        return folder.Count >= 1 ? folder[0] : null;
     }
 
     private static async Task<IReadOnlyList<IStorageFile>?> OpenFilePickerAsync()

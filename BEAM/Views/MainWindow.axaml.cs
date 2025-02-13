@@ -47,5 +47,13 @@ public partial class MainWindow : Window
             Logger.GetInstance().Error(LogEvent.OpenedFile,
                 $"Cannot open dragged-in files since no suitable sequence type found. (Supported sequences: {string.Join(", ", DiskSequence.SupportedSequences)})");
         }
+        catch (EmptySequenceException)
+        {
+            Logger.GetInstance().Info(LogEvent.OpenedFile, "The sequence to be opened is empty");
+        }
+        catch (InvalidSequenceException)
+        {
+            // not handled, since the sequence will write a log message
+        }
     }
 }

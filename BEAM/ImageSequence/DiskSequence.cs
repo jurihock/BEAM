@@ -115,7 +115,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     /// </summary>
     /// <returns>True if the sequence has been initialised, false if an error occured (then see log)</returns>
     protected internal abstract bool InitializeSequence();
-    
+
     /// <summary>
     /// A method to get the amount of loaded images in the sequence.
     /// </summary>
@@ -124,7 +124,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     {
         return _loadedImages.Length;
     }
-    
+
     /// <summary>
     /// Returns the desired image. Loads the image into main memory on-demand if necessary.
     /// </summary>
@@ -204,6 +204,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     /// <returns>The sequence</returns>
     /// <exception cref="EmptySequenceException">Thrown when no images are being passed or all found file extensions are unsupported</exception>
     /// <exception cref="UnknownSequenceException">Thrown when no suitable sequence can be found in the paths</exception>
+    /// <exception cref="InvalidSequenceException">Thrown when the sequence could not be loaded</exception>
     public static DiskSequence Open(List<string> paths, string name)
     {
         if (paths.Count == 0) throw new EmptySequenceException("Empty sequences are not supported");
@@ -232,6 +233,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     /// <returns>The opened sequence</returns>
     /// <exception cref="EmptySequenceException">Thrown when no images are being passed or all found file extensions are unsupported.</exception>
     /// <exception cref="UnknownSequenceException">Thrown when the folder does not exist.</exception>
+    /// <exception cref="InvalidSequenceException">Thrown when the sequence could not be loaded</exception>
     public static DiskSequence Open(string folder)
     {
         if (!Directory.Exists(folder)) throw new UnknownSequenceException($"Cannot find folder: {folder}");
@@ -248,7 +250,9 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     /// </summary>
     /// <param name="paths">The image paths the sequence uses.</param>
     /// <returns>The sequence</returns>
+    /// <exception cref="EmptySequenceException">Thrown when no images are being passed or all found file extensions are unsupported</exception>
     /// <exception cref="UnknownSequenceException">Thrown when no suitable sequence can be found in the paths</exception>
+    /// <exception cref="InvalidSequenceException">Thrown when the sequence could not be loaded</exception>
     public static DiskSequence Open(List<Uri> paths)
     {
         var name = string.Join(", ", paths.Select(p => Path.GetFileName(p.AbsolutePath)));
@@ -261,6 +265,8 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     /// <param name="folder">The uri to the folder with the sequence inside</param>
     /// <returns>The opened sequence</returns>
     /// <exception cref="UnknownSequenceException">Thrown when the folder does not exist.</exception>
+    /// <exception cref="EmptySequenceException">Thrown when no images are being passed or all found file extensions are unsupported</exception>
+    /// <exception cref="InvalidSequenceException">Thrown when the sequence could not be loaded</exception>
     public static DiskSequence Open(Uri folder)
     {
         Console.WriteLine(folder.ToString());
