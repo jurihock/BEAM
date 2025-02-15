@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using BEAM.Docking;
 using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
+using BEAM.ViewModels;
 
 namespace BEAM.Image.Minimap;
 
@@ -18,7 +19,7 @@ public abstract class Minimap
     /// The sequence based on which the minimap is based.
     /// </summary>
     protected readonly Sequence Sequence;
-    protected virtual bool IsGenerated { get; set; } = false;
+    protected bool IsGenerated { get; set; } = false;
     /// <summary>
     /// Cancellation Token for the generation process. Any subclass should use this Token for its Threads
     /// </summary>
@@ -59,7 +60,7 @@ public abstract class Minimap
     /// Returns a UI element which can be included by a view.
     /// </summary>
     /// <returns>The UI-Element as a <see cref="Avalonia.Controls.UserControl"/></returns>
-    public  UserControl GetMinimap()
+    public UserControl GetMinimap()
     {
         if (!IsGenerated || DisplayedMinimap is null)
         {
@@ -90,4 +91,6 @@ public abstract class Minimap
     }
 
     public abstract IDockBase GetDock();
+
+    public abstract ViewModelBase GetViewModel();
 }

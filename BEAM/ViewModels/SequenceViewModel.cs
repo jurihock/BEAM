@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Threading;
 using BEAM.Datatypes;
 using BEAM.Docking;
@@ -20,7 +22,9 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     [ObservableProperty] public partial DockingViewModel DockingVm { get; set; } = new();
     [ObservableProperty] public partial Coordinate2D pressedPointerPosition { get; set; } = new();
     [ObservableProperty] public partial Coordinate2D releasedPointerPosition { get; set; } = new();
+    [ObservableProperty] public ObservableCollection<UserControl> minimap = new();
 
+    public ViewModelBase ContentViewModel { get; set; }
     
     public EventHandler<EventArgs> MinimapHasGenerated = delegate { };
     
@@ -31,13 +35,13 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     private List<InspectionViewModel> _ConnectedInspectionViewModels = new();
     private Image.Minimap.Minimap _minimap;
 
-    public Image.Minimap.Minimap Minimap
+    /*public Image.Minimap.Minimap Minimap
     {
         get
         {
             return _minimap;
         } 
-    }
+    }*/
     
     
 
@@ -63,7 +67,12 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     
     public void OnMinimapGenerated(object sender, MinimapGeneratedEventArgs e)
     {
-        MinimapHasGenerated.Invoke(this, EventArgs.Empty);
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            this.ContentViewModel = e.Minimap.GetViewModel();
+            Minimap.Add(e.Minimap.GetMinimap());
+            MinimapHasGenerated.Invoke(this, EventArgs.Empty);
+        });
     }
 
     [RelayCommand]

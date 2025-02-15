@@ -1,10 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using BEAM.Docking;
 using BEAM.Image.Minimap.MinimapAlgorithms;
 using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
+using BEAM.ViewModels;
 using BEAM.ViewModels.Minimap;
 using BEAM.Views.Minimap;
 using ScottPlot;
@@ -23,7 +25,7 @@ public class PlotMinimap : Minimap
     /// without a specific algorithm through its base class constructor.
     /// </summary>
     private static readonly IMinimapAlgorithm DefaultAlgorithm = new PixelSumAlgorithm(100);
-    private bool _isGenerated;
+    
     private MinimapPlotViewModel viewModel;
 
 
@@ -84,8 +86,12 @@ public class PlotMinimap : Minimap
         }
 
         plot.Add.Bars(values);
-        viewModel = new MinimapPlotViewModel(plot);
-        _isGenerated = true;
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            viewModel = new MinimapPlotViewModel(plot);
+            DisplayedMinimap = new MinimapPlotView{DataContext = viewModel};
+        });
+        IsGenerated = true;
         Console.WriteLine("Hello World");
         OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Success));
     }
@@ -100,7 +106,7 @@ public class PlotMinimap : Minimap
     /// the minimap has not yet finished its generation process.</exception>
     public float GetMinimapValue(long line)
     {
-        if (!_isGenerated)
+        if (!IsGenerated)
         {
             throw new InvalidOperationException();
         }
@@ -110,6 +116,11 @@ public class PlotMinimap : Minimap
 
 
     public override IDockBase GetDock()
+    {
+        return viewModel;
+    }
+
+    public override ViewModelBase GetViewModel()
     {
         return viewModel;
     }

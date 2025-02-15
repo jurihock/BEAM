@@ -24,6 +24,25 @@ namespace BEAM.Views;
 
 public partial class SequenceView : UserControl
 {
+    // Hosts the external UserControl
+    public static readonly StyledProperty<Control?> DynamicContentProperty =
+        AvaloniaProperty.Register<SequenceView, Control?>(nameof(DynamicContent));
+    
+    // Optional: Bind to the external UserControl's ViewModel
+    public static readonly StyledProperty<object?> DynamicContentViewModelProperty =
+        AvaloniaProperty.Register<SequenceView, object?>(nameof(DynamicContentViewModel));
+    
+    public Control? DynamicContent
+    {
+        get => GetValue(DynamicContentProperty);
+        set => SetValue(DynamicContentProperty, value);
+    }
+
+    public object? DynamicContentViewModel
+    {
+        get => GetValue(DynamicContentViewModelProperty);
+        set => SetValue(DynamicContentViewModelProperty, value);
+    }
     
     public SequenceView()
     {
@@ -157,7 +176,6 @@ public partial class SequenceView : UserControl
         /*Dispatcher.UIThread.InvokeAsync(() =>
         {
             var vm = DataContext as SequenceViewModel;
-            MinimapHost.Content = vm.Minimap.GetDock();
         });*/
     }
 }

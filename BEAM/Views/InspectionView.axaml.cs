@@ -18,7 +18,7 @@ using ScottPlot.Statistics;
 
 namespace BEAM.Views;
 
-public partial class üInspectionView : UserControl
+public partial class InspectionView : UserControl
 {
     private int counter = 0;
     public InspectionView()

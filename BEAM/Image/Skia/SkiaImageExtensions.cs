@@ -11,7 +11,7 @@ namespace BEAM.Image.Skia;
 public static class SkiaImageExtensions
 {
     /// <summary>
-    /// Returns the type of a channels data for a given color type. Supported types all have values in the range of a byte.
+    /// Returns the type of a channel's data for a given color type. Supported types all have values in the range of a byte.
     /// </summary>
     /// <param name="type">The color type whose data type per channel is meant to be retrieved.</param>
     /// <returns>The size of the corresponding primitive c# type to the given color type.</returns>
