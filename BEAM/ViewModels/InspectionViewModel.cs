@@ -4,12 +4,15 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 using BEAM.Analysis;
 using BEAM.Datatypes;
 using BEAM.Docking;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using NP.Utilities;
 using ScottPlot;
+using ShimSkiaSharp;
 
 
 namespace BEAM.ViewModels;
@@ -20,12 +23,11 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 
     [ObservableProperty] private Plot _currentPlot;
     [ObservableProperty] private bool _keepData  = false;
-
-
-    
     private SequenceViewModel _currentSequenceViewModel;
     private Analysis.Analysis _currentAnalysis;
     private (Coordinate2D pressed, Coordinate2D released) _pointerRectanglePosition;
+    
+    private Plot PlaceholderPlot { get; set; }
 
     
     public ObservableCollection<SequenceViewModel> ExistingSequenceViewModels { get; private set;  } = new();
@@ -52,6 +54,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         _currentSequenceViewModel = sequenceViewModel;
         ExistingSequenceViewModels.Add(sequenceViewModel);
         _currentSequenceViewModel.DockingVm.Items.CollectionChanged += DockingItemsChanged;
+        PlaceholderPlot = createPlaceholderPlot();
     }
     
 
@@ -98,6 +101,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             {
                 if (item is not SequenceViewModel sequenceViewModel) continue;
                 ExistingSequenceViewModels.Add(sequenceViewModel);
+                if(ExistingSequenceViewModels.Count == 1) SwitchToFirst();
             }
         }
 
@@ -107,8 +111,42 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             {
                 if (item is not SequenceViewModel sequenceViewModel) continue;
                 ExistingSequenceViewModels.Remove(sequenceViewModel);
+                if (sequenceViewModel == _currentSequenceViewModel) SwitchToFirst();
             }
         }
+    }
+    
+    private Plot createPlaceholderPlot()
+    {
+        Plot myPlot = new();
+        
+        Coordinates center = new(0, 0);
+        double radiusX = 1;
+        double radiusY = 5;
+
+        for (int i = 0; i < 5; i++)
+        {
+            float angle =(i * 20);
+            var el = myPlot.Add.Ellipse(center, radiusX, radiusY, angle);
+            el.LineWidth = 3;
+            el.LineColor = Colors.Blue.WithAlpha(0.1 + 0.2 * i);
+        }
+        myPlot.Layout.Frameless();
+        myPlot.Axes.Margins(0, 0);
+        myPlot.Title("No sequence selected");
+        return myPlot;
+    }
+    
+    private void SwitchToFirst()
+    {
+        if (ExistingSequenceViewModels.Count == 0)
+        {
+            CurrentPlot = PlaceholderPlot;
+            return;
+        }
+        _currentSequenceViewModel.UnregisterInspectionViewModel(this);
+        _currentSequenceViewModel = ExistingSequenceViewModels[0];
+        _currentSequenceViewModel.RegisterInspectionViewModel(this);
     }
     
     [RelayCommand]

@@ -61,6 +61,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     public void RegisterInspectionViewModel(InspectionViewModel inspectionViewModel)
     {
         _ConnectedInspectionViewModels.Add(inspectionViewModel);
+        inspectionViewModel.Update(pressedPointerPosition, releasedPointerPosition);
     }
     
     public void UnregisterInspectionViewModel(InspectionViewModel inspectionViewModel)

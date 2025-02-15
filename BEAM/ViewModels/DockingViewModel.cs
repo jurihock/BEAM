@@ -33,4 +33,9 @@ public partial class DockingViewModel : ViewModelBase
     {
         OpenDock(new SequenceViewModel(sequence, this));
     }
+    
+    public void RemoveDock(IDockBase viewModel)
+    {
+        Items.Remove(viewModel);
+    }
 }

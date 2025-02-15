@@ -8,6 +8,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Input;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using Avalonia.Remote.Protocol.Input;
 using Avalonia.Styling;
 using BEAM.CustomActions;
 using BEAM.Image.Displayer.ScottPlot;
@@ -24,6 +25,7 @@ using ScottPlot;
 using ScottPlot.Avalonia;
 using ScottPlot.Interactivity;
 using ScottPlot.Interactivity.UserActionResponses;
+using ScottPlot.Plottables;
 using MouseButton = ScottPlot.Interactivity.MouseButton;
 
 namespace BEAM.Views;
@@ -31,10 +33,14 @@ namespace BEAM.Views;
 public partial class SequenceView : UserControl
 {
     private BitmapPlottable _plottable;
+    private HorizontalLine _horizontalLine = new();
+    private VerticalLine _verticalLine = new();
 
     public SequenceView()
     {
         InitializeComponent();
+        _horizontalLine = AvaPlot1.Plot.Add.HorizontalLine(0);
+        _verticalLine = AvaPlot1.Plot.Add.VerticalLine(0);
     }
 
     private void PreparePlot()
@@ -184,6 +190,21 @@ public partial class SequenceView : UserControl
         var vm = (SequenceViewModel?)DataContext;
         vm.releasedPointerPosition = CoordInPlot;
         vm.UpdateInspectionViewModel();
+    }
+
+    private void PointerMovedHandler(object? sender, PointerEventArgs args)
+    {
+        var point = args.GetCurrentPoint(sender as Control);
+        var x = point.Position.X;
+        var y = point.Position.Y;
+
+        var pointInPlot = AvaPlot1.Plot.GetCoordinates(
+            (float)args.GetPosition(AvaPlot1).X * AvaPlot1.DisplayScale,
+            (float)args.GetPosition(AvaPlot1).Y * AvaPlot1.DisplayScale);
+        
+        _horizontalLine.Position = pointInPlot.Y;
+        _verticalLine.Position = pointInPlot.X;
+        AvaPlot1.Refresh();
     }
 
     private void StyledElement_OnDataContextChanged(object? sender, EventArgs e)

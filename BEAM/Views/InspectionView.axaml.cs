@@ -13,6 +13,7 @@ public partial class InspectionView : UserControl
     {
         InitializeComponent();
         this.DataContextChanged += DataContextChangedHandling;
+        
     }
     
     /// <summary>
