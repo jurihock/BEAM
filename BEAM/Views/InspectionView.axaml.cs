@@ -1,21 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics.X86;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using Avalonia.Media;
-using BEAM.Analysis;
 using BEAM.ViewModels;
-using NP.Utilities;
 using ScottPlot;
-using ScottPlot.Avalonia;
-using ScottPlot.AxisRules;
-using ScottPlot.Statistics;
 
 namespace BEAM.Views;
 

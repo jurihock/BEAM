@@ -44,12 +44,6 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     public async Task UpdateInspectionViewModel(Coordinate2D point)
     {
         Console.WriteLine("Rectangle is detected:" + pressedPointerPosition.ToString() + ", " + releasedPointerPosition.ToString());
-
-        if (!_arePointsValid(pressedPointerPosition, releasedPointerPosition))
-        {
-            Console.WriteLine("Rectangle is not valid");
-            return;
-        }
         
         foreach (var inspectionViewModel in _ConnectedInspectionViewModels)
         {
@@ -60,25 +54,11 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public async Task OpenInspectionView()
     {
-        if(!_arePointsValid(pressedPointerPosition, releasedPointerPosition))
-            return;
         InspectionViewModel inspectionViewModel = new InspectionViewModel(this);
         _ConnectedInspectionViewModels.Add(inspectionViewModel);
         DockingVm.OpenDock(inspectionViewModel);
         Console.WriteLine("Everythig is safe!");
         inspectionViewModel.Update(pressedPointerPosition, releasedPointerPosition);
-    }
-    
-    private bool _arePointsValid(Coordinate2D point1, Coordinate2D point2)
-    {
-        if(point1.Column < 0 || point1.Row < 0 || point2.Column < 0 || point2.Row < 0)
-            return false;
-        if(point1.Column > Sequence.Shape.Width 
-           || point1.Row > Sequence.Shape.Height 
-           || point2.Column > Sequence.Shape.Width 
-           || point2.Row > Sequence.Shape.Height)
-            return false;
-        return true;
     }
     
     
