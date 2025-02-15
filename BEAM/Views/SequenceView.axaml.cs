@@ -2,11 +2,15 @@ using System;
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml;
 using Avalonia.Input;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using BEAM.CustomActions;
+using BEAM.Image.Displayer.ScottPlot;
 using BEAM.Datatypes;
 using BEAM.Image.Bitmap;
 using BEAM.Image.Displayer;
@@ -26,15 +30,14 @@ namespace BEAM.Views;
 
 public partial class SequenceView : UserControl
 {
+    private BitmapPlottable _plottable;
 
-    private Sequence _sequence;
-    private int i = 0;
     public SequenceView()
     {
         InitializeComponent();
     }
 
-    private void FillPlot(Sequence sequence)
+    private void PreparePlot()
     {
         _ApplyDarkMode();
         _BuildCustomRightClickMenu();
@@ -48,23 +51,24 @@ public partial class SequenceView : UserControl
 
         //var panButton = ScottPlot.Interactivity.StandardMouseButtons.Middle;
         //var panResponse = new ScottPlot.Interactivity.UserActionResponses.MouseDragPan(panButton);
-        
+
         // Remove the standard MouseWheelZoom and replace it with the wanted custom functionality
-        _sequence = sequence;
         ScrollingSynchronizer.addSequence(this);
         AvaPlot1.UserInputProcessor.RemoveAll<MouseWheelZoom>();
         AvaPlot1.UserInputProcessor.RemoveAll<MouseDragZoom>(); // Remove option to zoom with right key
         AvaPlot1.UserInputProcessor.UserActionResponses.Add(new CustomMouseWheelZoom(StandardKeys.Shift,
             StandardKeys.Control));
+
         // Add ability to select area with right mouse button pressed
         AvaPlot1.UserInputProcessor.UserActionResponses.Add(new CustomAreaSelection(StandardMouseButtons.Right));
         
         Bar1.Scroll += (s, e) =>
         {
+            var vm = (DataContext as SequenceViewModel)!;
             var plot = AvaPlot1.Plot;
             var ySize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
             // Minus 100 to allow to scroll higher than the sequence for a better inspection of the start.
-            var top = (e.NewValue / 100.0) * sequence.Shape.Height - 100.0;
+            var top = (e.NewValue / 100.0) * vm.Sequence.Shape.Height - 100.0;
             AvaPlot1.Plot.Axes.SetLimitsY(top, top + ySize);
             AvaPlot1.Refresh();
             ScrollingSynchronizer.synchronize(this);
@@ -75,61 +79,33 @@ public partial class SequenceView : UserControl
             UpdateScrollBar();
             ScrollingSynchronizer.synchronize(this);
         };
-        
+
         addScrollBarUpdating();
-        
+
         PlotControllerManager.AddPlotToAllControllers(AvaPlot1);
-        using var _ = Timer.Start();
 
         AvaPlot1.Plot.Axes.InvertY();
         AvaPlot1.Plot.Axes.SquareUnits();
-
-        var plottable = new BitmapPlottable(sequence);
-        AvaPlot1.Plot.Add.Plottable(plottable);
-
-        plottable.SequenceImage.RequestRefreshPlotEvent += (sender, args) => AvaPlot1.Refresh();
         AvaPlot1.Refresh();
-        
     }
 
     private void addScrollBarUpdating()
     {
-        AvaPlot1.PointerEntered += (s, e) =>
-        {
-            UpdateScrollBar();
-        };
-        
-        AvaPlot1.PointerExited += (s, e) =>
-        {
-            UpdateScrollBar();
-        };
-        
-        AvaPlot1.PointerMoved += (s, e) =>
-        {
-            UpdateScrollBar();
-        };
-        
-        AvaPlot1.PointerPressed += (s, e) =>
-        {
-            UpdateScrollBar();
-        };
-        
-        AvaPlot1.PointerReleased += (s, e) =>
-        {
-            UpdateScrollBar();
-        };
-        
-        AvaPlot1.PointerCaptureLost += (s, e) =>
-        {
-            UpdateScrollBar();
-        };
-        
-        AvaPlot1.PointerWheelChanged += (s, e) =>
-        {
-            UpdateScrollBar();
-        };
+        AvaPlot1.PointerEntered += (s, e) => { UpdateScrollBar(); };
+
+        AvaPlot1.PointerExited += (s, e) => { UpdateScrollBar(); };
+
+        AvaPlot1.PointerMoved += (s, e) => { UpdateScrollBar(); };
+
+        AvaPlot1.PointerPressed += (s, e) => { UpdateScrollBar(); };
+
+        AvaPlot1.PointerReleased += (s, e) => { UpdateScrollBar(); };
+
+        AvaPlot1.PointerCaptureLost += (s, e) => { UpdateScrollBar(); };
+
+        AvaPlot1.PointerWheelChanged += (s, e) => { UpdateScrollBar(); };
     }
-    
+
     private void _ApplyDarkMode()
     {
         if (Application.Current!.ActualThemeVariant != ThemeVariant.Dark) return;
@@ -164,13 +140,22 @@ public partial class SequenceView : UserControl
                 PlotControllerManager.activateSynchronization();
             });
         menu.AddSeparator();
-        menu.Add("Configure colors",
-            control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
-        menu.Add("Affine Transformation",
-            control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+        menu.Add("Configure colors", control => _OpenColorsPopup());
+        menu.Add("Affine Transformation", control => _OpenTransformPopup());
         menu.AddSeparator();
+        menu.Add("Cut Sequence", control => _OpenCutPopup());
         menu.Add("Export sequence",
             control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+    }
+
+    private void _SetPlottable(BitmapPlottable plottable)
+    {
+        if (_plottable is not null) AvaPlot1.Plot.Remove(_plottable);
+
+        _plottable = plottable;
+        AvaPlot1.Plot.Add.Plottable(_plottable);
+        _plottable.SequenceImage.RequestRefreshPlotEvent += (sender, args) => AvaPlot1.Refresh();
+        AvaPlot1.Refresh();
     }
 
     private void PointerPressedHandler(object sender, PointerPressedEventArgs args)
@@ -205,7 +190,55 @@ public partial class SequenceView : UserControl
     {
         var vm = DataContext as SequenceViewModel;
 
-        FillPlot(vm.Sequence);
+        PreparePlot();
+        
+        var isDark = Application.Current!.ActualThemeVariant == ThemeVariant.Dark;
+        var checkerBoard = new CheckerboardPlottable(isDark);
+        AvaPlot1.Plot.Add.Plottable(checkerBoard);
+        
+        _SetPlottable(new BitmapPlottable(vm.Sequence, vm.CurrentRenderer));
+
+        // Changed the sequence view -> full rerender
+        vm.RenderersUpdated += (_, args) =>
+        {
+            _plottable.SequenceImage.Reset();
+            _plottable.ChangeRenderer(vm.CurrentRenderer);
+            AvaPlot1.Refresh();
+        };
+
+        vm.CutSequence += (_, args) =>
+        {
+            _SetPlottable(new BitmapPlottable(vm.Sequence, vm.CurrentRenderer));
+
+            var oldLimits = AvaPlot1.Plot.Axes.GetLimits();
+            var ySize = oldLimits.Bottom - oldLimits.Top;
+            var newLimits = new AxisLimits(oldLimits.Left, oldLimits.Right, -ySize / 3, 2 * ySize / 3);
+            AvaPlot1.Plot.Axes.SetLimits(newLimits);
+            AvaPlot1.Refresh();
+        };
+    }
+
+    private void _OpenTransformPopup()
+    {
+        AffineTransformationPopup popup = new(DataContext as SequenceViewModel);
+        var v = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+        popup.ShowDialog(v.MainWindow);
+    }
+
+    private void _OpenColorsPopup()
+    {
+        ColorSettingsPopup popup = new(DataContext as SequenceViewModel);
+        var v = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+
+        popup.ShowDialog(v.MainWindow);
+    }
+
+    private void _OpenCutPopup()
+    {
+        CutSequencePopup popup = new(DataContext as SequenceViewModel);
+        var v = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+
+        popup.ShowDialog(v.MainWindow);
     }
 
     /// <summary>
@@ -214,9 +247,10 @@ public partial class SequenceView : UserControl
     /// <param name="val">The new value of the ScrollBar</param>
     public void UpdateScrolling(double val)
     {
+        var vm = (DataContext as SequenceViewModel)!;
         var plot = AvaPlot1.Plot;
         var ySize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
-        var top = (val / 100.0) * _sequence.Shape.Height - 100.0;
+        var top = (val / 100.0) * vm.Sequence.Shape.Height - 100.0;
         AvaPlot1.Plot.Axes.SetLimitsY(top, top + ySize);
         AvaPlot1.Refresh();
         Bar1.Value = val;
@@ -253,7 +287,8 @@ public partial class SequenceView : UserControl
     /// </summary>
     public void UpdateScrollBar()
     {
-        var val =  ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / _sequence.Shape.Height) * 100;
+        var vm = (DataContext as SequenceViewModel)!;
+        var val =  ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / vm.Sequence.Shape.Height) * 100;
         Bar1.Value = val <= 0.0 ? 0.0 : double.Min(val, 100.0);
     }
 }

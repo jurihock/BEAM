@@ -5,7 +5,7 @@ namespace BEAM.Image.Minimap.MinimapAlgorithms;
 
 public class DummyMinimapAlgorithm : IMinimapAlgorithm
 {
-    public bool AnalyzeSequence(Sequence sequence)
+    public bool AnalyzeSequence(ISequence sequence)
     {
         Task.Delay(1000);
         return true;

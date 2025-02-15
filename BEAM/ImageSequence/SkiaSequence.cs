@@ -10,11 +10,11 @@ namespace BEAM.ImageSequence;
 /// Implementation details for skia images.
 /// </summary>
 /// <param name="imagePaths">The skia images to use inside the sequence</param>
-public class SkiaSequence(List<string> imagePaths) : Sequence(imagePaths)
+public class SkiaSequence(List<string> imagePaths, string name) : DiskSequence(imagePaths, name)
 {
-    protected override IImage LoadImage(int index) => new SkiaImage<byte>(imagePaths[index]);
+    protected internal override IImage LoadImage(int index) => new SkiaImage<byte>(imagePaths[index]);
 
-    protected override bool InitializeSequence()
+    protected internal override bool InitializeSequence()
     {
         var removed = imagePaths.RemoveAll(path => !Path.GetExtension(path).Equals(".png"));
         if (removed > 0) Logger.GetInstance().Info(LogEvent.OpenedFile, $"{removed} file(s) were not loaded into the sequence.");

@@ -25,7 +25,7 @@ public class PlotMinimap : Minimap
     /// </summary>
     private readonly IMinimapAlgorithm _minimapAlgorithm;
     
-    public PlotMinimap(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc) : base(sequence, eventCallbackFunc)
+    public PlotMinimap(ISequence sequence, MinimapGeneratedEventHandler eventCallbackFunc) : base(sequence, eventCallbackFunc)
     {
         this._minimapAlgorithm = DefaultAlgorithm;
         Task.Run(GenerateMinimap, CancellationTokenSource.Token);
@@ -41,7 +41,7 @@ public class PlotMinimap : Minimap
     /// This is being done through the <see cref="Minimap"/>'s MinimapGeneratedEventHandler event.</param>
     /// <param name="algorithm">The concrete algorithm used for value calculation.</param>
     /// <exception cref="ArgumentNullException">If any of the parameters is null.</exception>
-    public PlotMinimap(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc, IMinimapAlgorithm algorithm) : base(sequence, eventCallbackFunc)
+    public PlotMinimap(ISequence sequence, MinimapGeneratedEventHandler eventCallbackFunc, IMinimapAlgorithm algorithm) : base(sequence, eventCallbackFunc)
     {
         ArgumentNullException.ThrowIfNull(algorithm);
         _minimapAlgorithm = algorithm;
