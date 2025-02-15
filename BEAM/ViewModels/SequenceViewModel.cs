@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Avalonia;
 using BEAM.Datatypes;
@@ -57,13 +58,10 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         InspectionViewModel inspectionViewModel = new InspectionViewModel(this);
         _ConnectedInspectionViewModels.Add(inspectionViewModel);
         DockingVm.OpenDock(inspectionViewModel);
-        Console.WriteLine("Everythig is safe!");
         inspectionViewModel.Update(pressedPointerPosition, releasedPointerPosition);
     }
     
-    
-
-    public string Name { get; } = "Eine tolle Sequence";
+    public string Name { get; } =  DateTime.Now.Microsecond.ToString();
 
     public override string ToString()
     {

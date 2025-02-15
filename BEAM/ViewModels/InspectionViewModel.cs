@@ -81,6 +81,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         _currentSequenceViewModel = ExistingSequenceViewModels[index];
         _currentSequenceViewModel.RegisterInspectionViewModel(this);
         Console.WriteLine("Changed Sequence to: " + _currentSequenceViewModel);
+        Console.WriteLine("Index: " + index);
     }
     
     private void DockingItemsChanged(object sender, EventArgs e)
@@ -94,13 +95,14 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
                 ExistingSequenceViewModels.Add(sequenceViewModel);
             }
         }
+        Console.WriteLine("Docking Items changed. Length of docking item list" + dockingvm.Items.Count);
+
     }
     
     [RelayCommand]
     public async Task CheckBoxChanged(bool? isChecked)
     {
         _keepData = isChecked ?? false;
-        Console.WriteLine("Now data is accepted is: " + isChecked);
     }
 
     // [RelayCommand]
