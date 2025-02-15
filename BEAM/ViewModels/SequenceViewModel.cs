@@ -21,13 +21,9 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     [ObservableProperty] public partial DockingViewModel DockingVm { get; set; } = new();
     [ObservableProperty] public partial Coordinate2D pressedPointerPosition { get; set; } = new();
     [ObservableProperty] public partial Coordinate2D releasedPointerPosition { get; set; } = new();
-
-
-    public Sequence Sequence { get; }
-
+    
     private List<InspectionViewModel> _ConnectedInspectionViewModels = new();
 
-    public SequenceViewModel(Sequence sequence, DockingViewModel dockingVm)
     public EventHandler<RenderersUpdatedEventArgs> RenderersUpdated = delegate { };
     public EventHandler<RenderersUpdatedEventArgs> CutSequence = delegate { };
 
@@ -36,9 +32,11 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     public SequenceRenderer[] Renderers;
     public int RendererSelection;
 
-    public SequenceViewModel(ISequence sequence)
+
+    public SequenceViewModel(ISequence sequence, DockingViewModel dockingVm)
     {
         Sequence = new TransformedSequence(sequence);
+        DockingVm = dockingVm;
 
         var (min, max) = sequence switch
         {
@@ -58,8 +56,6 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             SkiaSequence => 0,
             _ => 1
         };
-        Sequence = sequence;
-        DockingVm = dockingVm;
     }
     
     public void RegisterInspectionViewModel(InspectionViewModel inspectionViewModel)
@@ -73,7 +69,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     }
 
     [RelayCommand]
-    public async Task UpdateInspectionViewModel(Coordinate2D point)
+    public async Task UpdateInspectionViewModel()
     {
         Console.WriteLine("Rectangle is detected:" + pressedPointerPosition.ToString() + ", " + releasedPointerPosition.ToString());
         
@@ -90,6 +86,23 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         _ConnectedInspectionViewModels.Add(inspectionViewModel);
         DockingVm.OpenDock(inspectionViewModel);
         inspectionViewModel.Update(pressedPointerPosition, releasedPointerPosition);
+    }
+    
+    
+    private Coordinate2D _correctInvalid(Coordinate2D point)
+    {
+        double x = point.Row;
+        double y = point.Column;
+        
+        if(x < 0)
+            x = 0;
+        else if (x > Sequence.Shape.Width)
+            x = Sequence.Shape.Width;
+        if(y < 0)
+            y = 0;
+        else if(y > Sequence.Shape.Height)
+            y = Sequence.Shape.Height;
+        return new Coordinate2D(x, y);
     }
 
     public string Name => Sequence.GetName();

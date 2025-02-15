@@ -130,7 +130,7 @@ public partial class SequenceView : UserControl
         var menu = AvaPlot1.Menu!;
         menu.Clear();
         menu.Add("Inspect Pixel",
-            control => vm.OpenInspectionViewCommand.Execute(null));
+            control => _OpenInspectionViewModel());
         menu.AddSeparator();
         menu.Add("Sync to this",
             control =>
@@ -165,7 +165,7 @@ public partial class SequenceView : UserControl
         var x = point.Position.X;
         var y = point.Position.Y;
     
-        var CoordInPlot = _correctInvalid(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
+        var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
     
         var vm = (SequenceViewModel?)DataContext;
         vm.pressedPointerPosition = CoordInPlot;
@@ -178,12 +178,12 @@ public partial class SequenceView : UserControl
         var x = point.Position.X;
         var y = point.Position.Y;
     
-        var CoordInPlot = _correctInvalid(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
+        var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
         
     
         var vm = (SequenceViewModel?)DataContext;
         vm.releasedPointerPosition = CoordInPlot;
-        vm.UpdateInspectionViewModel(CoordInPlot);
+        vm.UpdateInspectionViewModel();
     }
 
     private void StyledElement_OnDataContextChanged(object? sender, EventArgs e)
@@ -241,6 +241,12 @@ public partial class SequenceView : UserControl
         popup.ShowDialog(v.MainWindow);
     }
 
+    private void _OpenInspectionViewModel()
+    {
+        SequenceViewModel sequenceViewModel = DataContext as SequenceViewModel;
+        sequenceViewModel.OpenInspectionView();
+    }
+
     /// <summary>
     /// This method updates the value of the Scrollbar and display the corresponding position in the sequence.
     /// </summary>
@@ -266,20 +272,6 @@ public partial class SequenceView : UserControl
         AvaPlot1.Plot.Axes.SetLimits(otherPlot.Plot.Axes.GetLimits());
         AvaPlot1.Refresh();
         UpdateScrollBar();
-    }
-    
-    
-    private Coordinate2D _correctInvalid(Coordinates point)
-    {
-        if(point.X < 0)
-            point.X = 0;
-        if(point.Y < 0)
-            point.Y = 0;
-        if(point.X > _sequence.Shape.Width)
-            point.X = _sequence.Shape.Width;
-        if(point.Y > _sequence.Shape.Height)
-            point.Y = _sequence.Shape.Height;
-        return new Coordinate2D(point.X, point.Y);
     }
     
     /// <summary>

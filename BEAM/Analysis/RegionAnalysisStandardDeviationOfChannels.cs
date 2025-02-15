@@ -20,7 +20,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
     private Coordinate2D _bottomRight;
     private int _amountChannels;
 
-    public override Plot Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint, Sequence sequence)
+    public override Plot Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint, ISequence sequence)
     {
         _topLeft =
             new Coordinate2D((long) Math.Min(pointerPressedPoint.Row, pointerReleasedPoint.Row),
@@ -30,7 +30,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
             new Coordinate2D((long) Math.Max(pointerPressedPoint.Row, pointerReleasedPoint.Row),
                 (long) Math.Max(pointerPressedPoint.Column, pointerReleasedPoint.Column));
 
-        _amountChannels = sequence.GetChannelAmount();
+        _amountChannels = sequence.Shape.Channels;
         
         // Catch trivial case of only one pixel selected
         if (Math.Abs(_amountPixels() - 1) < 0.001)
@@ -51,7 +51,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
     /// Calculates the standard deviation of the channels in the region and stores the result in _sumChannelsSquared
     /// </summary>
     /// <param name="sequence"></param>
-    private void _calculateResult(Sequence sequence)
+    private void _calculateResult(ISequence sequence)
     {
         _sumChannels = new double[_amountChannels];
         _sumChannelsSquared = new double[_amountChannels];

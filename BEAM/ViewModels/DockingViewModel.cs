@@ -22,15 +22,15 @@ public partial class DockingViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public void Foo()
+    public void Foo(SequenceViewModel sequenceViewModel)
     {
-        OpenDock(new InspectionViewModel());
+        OpenDock(new InspectionViewModel(sequenceViewModel));
     }
 
 
     [RelayCommand]
     public void OpenSequenceView(ISequence sequence)
     {
-        OpenDock(new SequenceViewModel(sequence));
+        OpenDock(new SequenceViewModel(sequence, this));
     }
 }

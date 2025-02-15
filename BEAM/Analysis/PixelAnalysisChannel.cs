@@ -16,7 +16,7 @@ public class PixelAnalysisChannel : Analysis
     
     private const string Name = "Pixel Channel Analysis";
     
-    public override Plot Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint, Sequence sequence)
+    public override Plot Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint, ISequence sequence)
     {
         double[] channels = sequence.GetPixel((long)pointerPressedPoint.Column, (long)pointerReleasedPoint.Row);
 
