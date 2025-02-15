@@ -71,7 +71,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public async Task UpdateInspectionViewModel()
     {
-        Console.WriteLine("Rectangle is detected:" + pressedPointerPosition.ToString() + ", " + releasedPointerPosition.ToString());
+        //Console.WriteLine("Rectangle is detected:" + pressedPointerPosition.ToString() + ", " + releasedPointerPosition.ToString());
         
         foreach (var inspectionViewModel in _ConnectedInspectionViewModels)
         {

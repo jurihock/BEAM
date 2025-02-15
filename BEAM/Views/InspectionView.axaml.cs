@@ -1,6 +1,7 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using BEAM.Docking;
 using BEAM.ViewModels;
 using ScottPlot;
 
@@ -52,7 +53,6 @@ public partial class InspectionView : UserControl
     {
         var vm = DataContext as InspectionViewModel;
         vm.ChangeSequence(SequencePicker.SelectedIndex);
-        Console.WriteLine("Hello this is the View");
     }
     
     public void CheckBox_Changed(object sender, RoutedEventArgs e)

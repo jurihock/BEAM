@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Threading.Tasks;
 using BEAM.Analysis;
 using BEAM.Datatypes;
@@ -18,19 +21,21 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     [ObservableProperty] private Plot _currentPlot;
     [ObservableProperty] private bool _keepData  = false;
 
+
     
     private SequenceViewModel _currentSequenceViewModel;
     private Analysis.Analysis _currentAnalysis;
     private (Coordinate2D pressed, Coordinate2D released) _pointerRectanglePosition;
 
-    public List<Analysis.Analysis> AnalysisList { get; private set;  } = new()
+    
+    public ObservableCollection<SequenceViewModel> ExistingSequenceViewModels { get; private set;  } = new();
+    public List<Analysis.Analysis> AnalysisList { get;  } = new()
     {
         new PixelAnalysisChannel(),
         new CirclePlot(),
         new RegionAnalysisStandardDeviationOfChannels()
     };
 
-    public List<SequenceViewModel> ExistingSequenceViewModels { get; set; } = new();
 
     /// <summary>
     /// The current AnalysisView displayed
@@ -70,7 +75,9 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         _currentAnalysis = AnalysisList[index];
         Console.WriteLine("Changed Analysis to: " + _currentAnalysis);
-        _currentPlot = _currentAnalysis.Analyze(_pointerRectanglePosition.pressed, _pointerRectanglePosition.released, _currentSequenceViewModel.Sequence);
+        _currentPlot = _currentAnalysis.Analyze(_pointerRectanglePosition.pressed, 
+            _pointerRectanglePosition.released, 
+            _currentSequenceViewModel.Sequence);
         return Task.CompletedTask;
     }
 
@@ -80,22 +87,33 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         _currentSequenceViewModel.UnregisterInspectionViewModel(this);
         _currentSequenceViewModel = ExistingSequenceViewModels[index];
         _currentSequenceViewModel.RegisterInspectionViewModel(this);
-        Console.WriteLine("Changed Sequence to: " + _currentSequenceViewModel);
-        Console.WriteLine("Index: " + index);
+        Console.WriteLine("Changed Sequence to: " + _currentSequenceViewModel.Name);
     }
     
-    private void DockingItemsChanged(object sender, EventArgs e)
+    private void DockingItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
-        var dockingvm = _currentSequenceViewModel.DockingVm;
-        ExistingSequenceViewModels.Clear();
-        foreach (var item in dockingvm.Items)
+        var dockItems = _currentSequenceViewModel.DockingVm.Items;
+        
+        Console.WriteLine("Added Item to Docking Items. Length of docking item list: " + dockItems.Count);
+
+
+        if (e.NewItems is not null)
         {
-            if (item is SequenceViewModel sequenceViewModel)
+            foreach (var item in e.NewItems)
             {
+                if (item is not SequenceViewModel sequenceViewModel) continue;
                 ExistingSequenceViewModels.Add(sequenceViewModel);
             }
         }
-        Console.WriteLine("Docking Items changed. Length of docking item list" + dockingvm.Items.Count);
+
+        if (e.OldItems is null) return;
+        {
+            foreach (var item in e.OldItems)
+            {
+                if (item is not SequenceViewModel sequenceViewModel) continue;
+                ExistingSequenceViewModels.Remove(sequenceViewModel);
+            }
+        }
 
     }
     
@@ -104,10 +122,5 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         _keepData = isChecked ?? false;
     }
-
-    // [RelayCommand]
-    // public async Task SetAnalysisView(AbstractAnalysisView abstractAnalysisView)
-    // {
-    //     abstractAnalysisView = new AnalysisViewPlotBars();
-    // }
+    
 }
