@@ -92,11 +92,6 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     
     private void DockingItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
-        var dockItems = _currentSequenceViewModel.DockingVm.Items;
-        
-        Console.WriteLine("Added Item to Docking Items. Length of docking item list: " + dockItems.Count);
-
-
         if (e.NewItems is not null)
         {
             foreach (var item in e.NewItems)
@@ -114,7 +109,6 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
                 ExistingSequenceViewModels.Remove(sequenceViewModel);
             }
         }
-
     }
     
     [RelayCommand]
