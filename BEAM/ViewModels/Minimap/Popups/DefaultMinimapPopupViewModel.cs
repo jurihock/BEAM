@@ -10,78 +10,104 @@ using Avalonia;
 using Avalonia.Controls;
 using BEAM.Image.Minimap;
 using BEAM.Renderer;
+using CommunityToolkit.Mvvm.ComponentModel;
 using NP.Utilities;
 
 namespace BEAM.ViewModels.Minimap.Popups;
 
-public class DefaultMinimapPopupViewModel
+public partial class  DefaultMinimapPopupViewModel : ViewModelBase
 {
-    public ObservableCollection<Control> RendererSelectionControls { get; } = [];
+    private static Control _defaultControl = new TextBox() { Text = "This Minimap provides no changeable settings" };
     
     private List<ISaveControl> _controls = [];
-    
-    private SequenceViewModel _sequenceViewModel;
 
-    private int _selection;
+    private Image.Minimap.Minimap? _chosenMinimap;
+
+    private ComboBox _minimapSelection = new ComboBox();
+
+    [ObservableProperty] public StackPanel minimapSubSettings = new StackPanel() { Margin = new Thickness(30, 0, 0, 0) };
+
+    private ISaveControl? _currentConfigControl;
+
+   
     
     public DefaultMinimapPopupViewModel(SequenceViewModel sequenceViewModel)
     {
-        _sequenceViewModel = sequenceViewModel;
-
-        _selection = MinimapSettingsUtilityHelper;
-
-        for (var index = 0; index < sequenceViewModel.Renderers.Length; index++)
+        if (!MinimapSettingsUtilityHelper.ExistAny())
         {
-            var renderer = sequenceViewModel.Renderers[index];
-            RendererSelectionControls.Add(_BuildSelectionButton(renderer, index));
-            RendererSelectionControls.Add(_BuildPanel(renderer));
+            TextBlock textBlock = new TextBlock();
+            textBlock.Text = "No Minimaps available";
+            minimapSubSettings.Children.Add(textBlock);
+            return;
         }
+        
+        _chosenMinimap = MinimapSettingsUtilityHelper.GetDefaultMinimap();
+        
+
+        for (var index = 0; index < MinimapSettingsUtilityHelper.GetDefaultMinimaps().Count(); index++)
+        {
+            var minimap = MinimapSettingsUtilityHelper.GetDefaultMinimaps()[index];
+            _minimapSelection.Items.Add(minimap);
+        }
+        
+        
+        _minimapSelection.SelectedItem = _chosenMinimap;
+        ChangeDisplayedSettings();
+        
+        _minimapSelection.SelectionChanged += (sender, args) =>
+        {
+            if(_currentConfigControl is not null)
+            {
+                _currentConfigControl.Save();
+            }
+            _chosenMinimap = (Image.Minimap.Minimap)_minimapSelection.SelectedItem;
+            ChangeDisplayedSettings();
+        };
+    }
+
+    private void ChangeDisplayedSettings()
+    {
+        if (_currentConfigControl is not null)
+        {
+            _currentConfigControl.Save();
+        }
+        minimapSubSettings.Children.Clear();
+        
+        //TODO: Alternatively one minimap only ever has one Control Window and we can get access to it thathw ay
+        //TODO: Alternatively one ([User]Control, ISaveControl) inherits from the other
+        (Control, ISaveControl)? duplicateView = (_minimapSelection.SelectedItem as Image.Minimap.Minimap)?.GetSettingsPopupControl();
+        Control toDisplay;
+        if (duplicateView is not null)
+        {
+            if(duplicateView.Value.Item1 is not null)
+            {
+                toDisplay = duplicateView.Value.Item1;
+                _currentConfigControl = duplicateView.Value.Item2;
+            }   
+            else
+            {
+               toDisplay = _defaultControl;
+               _currentConfigControl = null;
+            }
+        }
+        else
+        {
+            toDisplay = new TextBox(){Text = "An Error Occured trying to get this Minimap's Control Panel;"};
+            _currentConfigControl = null;
+        }
+        
+        minimapSubSettings.Children.Add(toDisplay);
     }
     
     public bool Save()
     {
-        foreach (var control in _controls)
+        if (_currentConfigControl is not null)
         {
-            control.Save();
+            _currentConfigControl.Save();
         }
-
-        foreach (var renderer in _sequenceViewModel.Renderers)
-        {
-            renderer.MinimumOfIntensityRange = (double) Min;
-            renderer.MaximumOfIntensityRange = (double) Max;
-        }
-
-        _sequenceViewModel.RendererSelection = _selection;
-        _sequenceViewModel.RenderersUpdated.Invoke(this, new RenderersUpdatedEventArgs());
+        
+        MinimapSettingsUtilityHelper.SetDefaultMinimap(_chosenMinimap);
         return true;
-    }
-    private StackPanel _BuildPanel(SequenceRenderer renderer)
-    {
-        if (_mapping is null)
-        {
-            CreateMapping();
-        }
-        var panel = new StackPanel() { Margin = new Thickness(30, 0, 0, 0) };
-
-        switch (renderer)
-        {
-            case HeatMapRenderer htmRenderer:
-                var hmView = new HeatMapConfigControlView(htmRenderer, _sequenceViewModel);
-                panel.Children.Add(hmView);
-                _controls.Add(hmView);
-                break;
-            case ChannelMapRenderer chmRenderer:
-                var chmView = new ChannelMapConfigControlView(chmRenderer, _sequenceViewModel);
-                panel.Children.Add(chmView);
-                _controls.Add(chmView);
-                break;
-            case ArgMaxRenderer:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(renderer));
-        }
-
-        return panel;
     }
     
 }

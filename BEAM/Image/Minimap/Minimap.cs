@@ -5,6 +5,7 @@ using BEAM.Docking;
 using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
 using BEAM.ViewModels;
+using BEAM.ViewModels.Minimap.Popups;
 
 namespace BEAM.Image.Minimap;
 
@@ -105,10 +106,18 @@ public abstract class Minimap
     }
 
     public abstract String GetName();
-    public abstract Control GetSettingsPopupControl();
+    public abstract (Control, ISaveControl) GetSettingsPopupControl();
     
     
     public abstract IDockBase GetDock();
 
+    public new string ToString()
+    {
+        return GetName();
+    }
     public abstract ViewModelBase GetViewModel();
+
+    public abstract Minimap Clone();
+    
+    public abstract void StartGeneration(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc);
 }

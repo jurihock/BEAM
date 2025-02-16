@@ -8,7 +8,9 @@ using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
 using BEAM.ViewModels;
 using BEAM.ViewModels.Minimap;
+using BEAM.ViewModels.Minimap.Popups;
 using BEAM.Views.Minimap;
+using BEAM.Views.Minimap.Popups.EmbeddedSettings;
 using ScottPlot;
 
 namespace BEAM.Image.Minimap;
@@ -19,7 +21,7 @@ namespace BEAM.Image.Minimap;
 /// </summary>
 public class PlotMinimap : Minimap
 {
-    private int _compactionFactor = 100;
+    public int CompactionFactor = 100;
     /// <summary>
     /// The default minimap algorithm which will be used if this class is instantiated
     /// without a specific algorithm through its base class constructor.
@@ -32,11 +34,16 @@ public class PlotMinimap : Minimap
     /// <summary>
     /// The underlying algorithm used to calculate values for pixel lines. These values will later be displayed in the plot.
     /// </summary>
-    private readonly IMinimapAlgorithm _minimapAlgorithm;
+    public IMinimapAlgorithm MinimapAlgorithm;
+
+    public PlotMinimap()
+    {
+        
+    }
     
     public PlotMinimap(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc) : base(sequence, eventCallbackFunc)
     {
-        this._minimapAlgorithm = DefaultAlgorithm;
+        this.MinimapAlgorithm = DefaultAlgorithm;
         Task.Run(GenerateMinimap, CancellationTokenSource.Token);
     }
     
@@ -53,12 +60,18 @@ public class PlotMinimap : Minimap
     public PlotMinimap(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc, IMinimapAlgorithm algorithm) : base(sequence, eventCallbackFunc)
     {
         ArgumentNullException.ThrowIfNull(algorithm);
-        _minimapAlgorithm = algorithm;
+        MinimapAlgorithm = algorithm;
         Task.Run(GenerateMinimap, CancellationTokenSource.Token);
     }
 
 
 
+    public override void StartGeneration(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc)
+    {
+        this.Sequence = sequence;
+        MinimapGenerated += eventCallbackFunc;
+        Task.Run(GenerateMinimap, CancellationTokenSource.Token);
+    }
     /// <summary>
     /// Handles the logic for creating the minimap data alongside its
     /// visual representation in the required format(<see cref="Avalonia.Controls.UserControl"/>).
@@ -67,7 +80,7 @@ public class PlotMinimap : Minimap
     {
         
         //TODO: do Work with Sequence
-        bool result = _minimapAlgorithm.AnalyzeSequence(Sequence, this.CancellationTokenSource.Token);
+        bool result = MinimapAlgorithm.AnalyzeSequence(Sequence, this.CancellationTokenSource.Token);
         Console.WriteLine("Returned " + result);
         if (!result)
         {
@@ -81,7 +94,7 @@ public class PlotMinimap : Minimap
         double[]values = new double[Sequence.Shape.Height / 100];
         for (int i = 0; i < Sequence.Shape.Height / 100; i++)
         {
-            values[i] = _minimapAlgorithm.GetLineValue(i * 100);
+            values[i] = MinimapAlgorithm.GetLineValue(i * 100);
             Console.WriteLine("Line " + i + " Value: " + values[i]);
         }
 
@@ -111,7 +124,7 @@ public class PlotMinimap : Minimap
             throw new InvalidOperationException();
         }
 
-        return _minimapAlgorithm.GetLineValue(line);
+        return MinimapAlgorithm.GetLineValue(line);
     }
 
 
@@ -120,18 +133,31 @@ public class PlotMinimap : Minimap
         return "Plot Minimap";
     }
 
-    public override Control GetSettingsPopupControl()
+    public override (Control, ISaveControl) GetSettingsPopupControl()
     {
-        return new PlotMinimapConfigControlView(this,)
+        var toReturn = new PlotMinimapConfigControlView(this);
+        return (toReturn, toReturn);
     }
 
     public override IDockBase GetDock()
     {
         return viewModel;
     }
+    
+    
+    public void SetCompactionFactor(int newFactor)
+    {
+        if (newFactor < 1) return;
+         CompactionFactor = newFactor;
+    }
 
     public override ViewModelBase GetViewModel()
     {
-        return viewModel;
+        throw new NotImplementedException();
+    }
+
+    public override Minimap Clone()
+    {
+        return new PlotMinimap() {CompactionFactor = this.CompactionFactor, MinimapAlgorithm = this.MinimapAlgorithm};
     }
 }

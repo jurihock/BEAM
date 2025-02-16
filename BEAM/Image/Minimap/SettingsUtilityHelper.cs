@@ -11,7 +11,8 @@ public static class MinimapSettingsUtilityHelper
 {
     private static NumberMapper<Type>? _mapping;
     private static List<Minimap>? _defaultMinimaps;
-
+    private static Minimap? _currentDefault;
+    
     private static int _currentSelection = 0;
     private static void CreateMapping()
     {
@@ -19,7 +20,8 @@ public static class MinimapSettingsUtilityHelper
         _mapping = new NumberMapper<Type>(minimaps);
     }
 
-    public static IEnumerable<Minimap> GetDefaultMinimaps()
+    
+    public static ImmutableList<Minimap> GetDefaultMinimaps()
     {
         if(_mapping is null) CreateMapping();
         if (_defaultMinimaps is null)
@@ -34,6 +36,38 @@ public static class MinimapSettingsUtilityHelper
     public static int GetCurrentSelection()
     {
         return _currentSelection;  
+    }
+    
+    public static Minimap GetDefaultMinimap()
+    {
+        if(_mapping is null) CreateMapping();
+        if(_currentDefault is null) _currentDefault = TypeToMinimap(_mapping.FromNumber(0));
+        return _currentDefault;
+    }
+    
+    public static void SetDefaultMinimap(Minimap? newMinimapDefault)
+    {
+        if (newMinimapDefault is null)
+        {
+            return;
+        }
+        _currentDefault = newMinimapDefault;
+    }
+
+    public static List<Minimap> GetNewMinimapSet()
+    {
+        return ReplaceEveryEntry<Minimap, Minimap>(GetDefaultMinimaps(), x => x.Clone());
+    }
+    
+    public static List<K> ReplaceEveryEntry<T,K>(this IEnumerable<T> inputList, Func<T, K> conversion)
+    {
+        List<K> output = new List<K>();
+        foreach (var element in inputList)
+        {
+            output.Add(conversion(element));
+        }
+
+        return output;
     }
 
     public static bool ExistAny()
