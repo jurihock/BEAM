@@ -11,6 +11,7 @@ public partial class DefaultMinimapPopupView : Window, IDockBase
 {
     public DefaultMinimapPopupView()
     {
+        DataContext = new DefaultMinimapPopupViewModel();
         InitializeComponent();
     }
     

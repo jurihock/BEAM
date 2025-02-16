@@ -86,7 +86,10 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     public async Task OpenDefaultMinimapWindow()
     {
-        DockingVm.OpenDock(new DefaultMinimapPopupView());
+        
+        DefaultMinimapPopupView minimapPopup = new();
+        var v = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+        await minimapPopup.ShowDialog(v.MainWindow);
     }
     
     [RelayCommand]

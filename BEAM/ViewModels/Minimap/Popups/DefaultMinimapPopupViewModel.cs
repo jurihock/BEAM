@@ -23,15 +23,16 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
 
     private Image.Minimap.Minimap? _chosenMinimap;
 
-    private ComboBox _minimapSelection = new ComboBox();
+    private ComboBox _minimapSelection;
 
     [ObservableProperty] public StackPanel minimapSubSettings = new StackPanel() { Margin = new Thickness(30, 0, 0, 0) };
+    public ObservableCollection<Control> subSettings = [];
 
     private ISaveControl? _currentConfigControl;
 
    
     
-    public DefaultMinimapPopupViewModel(SequenceViewModel sequenceViewModel)
+    public DefaultMinimapPopupViewModel()
     {
         if (!MinimapSettingsUtilityHelper.ExistAny())
         {
