@@ -3,5 +3,6 @@
 namespace BEAM.ViewModels;
 
 public class ViewModelBase : ObservableObject
+
 {
 }

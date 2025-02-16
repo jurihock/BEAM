@@ -2,11 +2,12 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using BEAM.Docking;
 using BEAM.ViewModels.Minimap.Popups;
 
 namespace BEAM.Views.Minimap.Popups;
 
-public partial class DefaultMinimapPopupView : Window
+public partial class DefaultMinimapPopupView : Window, IDockBase
 {
     public DefaultMinimapPopupView()
     {
@@ -26,5 +27,12 @@ public partial class DefaultMinimapPopupView : Window
         }
 
         // If execution is here -> Save failed, hints in controls
+    }
+
+    public new string Name { get; } = "Configure Default Minimap settings";
+
+    public void OnClose()
+    {
+        return;
     }
 }

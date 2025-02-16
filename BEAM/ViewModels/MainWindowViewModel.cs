@@ -11,6 +11,7 @@ using BEAM.ImageSequence;
 using BEAM.Log;
 using BEAM.Models;
 using BEAM.Views;
+using BEAM.Views.Minimap.Popups;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Input;
@@ -30,7 +31,11 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] public partial string Copy { get; set; } = BaseConfig.Copy;
     [ObservableProperty] public partial string Help { get; set; } = BaseConfig.Help;
     [ObservableProperty] public partial string View { get; set; } = BaseConfig.View;
+    
+    [ObservableProperty] public partial string ShowDefaultMinimap { get; set; } = BaseConfig.ShowDefaultMinimap;
     [ObservableProperty] public partial string ViewOpenStatusWindow { get; set; } = BaseConfig.ViewOpenStatusWindow;
+    
+
 
     [ObservableProperty] private string? _fileText;
     [ObservableProperty] public partial DockingViewModel DockingVm { get; set; } = new();
@@ -78,6 +83,12 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
+    [RelayCommand]
+    public async Task OpenDefaultMinimapWindow()
+    {
+        DockingVm.OpenDock(new DefaultMinimapPopupView());
+    }
+    
     [RelayCommand]
     private async Task OpenSequenceFromDrop(IEnumerable<IStorageItem>? files)
     {

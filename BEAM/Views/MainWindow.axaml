@@ -31,6 +31,8 @@
                     <NativeMenuItemSeparator />
                     <NativeMenuItem Header="{Binding Exit}" Command="{Binding ExitBeam}"
                                     IsVisible="{OnPlatform macOS=False, Default=True}" />
+                    <NativeMenuItem Header="{Binding ShowDefaultMinimap}" Command="{Binding OpenDefaultMinimapWindow}"
+                                    IsVisible="{OnPlatform macOS=False, Default=True}" />
                 </NativeMenu>
             </NativeMenuItem>
             <NativeMenuItem Header="{Binding Edit}">
