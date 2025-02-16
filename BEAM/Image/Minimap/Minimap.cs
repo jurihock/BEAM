@@ -18,7 +18,7 @@ public abstract class Minimap
     /// <summary>
     /// The sequence based on which the minimap is based.
     /// </summary>
-    protected readonly Sequence Sequence;
+    protected Sequence? Sequence;
     protected bool IsGenerated { get; set; } = false;
     /// <summary>
     /// Cancellation Token for the generation process. Any subclass should use this Token for its Threads
@@ -55,6 +55,20 @@ public abstract class Minimap
         CancellationTokenSource = new();
         MinimapGenerated += eventCallbackFunc;
     }
+
+    public Minimap()
+    {
+        CancellationTokenSource = new();
+    }
+
+    public void SetParameters(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc)
+    {
+        ArgumentNullException.ThrowIfNull(sequence);
+        ArgumentNullException.ThrowIfNull(eventCallbackFunc);
+        this.Sequence = sequence;
+        MinimapGenerated += eventCallbackFunc;
+    }
+
     
     /// <summary>
     /// Returns a UI element which can be included by a view.
@@ -90,6 +104,10 @@ public abstract class Minimap
         MinimapGenerated.Invoke(e.Minimap, e);
     }
 
+    public abstract String GetName();
+    public abstract Control GetSettingsPopupControl();
+    
+    
     public abstract IDockBase GetDock();
 
     public abstract ViewModelBase GetViewModel();

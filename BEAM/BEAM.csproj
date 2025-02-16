@@ -13,6 +13,8 @@
     <ItemGroup>
         <Folder Include="Models\" />
         <AvaloniaResource Include="Assets\**" />
+        <Folder Include="ViewModels\Minimap\Popups\EmbeddedSettings\" />
+        <Folder Include="Views\Minimap\Popups\EmbeddedSettings\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -32,6 +34,7 @@
 
     <ItemGroup>
       <UpToDateCheckInput Remove="Views\Titlebar\MenuBar.axaml" />
+      <UpToDateCheckInput Remove="ViewModels\Minimap\Popups\DefaultMinimapPopupViewModel.axaml" />
     </ItemGroup>
 
     <ItemGroup>

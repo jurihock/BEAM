@@ -115,6 +115,16 @@ public class PlotMinimap : Minimap
     }
 
 
+    public override string GetName()
+    {
+        return "Plot Minimap";
+    }
+
+    public override Control GetSettingsPopupControl()
+    {
+        return new PlotMinimapConfigControlView(this,)
+    }
+
     public override IDockBase GetDock()
     {
         return viewModel;
