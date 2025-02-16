@@ -8,8 +8,16 @@
              x:Class="BEAM.Views.Minimap.Popups.EmbeddedSettings.PlotMinimapConfigControlView">
     
     <StackPanel Orientation="Horizontal">
-        <TextBlock VerticalAlignment="Center" Margin="10 0">Channel:</TextBlock>
-        <!--<TextBox TextChanged="_InputChanged" Text="{Binding ChannelText}"/>-->
-        <NumericUpDown Value="{Binding LineCompaction}" FormatString="N0" Minimum="1" MinWidth="110" ParsingNumberStyle="Integer" />
+        <NumericUpDown Value="{Binding LineCompaction}" FormatString="N0" Increment="5" Minimum="1" MinWidth="110" ParsingNumberStyle="Integer" />
+        <ComboBox x:Name="MinimapSelector" Grid.Column="2" Grid.Row="2" MinWidth="200" MaxDropDownHeight="200" 
+                  ItemsSource="{Binding algorithms}" SelectedItem="{Binding SelectedAlgorithm}"
+                  SelectionChanged="AlgorithmSelector_OnSelectionChanged">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <ItemsControl Grid.Column="4" Grid.Row="2" ItemsSource="{Binding algorithmSubSettings}" />
     </StackPanel>
 </UserControl>

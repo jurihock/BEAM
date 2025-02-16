@@ -106,18 +106,17 @@ public abstract class Minimap
     }
 
     public abstract String GetName();
-    public abstract (Control, ISaveControl) GetSettingsPopupControl();
+    public abstract (Control, ISaveControl)? GetSettingsPopupControl();
     
     
     public abstract IDockBase GetDock();
 
-    public new string ToString()
-    {
-        return GetName();
-    }
+    public new abstract string ToString();
     public abstract ViewModelBase GetViewModel();
 
     public abstract Minimap Clone();
+
+    public String Name => GetName();
     
     public abstract void StartGeneration(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc);
 }

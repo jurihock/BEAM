@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
+using Avalonia.Controls;
 using BEAM.ImageSequence;
+using BEAM.ViewModels.Minimap.Popups;
 
 namespace BEAM.Image.Minimap.MinimapAlgorithms;
 
@@ -42,5 +44,20 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
     public float GetLineValue(long line)
     {
         return _data[line / _compactionFactor];
+    }
+
+    public string GetName()
+    {
+        return "Pixel Sum";
+    }
+
+    public (Control, ISaveControl)? GetSettingsPopupControl()
+    {
+        return null;
+    }
+
+    public PixelSumAlgorithm()
+    {
+        
     }
 }

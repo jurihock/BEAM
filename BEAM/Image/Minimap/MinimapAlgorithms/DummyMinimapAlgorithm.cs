@@ -2,7 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Animation;
+using Avalonia.Controls;
 using BEAM.ImageSequence;
+using BEAM.ViewModels.Minimap.Popups;
 
 namespace BEAM.Image.Minimap.MinimapAlgorithms;
 
@@ -23,5 +25,19 @@ public class DummyMinimapAlgorithm : IMinimapAlgorithm
     public float GetLineValue(long line)
     {
         return random.NextSingle();
+    }
+
+    public string GetName()
+    {
+        return "Dummy Algorithm";
+    }
+
+    public (Control, ISaveControl)? GetSettingsPopupControl()
+    {
+        return null;
+    }
+    
+    public DummyMinimapAlgorithm()
+    {
     }
 }

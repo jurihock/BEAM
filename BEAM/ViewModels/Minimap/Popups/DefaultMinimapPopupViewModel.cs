@@ -9,7 +9,9 @@ using System.Xml.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using BEAM.Image.Minimap;
+using BEAM.Image.Minimap.Utility;
 using BEAM.Renderer;
+using BEAM.Views.Minimap.Popups.EmbeddedSettings;
 using CommunityToolkit.Mvvm.ComponentModel;
 using NP.Utilities;
 
@@ -17,18 +19,13 @@ namespace BEAM.ViewModels.Minimap.Popups;
 
 public partial class  DefaultMinimapPopupViewModel : ViewModelBase
 {
-    private static Control _defaultControl = new TextBox() { Text = "This Minimap provides no changeable settings" };
+    private static String _defaultControlText = "This Minimap provides no changeable settings";
+
+    [ObservableProperty] public partial Image.Minimap.Minimap SelectedMinimap { get; set; }
+    [ObservableProperty] public partial ObservableCollection<Image.Minimap.Minimap> minimaps { get; set; } = new ObservableCollection<Image.Minimap.Minimap>();
+    [ObservableProperty] public partial ObservableCollection<Control> minimapSubSettings { get; set; } = new ObservableCollection<Control>();
     
-    private List<ISaveControl> _controls = [];
-
-    [ObservableProperty] public Image.Minimap.Minimap chosenMinimap;
-    [ObservableProperty] public int chosenMinimapIndex;
-    private ComboBox _minimapSelection;
-
-    [ObservableProperty] public StackPanel minimapSubSettings = new StackPanel() { Margin = new Thickness(30, 0, 0, 0) };
-    public ObservableCollection<Control> subSettings = [];
-    [ObservableProperty] ObservableCollection<Image.Minimap.Minimap> minimaps = [];
-    private ISaveControl? _currentConfigControl;
+    private ISaveControl _currentControl = new NullSaveConfig();
 
    
     
@@ -36,80 +33,55 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
     {
         if (!MinimapSettingsUtilityHelper.ExistAny())
         {
-            TextBlock textBlock = new TextBlock();
-            textBlock.Text = "No Minimaps available";
-            minimapSubSettings.Children.Add(textBlock);
+            TextBlock textBlock = new TextBlock(){Text= "There are no Minimaps to choose from"};
             return;
         }
         
         
-        
-
-        for (var index = 0; index < MinimapSettingsUtilityHelper.GetDefaultMinimaps().Count(); index++)
+        foreach(var element in MinimapSettingsUtilityHelper.GetDefaultMinimaps())
         {
-            var minimap = MinimapSettingsUtilityHelper.GetDefaultMinimaps()[index];
-            _minimapSelection.Items.Add(minimap);
-            minimaps.Add(minimap);
+            minimaps.Add(element);
         }
+        //TODO: remove before demonstration
+        minimaps.Add(new PlotMinimap());
+        SelectedMinimap = MinimapSettingsUtilityHelper.GetDefaultMinimap();
         
-        chosenMinimap = MinimapSettingsUtilityHelper.GetDefaultMinimap();
-        chosenMinimapIndex = 0;
-        _minimapSelection.SelectedItem = chosenMinimap;
-        ChangeDisplayedSettings();
-        
-        _minimapSelection.SelectionChanged += (sender, args) =>
-        {
-            if(_currentConfigControl is not null)
-            {
-                _currentConfigControl.Save();
-            }
-            chosenMinimap = (Image.Minimap.Minimap)_minimapSelection.SelectedItem;
-            ChangeDisplayedSettings();
-        };
     }
 
-    private void ChangeDisplayedSettings()
+    public void SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (_currentConfigControl is not null)
+        _currentControl.Save();
+        Image.Minimap.Minimap? minimap;
+        try
         {
-            _currentConfigControl.Save();
+             minimap = (Image.Minimap.Minimap) e.AddedItems[0]!;
         }
-        minimapSubSettings.Children.Clear();
-        
+        catch (NullReferenceException ex)
+        {
+            throw new InvalidCastException("The selected Minimap is not a Minimap", ex);
+        }
+
         //TODO: Alternatively one minimap only ever has one Control Window and we can get access to it thathw ay
         //TODO: Alternatively one ([User]Control, ISaveControl) inherits from the other
-        (Control, ISaveControl)? duplicateView = (_minimapSelection.SelectedItem as Image.Minimap.Minimap)?.GetSettingsPopupControl();
-        Control toDisplay;
-        if (duplicateView is not null)
+        var controls = minimap.GetSettingsPopupControl();
+        minimapSubSettings.Clear();
+        if(controls is null or (null, null) or (null, not null) or (not null, null))
         {
-            if(duplicateView.Value.Item1 is not null)
-            {
-                toDisplay = duplicateView.Value.Item1;
-                _currentConfigControl = duplicateView.Value.Item2;
-            }   
-            else
-            {
-               toDisplay = _defaultControl;
-               _currentConfigControl = null;
-            }
+            _currentControl = new NullSaveConfig();
+            minimapSubSettings.Add(new TextBlock() {Text = _defaultControlText});
         }
         else
         {
-            toDisplay = new TextBox(){Text = "An Error Occured trying to get this Minimap's Control Panel;"};
-            _currentConfigControl = null;
+            _currentControl = controls.Value.Item2;
+            minimapSubSettings.Add(controls.Value.Item1);
         }
-        
-        minimapSubSettings.Children.Add(toDisplay);
     }
     
     public bool Save()
     {
-        if (_currentConfigControl is not null)
-        {
-            _currentConfigControl.Save();
-        }
+        _currentControl.Save();
         
-        MinimapSettingsUtilityHelper.SetDefaultMinimap(chosenMinimap);
+        MinimapSettingsUtilityHelper.SetDefaultMinimap(SelectedMinimap);
         return true;
     }
     

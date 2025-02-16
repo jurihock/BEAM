@@ -1,5 +1,8 @@
+using System;
 using System.Threading;
+using Avalonia.Controls;
 using BEAM.ImageSequence;
+using BEAM.ViewModels.Minimap.Popups;
 
 namespace BEAM.Image.Minimap.MinimapAlgorithms;
 
@@ -23,5 +26,11 @@ public interface IMinimapAlgorithm
     /// <param name="line">The line whose value shall be returned.</param>
     /// <returns>The specified line's calculated value.</returns>
     float GetLineValue(long line);
+
+    String GetName();
+
+    public String Name => GetName();
     
+    public abstract (Control, ISaveControl)? GetSettingsPopupControl();
+
 }

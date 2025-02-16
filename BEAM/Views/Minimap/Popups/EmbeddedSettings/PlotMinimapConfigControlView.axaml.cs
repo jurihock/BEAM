@@ -19,4 +19,15 @@ public partial class PlotMinimapConfigControlView : UserControl, ISaveControl
     {
         ((DataContext as PlotMinimapConfigControlViewModel)!).Save();
     }
+    
+
+    private void AlgorithmSelector_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        var vm = (DataContext as PlotMinimapConfigControlViewModel);
+        if (vm is null)
+        {
+            return;
+        }
+        vm.SelectionChanged(sender, e);
+    }
 }

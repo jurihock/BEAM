@@ -133,7 +133,7 @@ public class PlotMinimap : Minimap
         return "Plot Minimap";
     }
 
-    public override (Control, ISaveControl) GetSettingsPopupControl()
+    public override (Control, ISaveControl)? GetSettingsPopupControl()
     {
         var toReturn = new PlotMinimapConfigControlView(this);
         return (toReturn, toReturn);
@@ -159,5 +159,10 @@ public class PlotMinimap : Minimap
     public override Minimap Clone()
     {
         return new PlotMinimap() {CompactionFactor = this.CompactionFactor, MinimapAlgorithm = this.MinimapAlgorithm};
+    }
+
+    public override string ToString()
+    {
+        return "Plot Minimap";
     }
 }
