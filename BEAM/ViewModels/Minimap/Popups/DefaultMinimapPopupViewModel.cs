@@ -21,13 +21,13 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
     
     private List<ISaveControl> _controls = [];
 
-    private Image.Minimap.Minimap? _chosenMinimap;
-
+    [ObservableProperty] public Image.Minimap.Minimap chosenMinimap;
+    [ObservableProperty] public int chosenMinimapIndex;
     private ComboBox _minimapSelection;
 
     [ObservableProperty] public StackPanel minimapSubSettings = new StackPanel() { Margin = new Thickness(30, 0, 0, 0) };
     public ObservableCollection<Control> subSettings = [];
-
+    [ObservableProperty] ObservableCollection<Image.Minimap.Minimap> minimaps = [];
     private ISaveControl? _currentConfigControl;
 
    
@@ -42,17 +42,19 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
             return;
         }
         
-        _chosenMinimap = MinimapSettingsUtilityHelper.GetDefaultMinimap();
+        
         
 
         for (var index = 0; index < MinimapSettingsUtilityHelper.GetDefaultMinimaps().Count(); index++)
         {
             var minimap = MinimapSettingsUtilityHelper.GetDefaultMinimaps()[index];
             _minimapSelection.Items.Add(minimap);
+            minimaps.Add(minimap);
         }
         
-        
-        _minimapSelection.SelectedItem = _chosenMinimap;
+        chosenMinimap = MinimapSettingsUtilityHelper.GetDefaultMinimap();
+        chosenMinimapIndex = 0;
+        _minimapSelection.SelectedItem = chosenMinimap;
         ChangeDisplayedSettings();
         
         _minimapSelection.SelectionChanged += (sender, args) =>
@@ -61,7 +63,7 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
             {
                 _currentConfigControl.Save();
             }
-            _chosenMinimap = (Image.Minimap.Minimap)_minimapSelection.SelectedItem;
+            chosenMinimap = (Image.Minimap.Minimap)_minimapSelection.SelectedItem;
             ChangeDisplayedSettings();
         };
     }
@@ -107,7 +109,7 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
             _currentConfigControl.Save();
         }
         
-        MinimapSettingsUtilityHelper.SetDefaultMinimap(_chosenMinimap);
+        MinimapSettingsUtilityHelper.SetDefaultMinimap(chosenMinimap);
         return true;
     }
     
