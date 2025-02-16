@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading;
+using BEAM.Datatypes;
 using BEAM.Datatypes.Color;
 using BEAM.Exceptions;
 using BEAM.ImageSequence;
@@ -16,10 +17,13 @@ namespace BEAM.Renderer;
 public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maximumOfIntensityRange)
     : SequenceRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
 {
+    // TODO: Implement function for user to determine unused Channel
+    private int _alphaChannel = -1;
+    
     public override BGR RenderPixel(ISequence sequence, long x, long y)
     {
         var channels = sequence.GetPixel(x, y);
-        var argMaxChannel = ArgMax(channels);
+        var argMaxChannel = channels.ArgMax();
         var color = GetColor(argMaxChannel, channels.Length);
         
         return color;
@@ -31,51 +35,31 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
         var channels = new int[sequence.Shape.Channels];
         for (var i = 0; i < sequence.Shape.Channels; i++)
         {
+            if (i == _alphaChannel) // ignore the alpa channel
+            {
+                continue;
+            }
+            
             channels[i] = i;
         }
 
         var line = sequence.GetPixelLineData(xs, y, channels);
         var data = new BGR[xs.Length];
-
+        
         for (var x = 0; x < xs.Length; x++)
         {
             tokenSource?.Token.ThrowIfCancellationRequested();
 
-            var index = ArgMax(line.GetPixel(x, 0));
-            var color = GetColor(index, channels.Length);
+            var argMax = line.GetPixel(x, 0).ArgMax();
+            
+            var amountChannels = (_alphaChannel == -1) ? channels.Length - 1 : channels.Length;
+            
+            var color = GetColor(argMax, amountChannels);
 
             data[x] = color;
-            //data[x, 3] = 255;
         }
 
         return data;
-    }
-
-    /// <summary>
-    /// Given an Array of channel intensities, return the first index with the highest intensity
-    /// </summary>
-    /// <param name="channels"></param>
-    /// <returns></returns>
-    /// <exception cref="ChannelException"></exception>
-    private int ArgMax(double[] channels)
-    {
-        if (channels.Length <= 0)
-        {
-            throw new ChannelException("Channels must be greater than 0.");
-        }
-
-        double maxIntensity = MinimumOfIntensityRange;
-        int maxPosition = 0;
-        for (int i = 0; i < channels.Length; i++)
-        {
-            if (channels[i] > maxIntensity)
-            {
-                maxIntensity = channels[i];
-                maxPosition = i;
-            }
-        }
-
-        return maxPosition;
     }
     
     protected abstract BGR GetColor(int channelNumber, int amountChannels);

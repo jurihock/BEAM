@@ -28,7 +28,6 @@ public partial class ChannelMapRenderer : SequenceRenderer
     [ObservableProperty] private int channelGreen;
     [ObservableProperty] private int channelBlue;
 
-    //TODO: RGBA or ARGB?
     /// <summary>
     /// Create the RGBA value for a given pixel of a sequence
     /// </summary>
