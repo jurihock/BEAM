@@ -58,7 +58,6 @@ public partial class SequenceView : UserControl
         var vm = DataContext as SequenceViewModel;
         if (vm == null || vm.Minimap.Count == 0)
         {
-            Console.WriteLine("sth went wrong");
             return;
         }
 
@@ -138,6 +137,8 @@ public partial class SequenceView : UserControl
         menu.AddSeparator();
         menu.Add("Export sequence",
             control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+        menu.Add("Change Minimap settings for this sequence",
+            control => vm.OpenMinimapSettingsCommand.Execute(null));
     }
 
     private void PointerPressedHandler(object sender, PointerPressedEventArgs args)
@@ -174,9 +175,10 @@ public partial class SequenceView : UserControl
         {
             return;
         }
-        vm.MinimapHasGenerated += OnMinimapGenerated;
         FillPlot(vm.Sequence);
     }
+
+
 
     // private void InputElement_OnPointerMoved(object? sender, PointerEventArgs e)
     // {
@@ -190,21 +192,13 @@ public partial class SequenceView : UserControl
     //     vm.UpdateInspectionViewModel(((long)CoordInPlot.X, (long)CoordInPlot.Y));
     // }
 
-    private void OnMinimapGenerated(object? sender, EventArgs e)
-    {
-        Console.WriteLine("Ready to view");
-        /*Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            var vm = DataContext as SequenceViewModel;
-        });*/
-    }
+
 
     private void Layoutable_OnLayoutUpdated(object? sender, EventArgs e)
     {
         var vm = DataContext as SequenceViewModel;
         if (vm == null || vm.Minimap.Count == 0)
         {
-            Console.WriteLine("sth went wrong");
             return;
         }
 

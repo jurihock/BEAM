@@ -11,22 +11,25 @@ public static class MinimapSettingsUtilityHelper
 {
     private static List<Minimap>? _defaultMinimaps;
     private static Minimap? _currentDefault;
+    private static readonly Type DefaultType = typeof(PlotMinimap);
     
     private static void GenerateMinimaps()
     {
-        try
+        
+        _defaultMinimaps = new List<Minimap>();
+        _defaultMinimaps.AddAll(Assembly.GetExecutingAssembly().GetTypes()
+            .Where(t => t is { IsClass: true, IsAbstract: false } && t.IsSubclassOf(typeof(Image.Minimap.Minimap)))
+            .ToList().ReplaceEveryEntry(TypeToMinimap));
+        if (_currentDefault is null)
         {
-            _defaultMinimaps = new List<Minimap>();
-            _defaultMinimaps.AddAll(Assembly.GetExecutingAssembly().GetTypes()
-                .Where(t => t is { IsClass: true, IsAbstract: false } && t.IsSubclassOf(typeof(Image.Minimap.Minimap)))
-                .ToList().ReplaceEveryEntry(TypeToMinimap));
-            if (_currentDefault is null)
+            var defaults = _defaultMinimaps.Where(t => t.GetType().Equals(DefaultType)).ToList();
+            if (!defaults.IsNullOrEmpty())
             {
-                _currentDefault = _defaultMinimaps.First();
+                _currentDefault = defaults.First();
+            } else
+            {
+                _currentDefault ??= _defaultMinimaps.First();
             }
-        }catch (TargetInvocationException e)
-        {
-            Console.WriteLine(e + "| " + e.Source);
         }
     }
 

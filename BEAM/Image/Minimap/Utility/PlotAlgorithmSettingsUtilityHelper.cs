@@ -14,6 +14,7 @@ public static class PlotAlgorithmSettingsUtilityHelper
 {
     private static List<IMinimapAlgorithm>? _defaultAlgorithms;
     private static IMinimapAlgorithm? _currentDefault;
+    private static readonly Type DefaultType = typeof(PixelSumAlgorithm);
     
     private static void GenerateAlgorithms()
     {
@@ -21,7 +22,14 @@ public static class PlotAlgorithmSettingsUtilityHelper
         _defaultAlgorithms.AddAll(Assembly.GetExecutingAssembly().GetTypes()
             .Where(t => t is { IsClass: true, IsAbstract: false } && t.GetInterfaces().Contains(typeof(IMinimapAlgorithm)))
             .ToList().ReplaceEveryEntry(TypeToAlgorithm));
-        _currentDefault ??= _defaultAlgorithms.First();
+        var defaults = _defaultAlgorithms.Where(t => t.GetType().Equals(DefaultType)).ToList();
+        if (!defaults.IsNullOrEmpty())
+        {
+            _currentDefault = defaults.First();
+        } else
+        {
+            _currentDefault ??= _defaultAlgorithms.First();
+        }
     }
 
     
@@ -38,16 +46,16 @@ public static class PlotAlgorithmSettingsUtilityHelper
     }
     
     
-    public static void SetDefaultAlgorithm(IMinimapAlgorithm? newMinimapDefault)
+    public static void SetDefaultAlgorithm(IMinimapAlgorithm? newAlgorithmDefault)
     {
         
-        if (newMinimapDefault is null)
+        if (newAlgorithmDefault is null)
         {
             Console.WriteLine("Default not set to due to null");
             return;
         }
-        Console.WriteLine("Default set to+ " + newMinimapDefault.GetName());
-        _currentDefault = newMinimapDefault;
+        Console.WriteLine("Default set to+ " + newAlgorithmDefault.GetName());
+        _currentDefault = newAlgorithmDefault;
     }
     
     

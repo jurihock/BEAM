@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Avalonia.Animation;
 using Avalonia.Controls;
 using BEAM.ImageSequence;
+using BEAM.Renderer;
 using BEAM.ViewModels.Minimap.Popups;
 
 namespace BEAM.Image.Minimap.MinimapAlgorithms;
@@ -38,9 +39,19 @@ public class DummyMinimapAlgorithm : IMinimapAlgorithm
         return null;
     }
 
+    public ISaveControl? GetSettingsPopupControl(SettingsStorer storer)
+    {
+        return null;
+    }
+
     public IMinimapAlgorithm Clone()
     {
         return new DummyMinimapAlgorithm();
+    }
+
+    public void SetRenderer(SequenceRenderer renderer)
+    {
+        return;
     }
 
     public DummyMinimapAlgorithm()

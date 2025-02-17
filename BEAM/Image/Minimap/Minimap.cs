@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using BEAM.Docking;
 using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
+using BEAM.Renderer;
 using BEAM.ViewModels;
 using BEAM.ViewModels.Minimap.Popups;
 
@@ -107,6 +108,7 @@ public abstract class Minimap
 
     public abstract String GetName();
     public abstract ISaveControl? GetSettingsPopupControl();
+    public abstract ISaveControl? GetSettingsPopupControl(SettingsStorer storer);
     
     
 
@@ -115,4 +117,6 @@ public abstract class Minimap
     public String Name => GetName();
     
     public abstract void StartGeneration(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc);
+
+    public abstract void SetRenderer(SequenceRenderer renderer);
 }

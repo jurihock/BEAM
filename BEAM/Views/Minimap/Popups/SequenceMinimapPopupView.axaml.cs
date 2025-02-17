@@ -3,21 +3,18 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using BEAM.Docking;
+using BEAM.Image.Minimap;
 using BEAM.ViewModels;
 using BEAM.ViewModels.Minimap.Popups;
 
 namespace BEAM.Views.Minimap.Popups;
 
-public partial class DefaultMinimapPopupView : Window
+public partial class SequenceMinimapPopupView : Window
 {
-    public DefaultMinimapPopupView()
+    public SequenceMinimapPopupView(SequenceViewModel dataBase, SettingsStorer storer)
     {
         InitializeComponent();
-        var vm = new DefaultMinimapPopupViewModel();
-        DataContext = vm;
-        
-        this.DataContextChanged += OnDataContextChanged;
+        DataContext = new SequenceMinimapPopupViewModel(dataBase, storer);
     }
     
     private void Close(object? sender, RoutedEventArgs e)
@@ -32,7 +29,7 @@ public partial class DefaultMinimapPopupView : Window
 
     private void TrySave(object? sender, RoutedEventArgs e)
     {
-        if (((DataContext as DefaultMinimapPopupViewModel)!).Save())
+        if (((DataContext as SequenceMinimapPopupViewModel)!).Save())
         {
             Close();
         }

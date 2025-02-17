@@ -3,6 +3,7 @@ using System.Threading;
 using Avalonia.Controls;
 using BEAM.Exceptions;
 using BEAM.ImageSequence;
+using BEAM.Renderer;
 using BEAM.ViewModels.Minimap.Popups;
 using NP.Utilities;
 
@@ -11,7 +12,6 @@ namespace BEAM.Image.Minimap.MinimapAlgorithms;
 public class PixelSumAlgorithm : IMinimapAlgorithm
 {
     private Sequence? _sequence;
-    private float[]? _data;
     private CancellationToken? _ctx;
     private int[]? _channelFetchMask;
 
@@ -71,9 +71,19 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
         return null;
     }
 
+    public ISaveControl? GetSettingsPopupControl(SettingsStorer storer)
+    {
+        return null;
+    }
+
     public IMinimapAlgorithm Clone()
     {
         return new PixelSumAlgorithm();
+    }
+
+    public void SetRenderer(SequenceRenderer renderer)
+    {
+        return;
     }
 
     public PixelSumAlgorithm()

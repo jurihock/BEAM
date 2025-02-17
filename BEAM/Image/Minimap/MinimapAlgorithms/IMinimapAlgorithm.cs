@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using Avalonia.Controls;
 using BEAM.ImageSequence;
+using BEAM.Renderer;
 using BEAM.ViewModels.Minimap.Popups;
 
 namespace BEAM.Image.Minimap.MinimapAlgorithms;
@@ -32,7 +33,10 @@ public interface IMinimapAlgorithm
     public String Name => GetName();
     
     public abstract ISaveControl? GetSettingsPopupControl();
+    public abstract ISaveControl? GetSettingsPopupControl(SettingsStorer storer);
     
     public abstract IMinimapAlgorithm Clone();
+    
+    public void SetRenderer(SequenceRenderer renderer);
 
 }

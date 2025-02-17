@@ -15,7 +15,6 @@ public partial class MinimapPlotView : UserControl
     {
         InitializeComponent();
         this.DataContextChanged += DataContextChangedHandling;
-        Console.WriteLine("Call constructor Plot view");
     }
     public void FillPlot(Plot newPlot)
     {

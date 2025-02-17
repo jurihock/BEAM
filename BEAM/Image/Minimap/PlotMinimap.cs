@@ -7,6 +7,7 @@ using BEAM.Docking;
 using BEAM.Image.Minimap.MinimapAlgorithms;
 using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
+using BEAM.Renderer;
 using BEAM.ViewModels;
 using BEAM.ViewModels.Minimap;
 using BEAM.ViewModels.Minimap.Popups;
@@ -24,14 +25,6 @@ namespace BEAM.Image.Minimap;
 public class PlotMinimap : Minimap
 {
     public int CompactionFactor = 100;
-    /// <summary>
-    /// The default minimap algorithm which will be used if this class is instantiated
-    /// without a specific algorithm through its base class constructor.
-    /// </summary>
-    private static readonly IMinimapAlgorithm DefaultAlgorithm = new PixelSumAlgorithm();
-    
-    private MinimapPlotViewModel viewModel;
-
 
     /// <summary>
     /// The underlying algorithm used to calculate values for pixel lines. These values will later be displayed in the plot.
@@ -48,7 +41,7 @@ public class PlotMinimap : Minimap
     public PlotMinimap(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc) : base(sequence, eventCallbackFunc)
     {
         CancellationTokenSource = new CancellationTokenSource();
-        this.MinimapAlgorithm = DefaultAlgorithm;
+        this.MinimapAlgorithm = PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithm();;
         Task.Run(GenerateMinimap, CancellationTokenSource.Token);
     }
     
@@ -76,12 +69,22 @@ public class PlotMinimap : Minimap
         Console.WriteLine("Started new Minimap Generation|  " + CancellationTokenSource.ToString());
         Task.Run(GenerateMinimap, CancellationTokenSource.Token);
     }
+
+    public override void SetRenderer(SequenceRenderer renderer)
+    {
+        MinimapAlgorithm.SetRenderer(renderer);
+    }
+
     /// <summary>
     /// Handles the logic for creating the minimap data alongside its
     /// visual representation in the required format(<see cref="Avalonia.Controls.UserControl"/>).
     /// </summary>
     private async Task GenerateMinimap()
     {
+        if (Sequence is null)
+        {
+            OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Failure));
+        }
         Console.WriteLine("Hello");
         Console.WriteLine("Generation by thread: +" + Thread.CurrentThread.ManagedThreadId + " | " + Task.CurrentId);
         //TODO: do Work with Sequence
@@ -122,11 +125,7 @@ public class PlotMinimap : Minimap
         {
             //viewModel = new MinimapPlotViewModel(plot);
             DisplayedMinimap = new MinimapPlotView() {DataContext = new MinimapPlotViewModel(plot)};
-            Console.WriteLine("MinimapVM gen by: +" + Thread.CurrentThread.ManagedThreadId + " | " + Task.CurrentId);
-            Console.WriteLine("Displayed minimap nullcheck innter: " + (DisplayedMinimap is null));
-            Console.WriteLine("Displayed minimap nullcheck outer: " + (DisplayedMinimap is null));
             IsGenerated = true;
-            Console.WriteLine("Hello World");
             OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Success));
         });
 
@@ -166,9 +165,13 @@ public class PlotMinimap : Minimap
     {
         return new PlotMinimapConfigControlView(this);
     }
-    
-    
-    
+
+    public override ISaveControl? GetSettingsPopupControl(SettingsStorer storer)
+    {
+        return new StoredPlotMinimapConfigControlView(this, storer);
+    }
+
+
     public void SetCompactionFactor(int newFactor)
     {
         if (newFactor < 1) return;
@@ -187,4 +190,6 @@ public class PlotMinimap : Minimap
     {
         return "Plot Minimap";
     }
+    
+    
 }

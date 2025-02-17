@@ -1,0 +1,27 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="BEAM.Views.Minimap.Popups.EmbeddedSettings.StoredPlotMinimapConfigControlView"
+             xmlns:controls="clr-namespace:BEAM.ViewModels.Minimap.Popups.EmbeddedSettings"
+             x:DataType="controls:StoredPlotMinimapConfigControlViewModel">
+    <StackPanel>
+        <Grid ColumnDefinitions="Auto, 2, Auto" RowDefinitions="Auto, 2, Auto, 2">
+            <TextBlock Grid.Row="0" Grid.Column="0"> Calculate the values for every x's line:</TextBlock>
+            <NumericUpDown Grid.Row="0" Grid.Column ="2" Value="{Binding LineCompaction}" FormatString="N0" Increment="5" Minimum="1" MinWidth="110" ParsingNumberStyle="Integer" />
+            <TextBlock Grid.Row="2" Grid.Column="0"> Select the algorithm to use:</TextBlock>
+            <ComboBox x:Name="MinimapSelector" Grid.Column="2" Grid.Row="2" MinWidth="200" MaxDropDownHeight="200" 
+                      ItemsSource="{Binding algorithms}" SelectedItem="{Binding SelectedAlgorithm}"
+                      SelectionChanged="AlgorithmSelector_OnSelectionChanged">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Separator Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3"></Separator>
+        </Grid>
+        <ItemsControl ItemsSource="{Binding algorithmSubSettings}" />
+    </StackPanel>
+</UserControl>

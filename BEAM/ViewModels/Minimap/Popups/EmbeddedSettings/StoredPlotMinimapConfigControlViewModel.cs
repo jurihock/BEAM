@@ -11,11 +11,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BEAM.ViewModels.Minimap.Popups.EmbeddedSettings;
 
-public partial class PlotMinimapConfigControlViewModel: ViewModelBase
+public partial class StoredPlotMinimapConfigControlViewModel : ViewModelBase
 {
     private static String _defaultControlText = "This Algorithm provides no changeable settings";
 
-    private PlotMinimap _plotMinimap;
+    private readonly PlotMinimap _plotMinimap;
+    private readonly SettingsStorer _storer;
     [ObservableProperty] public int lineCompaction;
     
     [ObservableProperty] public partial IMinimapAlgorithm SelectedAlgorithm { get; set; }
@@ -29,31 +30,32 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
         _plotMinimap.CompactionFactor = LineCompaction;
         _currentConfigControl.Save();
         _plotMinimap.MinimapAlgorithm = SelectedAlgorithm;
-        PlotAlgorithmSettingsUtilityHelper.SetDefaultAlgorithm(SelectedAlgorithm);
+        _storer.SetDefaultAlgorithm(SelectedAlgorithm);
     }
     
     
    
     
-    public PlotMinimapConfigControlViewModel(PlotMinimap plotMinimap)
+    public StoredPlotMinimapConfigControlViewModel(PlotMinimap plotMinimap, SettingsStorer storer)
     {
+        _storer = storer;
         _plotMinimap = plotMinimap;
         lineCompaction = plotMinimap.CompactionFactor;
-        if (!PlotAlgorithmSettingsUtilityHelper.ExistAny())
+        if (!storer.ExistsAnyAlgorithm())
         {
             TextBlock textBlock = new TextBlock(){Text= "There are no Algorithms to choose from"};
             return;
         }
         
         
-        foreach(var element in PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithms())
+        foreach(var element in _storer.GetDefaultAlgorithms())
         {
             algorithms.Add(element);
         }
 
         try
         {
-            SelectedAlgorithm = PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithm();
+            SelectedAlgorithm = _storer.GetDefaultAlgorithm();
         }
         catch (InvalidStateException ex)
         {
@@ -75,11 +77,10 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
         {
             throw new InvalidCastException("The selected Minimap is not a Minimap", ex);
         }
-        
 
         //TODO: Alternatively one minimap only ever has one Control Window and we can get access to it thathw ay
         //TODO: Alternatively one ([User]Control, ISaveControl) inherits from the other
-        var controls = algorithm.GetSettingsPopupControl();
+        var controls = algorithm.GetSettingsPopupControl(_storer);
         algorithmSubSettings.Clear();
         if(controls is null)
         {
@@ -92,5 +93,4 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
             algorithmSubSettings.Add(controls);
         }
     }
-    
 }
