@@ -15,6 +15,7 @@ public partial class MinimapPlotView : UserControl
     {
         InitializeComponent();
         this.DataContextChanged += DataContextChangedHandling;
+        Console.WriteLine("Call constructor Plot view");
     }
     public void FillPlot(Plot newPlot)
     {
@@ -22,6 +23,8 @@ public partial class MinimapPlotView : UserControl
         
         newPlot.PlotControl = MinimapPlot;
         MinimapPlot.Reset(newPlot);
+        MinimapPlot.Height = 300;
+        MinimapPlot.Width = 300;
         //TODO: Caused AccessViolationException sometimes?!
         MinimapPlot.Refresh();
     }
@@ -29,9 +32,18 @@ public partial class MinimapPlotView : UserControl
     private void DataContextChangedHandling(object? sender, EventArgs eventArgs)
     {
         var vm = DataContext as MinimapPlotViewModel;
-        FillPlot(vm.CurrentPlot);        
+        Console.WriteLine("Filling Plot of Plot view");
+        FillPlot(vm.CurrentPlot); 
+        
+    }
+
+    public void AdaptSize(double newWidth, double newHeight)
+    {
+        MinimapPlot.Width = newWidth;
+        MinimapPlot.Height = newHeight;
+        MinimapPlot.Refresh();
     }
 
 
-    
+
 }

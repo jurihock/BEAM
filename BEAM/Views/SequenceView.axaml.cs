@@ -16,7 +16,9 @@ using BEAM.ImageSequence;
 using BEAM.Log;
 using BEAM.Profiling;
 using BEAM.ViewModels;
+using BEAM.Views.Minimap;
 using CommunityToolkit.Mvvm.ComponentModel;
+using NP.Ava.Visuals;
 using ScottPlot;
 using ScottPlot.Avalonia;
 
@@ -47,7 +49,26 @@ public partial class SequenceView : UserControl
     public SequenceView()
     {
         InitializeComponent();
-        
+        this.SizeChanged += OnSizeChanged;
+
+    }
+
+    private void OnSizeChanged(object? sender, SizeChangedEventArgs e)
+    {
+        var vm = DataContext as SequenceViewModel;
+        if (vm == null || vm.Minimap.Count == 0)
+        {
+            Console.WriteLine("sth went wrong");
+            return;
+        }
+
+        if (vm.Minimap[0] is MinimapPlotView minimapControl)
+        {
+            double newWidth = e.NewSize.Width * 0.2; // 20% of the SequenceView's width
+            double newHeight = e.NewSize.Height; // Full height of the SequenceView
+            
+            minimapControl.AdaptSize(newWidth, newHeight);
+        }
     }
 
     private void FillPlot(Sequence sequence)
@@ -65,7 +86,6 @@ public partial class SequenceView : UserControl
         //var panButton = ScottPlot.Interactivity.StandardMouseButtons.Middle;
         //var panResponse = new ScottPlot.Interactivity.UserActionResponses.MouseDragPan(panButton);
         using var _ = Timer.Start();
-
         AvaPlot1.Plot.Axes.InvertY();
         AvaPlot1.Plot.Axes.SquareUnits();
 
@@ -177,5 +197,23 @@ public partial class SequenceView : UserControl
         {
             var vm = DataContext as SequenceViewModel;
         });*/
+    }
+
+    private void Layoutable_OnLayoutUpdated(object? sender, EventArgs e)
+    {
+        var vm = DataContext as SequenceViewModel;
+        if (vm == null || vm.Minimap.Count == 0)
+        {
+            Console.WriteLine("sth went wrong");
+            return;
+        }
+
+        if (vm.Minimap[0] is MinimapPlotView minimapControl)
+        {
+            double newWidth = this.GetSize().X * 0.2; // 20% of the SequenceView's width
+            double newHeight = this.GetSize().Y; // Full height of the SequenceView
+            
+            minimapControl.AdaptSize(newWidth, newHeight);
+        }
     }
 }

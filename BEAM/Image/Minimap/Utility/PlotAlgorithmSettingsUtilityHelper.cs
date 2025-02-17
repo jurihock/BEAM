@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using BEAM.Exceptions;
 using BEAM.Image.Minimap.MinimapAlgorithms;
+using Microsoft.VisualBasic.CompilerServices;
 using NP.Utilities;
 
 namespace BEAM.Image.Minimap.Utility;
 
 public static class PlotAlgorithmSettingsUtilityHelper
 {
-        private static List<IMinimapAlgorithm>? _defaultAlgorithms;
+    private static List<IMinimapAlgorithm>? _defaultAlgorithms;
     private static IMinimapAlgorithm? _currentDefault;
     
     private static void GenerateAlgorithms()
@@ -38,10 +40,13 @@ public static class PlotAlgorithmSettingsUtilityHelper
     
     public static void SetDefaultAlgorithm(IMinimapAlgorithm? newMinimapDefault)
     {
+        
         if (newMinimapDefault is null)
         {
+            Console.WriteLine("Default not set to due to null");
             return;
         }
+        Console.WriteLine("Default set to+ " + newMinimapDefault.GetName());
         _currentDefault = newMinimapDefault;
     }
     
@@ -76,8 +81,41 @@ public static class PlotAlgorithmSettingsUtilityHelper
         return (IMinimapAlgorithm)result.First().Invoke([]);
         
     }
-    public static IMinimapAlgorithm? GetDefaultAlgorithm()
+    public static IMinimapAlgorithm GetDefaultAlgorithm()
     {
+        if(_defaultAlgorithms is null) GenerateAlgorithms();
+        if(_currentDefault is null)
+        {
+            _currentDefault = _defaultAlgorithms!.First();
+        }
+
+        if (!ExistAny()) throw new InvalidStateException();
+        Console.WriteLine("returned current default as: " + _currentDefault.GetName());
         return _currentDefault;
     }
+
+    public static SettingsTransferObject<IMinimapAlgorithm> GetDefaultClones()
+    {
+        IMinimapAlgorithm? defaultClone = null;
+        List<IMinimapAlgorithm> allPossible = new List<IMinimapAlgorithm>();
+        if(_defaultAlgorithms is null) GenerateAlgorithms();
+        foreach (var entry in _defaultAlgorithms!)
+        {
+            IMinimapAlgorithm clone = entry.Clone();
+            if (entry.Equals(_currentDefault))
+            {
+                defaultClone = clone;
+            }
+
+            allPossible.Add(clone);
+        }
+        return new SettingsTransferObject<IMinimapAlgorithm>(allPossible.ToImmutableList(), defaultClone);
+    }
+    
+}
+
+public class SettingsTransferObject<T>(ImmutableList<T> allPossible, T? active)
+{
+    public T? Active { get; set; } = active;
+    public readonly ImmutableList<T> AllPossible = allPossible;
 }

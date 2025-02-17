@@ -8,5 +8,8 @@
              x:DataType="minimap:MinimapPlotViewModel"
              x:Name="Minimap"
              x:Class="BEAM.Views.Minimap.MinimapPlotView">
-    <scott:AvaPlot Name="MinimapPlot"></scott:AvaPlot>
+    
+    <StackPanel>
+        <scott:AvaPlot Name="MinimapPlot"></scott:AvaPlot>
+    </StackPanel>
 </UserControl>

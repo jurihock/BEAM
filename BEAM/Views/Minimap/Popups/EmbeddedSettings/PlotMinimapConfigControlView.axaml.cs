@@ -7,7 +7,7 @@ using BEAM.ViewModels.Minimap.Popups.EmbeddedSettings;
 
 namespace BEAM.Views.Minimap.Popups.EmbeddedSettings;
 
-public partial class PlotMinimapConfigControlView : UserControl, ISaveControl
+public partial class PlotMinimapConfigControlView : ISaveControl
 {
     public PlotMinimapConfigControlView(PlotMinimap plotMinimap)
     {
@@ -15,7 +15,7 @@ public partial class PlotMinimapConfigControlView : UserControl, ISaveControl
         InitializeComponent();
     }
     
-    public void Save()
+    public override void Save()
     {
         ((DataContext as PlotMinimapConfigControlViewModel)!).Save();
     }

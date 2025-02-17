@@ -17,6 +17,6 @@
     <Grid ColumnDefinitions="*, Auto, Auto">
         <scott:AvaPlot Name="AvaPlot1" Grid.Column="0"/>
         <ScrollBar Name="Bar" Orientation="Vertical" Visibility="Visible" AllowAutoHide="False" Grid.Column="1" />
-        <ItemsControl ItemsSource="{Binding Minimap}" Grid.Column="2"></ItemsControl>
+        <ItemsControl ItemsSource="{Binding Minimap}" Grid.Column="2" LayoutUpdated="Layoutable_OnLayoutUpdated"></ItemsControl>
     </Grid>
 </UserControl>

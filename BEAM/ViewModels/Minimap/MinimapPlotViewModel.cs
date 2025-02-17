@@ -10,7 +10,7 @@ public partial class MinimapPlotViewModel : ViewModelBase, IDockBase
     public string Name { get; } = "Minimap View";
     public void OnClose()
     {
-        throw new System.NotImplementedException();
+        return;
     }
 
     public MinimapPlotViewModel(Plot plot)

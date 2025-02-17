@@ -65,15 +65,15 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
         //TODO: Alternatively one ([User]Control, ISaveControl) inherits from the other
         var controls = minimap.GetSettingsPopupControl();
         minimapSubSettings.Clear();
-        if(controls is null or (null, null) or (null, not null) or (not null, null))
+        if(controls is null)
         {
             _currentControl = new NullSaveConfig();
             minimapSubSettings.Add(new TextBlock() {Text = _defaultControlText});
         }
         else
         {
-            _currentControl = controls.Value.Item2;
-            minimapSubSettings.Add(controls.Value.Item1);
+            _currentControl = controls;
+            minimapSubSettings.Add(controls);
         }
     }
     
@@ -87,7 +87,7 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
     
 }
 
-public interface ISaveControl
+public abstract class ISaveControl : UserControl
 {
-    public void Save();
+    public abstract void Save();
 }

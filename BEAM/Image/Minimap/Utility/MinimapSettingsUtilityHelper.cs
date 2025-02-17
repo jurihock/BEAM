@@ -14,13 +14,19 @@ public static class MinimapSettingsUtilityHelper
     
     private static void GenerateMinimaps()
     {
-        _defaultMinimaps = new List<Minimap>(); 
-        _defaultMinimaps.AddAll(Assembly.GetExecutingAssembly().GetTypes()
-            .Where(t => t is { IsClass: true, IsAbstract: false } && t.IsSubclassOf(typeof(Image.Minimap.Minimap)))
-            .ToList().ReplaceEveryEntry(TypeToMinimap));
-        if(_currentDefault is null)
+        try
         {
-            _currentDefault = _defaultMinimaps.First();
+            _defaultMinimaps = new List<Minimap>();
+            _defaultMinimaps.AddAll(Assembly.GetExecutingAssembly().GetTypes()
+                .Where(t => t is { IsClass: true, IsAbstract: false } && t.IsSubclassOf(typeof(Image.Minimap.Minimap)))
+                .ToList().ReplaceEveryEntry(TypeToMinimap));
+            if (_currentDefault is null)
+            {
+                _currentDefault = _defaultMinimaps.First();
+            }
+        }catch (TargetInvocationException e)
+        {
+            Console.WriteLine(e + "| " + e.Source);
         }
     }
 
@@ -32,7 +38,7 @@ public static class MinimapSettingsUtilityHelper
             GenerateMinimaps();
         }
 
-        return _defaultMinimaps.ToImmutableList();
+        return _defaultMinimaps!.ToImmutableList();
     }
     
     
@@ -79,5 +85,23 @@ public static class MinimapSettingsUtilityHelper
     public static Minimap? GetDefaultMinimap()
     {
         return _currentDefault;
+    }
+    
+    public static SettingsTransferObject<Minimap> GetDefaultClones()
+    {
+        Minimap? defaultClone = null;
+        List<Minimap> allPossible = new List<Minimap>();
+        if(_defaultMinimaps is null) GenerateMinimaps();
+        foreach (var entry in _defaultMinimaps!)
+        {
+            Minimap clone = entry.Clone();
+            if (entry.Equals(_currentDefault))
+            {
+                defaultClone = clone;
+            }
+
+            allPossible.Add(clone);
+        }
+        return new SettingsTransferObject<Minimap>(allPossible.ToImmutableList(), defaultClone);
     }
 }

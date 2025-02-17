@@ -10,13 +10,14 @@ namespace BEAM.Image.Minimap.MinimapAlgorithms;
 
 public class DummyMinimapAlgorithm : IMinimapAlgorithm
 {
-    private Random random = new Random();
+    private readonly Random _random = new Random();
     public bool AnalyzeSequence(Sequence sequence, CancellationToken ctx)
     {
+        Console.WriteLine("USed the dummy algorithm");
         for(int i = 0; i < 10000; i++)
         {
             sequence.GetPixelLineData(i, [1]);
-            Console.WriteLine(i);
+            Task.Delay(1000);
         }
             
         return true;
@@ -24,7 +25,7 @@ public class DummyMinimapAlgorithm : IMinimapAlgorithm
 
     public float GetLineValue(long line)
     {
-        return random.NextSingle();
+        return _random.NextSingle();
     }
 
     public string GetName()
@@ -32,11 +33,16 @@ public class DummyMinimapAlgorithm : IMinimapAlgorithm
         return "Dummy Algorithm";
     }
 
-    public (Control, ISaveControl)? GetSettingsPopupControl()
+    public ISaveControl? GetSettingsPopupControl()
     {
         return null;
     }
-    
+
+    public IMinimapAlgorithm Clone()
+    {
+        return new DummyMinimapAlgorithm();
+    }
+
     public DummyMinimapAlgorithm()
     {
     }

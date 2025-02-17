@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using Avalonia.Controls;
+using BEAM.Exceptions;
 using BEAM.Image.Minimap;
 using BEAM.Image.Minimap.MinimapAlgorithms;
 using BEAM.Image.Minimap.Utility;
+using BEAM.Log;
 using BEAM.Views.Minimap.Popups.EmbeddedSettings;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BEAM.ViewModels.Minimap.Popups.EmbeddedSettings;
 
-public partial class PlotMinimapConfigControlViewModel: ViewModelBase, ISaveControl
+public partial class PlotMinimapConfigControlViewModel: ViewModelBase
 {
     private static String _defaultControlText = "This Algorithm provides no changeable settings";
 
@@ -27,7 +29,7 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase, ISaveCont
     {
         _plotMinimap.CompactionFactor = LineCompaction;
         _currentConfigControl.Save();
-        
+        _plotMinimap.MinimapAlgorithm = SelectedAlgorithm;
         PlotAlgorithmSettingsUtilityHelper.SetDefaultAlgorithm(SelectedAlgorithm);
     }
     
@@ -49,7 +51,16 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase, ISaveCont
         {
             algorithms.Add(element);
         }
-        SelectedAlgorithm = PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithm();
+
+        try
+        {
+            SelectedAlgorithm = PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithm();
+        }
+        catch (InvalidStateException ex)
+        {
+            Logger.GetInstance().LogMessage("No valid Plotting algorithm was found");
+        }
+        
         
     }
 
@@ -70,15 +81,15 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase, ISaveCont
         //TODO: Alternatively one ([User]Control, ISaveControl) inherits from the other
         var controls = algorithm.GetSettingsPopupControl();
         algorithmSubSettings.Clear();
-        if(controls is null or (null, null) or (null, not null) or (not null, null))
+        if(controls is null)
         {
             _currentControl = new NullSaveConfig();
             algorithmSubSettings.Add(new TextBlock() {Text = _defaultControlText});
         }
         else
         {
-            _currentControl = controls.Value.Item2;
-            algorithmSubSettings.Add(controls.Value.Item1);
+            _currentControl = controls;
+            algorithmSubSettings.Add(controls);
         }
     }
     
