@@ -38,11 +38,7 @@ public class DummyMinimapAlgorithm : IMinimapAlgorithm
     {
         return null;
     }
-
-    public ISaveControl? GetSettingsPopupControl(SettingsStorer storer)
-    {
-        return null;
-    }
+    
 
     public IMinimapAlgorithm Clone()
     {
@@ -53,8 +49,5 @@ public class DummyMinimapAlgorithm : IMinimapAlgorithm
     {
         return;
     }
-
-    public DummyMinimapAlgorithm()
-    {
-    }
+    
 }

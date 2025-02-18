@@ -10,9 +10,11 @@ using Avalonia;
 using Avalonia.Controls;
 using BEAM.Image.Minimap;
 using BEAM.Image.Minimap.Utility;
+using BEAM.ImageSequence;
 using BEAM.Renderer;
 using BEAM.Views.Minimap.Popups.EmbeddedSettings;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using NP.Utilities;
 
 namespace BEAM.ViewModels.Minimap.Popups;
@@ -21,16 +23,17 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
 {
     private static String _defaultControlText = "This Minimap provides no changeable settings";
 
-    [ObservableProperty] public partial Image.Minimap.Minimap SelectedMinimap { get; set; }
+    [ObservableProperty] public partial Image.Minimap.Minimap? SelectedMinimap { get; set; }
     [ObservableProperty] public partial ObservableCollection<Image.Minimap.Minimap> minimaps { get; set; } = new ObservableCollection<Image.Minimap.Minimap>();
     [ObservableProperty] public partial ObservableCollection<Control> minimapSubSettings { get; set; } = new ObservableCollection<Control>();
     
     private ISaveControl _currentControl = new NullSaveConfig();
 
-   
+    private readonly SequenceViewModel _sequenceVm;
     
-    public DefaultMinimapPopupViewModel()
+    public DefaultMinimapPopupViewModel(SequenceViewModel sequenceVm)
     {
+        _sequenceVm = sequenceVm;
         if (!MinimapSettingsUtilityHelper.ExistAny())
         {
             TextBlock textBlock = new TextBlock(){Text= "There are no Minimaps to choose from"};
@@ -83,6 +86,16 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
         
         MinimapSettingsUtilityHelper.SetDefaultMinimap(SelectedMinimap);
         return true;
+    }
+
+    [RelayCommand]
+    public void RenderMinimap()
+    {
+        if (SelectedMinimap is null)
+        {
+            return;
+        }
+        _sequenceVm.ChangeCurrentMinimap(SelectedMinimap.Clone());
     }
     
 }

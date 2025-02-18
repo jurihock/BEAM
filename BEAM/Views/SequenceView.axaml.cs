@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
@@ -16,11 +17,13 @@ using BEAM.ImageSequence;
 using BEAM.Log;
 using BEAM.Profiling;
 using BEAM.ViewModels;
+using BEAM.ViewModels.Minimap;
 using BEAM.Views.Minimap;
 using CommunityToolkit.Mvvm.ComponentModel;
 using NP.Ava.Visuals;
 using ScottPlot;
 using ScottPlot.Avalonia;
+using SizeChangedEventArgs = Avalonia.Controls.SizeChangedEventArgs;
 
 namespace BEAM.Views;
 
@@ -55,6 +58,7 @@ public partial class SequenceView : UserControl
 
     private void OnSizeChanged(object? sender, SizeChangedEventArgs e)
     {
+        Console.WriteLine("Size Event triggered");
         var vm = DataContext as SequenceViewModel;
         if (vm == null || vm.Minimap.Count == 0)
         {
@@ -68,6 +72,15 @@ public partial class SequenceView : UserControl
             
             minimapControl.AdaptSize(newWidth, newHeight);
         }
+        
+        Console.WriteLine("Size Event triggered");
+        if(vm.MinimapVms.Any())
+        {   
+            var mapViewModel = (vm.MinimapVms.First() as MinimapPlotViewModel);
+            Console.WriteLine("Size viewmodel change triggered" + (mapViewModel is null));
+            mapViewModel.SizeChanged.Invoke(this, new ViewModels.Minimap.SizeChangedEventArgs(e.NewSize.Width * 0.2, e.NewSize.Height));
+        }
+        
     }
 
     private void FillPlot(Sequence sequence)
@@ -208,6 +221,15 @@ public partial class SequenceView : UserControl
             double newHeight = this.GetSize().Y; // Full height of the SequenceView
             
             minimapControl.AdaptSize(newWidth, newHeight);
+        }
+        
+        Console.WriteLine("Size Event triggered");
+        if(vm.MinimapVms.Any())
+        {   
+            Console.WriteLine("Count > 0");
+            var mapViewModel = (vm.MinimapVms.First() as MinimapPlotViewModel);
+            Console.WriteLine("Size viewmodel change triggered" + (mapViewModel is null));
+            mapViewModel.SizeChanged.Invoke(this, new ViewModels.Minimap.SizeChangedEventArgs(this.GetSize().X * 0.2, this.GetSize().Y));
         }
     }
 }

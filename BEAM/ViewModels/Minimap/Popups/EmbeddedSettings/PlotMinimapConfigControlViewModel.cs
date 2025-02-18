@@ -33,8 +33,6 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
     }
     
     
-   
-    
     public PlotMinimapConfigControlViewModel(PlotMinimap plotMinimap)
     {
         _plotMinimap = plotMinimap;
@@ -59,8 +57,6 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
         {
             Logger.GetInstance().LogMessage("No valid Plotting algorithm was found");
         }
-        
-        
     }
 
     public void SelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -76,7 +72,6 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
             throw new InvalidCastException("The selected Minimap is not a Minimap", ex);
         }
         
-
         //TODO: Alternatively one minimap only ever has one Control Window and we can get access to it thathw ay
         //TODO: Alternatively one ([User]Control, ISaveControl) inherits from the other
         var controls = algorithm.GetSettingsPopupControl();
@@ -92,5 +87,4 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
             algorithmSubSettings.Add(controls);
         }
     }
-    
 }

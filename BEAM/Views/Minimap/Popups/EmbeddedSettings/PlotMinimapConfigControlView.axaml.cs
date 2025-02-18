@@ -15,6 +15,11 @@ public partial class PlotMinimapConfigControlView : ISaveControl
         InitializeComponent();
     }
     
+    public PlotMinimapConfigControlView()
+    {
+        InitializeComponent();
+    }
+    
     public override void Save()
     {
         ((DataContext as PlotMinimapConfigControlViewModel)!).Save();

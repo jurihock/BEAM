@@ -12,9 +12,6 @@
         WindowStartupLocation="CenterOwner"
         x:DataType="viewModels:DefaultMinimapPopupViewModel"
         SizeToContent="WidthAndHeight">
-    <Design.DataContext>
-        <viewModels:DefaultMinimapPopupViewModel />
-    </Design.DataContext>
     <StackPanel Orientation="Vertical" Margin="20, 10, 20, 0">
         <TextBlock FontWeight="Bold">Configure the default minimap settings</TextBlock>
         <Separator Background="{DynamicResource ThemeAccentBrush}" Margin="0 10"></Separator>
@@ -37,7 +34,11 @@
             <Button Click="Close">Cancel</Button>
             <Button Click="TrySave" Margin="10 0 0 0"
                     Background="{DynamicResource Accent}" Foreground="{DynamicResource AccentForeground}">
-                OK
+                Save
+            </Button>
+            <Button Click="RenderMinimap" Margin="10 0 0 0"
+                    Background="{DynamicResource Accent}" Foreground="{DynamicResource AccentForeground}">
+                Save and Render
             </Button>
         </StackPanel>
     </StackPanel>

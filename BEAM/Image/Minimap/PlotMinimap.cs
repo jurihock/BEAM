@@ -11,6 +11,7 @@ using BEAM.Renderer;
 using BEAM.ViewModels;
 using BEAM.ViewModels.Minimap;
 using BEAM.ViewModels.Minimap.Popups;
+using BEAM.ViewModels.Minimap.Popups.EmbeddedSettings;
 using BEAM.Views.Minimap;
 using BEAM.Views.Minimap.Popups.EmbeddedSettings;
 using ScottPlot;
@@ -30,6 +31,9 @@ public class PlotMinimap : Minimap
     /// The underlying algorithm used to calculate values for pixel lines. These values will later be displayed in the plot.
     /// </summary>
     public IMinimapAlgorithm MinimapAlgorithm;
+
+    private Plot _plot = new Plot();
+    MinimapPlotViewModel viewModel;
 
     public PlotMinimap() : base()
     {
@@ -75,6 +79,11 @@ public class PlotMinimap : Minimap
         MinimapAlgorithm.SetRenderer(renderer);
     }
 
+    public override ViewModelBase GetViewModel()
+    {
+        return viewModel;
+    }
+
     /// <summary>
     /// Handles the logic for creating the minimap data alongside its
     /// visual representation in the required format(<see cref="Avalonia.Controls.UserControl"/>).
@@ -96,7 +105,7 @@ public class PlotMinimap : Minimap
             return;
         }
         
-        Plot plot = new Plot();
+        _plot = new Plot();
         Bar[] bars = new Bar[Sequence.Shape.Height / CompactionFactor];
         double maxValue = 0;
         double minValue = 0;
@@ -117,14 +126,15 @@ public class PlotMinimap : Minimap
             bars[i] = bar;
             
         }
-        plot.Axes.InvertY();
-        plot.Add.Bars(bars);
-        plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 , bottom: Sequence.Shape.Height);
+        _plot.Axes.InvertY();
+        _plot.Add.Bars(bars);
+        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 , bottom: Sequence.Shape.Height);
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             //viewModel = new MinimapPlotViewModel(plot);
-            DisplayedMinimap = new MinimapPlotView() {DataContext = new MinimapPlotViewModel(plot)};
+            //DisplayedMinimap = new MinimapPlotView() {DataContext = new MinimapPlotViewModel(_plot)};
+            viewModel = new MinimapPlotViewModel(_plot);
             IsGenerated = true;
             OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Success));
         });
@@ -165,11 +175,7 @@ public class PlotMinimap : Minimap
     {
         return new PlotMinimapConfigControlView(this);
     }
-
-    public override ISaveControl? GetSettingsPopupControl(SettingsStorer storer)
-    {
-        return new StoredPlotMinimapConfigControlView(this, storer);
-    }
+    
 
 
     public void SetCompactionFactor(int newFactor)

@@ -11,9 +11,9 @@ namespace BEAM.Image.Minimap.MinimapAlgorithms;
 public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
 {
 
-    public byte ThresholdRed {get; set;}
-    public byte ThresholdBlue {get; set;}
-    public byte ThresholdGreen {get; set;}
+    public byte ThresholdRed { get; set; } = 25;
+    public byte ThresholdBlue { get; set; } = 25;
+    public byte ThresholdGreen { get; set; } = 25;
     public byte ThresholdGamma {get; set;} = 255 ;
     private Sequence? _sequence;
     private CancellationToken? _ctx;
@@ -21,6 +21,7 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
     Vector4D<byte> _thresholds = new Vector4D<byte>(0, 0, 0, 255);
     public bool AnalyzeSequence(Sequence sequence, CancellationToken ctx)
     {
+        Console.WriteLine("Threshold");
         _thresholds = new Vector4D<byte>(ThresholdRed, ThresholdGreen, ThresholdBlue, ThresholdGamma);
         _sequence = sequence;
         _ctx = ctx;
@@ -70,11 +71,7 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
     {
         return new PixelThresholdSumAlgorithmConfigControlView(this);
     }
-
-    public ISaveControl? GetSettingsPopupControl(SettingsStorer storer)
-    {
-        return new StoredPixelThresholdSumAlgorithmConfigControlView(this, storer);
-    }
+    
 
     public IMinimapAlgorithm Clone()
     {

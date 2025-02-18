@@ -108,7 +108,6 @@ public abstract class Minimap
 
     public abstract String GetName();
     public abstract ISaveControl? GetSettingsPopupControl();
-    public abstract ISaveControl? GetSettingsPopupControl(SettingsStorer storer);
     
     
 
@@ -119,4 +118,6 @@ public abstract class Minimap
     public abstract void StartGeneration(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc);
 
     public abstract void SetRenderer(SequenceRenderer renderer);
+
+    public abstract ViewModelBase GetViewModel();
 }

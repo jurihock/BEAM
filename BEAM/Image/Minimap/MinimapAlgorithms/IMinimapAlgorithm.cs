@@ -33,7 +33,6 @@ public interface IMinimapAlgorithm
     public String Name => GetName();
     
     public abstract ISaveControl? GetSettingsPopupControl();
-    public abstract ISaveControl? GetSettingsPopupControl(SettingsStorer storer);
     
     public abstract IMinimapAlgorithm Clone();
     

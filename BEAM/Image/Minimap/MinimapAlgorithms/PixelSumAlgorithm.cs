@@ -70,11 +70,7 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
     {
         return null;
     }
-
-    public ISaveControl? GetSettingsPopupControl(SettingsStorer storer)
-    {
-        return null;
-    }
+    
 
     public IMinimapAlgorithm Clone()
     {

@@ -14,7 +14,7 @@ public static class PlotAlgorithmSettingsUtilityHelper
 {
     private static List<IMinimapAlgorithm>? _defaultAlgorithms;
     private static IMinimapAlgorithm? _currentDefault;
-    private static readonly Type DefaultType = typeof(PixelSumAlgorithm);
+    private static readonly Type DefaultType = typeof(RenderedPixelThresholdAlgorithm);
     
     private static void GenerateAlgorithms()
     {
