@@ -21,6 +21,7 @@ public partial class MinimapPlotView : UserControl
         MinimapPlot.Plot.Clear();
         
         newPlot.PlotControl = MinimapPlot;
+        MinimapPlot.UserInputProcessor.UserActionResponses.Clear();
         MinimapPlot.Reset(newPlot);
         MinimapPlot.Height = 300;
         MinimapPlot.Width = 300;
