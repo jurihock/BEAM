@@ -24,7 +24,6 @@ public partial class InspectionView : UserControl
     {
         newPlot.PlotControl = AnalysisPlot;
         AnalysisPlot.Reset(newPlot);
-        //TODO: Caused AccessViolationException sometimes?!
         AnalysisPlot.Refresh();
     }
 
