@@ -48,7 +48,6 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 
     public SequenceViewModel(ISequence sequence, DockingViewModel dockingVm)
     {
-        Test();
         Sequence = new TransformedSequence(sequence);
 
         DockingVm = dockingVm;
@@ -85,19 +84,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         }
         
     }
-
-    private void Test()
-    {
-        SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObjects().ForEach(Console.WriteLine);
-        SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObjects().ForEach(Console.WriteLine);
-        Console.WriteLine(SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObject());
-        Console.WriteLine(SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObject());
-        Console.WriteLine("-");
-        SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObjects().ForEach(Console.WriteLine);
-        SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObjects().ForEach(Console.WriteLine);
-        Console.WriteLine(SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObject());
-        Console.WriteLine(SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObject());
-    }
+    
 
 
     public string Name => Sequence.GetName();

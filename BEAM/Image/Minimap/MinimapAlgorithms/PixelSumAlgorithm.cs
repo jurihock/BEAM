@@ -41,7 +41,6 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
                 sum += (double) channelValue;
             }
         }
-        Console.WriteLine("Line: " + line + " || " + sum);
         return sum;
     }
 

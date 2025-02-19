@@ -106,7 +106,6 @@ public class PlotMinimap : Minimap
         for (int i = 0; i < Sequence.Shape.Height / CompactionFactor; i++)
         {
             double calculation = MinimapAlgorithm.GetLineValue(i * CompactionFactor);
-            Console.WriteLine("Outer: " + calculation + " progress " + i + " of " + Sequence.Shape.Height / CompactionFactor);
             if(calculation > maxValue)
             {
                 maxValue = calculation;
@@ -123,7 +122,6 @@ public class PlotMinimap : Minimap
             bars[i] = bar;
             
         }
-        Console.WriteLine("finished with all bars");
         _plot.Axes.InvertY();
         _plot.Add.Bars(bars);
         _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 , bottom: Sequence.Shape.Height);

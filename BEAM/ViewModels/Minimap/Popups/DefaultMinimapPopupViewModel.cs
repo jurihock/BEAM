@@ -30,13 +30,10 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
             MinimapSubSettings.Add(textBlock);
             return;
         }
-        Console.WriteLine("In view");
-        SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObjects().ForEach(Console.WriteLine);
         foreach(var element in SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObjects() /*MinimapSettingsUtilityHelper.GetDefaultMinimaps()*/)
         {
             Minimaps.Add(element);
         }
-        Console.WriteLine(SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObject());
         //SelectedMinimap = MinimapSettingsUtilityHelper.GetDefaultMinimap();
         SelectedMinimap = SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObject();
         
