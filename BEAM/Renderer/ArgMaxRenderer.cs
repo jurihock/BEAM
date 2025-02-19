@@ -17,8 +17,6 @@ namespace BEAM.Renderer;
 public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maximumOfIntensityRange)
     : SequenceRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
 {
-    // TODO: Implement function for user to determine unused Channel
-    private int _alphaChannel = -1;
     
     public override BGR RenderPixel(ISequence sequence, long x, long y)
     {
@@ -35,11 +33,6 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
         var channels = new int[sequence.Shape.Channels];
         for (var i = 0; i < sequence.Shape.Channels; i++)
         {
-            if (i == _alphaChannel) // ignore the alpa channel
-            {
-                continue;
-            }
-            
             channels[i] = i;
         }
 
@@ -52,9 +45,7 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
 
             var argMax = line.GetPixel(x, 0).ArgMax();
             
-            var amountChannels = (_alphaChannel == -1) ? channels.Length - 1 : channels.Length;
-            
-            var color = GetColor(argMax, amountChannels);
+            var color = GetColor(argMax, channels.Length);
 
             data[x] = color;
         }
