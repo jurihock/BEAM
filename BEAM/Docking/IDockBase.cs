@@ -1,5 +1,6 @@
 namespace BEAM.Docking;
 
+/// Interface to signal a viewmodel is usable as a dock.
 public interface IDockBase
 {
     string Name { get; }

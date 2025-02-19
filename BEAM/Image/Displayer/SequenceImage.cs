@@ -149,6 +149,7 @@ public class SequenceImage : IDisposable
     /// </summary>
     /// <param name="sequence">The sequence used</param>
     /// <param name="startLine">The line to start the view from</param>
+    /// <param name="renderer"></param>
     /// <param name="sectionHeight">The height (in lines) of an individual sequence part.</param>
     public SequenceImage(ISequence sequence, long startLine, SequenceRenderer renderer, long sectionHeight = 1000)
     {

@@ -6,11 +6,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BEAM.Controls;
 
-/**
- * View model for managing <see cref="ChannelMapRenderer"/> settings.
- * <param name="renderer">The renderer to configure</param>
- * <param name="model">The sequence view model where to get information about the loaded sequence from</param>
- */
+///View model for managing <see cref="ChannelMapRenderer"/> settings.
+///<param name="renderer">The renderer to configure</param>
+///<param name="model">The sequence view model where to get information about the loaded sequence from</param>
 public partial class ChannelMapConfigControlViewModel(ChannelMapRenderer renderer, SequenceViewModel model)
     : ViewModelBase, ISaveControl
 {

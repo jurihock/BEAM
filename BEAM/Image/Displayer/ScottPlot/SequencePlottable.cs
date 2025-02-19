@@ -8,9 +8,15 @@ using BEAM.ImageSequence;
 using BEAM.Renderer;
 using ScottPlot.Avalonia;
 
-namespace BEAM.IMage.Displayer.Scottplot;
+namespace BEAM.Image.Displayer.Scottplot;
 
-public sealed class BitmapPlottable(ISequence sequence, SequenceRenderer renderer, long startLine = 0) : IPlottable
+/// <summary>
+/// Plottable for rendering a sequence to a ScottPlot plot.
+/// </summary>
+/// <param name="sequence">The sequence to draw</param>
+/// <param name="renderer">The renderer used to draw the sequence</param>
+/// <param name="startLine">The starting line number to draw the sequence from</param>
+public sealed class SequencePlottable(ISequence sequence, SequenceRenderer renderer, long startLine = 0) : IPlottable
 {
     public bool IsVisible { get; set; } = true;
     public IAxes Axes { get; set; } = new Axes();
@@ -25,6 +31,10 @@ public sealed class BitmapPlottable(ISequence sequence, SequenceRenderer rendere
             -Math.Floor(sequence.Shape.Width / 2.0) + startLine);
     }
 
+    /// <summary>
+    /// Updated the selected renderer to draw the sequence with.
+    /// </summary>
+    /// <param name="renderer"></param>
     public void ChangeRenderer(SequenceRenderer renderer)
     {
         SequenceImage.Renderer = renderer;
@@ -55,9 +65,9 @@ public sealed class BitmapPlottable(ISequence sequence, SequenceRenderer rendere
         for (var i = 0; i < SequenceImage.GetRenderedPartsCount(); i++)
         {
             var preview = SequenceImage.GetRenderedPart(i);
-            // TODO: fix bug where Bitmap is null
             if (preview?.Bitmap is null) continue;
 
+            // positions the rendered images
             var coordinateRect = new CoordinateRect()
             {
                 Left = xOffset,
@@ -65,8 +75,9 @@ public sealed class BitmapPlottable(ISequence sequence, SequenceRenderer rendere
                 Top = preview.YStart + yOffset,
                 Bottom = preview.YEnd + yOffset
             };
-
             var dest = Axes.GetPixelRect(coordinateRect);
+
+            // draws the images
             rp.Canvas.DrawBitmap(preview.Bitmap, dest.ToSKRect(), paint);
         }
     }

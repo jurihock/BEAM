@@ -2,6 +2,10 @@ using System;
 
 namespace BEAM.Image.Bitmap;
 
+/// <summary>
+/// Interface for a custom bitmap, used to access the underlying pixel values as <see cref="T"/> objects.
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public interface IBitmap<T>
 {
   int Width { get; }

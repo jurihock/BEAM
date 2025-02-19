@@ -4,8 +4,8 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Styling;
 using BEAM.CustomActions;
+using BEAM.Image.Displayer.Scottplot;
 using BEAM.Image.Displayer.ScottPlot;
-using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence.Synchronization;
 using BEAM.Models.Log;
 using BEAM.ViewModels;
@@ -18,7 +18,7 @@ namespace BEAM.Views;
 
 public partial class SequenceView : UserControl
 {
-    private BitmapPlottable? _plottable;
+    private SequencePlottable? _plottable;
 
     public SequenceView()
     {
@@ -131,7 +131,7 @@ public partial class SequenceView : UserControl
             control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
     }
 
-    private void _SetPlottable(BitmapPlottable plottable)
+    private void _SetPlottable(SequencePlottable plottable)
     {
         if (_plottable is not null) AvaPlot1.Plot.Remove(_plottable);
 
@@ -152,7 +152,7 @@ public partial class SequenceView : UserControl
         AvaPlot1.Plot.Add.Plottable(checkerBoard);
 
         // sets the plottable
-        _SetPlottable(new BitmapPlottable(vm.Sequence, vm.CurrentRenderer));
+        _SetPlottable(new SequencePlottable(vm.Sequence, vm.CurrentRenderer));
 
         // Changed the sequence view -> full rerender
         vm.RenderersUpdated += (_, args) =>
@@ -164,7 +164,7 @@ public partial class SequenceView : UserControl
 
         vm.CutSequence += (_, args) =>
         {
-            _SetPlottable(new BitmapPlottable(vm.Sequence, vm.CurrentRenderer));
+            _SetPlottable(new SequencePlottable(vm.Sequence, vm.CurrentRenderer));
 
             var oldLimits = AvaPlot1.Plot.Axes.GetLimits();
             var ySize = oldLimits.Bottom - oldLimits.Top;
