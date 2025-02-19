@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BEAM.Views.AboutWindow"
         x:DataType="viewModels:AboutWindowViewModel"
-        Title="AboutWindow"
+        Title="About BEAM"
         Width="750"
         Height="500">
 
