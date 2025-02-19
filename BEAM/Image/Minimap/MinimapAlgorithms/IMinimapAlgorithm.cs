@@ -1,9 +1,7 @@
 using System;
 using System.Threading;
-using Avalonia.Controls;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
-using BEAM.ViewModels.Minimap.Popups;
 using BEAM.Views.Utility;
 
 namespace BEAM.Image.Minimap.MinimapAlgorithms;
@@ -20,7 +18,7 @@ public interface IMinimapAlgorithm
     /// <param name="sequence"> The sequence based on which the values are being calculated.</param>
     /// <param name="ctx"> The cancellation token which is used to cancel the generation process.</param>
     /// <returns> A Boolean representing whether the generation finished successfully.</returns>
-    bool AnalyzeSequence(Sequence sequence, CancellationToken ctx);
+    bool AnalyzeSequence(ISequence sequence, CancellationToken ctx);
 
     /// <summary>
     /// Returns the algorithm calculation based value for a specific line. Commonly used for plotting.
@@ -33,9 +31,9 @@ public interface IMinimapAlgorithm
 
     public String Name => GetName();
     
-    public abstract ISaveControl? GetSettingsPopupControl();
+    public ISaveControl? GetSettingsPopupControl();
     
-    public abstract IMinimapAlgorithm Clone();
+    public IMinimapAlgorithm Clone();
     
     public void SetRenderer(SequenceRenderer renderer);
 

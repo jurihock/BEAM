@@ -11,7 +11,7 @@ namespace BEAM.Analysis;
 
 public class PixelAnalysisChannel : IPixelAnalysis
 {
-    public Plot analysePixel(Sequence sequence, Coordinate2D position)
+    public Plot analysePixel(ISequence sequence, Coordinate2D position)
     {
         double[] channels = sequence.GetPixel((long)position.Column, (long)position.Row);
 

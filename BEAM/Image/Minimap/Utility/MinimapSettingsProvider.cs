@@ -3,20 +3,17 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using BEAM.Exceptions;
 using NP.Utilities;
 
 namespace BEAM.Image.Minimap.Utility;
 
-public static class MinimapSettingsUtilityHelper
+public class MinimapSettingsProvider : ISettingsProvider<Minimap>
 {
-    private static List<Minimap>? _defaultMinimaps;
-    private static Minimap? _currentDefault;
-    private static readonly Type DefaultType = typeof(PlotMinimap);
-    
-    private static void GenerateMinimaps()
+    private List<Minimap> _defaultMinimaps;
+    private Minimap? _currentDefault;
+    private readonly Type DefaultType = typeof(PlotMinimap);
+    public MinimapSettingsProvider()
     {
-        
         _defaultMinimaps = new List<Minimap>();
         _defaultMinimaps.AddAll(Assembly.GetExecutingAssembly().GetTypes()
             .Where(t => t is { IsClass: true, IsAbstract: false } && t.IsSubclassOf(typeof(Minimap)))
@@ -33,38 +30,8 @@ public static class MinimapSettingsUtilityHelper
             }
         }
     }
-
     
-    public static ImmutableList<Minimap> GetDefaultMinimaps()
-    {
-        if (_defaultMinimaps is null)
-        {
-            GenerateMinimaps();
-        }
-
-        return _defaultMinimaps!.ToImmutableList();
-    }
-    
-    
-    public static void SetDefaultMinimap(Minimap? newMinimapDefault)
-    {
-        if (newMinimapDefault is null)
-        {
-            return;
-        }
-        _currentDefault = newMinimapDefault;
-    }
-    
-    
-
-    public static bool ExistAny()
-    {
-        if(_defaultMinimaps is null) GenerateMinimaps();
-        return _defaultMinimaps!.Count > 0;
-    }
-    
-
-    private static Minimap TypeToMinimap(Type T) 
+    private Minimap TypeToMinimap(Type T) 
     {
         var result = T.GetConstructors().Where(t => t.GetParameters().Length == 0).ToList();
         if (!result.Any())
@@ -74,16 +41,35 @@ public static class MinimapSettingsUtilityHelper
         return (Minimap)result.First().Invoke([]);
         
     }
-    public static Minimap? GetDefaultMinimap()
+    
+    public ImmutableList<Minimap> GetDefaultObjects()
+    {
+        return _defaultMinimaps.ToImmutableList();
+    }
+
+    public void SetDefaultObject(Minimap? newMinimapDefault)
+    {
+        if (newMinimapDefault is null)
+        {
+            return;
+        }
+        _currentDefault = newMinimapDefault;
+    }
+
+    public bool ExistAny()
+    {
+        return _defaultMinimaps.Count > 0;
+    }
+
+    public Minimap? GetDefaultObject()
     {
         return !ExistAny() ? null : _currentDefault;
     }
-    
-    public static SettingsTransferObject<Minimap> GetDefaultClones()
+
+    public SettingsTransferObject<Minimap> GetDefaultClones()
     {
         Minimap? defaultClone = null;
         List<Minimap> allPossible = new List<Minimap>();
-        if(_defaultMinimaps is null) GenerateMinimaps();
         foreach (var entry in _defaultMinimaps!)
         {
             Minimap clone = entry.Clone();
@@ -96,4 +82,5 @@ public static class MinimapSettingsUtilityHelper
         }
         return new SettingsTransferObject<Minimap>(allPossible.ToImmutableList(), defaultClone);
     }
+    
 }

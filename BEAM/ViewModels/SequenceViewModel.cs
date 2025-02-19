@@ -4,15 +4,15 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Rendering;
 using Avalonia.Threading;
 using BEAM.Datatypes;
 using BEAM.Docking;
-using BEAM.IMage.Displayer.Scottplot;
+using BEAM.Image.Minimap.MinimapAlgorithms;
 using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
-using BEAM.Log;
-using BEAM.Renderer;
+using BEAM.Models.Log;
 using BEAM.Views.Minimap.Popups;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -29,8 +29,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 
     public SequenceRenderer[] Renderers;
     public int RendererSelection;
-
-    public SequenceViewModel(ISequence sequence)
+    
     [ObservableProperty] public partial DockingViewModel DockingVm { get; set; } = new();
     [ObservableProperty] public partial Coordinate2D pressedPointerPosition { get; set; } = new();
     [ObservableProperty] public partial Coordinate2D releasedPointerPosition { get; set; } = new();
@@ -39,28 +38,20 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     public EventHandler<EventArgs> MinimapHasChanged = delegate { };
 
 
-    public Sequence Sequence { get; }
+    //public ISequence Sequence { get; }
 
     private List<InspectionViewModel> _ConnectedInspectionViewModels = new();
 
     
     [ObservableProperty] public partial ObservableCollection<ViewModelBase> MinimapVms { get; set; }= new ObservableCollection<ViewModelBase>();
 
-    public SequenceViewModel(Sequence sequence, DockingViewModel dockingVm)
+    public SequenceViewModel(ISequence sequence, DockingViewModel dockingVm)
     {
+        Test();
         Sequence = new TransformedSequence(sequence);
 
         DockingVm = dockingVm;
 
-        //TODO: Maybe Button for loading the default minimaps on sequence opening
-        _currentMinimap = MinimapSettingsUtilityHelper.GetDefaultClones().Active;
-        if (_currentMinimap is not null)
-        {
-            //TODO: in up to data branch the SequenceVM knows the renderer
-            _currentMinimap.SetRenderer(new ChannelMapRenderer(0, 255, 0, 1,2));
-            _currentMinimap.StartGeneration(sequence, OnMinimapGenerated);
-        }
-        
         var (min, max) = sequence switch
         {
             SkiaSequence => (0, 255),
@@ -79,6 +70,25 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             SkiaSequence => 0,
             _ => 1
         };
+        
+        _currentMinimap = MinimapSettingsUtilityHelper.GetDefaultClones().Active;
+        if (_currentMinimap is not null)
+        {
+            //TODO: in up to data branch the SequenceVM knows the renderer
+            if(RendererSelection < Renderers.Length && RendererSelection >= 0)
+            {
+                _currentMinimap.SetRenderer(Renderers[RendererSelection]);
+                _currentMinimap.StartGeneration(sequence, OnMinimapGenerated);
+            }
+        }
+        
+    }
+
+    private void Test()
+    {
+        SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObjects().ForEach(Console.WriteLine);
+        Console.WriteLine("------");
+        SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObjects().ForEach(Console.WriteLine);
     }
 
     public string Name => Sequence.GetName();

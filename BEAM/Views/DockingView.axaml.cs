@@ -1,9 +1,5 @@
-using System;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using BEAM.Docking;
 using BEAM.Exceptions;
 using BEAM.ViewModels;

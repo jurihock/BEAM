@@ -13,7 +13,7 @@ namespace BEAM.Analysis;
 /// </summary>
 public interface IRegionAnalysis
 {
-    public Plot analyseRegion(Sequence sequence, Shape region);
+    public Plot analyseRegion(ISequence sequence, Shape region);
     public Plot analyseRegion(SequenceViewModel viewModel, Shape region);
 
     public Plot analyseRegion(long posX, long posY, long width, long height,

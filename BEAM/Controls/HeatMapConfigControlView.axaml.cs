@@ -6,7 +6,8 @@ using BEAM.ViewModels;
 
 namespace BEAM.Controls;
 
-public partial class HeatMapConfigControlView : UserControl, ISaveControl
+public partial class 
+    HeatMapConfigControlView : UserControl, ISaveControl
 {
     public HeatMapConfigControlView(HeatMapRenderer renderer, SequenceViewModel model)
     {

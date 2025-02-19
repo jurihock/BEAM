@@ -5,7 +5,7 @@ using BEAM.Exceptions;
 using BEAM.Image.Minimap;
 using BEAM.Image.Minimap.MinimapAlgorithms;
 using BEAM.Image.Minimap.Utility;
-using BEAM.Log;
+using BEAM.Models.Log;
 using BEAM.Views.Minimap.Popups.EmbeddedSettings;
 using BEAM.Views.Utility;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -14,9 +14,9 @@ namespace BEAM.ViewModels.Minimap.Popups.EmbeddedSettings;
 
 public partial class PlotMinimapConfigControlViewModel: ViewModelBase
 {
-    private static String _defaultControlText = "This Algorithm provides no changeable settings";
+    private const String DefaultControlText = "This Algorithm provides no changeable settings";
 
-    private PlotMinimap _plotMinimap;
+    private readonly PlotMinimap _plotMinimap;
     [ObservableProperty] public partial int LineCompaction { get; set; }
     
     [ObservableProperty] public partial IMinimapAlgorithm SelectedAlgorithm { get; set; }
@@ -75,14 +75,13 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
             throw new InvalidCastException("The selected Minimap is not a Minimap", ex);
         }
         
-        //TODO: Alternatively one minimap only ever has one Control Window and we can get access to it thathw ay
-        //TODO: Alternatively one ([User]Control, ISaveControl) inherits from the other
+
         var controls = algorithm.GetSettingsPopupControl();
         AlgorithmSubSettings.Clear();
         if(controls is null)
         {
             _currentConfigControl = new NullSaveConfig();
-            AlgorithmSubSettings.Add(new TextBlock() {Text = _defaultControlText});
+            AlgorithmSubSettings.Add(new TextBlock() {Text = DefaultControlText});
         }
         else
         {

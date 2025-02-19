@@ -9,12 +9,12 @@ namespace BEAM.Image.Minimap.MinimapAlgorithms;
 
 public class PixelSumAlgorithm : IMinimapAlgorithm
 {
-    private Sequence? _sequence;
+    private ISequence? _sequence;
     private CancellationToken? _ctx;
     private int[]? _channelFetchMask;
 
 
-    public bool AnalyzeSequence(Sequence sequence, CancellationToken ctx)
+    public bool AnalyzeSequence(ISequence sequence, CancellationToken ctx)
     {
         _sequence = sequence;
         _ctx = ctx;

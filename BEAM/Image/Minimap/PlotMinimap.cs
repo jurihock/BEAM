@@ -36,7 +36,7 @@ public class PlotMinimap : Minimap
         
     }
     
-    public PlotMinimap(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc) : base(sequence, eventCallbackFunc)
+    public PlotMinimap(ISequence sequence, MinimapGeneratedEventHandler eventCallbackFunc) : base(sequence, eventCallbackFunc)
     {
         CancellationTokenSource = new CancellationTokenSource();
         this.MinimapAlgorithm = PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithm();
@@ -53,14 +53,14 @@ public class PlotMinimap : Minimap
     /// This is being done through the <see cref="Minimap"/>'s MinimapGeneratedEventHandler event.</param>
     /// <param name="algorithm">The concrete algorithm used for value calculation.</param>
     /// <exception cref="ArgumentNullException">If any of the parameters is null.</exception>
-    public PlotMinimap(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc, IMinimapAlgorithm algorithm) : base(sequence, eventCallbackFunc)
+    public PlotMinimap(ISequence sequence, MinimapGeneratedEventHandler eventCallbackFunc, IMinimapAlgorithm algorithm) : base(sequence, eventCallbackFunc)
     {
         ArgumentNullException.ThrowIfNull(algorithm);
         MinimapAlgorithm = algorithm;
         Task.Run(GenerateMinimap, CancellationTokenSource.Token);
     }
 
-    public override void StartGeneration(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc)
+    public override void StartGeneration(ISequence sequence, MinimapGeneratedEventHandler eventCallbackFunc)
     {
         this.Sequence = sequence;
         MinimapGenerated += eventCallbackFunc;

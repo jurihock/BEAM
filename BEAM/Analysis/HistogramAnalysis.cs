@@ -7,7 +7,7 @@ namespace BEAM.Analysis;
 
 public class HistogramAnalysis : IPixelAnalysis
 {
-    public Plot analyseRegion(Sequence sequence, Shape region)
+    public Plot analyseRegion(ISequence sequence, Shape region)
     {
         throw new System.NotImplementedException();
     }
@@ -22,7 +22,7 @@ public class HistogramAnalysis : IPixelAnalysis
         throw new System.NotImplementedException();
     }
 
-    public Plot analysePixel(Sequence sequence, Coordinate2D position)
+    public Plot analysePixel(ISequence sequence, Coordinate2D position)
     {
         throw new System.NotImplementedException();
     }

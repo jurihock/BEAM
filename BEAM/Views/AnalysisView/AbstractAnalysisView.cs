@@ -1,7 +1,4 @@
 ﻿using Avalonia.Controls;
-using BEAM.Analysis;
-using BEAM.Datatypes;
-using BEAM.ImageSequence;
 using ScottPlot;
 
 namespace BEAM.Views.AnalysisView;

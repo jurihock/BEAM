@@ -56,16 +56,6 @@ public static class PlotAlgorithmSettingsUtilityHelper
     }
     
     
-    private static List<TK> ReplaceEveryEntry<T, TK>(this IEnumerable<T> inputList, Func<T, TK> conversion)
-    {
-        List<TK> output = new List<TK>();
-        foreach (var element in inputList)
-        {
-            output.Add(conversion(element));
-        }
-
-        return output;
-    }
 
     public static bool ExistAny()
     {

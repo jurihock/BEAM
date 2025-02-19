@@ -1,24 +1,30 @@
 using System;
-using System.Runtime.InteropServices;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using Avalonia.Styling;
 using BEAM.CustomActions;
+using BEAM.Datatypes;
 using BEAM.Image.Displayer.ScottPlot;
 using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence.Synchronization;
 using BEAM.Models.Log;
 using BEAM.ViewModels;
+using BEAM.ViewModels.Utility;
+using NP.Ava.Visuals;
 using ScottPlot;
 using ScottPlot.Avalonia;
 using ScottPlot.Interactivity;
 using ScottPlot.Interactivity.UserActionResponses;
+using SizeChangedEventArgs = Avalonia.Controls.SizeChangedEventArgs;
 
 namespace BEAM.Views;
 
 public partial class SequenceView : UserControl
 {
+    private BitmapPlottable? _plottable;
     // Hosts the external UserControl
     public static readonly StyledProperty<Control?> DynamicContentProperty =
         AvaloniaProperty.Register<SequenceView, Control?>(nameof(DynamicContent));
@@ -43,7 +49,7 @@ public partial class SequenceView : UserControl
     {
         InitializeComponent();
         this.SizeChanged += OnSizeChanged;
-        this.DataContextChanged += StyledElement_OnDataContextChanged;
+        //this.DataContextChanged += StyledElement_OnDataContextChanged;
 
     }
 
@@ -64,7 +70,7 @@ public partial class SequenceView : UserControl
         
     }
 
-    private void FillPlot(Sequence sequence)
+    private void PreparePlot()
     {
         _ApplyDarkMode();
         _BuildCustomRightClickMenu();
@@ -107,7 +113,7 @@ public partial class SequenceView : UserControl
 
         PlotControllerManager.AddPlotToAllControllers(AvaPlot1);
 
-        AvaPlot1.Plot.Axes.InvertY();
+        /**AvaPlot1.Plot.Axes.InvertY();
         AvaPlot1.Plot.Axes.SquareUnits();
 
         var plottable = new BitmapPlottable(sequence);
@@ -115,6 +121,9 @@ public partial class SequenceView : UserControl
 
         plottable.SequenceImage.RequestRefreshPlotEvent += (sender, args) => AvaPlot1.Refresh();
 
+        AvaPlot1.Refresh();**/
+        AvaPlot1.Plot.Axes.InvertY();
+        AvaPlot1.Plot.Axes.SquareUnits();
         AvaPlot1.Refresh();
     }
 
@@ -215,9 +224,9 @@ public partial class SequenceView : UserControl
 
     private void _SetPlottable(BitmapPlottable plottable)
     {
+         _plottable = plottable;
         if (_plottable is not null) AvaPlot1.Plot.Remove(_plottable);
-
-        _plottable = plottable;
+        
         AvaPlot1.Plot.Add.Plottable(_plottable);
         _plottable.SequenceImage.RequestRefreshPlotEvent += (sender, args) => AvaPlot1.Refresh();
         AvaPlot1.Refresh();
@@ -241,7 +250,6 @@ public partial class SequenceView : UserControl
         // sets the plottable
         _SetPlottable(new BitmapPlottable(vm.Sequence, vm.CurrentRenderer));
 
-        
         // Changed the sequence view -> full rerender
         vm.RenderersUpdated += (_, args) =>
         {
@@ -321,9 +329,7 @@ public partial class SequenceView : UserControl
         var val = ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / vm.Sequence.Shape.Height) * 100;
         Bar1.Value = val <= 0.0 ? 0.0 : double.Min(val, 100.0);
     }
-
-
-
+    
     
 
     private void Layoutable_OnLayoutUpdated(object? sender, EventArgs e)
@@ -333,8 +339,6 @@ public partial class SequenceView : UserControl
         {
             return;
         }
-
-
         
         if(vm.MinimapVms.Count > 0)
         {   

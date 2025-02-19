@@ -10,7 +10,7 @@ namespace BEAM.Image.Minimap.MinimapAlgorithms;
 public class DummyMinimapAlgorithm : IMinimapAlgorithm
 {
     private readonly Random _random = new Random();
-    public bool AnalyzeSequence(Sequence sequence, CancellationToken ctx)
+    public bool AnalyzeSequence(ISequence sequence, CancellationToken ctx)
     {
         for(int i = 0; i < 10000; i++)
         {

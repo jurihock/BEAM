@@ -12,6 +12,6 @@ namespace BEAM.Analysis;
 /// </summary>
 public interface IPixelAnalysis
 {
-    public Plot analysePixel(Sequence sequence, Coordinate2D position);
+    public Plot analysePixel(ISequence sequence, Coordinate2D position);
     public Plot analysePixel(SequenceViewModel viewModel, Coordinate2D position);
 }

@@ -15,12 +15,13 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
     public byte ThresholdBlue { get; set; } = 25;
     public byte ThresholdGreen { get; set; } = 25;
     public byte ThresholdGamma {get; set;} = 255 ;
-    private Sequence? _sequence;
+    private ISequence? _sequence;
     private CancellationToken? _ctx;
     private SequenceRenderer? _renderer;
     Vector4D<byte> _thresholds = new Vector4D<byte>(0, 0, 0, 255);
-    public bool AnalyzeSequence(Sequence sequence, CancellationToken ctx)
+    public bool AnalyzeSequence(ISequence sequence, CancellationToken ctx)
     {
+        //TODO: Adjust Mapping to match renderer return values
         _thresholds = new Vector4D<byte>(ThresholdRed, ThresholdGreen, ThresholdBlue, ThresholdGamma);
         _sequence = sequence;
         _ctx = ctx;
@@ -105,6 +106,11 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
                 }
             }
             return true;
+        }
+
+        public new String ToString()
+        {
+            return $"({Entries[0].ToString()},${Entries[1].ToString()},${Entries[2].ToString()},{Entries[3].ToString()})";
         }
     }
 }
