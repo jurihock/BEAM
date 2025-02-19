@@ -91,4 +91,22 @@ public class ChannelHSVMap
             clone.SetColor(i, this.GetColorHSV(i));
         }
     }
+
+    /// <summary>
+    /// Returns pointer to usedChannels array.
+    /// </summary>
+    /// <returns></returns>
+    public bool[] getUsedChannels()
+    {
+        return usedChannels;
+    }
+
+    /// <summary>
+    /// Returns pointer to valueArray
+    /// </summary>
+    /// <returns></returns>
+    public double[] getValueArray()
+    {
+        return valueArray;
+    }
 }

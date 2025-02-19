@@ -1,4 +1,5 @@
-﻿using BEAM.Renderer;
+﻿using Avalonia.Controls.Models.TreeDataGrid;
+using BEAM.Renderer;
 using BEAM.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -8,6 +9,8 @@ public partial class ArgMaxConfigControlViewModel(ArgMaxRendererColorHSV rendere
     : ViewModelBase, ISaveControl
 {
     [ObservableProperty] private partial ChannelHSVMap ChannelHsvMap { get; set; } = renderer.getChannelHsvMap();
+    
+    public FlatTreeDataGridSource
     
     public void Save()
     {
