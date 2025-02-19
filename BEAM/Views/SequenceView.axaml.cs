@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -16,10 +15,8 @@ using BEAM.Datatypes;
 using BEAM.Image.Bitmap;
 using BEAM.Image.Displayer;
 using BEAM.IMage.Displayer.Scottplot;
-using BEAM.ImageSequence;
 using BEAM.ImageSequence.Synchronization;
-using BEAM.Log;
-using BEAM.Profiling;
+using BEAM.Models.Log;
 using BEAM.ViewModels;
 using ScottPlot;
 using ScottPlot.Avalonia;
@@ -86,7 +83,7 @@ public partial class SequenceView : UserControl
             ScrollingSynchronizer.synchronize(this);
         };
 
-        addScrollBarUpdating();
+        AddScrollBarUpdating();
 
         PlotControllerManager.AddPlotToAllControllers(AvaPlot1);
 
@@ -95,7 +92,7 @@ public partial class SequenceView : UserControl
         AvaPlot1.Refresh();
     }
 
-    private void addScrollBarUpdating()
+    private void AddScrollBarUpdating()
     {
         AvaPlot1.PointerEntered += (s, e) => { UpdateScrollBar(); };
 
@@ -209,21 +206,22 @@ public partial class SequenceView : UserControl
 
     private void StyledElement_OnDataContextChanged(object? sender, EventArgs e)
     {
-        var vm = DataContext as SequenceViewModel;
+        var vm = (SequenceViewModel)DataContext!;
 
         PreparePlot();
-        
+
         var isDark = Application.Current!.ActualThemeVariant == ThemeVariant.Dark;
         var checkerBoard = new CheckerboardPlottable(isDark);
         AvaPlot1.Plot.Add.Plottable(checkerBoard);
-        
+
+        // sets the plottable
         _SetPlottable(new BitmapPlottable(vm.Sequence, vm.CurrentRenderer));
 
         // Changed the sequence view -> full rerender
         vm.RenderersUpdated += (_, args) =>
         {
-            _plottable.SequenceImage.Reset();
-            _plottable.ChangeRenderer(vm.CurrentRenderer);
+            _plottable!.SequenceImage.Reset();
+            _plottable!.ChangeRenderer(vm.CurrentRenderer);
             AvaPlot1.Refresh();
         };
 
@@ -241,25 +239,25 @@ public partial class SequenceView : UserControl
 
     private void _OpenTransformPopup()
     {
-        AffineTransformationPopup popup = new(DataContext as SequenceViewModel);
+        AffineTransformationPopup popup = new((SequenceViewModel)DataContext!);
         var v = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
-        popup.ShowDialog(v.MainWindow);
+        popup.ShowDialog(v!.MainWindow!);
     }
 
     private void _OpenColorsPopup()
     {
-        ColorSettingsPopup popup = new(DataContext as SequenceViewModel);
+        ColorSettingsPopup popup = new((SequenceViewModel)DataContext!);
         var v = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
 
-        popup.ShowDialog(v.MainWindow);
+        popup.ShowDialog(v!.MainWindow!);
     }
 
     private void _OpenCutPopup()
     {
-        CutSequencePopup popup = new(DataContext as SequenceViewModel);
+        CutSequencePopup popup = new((SequenceViewModel)DataContext!);
         var v = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
 
-        popup.ShowDialog(v.MainWindow);
+        popup.ShowDialog(v!.MainWindow!);
     }
 
     private void _OpenInspectionViewModel()
@@ -301,7 +299,7 @@ public partial class SequenceView : UserControl
     public void UpdateScrollBar()
     {
         var vm = (DataContext as SequenceViewModel)!;
-        var val =  ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / vm.Sequence.Shape.Height) * 100;
+        var val = ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / vm.Sequence.Shape.Height) * 100;
         Bar1.Value = val <= 0.0 ? 0.0 : double.Min(val, 100.0);
     }
 }
