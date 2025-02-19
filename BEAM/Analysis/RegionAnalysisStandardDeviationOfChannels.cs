@@ -46,11 +46,12 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
     }
     
     
-    //TODO: Line Image more efficient? Find more efficient implementation
+    
     /// <summary>
     /// Calculates the standard deviation of the channels in the region and stores the result in _sumChannelsSquared
     /// </summary>
     /// <param name="sequence"></param>
+    //TODO: Line Image more efficient? Find more efficient implementation
     private void _CalculateResult(ISequence sequence)
     {
         _sumChannels = new double[_amountChannels];

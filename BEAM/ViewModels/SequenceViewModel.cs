@@ -1,17 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Avalonia;
 using BEAM.Datatypes;
 using BEAM.Docking;
-using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence;
-using BEAM.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ScottPlot;
-using Svg;
 using BEAM.Renderer;
 
 namespace BEAM.ViewModels;
@@ -72,19 +66,46 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public async Task UpdateInspectionViewModel()
     {
+        Coordinate2D pointPressed = _correctInvalid(pressedPointerPosition);
+        Coordinate2D pointReleased = _correctInvalid(releasedPointerPosition);
         foreach (var inspectionViewModel in _ConnectedInspectionViewModels)
         {
-            inspectionViewModel.Update(pressedPointerPosition, releasedPointerPosition);
+            inspectionViewModel.Update(pointPressed, pointReleased);
         }
     }
 
     [RelayCommand]
-    public async Task OpenInspectionView()
+    public Task OpenInspectionView()
     {
+        
         InspectionViewModel inspectionViewModel = new InspectionViewModel(this);
         _ConnectedInspectionViewModels.Add(inspectionViewModel);
         DockingVm.OpenDock(inspectionViewModel);
-        inspectionViewModel.Update(pressedPointerPosition, releasedPointerPosition);
+        //here instead of 0, 0 the clicked position should be passed, this caused 
+        //crashes sometimes, when corners were selected 
+        inspectionViewModel.Update(
+            new Coordinate2D(0,0), 
+            new Coordinate2D(0,0)
+            );
+        return Task.CompletedTask;
+    }
+    
+    
+    private Coordinate2D _correctInvalid(Coordinate2D point)
+    {
+        double x = point.Row;
+        double y = point.Column;
+        
+        if(x < 0)
+            x = 0;
+        else if (x >= Sequence.Shape.Width)
+            x = Sequence.Shape.Width - 1;
+        if(y < 0)
+            y = 0;
+        else if(y >= Sequence.Shape.Height)
+            y = Sequence.Shape.Height - 1;
+        
+        return new Coordinate2D(x, y);
     }
 
     public string Name => Sequence.GetName();
