@@ -3,8 +3,8 @@ using System.Threading;
 using BEAM.Exceptions;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
-using BEAM.ViewModels.Minimap.Popups;
 using BEAM.Views.Minimap.Popups.EmbeddedSettings;
+using BEAM.Views.Utility;
 
 namespace BEAM.Image.Minimap.MinimapAlgorithms;
 
@@ -21,7 +21,6 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
     Vector4D<byte> _thresholds = new Vector4D<byte>(0, 0, 0, 255);
     public bool AnalyzeSequence(Sequence sequence, CancellationToken ctx)
     {
-        Console.WriteLine("Threshold");
         _thresholds = new Vector4D<byte>(ThresholdRed, ThresholdGreen, ThresholdBlue, ThresholdGamma);
         _sequence = sequence;
         _ctx = ctx;
@@ -45,13 +44,11 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
     
     private float AnalyzeLine(long line)
     {
-        Console.WriteLine("Analyzing Line: "+ line);
         float sum;
         
         sum = 0.0f;
         for(long j = 0; j < _sequence!.Shape.Width; j++)
         {
-            //TODO: LineImage if rendererr would work with images or LineImage inherits from sequence
             var renderedData = _renderer!.RenderPixel(_sequence, j, line);
             Vector4D<byte> other = new Vector4D<byte>(ref renderedData);
             if(_thresholds.EntrywiseGreaterEqual(other))
@@ -85,7 +82,7 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
 
     internal class Vector4D<T> where T : IComparable<T>
     {
-        public T[] Entries { get; private set; }
+        private T[] Entries { get;  }
 
         public Vector4D(T r, T g, T b, T gamma)
         {

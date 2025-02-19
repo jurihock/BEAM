@@ -1,21 +1,16 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Controls;
 using Avalonia.Threading;
-using BEAM.Docking;
 using BEAM.Image.Minimap.MinimapAlgorithms;
 using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
 using BEAM.ViewModels;
 using BEAM.ViewModels.Minimap;
-using BEAM.ViewModels.Minimap.Popups;
-using BEAM.ViewModels.Minimap.Popups.EmbeddedSettings;
-using BEAM.Views.Minimap;
 using BEAM.Views.Minimap.Popups.EmbeddedSettings;
+using BEAM.Views.Utility;
 using ScottPlot;
-using ShimSkiaSharp;
 
 namespace BEAM.Image.Minimap;
 
@@ -33,19 +28,18 @@ public class PlotMinimap : Minimap
     public IMinimapAlgorithm MinimapAlgorithm;
 
     private Plot _plot = new Plot();
-    MinimapPlotViewModel viewModel;
+    private MinimapPlotViewModel? _viewModel;
 
-    public PlotMinimap() : base()
+    public PlotMinimap()
     {
         MinimapAlgorithm = PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithm();
-        Console.WriteLine("minmap algo init:");
-        Console.WriteLine(MinimapAlgorithm);
+        
     }
     
     public PlotMinimap(Sequence sequence, MinimapGeneratedEventHandler eventCallbackFunc) : base(sequence, eventCallbackFunc)
     {
         CancellationTokenSource = new CancellationTokenSource();
-        this.MinimapAlgorithm = PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithm();;
+        this.MinimapAlgorithm = PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithm();
         Task.Run(GenerateMinimap, CancellationTokenSource.Token);
     }
     
@@ -70,7 +64,6 @@ public class PlotMinimap : Minimap
     {
         this.Sequence = sequence;
         MinimapGenerated += eventCallbackFunc;
-        Console.WriteLine("Started new Minimap Generation|  " + CancellationTokenSource.ToString());
         Task.Run(GenerateMinimap, CancellationTokenSource.Token);
     }
 
@@ -81,7 +74,11 @@ public class PlotMinimap : Minimap
 
     public override ViewModelBase GetViewModel()
     {
-        return viewModel;
+        if (_viewModel is null)
+        {
+            return new MinimapPlotViewModel(_plot);
+        } 
+        return _viewModel;
     }
 
     /// <summary>
@@ -93,14 +90,11 @@ public class PlotMinimap : Minimap
         if (Sequence is null)
         {
             OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Failure));
+            return;
         }
-        Console.WriteLine("Hello");
-        Console.WriteLine("Generation by thread: +" + Thread.CurrentThread.ManagedThreadId + " | " + Task.CurrentId);
-        //TODO: do Work with Sequence
         bool result = MinimapAlgorithm.AnalyzeSequence(Sequence, this.CancellationTokenSource.Token);
         if (!result)
         {
-            // TODO: Should event also contain caller?
             OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Failure));
             return;
         }
@@ -119,10 +113,12 @@ public class PlotMinimap : Minimap
             {
                 minValue = calculation;
             }
-            Bar bar = new Bar();
-            bar.Position = i * CompactionFactor;
-            bar.Value = calculation;
-            bar.Orientation = Orientation.Horizontal;
+            Bar bar = new Bar
+            {
+                Position = i * CompactionFactor,
+                Value = calculation,
+                Orientation = Orientation.Horizontal
+            };
             bars[i] = bar;
             
         }
@@ -132,18 +128,12 @@ public class PlotMinimap : Minimap
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            //viewModel = new MinimapPlotViewModel(plot);
-            //DisplayedMinimap = new MinimapPlotView() {DataContext = new MinimapPlotViewModel(_plot)};
-            viewModel = new MinimapPlotViewModel(_plot);
+            _viewModel = new MinimapPlotViewModel(_plot);
             IsGenerated = true;
             OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Success));
         });
 
-        /*Console.WriteLine("Displayed minimap nullcheck outer: " + (DisplayedMinimap is null));
-        IsGenerated = true;
-        Console.WriteLine("Hello World");
-        Console.WriteLine(DisplayedMinimap.FocusAdorner.ToString());
-        OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Success));*/
+
 
     }
     
@@ -171,7 +161,7 @@ public class PlotMinimap : Minimap
         return "Plot Minimap";
     }
 
-    public override ISaveControl? GetSettingsPopupControl()
+    public override ISaveControl GetSettingsPopupControl()
     {
         return new PlotMinimapConfigControlView(this);
     }
@@ -187,8 +177,6 @@ public class PlotMinimap : Minimap
 
     public override Minimap Clone()
     {
-        Console.WriteLine("Cloned minimap ---------");
-        Console.WriteLine("CompactionFactor: " + CompactionFactor + " | " + MinimapAlgorithm.GetName());
         return new PlotMinimap() {CompactionFactor = this.CompactionFactor, MinimapAlgorithm = this.MinimapAlgorithm};
     }
 

@@ -1,5 +1,4 @@
-﻿using System;
-using BEAM.Image.Minimap.MinimapAlgorithms;
+﻿using BEAM.Image.Minimap.MinimapAlgorithms;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BEAM.ViewModels.Minimap.Popups.EmbeddedSettings;
@@ -22,8 +21,6 @@ public partial class PixelThresholdSumAlgorithmConfigControlViewModel : ViewMode
     }
     public void Save()
     {
-        Console.WriteLine("Is algo null?: " );
-        Console.WriteLine(_algorithm is null);
         _algorithm.ThresholdRed = SelectedRedThreshold;
         _algorithm.ThresholdGreen = SelectedGreenThreshold;
         _algorithm.ThresholdBlue = SelectedBlueThreshold;

@@ -1,28 +1,18 @@
 using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
-using Avalonia.Threading;
 using BEAM.Datatypes;
-using BEAM.Image.Bitmap;
-using BEAM.Image.Displayer;
 using BEAM.IMage.Displayer.Scottplot;
-using BEAM.Image.Minimap;
-using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
 using BEAM.Log;
 using BEAM.Profiling;
 using BEAM.ViewModels;
-using BEAM.ViewModels.Minimap;
-using BEAM.Views.Minimap;
-using CommunityToolkit.Mvvm.ComponentModel;
+using BEAM.ViewModels.Utility;
 using NP.Ava.Visuals;
 using ScottPlot;
-using ScottPlot.Avalonia;
 using SizeChangedEventArgs = Avalonia.Controls.SizeChangedEventArgs;
 
 namespace BEAM.Views;
@@ -53,32 +43,23 @@ public partial class SequenceView : UserControl
     {
         InitializeComponent();
         this.SizeChanged += OnSizeChanged;
+        this.DataContextChanged += StyledElement_OnDataContextChanged;
 
     }
 
     private void OnSizeChanged(object? sender, SizeChangedEventArgs e)
     {
-        Console.WriteLine("Size Event triggered");
         var vm = DataContext as SequenceViewModel;
-        if (vm == null || vm.Minimap.Count == 0)
+        if (vm == null || vm.MinimapVms.Count == 0)
         {
             return;
         }
-
-        if (vm.Minimap[0] is MinimapPlotView minimapControl)
-        {
-            double newWidth = e.NewSize.Width * 0.2; // 20% of the SequenceView's width
-            double newHeight = e.NewSize.Height; // Full height of the SequenceView
-            
-            minimapControl.AdaptSize(newWidth, newHeight);
-        }
         
-        Console.WriteLine("Size Event triggered");
+        
         if(vm.MinimapVms.Any())
-        {   
-            var mapViewModel = (vm.MinimapVms.First() as MinimapPlotViewModel);
-            Console.WriteLine("Size viewmodel change triggered" + (mapViewModel is null));
-            mapViewModel.SizeChanged.Invoke(this, new ViewModels.Minimap.SizeChangedEventArgs(e.NewSize.Width * 0.2, e.NewSize.Height));
+        {
+            if(vm.MinimapVms.First() is not SizeAdjustableViewModelBase mapViewModel) return;
+            mapViewModel.NotifySizeChanged(this, new ViewModels.Utility.SizeChangedEventArgs(e.NewSize.Width * 0.2, e.NewSize.Height));
         }
         
     }
@@ -87,16 +68,7 @@ public partial class SequenceView : UserControl
     {
         _ApplyDarkMode();
         _BuildCustomRightClickMenu();
-
-        // TODO: CustomMouseActions
-        // https://github.com/ScottPlot/ScottPlot/blob/main/src/ScottPlot5/ScottPlot5%20Demos/ScottPlot5%20WinForms%20Demo/Demos/CustomMouseActions.cs
-
-        //avaPlot1.Interaction.IsEnabled = true;
-        //avaPlot1.UserInputProcessor.IsEnabled = true;
-        //avaPlot1.UserInputProcessor.UserActionResponses.Clear();
-
-        //var panButton = ScottPlot.Interactivity.StandardMouseButtons.Middle;
-        //var panResponse = new ScottPlot.Interactivity.UserActionResponses.MouseDragPan(panButton);
+        
         using var _ = Timer.Start();
         AvaPlot1.Plot.Axes.InvertY();
         AvaPlot1.Plot.Axes.SquareUnits();
@@ -104,7 +76,7 @@ public partial class SequenceView : UserControl
         var plottable = new BitmapPlottable(sequence);
         AvaPlot1.Plot.Add.Plottable(plottable);
 
-        plottable.SequenceImage.RequestRefreshPlotEvent += (sender, args) => AvaPlot1.Refresh();
+        plottable.SequenceImage.RequestRefreshPlotEvent += (_, _) => AvaPlot1.Refresh();
 
         AvaPlot1.Refresh();
     }
@@ -161,10 +133,11 @@ public partial class SequenceView : UserControl
         var x = point.Position.X;
         var y = point.Position.Y;
     
-        var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
+        var coordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
     
         var vm = (SequenceViewModel?)DataContext;
-        vm.pressedPointerPosition = CoordInPlot;
+        if (vm is null) return;
+        vm.pressedPointerPosition = coordInPlot;
     }
     
     private void PointerReleasedHandler(object? sender, PointerReleasedEventArgs args)
@@ -177,6 +150,7 @@ public partial class SequenceView : UserControl
         var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
     
         var vm = (SequenceViewModel?)DataContext;
+        if (vm is null) return;
         vm.releasedPointerPosition = CoordInPlot;
         vm.UpdateInspectionViewModel(CoordInPlot);
     }
@@ -188,48 +162,33 @@ public partial class SequenceView : UserControl
         {
             return;
         }
+
+        vm.MinimapHasChanged += Layoutable_OnLayoutUpdated;
         FillPlot(vm.Sequence);
     }
 
 
 
-    // private void InputElement_OnPointerMoved(object? sender, PointerEventArgs e)
-    // {
-    //     var point = e.GetCurrentPoint(sender as Control);
-    //     var x = point.Position.X;
-    //     var y = point.Position.Y;
-    //
-    //     Coordinates CoordInPlot = AvaPlot1.Plot.GetCoordinates(new Pixel(x, y));
-    //
-    //     var vm = (SequenceViewModel?)DataContext;
-    //     vm.UpdateInspectionViewModel(((long)CoordInPlot.X, (long)CoordInPlot.Y));
-    // }
-
-
+    
 
     private void Layoutable_OnLayoutUpdated(object? sender, EventArgs e)
     {
         var vm = DataContext as SequenceViewModel;
-        if (vm == null || vm.Minimap.Count == 0)
+        if (vm == null || vm.MinimapVms.Count == 0)
         {
             return;
         }
 
-        if (vm.Minimap[0] is MinimapPlotView minimapControl)
-        {
-            double newWidth = this.GetSize().X * 0.2; // 20% of the SequenceView's width
-            double newHeight = this.GetSize().Y; // Full height of the SequenceView
-            
-            minimapControl.AdaptSize(newWidth, newHeight);
-        }
+
         
-        Console.WriteLine("Size Event triggered");
-        if(vm.MinimapVms.Any())
+        if(vm.MinimapVms.Count > 0)
         {   
-            Console.WriteLine("Count > 0");
-            var mapViewModel = (vm.MinimapVms.First() as MinimapPlotViewModel);
-            Console.WriteLine("Size viewmodel change triggered" + (mapViewModel is null));
-            mapViewModel.SizeChanged.Invoke(this, new ViewModels.Minimap.SizeChangedEventArgs(this.GetSize().X * 0.2, this.GetSize().Y));
+            var mapViewModel = (vm.MinimapVms.First() as SizeAdjustableViewModelBase);
+            if (mapViewModel is null)
+            {
+                return;
+            }
+            mapViewModel.NotifySizeChanged(this, new ViewModels.Utility.SizeChangedEventArgs(this.GetSize().X * 0.2, this.GetSize().Y));
         }
     }
 }

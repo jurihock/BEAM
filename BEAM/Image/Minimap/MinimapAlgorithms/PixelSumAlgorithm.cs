@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Threading;
-using Avalonia.Controls;
 using BEAM.Exceptions;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
-using BEAM.ViewModels.Minimap.Popups;
-using NP.Utilities;
+using BEAM.Views.Utility;
 
 namespace BEAM.Image.Minimap.MinimapAlgorithms;
 
@@ -21,25 +19,24 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
         _sequence = sequence;
         _ctx = ctx;
         _channelFetchMask = new int[sequence.Shape.Channels];
-        
-        for(int i  = 0; i < sequence.Shape.Channels; i++)
+
+        for (int i = 0; i < sequence.Shape.Channels; i++)
         {
             _channelFetchMask[i] = i;
         }
 
-        
+
         return true;
     }
-    
+
     private float AnalyzeLine(long line)
     {
-        float sum;
-
         LineImage lineExcerpt = _sequence!.GetPixelLineData(line, _channelFetchMask!);
-        sum = 0.0f;
-        for(long j = 0; j < _sequence.Shape.Width; j++)
+        float sum = 0.0f;
+        for (long j = 0; j < _sequence.Shape.Width; j++)
         {
-            foreach(double channelValue in lineExcerpt.GetPixel(j, 0)) {
+            foreach (double channelValue in lineExcerpt.GetPixel(j, 0))
+            {
                 sum += (float)channelValue;
             }
         }
@@ -53,9 +50,10 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
         {
             throw new InvalidStateException("Data must first be initialized!");
         }
-        if(line < 0 || line >= _sequence.Shape.Height)
+
+        if (line < 0 || line >= _sequence.Shape.Height)
         {
-            throw new ArgumentOutOfRangeException("Line out of bounds!");
+            throw new ArgumentOutOfRangeException(nameof(line));
         }
 
         return AnalyzeLine(line);
@@ -70,7 +68,7 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
     {
         return null;
     }
-    
+
 
     public IMinimapAlgorithm Clone()
     {
@@ -79,11 +77,6 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
 
     public void SetRenderer(SequenceRenderer renderer)
     {
-        return;
-    }
-
-    public PixelSumAlgorithm()
-    {
-        
     }
 }
+    

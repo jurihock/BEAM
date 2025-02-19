@@ -82,15 +82,7 @@ public partial class MainWindowViewModel : ViewModelBase
         {
         }
     }
-
-    [RelayCommand]
-    public async Task OpenDefaultMinimapWindow()
-    {
-        
-        /*DefaultMinimapPopupView minimapPopup = new();
-        var v = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
-        await minimapPopup.ShowDialog(v.MainWindow);*/
-    }
+    
     
     [RelayCommand]
     private async Task OpenSequenceFromDrop(IEnumerable<IStorageItem>? files)

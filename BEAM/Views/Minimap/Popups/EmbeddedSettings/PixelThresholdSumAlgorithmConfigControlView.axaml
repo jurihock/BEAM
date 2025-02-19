@@ -14,7 +14,7 @@
             <NumericUpDown Grid.Row="2" Grid.Column ="2" Value="{Binding SelectedGreenThreshold}" FormatString="N0" Increment="5" Minimum="0" MinWidth="255" ParsingNumberStyle="Integer" />
             <TextBlock Grid.Row="4" Grid.Column="0">Minimum blue value:</TextBlock>
             <NumericUpDown Grid.Row="4" Grid.Column ="2" Value="{Binding SelectedBlueThreshold}" FormatString="N0" Increment="5" Minimum="0" MinWidth="255" ParsingNumberStyle="Integer" />
-            <TextBlock Grid.Row="6" Grid.Column="0">Minimum gamme value:</TextBlock>
+            <TextBlock Grid.Row="6" Grid.Column="0">Minimum gamma value:</TextBlock>
             <NumericUpDown Grid.Row="6" Grid.Column ="2" Value="{Binding SelectedGammaThreshold}" FormatString="N0" Increment="5" Minimum="0" MinWidth="255" ParsingNumberStyle="Integer" />
             <TextBlock Grid.Row="8" Grid.Column="0">(All values are inclusive)</TextBlock>
         </Grid>

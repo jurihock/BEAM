@@ -22,6 +22,7 @@ public partial class MainWindow : Window
         {
             if (!IsInitialized) return;
             var viewmodel = (MainWindowViewModel)DataContext;
+            if (viewmodel is null) return;
             DockView.DataContext = viewmodel.DockingVm;
         };
 

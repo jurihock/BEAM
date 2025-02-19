@@ -18,7 +18,7 @@ public static class MinimapSettingsUtilityHelper
         
         _defaultMinimaps = new List<Minimap>();
         _defaultMinimaps.AddAll(Assembly.GetExecutingAssembly().GetTypes()
-            .Where(t => t is { IsClass: true, IsAbstract: false } && t.IsSubclassOf(typeof(Image.Minimap.Minimap)))
+            .Where(t => t is { IsClass: true, IsAbstract: false } && t.IsSubclassOf(typeof(Minimap)))
             .ToList().ReplaceEveryEntry(TypeToMinimap));
         if (_currentDefault is null)
         {
@@ -55,9 +55,9 @@ public static class MinimapSettingsUtilityHelper
     }
     
     
-    private static List<K> ReplaceEveryEntry<T,K>(this IEnumerable<T> inputList, Func<T, K> conversion)
+    private static List<TK> ReplaceEveryEntry<T,TK>(this IEnumerable<T> inputList, Func<T, TK> conversion)
     {
-        List<K> output = new List<K>();
+        List<TK> output = new List<TK>();
         foreach (var element in inputList)
         {
             output.Add(conversion(element));

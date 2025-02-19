@@ -43,8 +43,6 @@
                 <NativeMenu>
                     <NativeMenuItem Header="{Binding ViewOpenStatusWindow}" Command="{Binding OpenStatusWindowCommand}"/>
                 </NativeMenu>
-                <NativeMenuItem Header="{Binding ShowDefaultMinimap}" Command="{Binding OpenDefaultMinimapWindow}"
-                                IsVisible="{OnPlatform macOS=False, Default=True}" />
             </NativeMenuItem>
             <NativeMenuItem Header="{Binding Help}">
                 <NativeMenu>

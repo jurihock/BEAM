@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
 using BEAM.ViewModels.Minimap.Popups;
+using BEAM.Views.Utility;
 
 namespace BEAM.Image.Minimap.MinimapAlgorithms;
 

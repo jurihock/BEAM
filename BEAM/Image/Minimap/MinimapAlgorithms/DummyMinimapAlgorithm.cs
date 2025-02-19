@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Animation;
-using Avalonia.Controls;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
-using BEAM.ViewModels.Minimap.Popups;
+using BEAM.Views.Utility;
 
 namespace BEAM.Image.Minimap.MinimapAlgorithms;
 
@@ -14,11 +12,10 @@ public class DummyMinimapAlgorithm : IMinimapAlgorithm
     private readonly Random _random = new Random();
     public bool AnalyzeSequence(Sequence sequence, CancellationToken ctx)
     {
-        Console.WriteLine("USed the dummy algorithm");
         for(int i = 0; i < 10000; i++)
         {
             sequence.GetPixelLineData(i, [1]);
-            Task.Delay(1000);
+            Task.Delay(1000, ctx);
         }
             
         return true;
@@ -47,7 +44,6 @@ public class DummyMinimapAlgorithm : IMinimapAlgorithm
 
     public void SetRenderer(SequenceRenderer renderer)
     {
-        return;
     }
     
 }

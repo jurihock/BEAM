@@ -4,28 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:scott="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
              xmlns:vm="clr-namespace:BEAM.ViewModels"
-             xmlns:minimap="clr-namespace:BEAM.ViewModels.Minimap"
-             xmlns:minimap1="clr-namespace:BEAM.Views.Minimap"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:SequenceViewModel"
              x:Class="BEAM.Views.SequenceView"
              DataContextChanged="StyledElement_OnDataContextChanged"
              PointerPressed="PointerPressedHandler"
              PointerReleased="PointerReleasedHandler">
-    <Design.DataContext>
-        <vm:SequenceViewModel/>
-    </Design.DataContext>
 
     <Grid ColumnDefinitions="*, Auto, Auto">
         <scott:AvaPlot Name="AvaPlot1" Grid.Column="0"/>
         <ScrollBar Name="Bar" Orientation="Vertical" Visibility="Visible" AllowAutoHide="False" Grid.Column="1" />
-        <!--<ItemsControl ItemsSource="{Binding Minimap}" Grid.Column="2" LayoutUpdated="Layoutable_OnLayoutUpdated"></ItemsControl>-->
         <ItemsControl ItemsSource="{Binding MinimapVms}" Grid.Column="2" LayoutUpdated="Layoutable_OnLayoutUpdated">
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <minimap1:MinimapPlotView DataContext="{Binding}" />
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
         </ItemsControl>
     </Grid>
 </UserControl>

@@ -124,7 +124,6 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
 
     public override void Update(IPlottable newPlot)
     {
-        Console.WriteLine("BarView");
         FillPlot(new double[]{1,1,1,1});
     }
 }

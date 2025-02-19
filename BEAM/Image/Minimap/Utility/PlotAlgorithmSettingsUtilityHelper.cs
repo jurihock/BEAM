@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using BEAM.Exceptions;
 using BEAM.Image.Minimap.MinimapAlgorithms;
-using Microsoft.VisualBasic.CompilerServices;
 using NP.Utilities;
 
 namespace BEAM.Image.Minimap.Utility;
@@ -51,17 +50,15 @@ public static class PlotAlgorithmSettingsUtilityHelper
         
         if (newAlgorithmDefault is null)
         {
-            Console.WriteLine("Default not set to due to null");
             return;
         }
-        Console.WriteLine("Default set to+ " + newAlgorithmDefault.GetName());
         _currentDefault = newAlgorithmDefault;
     }
     
     
-    private static List<K> ReplaceEveryEntry<T, K>(this IEnumerable<T> inputList, Func<T, K> conversion)
+    private static List<TK> ReplaceEveryEntry<T, TK>(this IEnumerable<T> inputList, Func<T, TK> conversion)
     {
-        List<K> output = new List<K>();
+        List<TK> output = new List<TK>();
         foreach (var element in inputList)
         {
             output.Add(conversion(element));
@@ -73,9 +70,7 @@ public static class PlotAlgorithmSettingsUtilityHelper
     public static bool ExistAny()
     {
         if(_defaultAlgorithms is null) GenerateAlgorithms();
-#pragma warning disable CS8602 // Dereference of a possibly null reference. This is a false positive, as the method GenerateMinimaps() will always initialize _defaultMinimaps
-        return _defaultAlgorithms.Count > 0;
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        return _defaultAlgorithms!.Count > 0;
     }
     
 
@@ -92,13 +87,9 @@ public static class PlotAlgorithmSettingsUtilityHelper
     public static IMinimapAlgorithm GetDefaultAlgorithm()
     {
         if(_defaultAlgorithms is null) GenerateAlgorithms();
-        if(_currentDefault is null)
-        {
-            _currentDefault = _defaultAlgorithms!.First();
-        }
+        _currentDefault ??= _defaultAlgorithms!.First();
 
         if (!ExistAny()) throw new InvalidStateException();
-        Console.WriteLine("returned current default as: " + _currentDefault.GetName());
         return _currentDefault;
     }
 
@@ -120,10 +111,4 @@ public static class PlotAlgorithmSettingsUtilityHelper
         return new SettingsTransferObject<IMinimapAlgorithm>(allPossible.ToImmutableList(), defaultClone);
     }
     
-}
-
-public class SettingsTransferObject<T>(ImmutableList<T> allPossible, T? active)
-{
-    public T? Active { get; set; } = active;
-    public readonly ImmutableList<T> AllPossible = allPossible;
 }

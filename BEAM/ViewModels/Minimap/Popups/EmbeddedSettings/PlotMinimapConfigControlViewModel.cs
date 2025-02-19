@@ -7,6 +7,7 @@ using BEAM.Image.Minimap.MinimapAlgorithms;
 using BEAM.Image.Minimap.Utility;
 using BEAM.Log;
 using BEAM.Views.Minimap.Popups.EmbeddedSettings;
+using BEAM.Views.Utility;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BEAM.ViewModels.Minimap.Popups.EmbeddedSettings;
@@ -16,11 +17,11 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
     private static String _defaultControlText = "This Algorithm provides no changeable settings";
 
     private PlotMinimap _plotMinimap;
-    [ObservableProperty] public int lineCompaction;
+    [ObservableProperty] public partial int LineCompaction { get; set; }
     
     [ObservableProperty] public partial IMinimapAlgorithm SelectedAlgorithm { get; set; }
-    [ObservableProperty] public partial ObservableCollection<IMinimapAlgorithm> algorithms { get; set; } = new ObservableCollection<IMinimapAlgorithm>();
-    [ObservableProperty] public partial ObservableCollection<Control> algorithmSubSettings { get; set; } = new ObservableCollection<Control>();
+    [ObservableProperty] public partial ObservableCollection<IMinimapAlgorithm> Algorithms { get; set; } = new ObservableCollection<IMinimapAlgorithm>();
+    [ObservableProperty] public partial ObservableCollection<Control> AlgorithmSubSettings { get; set; } = new ObservableCollection<Control>();
     
     
     private ISaveControl _currentConfigControl = new NullSaveConfig();
@@ -36,17 +37,19 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
     public PlotMinimapConfigControlViewModel(PlotMinimap plotMinimap)
     {
         _plotMinimap = plotMinimap;
-        lineCompaction = plotMinimap.CompactionFactor;
+        LineCompaction = plotMinimap.CompactionFactor;
+        SelectedAlgorithm = _plotMinimap.MinimapAlgorithm;
         if (!PlotAlgorithmSettingsUtilityHelper.ExistAny())
         {
             TextBlock textBlock = new TextBlock(){Text= "There are no Algorithms to choose from"};
+            AlgorithmSubSettings.Add(textBlock);
             return;
         }
         
         
         foreach(var element in PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithms())
         {
-            algorithms.Add(element);
+            Algorithms.Add(element);
         }
 
         try
@@ -55,7 +58,7 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
         }
         catch (InvalidStateException ex)
         {
-            Logger.GetInstance().LogMessage("No valid Plotting algorithm was found");
+            Logger.GetInstance().LogMessage("No valid Plotting algorithm was found + " + ex.Message);
         }
     }
 
@@ -75,16 +78,16 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
         //TODO: Alternatively one minimap only ever has one Control Window and we can get access to it thathw ay
         //TODO: Alternatively one ([User]Control, ISaveControl) inherits from the other
         var controls = algorithm.GetSettingsPopupControl();
-        algorithmSubSettings.Clear();
+        AlgorithmSubSettings.Clear();
         if(controls is null)
         {
             _currentConfigControl = new NullSaveConfig();
-            algorithmSubSettings.Add(new TextBlock() {Text = _defaultControlText});
+            AlgorithmSubSettings.Add(new TextBlock() {Text = _defaultControlText});
         }
         else
         {
             _currentConfigControl = controls;
-            algorithmSubSettings.Add(controls);
+            AlgorithmSubSettings.Add(controls);
         }
     }
 }

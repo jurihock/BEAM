@@ -1,5 +1,4 @@
-﻿using Avalonia.Input.TextInput;
-using BEAM.ViewModels.Minimap.Popups;
+﻿using BEAM.Views.Utility;
 
 namespace BEAM.Views.Minimap.Popups.EmbeddedSettings;
 
@@ -7,6 +6,5 @@ public class NullSaveConfig : ISaveControl
 {
     public override void Save()
     {
-        return;
     }
 }
