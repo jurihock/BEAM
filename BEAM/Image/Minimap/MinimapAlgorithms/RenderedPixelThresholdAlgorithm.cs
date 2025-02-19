@@ -29,7 +29,7 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
     }
 
 
-    public float GetLineValue(long line)
+    public double GetLineValue(long line)
     {
         if (_sequence is null || _ctx is null)
         {
@@ -43,11 +43,9 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
         return AnalyzeLine(line);
     }
     
-    private float AnalyzeLine(long line)
+    private double AnalyzeLine(long line)
     {
-        float sum;
-        
-        sum = 0.0f;
+        double sum = 0.0f;
         for(long j = 0; j < _sequence!.Shape.Width; j++)
         {
             var renderedData = _renderer!.RenderPixel(_sequence, j, line);

@@ -21,9 +21,9 @@ public class DummyMinimapAlgorithm : IMinimapAlgorithm
         return true;
     }
 
-    public float GetLineValue(long line)
+    public double GetLineValue(long line)
     {
-        return _random.NextSingle();
+        return _random.NextDouble();
     }
 
     public string GetName()

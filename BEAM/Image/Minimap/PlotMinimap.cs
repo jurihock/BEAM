@@ -105,7 +105,8 @@ public class PlotMinimap : Minimap
         double minValue = 0;
         for (int i = 0; i < Sequence.Shape.Height / CompactionFactor; i++)
         {
-            float calculation = MinimapAlgorithm.GetLineValue(i * CompactionFactor);
+            double calculation = MinimapAlgorithm.GetLineValue(i * CompactionFactor);
+            Console.WriteLine("Outer: " + calculation + " progress " + i + " of " + Sequence.Shape.Height / CompactionFactor);
             if(calculation > maxValue)
             {
                 maxValue = calculation;
@@ -116,12 +117,13 @@ public class PlotMinimap : Minimap
             Bar bar = new Bar
             {
                 Position = i * CompactionFactor,
-                Value = calculation,
+                Value =  calculation,
                 Orientation = Orientation.Horizontal
             };
             bars[i] = bar;
             
         }
+        Console.WriteLine("finished with all bars");
         _plot.Axes.InvertY();
         _plot.Add.Bars(bars);
         _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 , bottom: Sequence.Shape.Height);
@@ -145,7 +147,7 @@ public class PlotMinimap : Minimap
     /// <returns>The specified line's calculated value.</returns>
     /// <exception cref="InvalidOperationException">Thrown to indicate that
     /// the minimap has not yet finished its generation process.</exception>
-    public float GetMinimapValue(long line)
+    public double GetMinimapValue(long line)
     {
         if (!IsGenerated)
         {

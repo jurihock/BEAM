@@ -8,6 +8,7 @@ using Avalonia.Rendering;
 using Avalonia.Threading;
 using BEAM.Datatypes;
 using BEAM.Docking;
+using BEAM.Image.Minimap;
 using BEAM.Image.Minimap.MinimapAlgorithms;
 using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
@@ -71,7 +72,8 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             _ => 1
         };
         
-        _currentMinimap = MinimapSettingsUtilityHelper.GetDefaultClones().Active;
+        //_currentMinimap = MinimapSettingsUtilityHelper.GetDefaultClones().Active;
+        _currentMinimap = SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultClones().Active;
         if (_currentMinimap is not null)
         {
             //TODO: in up to data branch the SequenceVM knows the renderer
@@ -87,9 +89,16 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     private void Test()
     {
         SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObjects().ForEach(Console.WriteLine);
-        Console.WriteLine("------");
         SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObjects().ForEach(Console.WriteLine);
+        Console.WriteLine(SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObject());
+        Console.WriteLine(SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObject());
+        Console.WriteLine("-");
+        SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObjects().ForEach(Console.WriteLine);
+        SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObjects().ForEach(Console.WriteLine);
+        Console.WriteLine(SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObject());
+        Console.WriteLine(SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObject());
     }
+
 
     public string Name => Sequence.GetName();
 

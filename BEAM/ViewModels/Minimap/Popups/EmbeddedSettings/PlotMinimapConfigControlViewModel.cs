@@ -30,7 +30,8 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
         _plotMinimap.CompactionFactor = LineCompaction;
         _currentConfigControl.Save();
         _plotMinimap.MinimapAlgorithm = SelectedAlgorithm;
-        PlotAlgorithmSettingsUtilityHelper.SetDefaultAlgorithm(SelectedAlgorithm);
+        //PlotAlgorithmSettingsUtilityHelper.SetDefaultAlgorithm(SelectedAlgorithm);
+        SettingsUtilityHelper<IMinimapAlgorithm>.SetDefaultObject(SelectedAlgorithm);
     }
     
     
@@ -39,7 +40,7 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
         _plotMinimap = plotMinimap;
         LineCompaction = plotMinimap.CompactionFactor;
         SelectedAlgorithm = _plotMinimap.MinimapAlgorithm;
-        if (!PlotAlgorithmSettingsUtilityHelper.ExistAny())
+        if (!SettingsUtilityHelper<IMinimapAlgorithm>.ExistAny() /*PlotAlgorithmSettingsUtilityHelper.ExistAny()*/)
         {
             TextBlock textBlock = new TextBlock(){Text= "There are no Algorithms to choose from"};
             AlgorithmSubSettings.Add(textBlock);
@@ -47,14 +48,15 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
         }
         
         
-        foreach(var element in PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithms())
+        foreach(var element in SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObjects() /*PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithms()*/)
         {
             Algorithms.Add(element);
         }
 
         try
         {
-            SelectedAlgorithm = PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithm();
+            //SelectedAlgorithm = PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithm();
+            SelectedAlgorithm = SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObject();
         }
         catch (InvalidStateException ex)
         {

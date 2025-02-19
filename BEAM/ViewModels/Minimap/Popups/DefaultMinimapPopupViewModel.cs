@@ -11,7 +11,7 @@ namespace BEAM.ViewModels.Minimap.Popups;
 
 public partial class  DefaultMinimapPopupViewModel : ViewModelBase
 {
-    private const String DefaultControlText = "This Minimap provides no changeable settings";
+    private const string DefaultControlText = "This Minimap provides no changeable settings";
 
     [ObservableProperty] public partial Image.Minimap.Minimap? SelectedMinimap { get; set; }
     [ObservableProperty] public partial ObservableCollection<Image.Minimap.Minimap> Minimaps { get; set; } = new ObservableCollection<Image.Minimap.Minimap>();
@@ -24,20 +24,21 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
     public DefaultMinimapPopupViewModel(SequenceViewModel sequenceVm)
     {
         _sequenceVm = sequenceVm;
-        if (!MinimapSettingsUtilityHelper.ExistAny())
+        if (!SettingsUtilityHelper<Image.Minimap.Minimap>.ExistAny() /*!MinimapSettingsUtilityHelper.ExistAny()*/)
         {
             TextBlock textBlock = new TextBlock(){Text= "There are no Minimaps to choose from"};
             MinimapSubSettings.Add(textBlock);
             return;
         }
-        
-        
-        foreach(var element in MinimapSettingsUtilityHelper.GetDefaultMinimaps())
+        Console.WriteLine("In view");
+        SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObjects().ForEach(Console.WriteLine);
+        foreach(var element in SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObjects() /*MinimapSettingsUtilityHelper.GetDefaultMinimaps()*/)
         {
             Minimaps.Add(element);
         }
-
-        SelectedMinimap = MinimapSettingsUtilityHelper.GetDefaultMinimap();
+        Console.WriteLine(SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObject());
+        //SelectedMinimap = MinimapSettingsUtilityHelper.GetDefaultMinimap();
+        SelectedMinimap = SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObject();
         
     }
 
@@ -72,7 +73,8 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
     {
         _currentControl.Save();
         
-        MinimapSettingsUtilityHelper.SetDefaultMinimap(SelectedMinimap);
+        //MinimapSettingsUtilityHelper.SetDefaultMinimap(SelectedMinimap);
+        SettingsUtilityHelper<Image.Minimap.Minimap>.SetDefaultObject(SelectedMinimap);
         return true;
     }
 

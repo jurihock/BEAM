@@ -25,7 +25,7 @@ public interface IMinimapAlgorithm
     /// </summary>
     /// <param name="line">The line whose value shall be returned.</param>
     /// <returns>The specified line's calculated value.</returns>
-    float GetLineValue(long line);
+    double GetLineValue(long line);
 
     String GetName();
 
