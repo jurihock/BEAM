@@ -107,6 +107,27 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
         return data;
     }
 
+    /// <summary>
+    /// Sets the ChannelHSVMap to the newly given ChannelHSVMap, but only if the amount of channels
+    /// does not change.
+    /// </summary>
+    /// <param name="hsvMap"></param>
+    /// <exception cref="ChannelException"></exception>
+    public void UpdateChannelHSVMap(ChannelHSVMap hsvMap)
+    {
+        if (_channelHsvMap.AmountChannels != hsvMap.AmountChannels)
+        {
+            throw new ChannelException("Channel count mismatch for ChannelHSVMap of ArgMax! Changed from: " 
+                                       + _channelHsvMap.AmountChannels + " to " + hsvMap.AmountChannels);
+        }
+        _channelHsvMap = hsvMap;
+    }
+
+    public ChannelHSVMap getChannelHsvMap()
+    {
+        return _channelHsvMap.Clone();
+    }
+
     public override string GetName()
     {
         return $"{base.GetName()} (Color HSV)";

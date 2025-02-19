@@ -77,4 +77,18 @@ public class ChannelHSVMap
     {
         return usedChannels.Count(value => value);
     }
+
+    /// <summary>
+    /// Creates a Clone of the ChannelHSVMap and fills it with the same values.
+    /// </summary>
+    /// <returns></returns>
+    public ChannelHSVMap Clone()
+    {
+        var clone = new ChannelHSVMap(AmountChannels);
+        for (var i = 0; i < AmountChannels; i++)
+        {
+            clone.setUsedChannels(i, usedChannels[i]);
+            clone.SetColor(i, this.GetColorHSV(i));
+        }
+    }
 }
