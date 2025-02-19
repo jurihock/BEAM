@@ -20,22 +20,6 @@ namespace BEAM.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    public static readonly Configuration BaseConfig = Configuration.StandardEnglish();
-
-    [ObservableProperty] public partial string File { get; set; } = BaseConfig.FileMenu;
-    [ObservableProperty] public partial string Open { get; set; } = BaseConfig.Open;
-    [ObservableProperty] public partial string OpenFolder { get; set; } = BaseConfig.OpenFolder;
-    [ObservableProperty] public partial string Exit { get; set; } = BaseConfig.Exit;
-    [ObservableProperty] public partial string Edit { get; set; } = BaseConfig.Edit;
-    [ObservableProperty] public partial string Paste { get; set; } = BaseConfig.Paste;
-    [ObservableProperty] public partial string Copy { get; set; } = BaseConfig.Copy;
-    [ObservableProperty] public partial string Help { get; set; } = BaseConfig.Help;
-    [ObservableProperty] public partial string View { get; set; } = BaseConfig.View;
-    [ObservableProperty] public partial string Synchro { get; set; } = BaseConfig.Synchro;
-    [ObservableProperty] public partial string ActivateSynchro { get; set; } = BaseConfig.ActivateSynchro;
-    [ObservableProperty] public partial string DeactivateSynchro { get; set; } = BaseConfig.DeactivateSynchro;
-    [ObservableProperty] public partial string ViewOpenStatusWindow { get; set; } = BaseConfig.ViewOpenStatusWindow;
-
     [ObservableProperty] private string? _fileText;
     [ObservableProperty] public partial DockingViewModel DockingVm { get; set; } = new();
 
