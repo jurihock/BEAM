@@ -7,6 +7,9 @@ riderModule.iml
 .vs
 BEAM.Tests/loggerTests/testLogs
 
+BEAM.sln.DotSettings.user
+*.log
+
 .DS_Store
 Thumbs.db
 

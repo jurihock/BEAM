@@ -7,9 +7,9 @@ namespace BEAM.Renderer;
 /// </summary>
 /// <param name="minimumOfIntensityRange"></param>
 /// <param name="maximumOfIntensityRange"></param>
-public class ArgMaxRendererGrey(int minimumOfIntensityRange, int maximumOfIntensityRange) : ArgMaxRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
+public class ArgMaxRendererGrey(double minimumOfIntensityRange, double maximumOfIntensityRange) : ArgMaxRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
 {
-    protected override RenderTypes GetRenderType()
+    public override RenderTypes GetRenderType()
     {
         return RenderTypes.ArgMaxRendererGrey;
     }
@@ -19,9 +19,14 @@ public class ArgMaxRendererGrey(int minimumOfIntensityRange, int maximumOfIntens
         return new ArgMaxRendererGrey(minimumOfIntensityRange, maximumOfIntensityRange);
     }
 
-    protected override bool CheckParameters(double[] displayParameters, IImage image)
+    protected override bool CheckParameters(double[] displayParameters)
     {
         return displayParameters.Length == 0;
+    }
+
+    public override object Clone()
+    {
+        return new ArgMaxRendererGrey(MinimumOfIntensityRange, MaximumOfIntensityRange);
     }
 
     /// <summary>

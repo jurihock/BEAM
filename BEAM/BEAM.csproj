@@ -11,6 +11,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Folder Include="Assets\Images\" />
         <Folder Include="Models\" />
         <AvaloniaResource Include="Assets\**" />
     </ItemGroup>
@@ -42,6 +43,9 @@
       </Compile>
       <Compile Update="Views\StatusWindow.axaml.cs">
         <DependentUpon>StatusWindow.axaml</DependentUpon>
+      </Compile>
+      <Compile Update="Views\ColorSettingsPopup.axaml.cs">
+        <DependentUpon>ColorSettingsPopup.axaml</DependentUpon>
       </Compile>
     </ItemGroup>
 </Project>

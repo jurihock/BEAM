@@ -5,15 +5,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Input;
 using Avalonia.Platform.Storage;
+using BEAM.Exceptions;
 using BEAM.ImageSequence;
-using BEAM.Log;
+using BEAM.ImageSequence.Synchronization;
+using BEAM.ImageSequence.Synchronization.Manipulators;
 using BEAM.Models;
+using BEAM.Models.Log;
 using BEAM.Views;
-using BEAM.Views.Minimap.Popups;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Input;
 
 namespace BEAM.ViewModels;
@@ -31,11 +31,10 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] public partial string Copy { get; set; } = BaseConfig.Copy;
     [ObservableProperty] public partial string Help { get; set; } = BaseConfig.Help;
     [ObservableProperty] public partial string View { get; set; } = BaseConfig.View;
-    
-    [ObservableProperty] public partial string ShowDefaultMinimap { get; set; } = BaseConfig.ShowDefaultMinimap;
+    [ObservableProperty] public partial string Synchro { get; set; } = BaseConfig.Synchro;
+    [ObservableProperty] public partial string ActivateSynchro { get; set; } = BaseConfig.ActivateSynchro;
+    [ObservableProperty] public partial string DeactivateSynchro { get; set; } = BaseConfig.DeactivateSynchro;
     [ObservableProperty] public partial string ViewOpenStatusWindow { get; set; } = BaseConfig.ViewOpenStatusWindow;
-    
-
 
     [ObservableProperty] private string? _fileText;
     [ObservableProperty] public partial DockingViewModel DockingVm { get; set; } = new();
@@ -43,32 +42,44 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public static int TitleBarHeight => 38;
 
-    private Logger? _logger;
+    private SyncedPlotController? _syncedPlotController;
 
     public MainWindowViewModel()
     {
-        _logger = Logger.GetInstance();
+        _syncedPlotController = new SyncedPlotController();
+        _syncedPlotController.Register(new MouseManipulator());
+        PlotControllerManager.RegisterController(_syncedPlotController);
     }
 
     [RelayCommand]
-    public async Task OpenSequence()
+    private async Task OpenSequence()
     {
         var files = await OpenFilePickerAsync();
-
-        if (files == null) return;
+        if (files == null || files.Count == 0) return;
 
         var list = files.Select(f => f.Path).ToList();
+
         try
         {
-            DockingVm.OpenDock(new SequenceViewModel(Sequence.Open(list), DockingVm));
+            DockingVm.OpenSequenceView(DiskSequence.Open(list));
         }
-        catch (Exception ex)
+        catch (UnknownSequenceException)
         {
+            Logger.GetInstance().Error(LogEvent.OpenedFile,
+                $"Cannot open files since no suitable sequence type found. (Supported sequences: {string.Join(", ", DiskSequence.SupportedSequences)})");
+        }
+        catch (EmptySequenceException)
+        {
+            Logger.GetInstance().Info(LogEvent.OpenedFile, "The sequence to be opened is empty");
+        }
+        catch (InvalidSequenceException)
+        {
+            // not handled, since the sequence will write a log message
         }
     }
 
     [RelayCommand]
-    public async Task OpenSequenceFromFolder()
+    private async Task OpenSequenceFromFolder()
     {
         var folder = await OpenFolderPickerAsync();
 
@@ -76,55 +87,30 @@ public partial class MainWindowViewModel : ViewModelBase
 
         try
         {
-            DockingVm.OpenDock(new SequenceViewModel(Sequence.Open(folder.Path), DockingVm));
+            DockingVm.OpenSequenceView(DiskSequence.Open(folder.Path));
         }
-        catch (Exception ex)
+        catch (UnknownSequenceException)
         {
+            Logger.GetInstance().Error(LogEvent.OpenedFile,
+                $"Cannot open folder since no suitable sequence type found. (Supported sequences: {string.Join(", ", DiskSequence.SupportedSequences)})");
         }
-    }
-    
-    
-    [RelayCommand]
-    private async Task OpenSequenceFromDrop(IEnumerable<IStorageItem>? files)
-    {
-        var data = files;
-        List<Uri> list = new();
-        foreach (var file in data)
+        catch (EmptySequenceException)
         {
-            var path = file.Path;
-            if (Directory.Exists(path.AbsolutePath))
-            {
-                try
-                {
-                    DockingVm.OpenDock(new SequenceViewModel(Sequence.Open(path), DockingVm));
-                }
-                catch (Exception ex)
-                {
-                }
-            }
-            else
-            {
-                list.Add(path);
-            }
+            Logger.GetInstance().Info(LogEvent.OpenedFile, "The sequence to be opened is empty");
         }
-
-        try
+        catch (InvalidSequenceException)
         {
-            DockingVm.OpenDock(new SequenceViewModel(Sequence.Open(list), DockingVm));
-        }
-        catch (Exception exception)
-        {
+            // not handled, since the sequence will write a log message
         }
     }
 
-
     [RelayCommand]
-    public void ExitBeam()
+    private void ExitBeam()
     {
         Environment.Exit(0);
     }
 
-    private async Task<IStorageFolder?> OpenFolderPickerAsync()
+    private static async Task<IStorageFolder?> OpenFolderPickerAsync()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
             desktop.MainWindow?.StorageProvider is not { } provider)
@@ -136,10 +122,10 @@ public partial class MainWindowViewModel : ViewModelBase
             AllowMultiple = false,
         });
 
-        return folder?.Count >= 1 ? folder[0] : null;
+        return folder.Count >= 1 ? folder[0] : null;
     }
 
-    private async Task<IReadOnlyList<IStorageFile>?> OpenFilePickerAsync()
+    private static async Task<IReadOnlyList<IStorageFile>?> OpenFilePickerAsync()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
             desktop.MainWindow?.StorageProvider is not { } provider)
@@ -155,40 +141,30 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public void AddInfo()
-    {
-        _logger?.Info(LogEvent.OpenedFile);
-    }
-
-    [RelayCommand]
-    public void AddWarning()
-    {
-        _logger?.Warning(LogEvent.UnknownFileFormat);
-    }
-
-    [RelayCommand]
-    public void AddError()
-    {
-        _logger?.Error(LogEvent.FileNotFound);
-    }
-
-    [RelayCommand]
-    public void ClearLog()
-    {
-        _logger?.ClearStatusBar();
-    }
-
-    [RelayCommand]
-    public void OpenStatusWindow()
+    private void OpenStatusWindow()
     {
         var statusWindow = new StatusWindow();
         statusWindow.Show();
     }
 
     [RelayCommand]
-    public void OpenAboutWindow()
+    private void OpenAboutWindow()
     {
         var aboutWindow = new AboutWindow();
         aboutWindow.Show();
+    }
+
+    [RelayCommand]
+    private void ActivateSynchronization()
+    {
+        _syncedPlotController?.Activate();
+        ScrollingSynchronizer.activateSynchronization();
+    }
+
+    [RelayCommand]
+    private void DeactivateSynchronization()
+    {
+        _syncedPlotController?.Deactivate();
+        ScrollingSynchronizer.deactivateSynchronization();
     }
 }

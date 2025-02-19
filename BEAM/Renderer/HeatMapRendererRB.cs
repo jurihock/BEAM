@@ -19,7 +19,7 @@ public class HeatMapRendererRB : HeatMapRenderer
     /// <param name="relMaxColdestIntensity"></param>
     /// <param name="relMinHottestIntensity"></param>
     /// <param name="channel"></param>
-    public HeatMapRendererRB(int minimumOfIntensityRange, int maximumOfIntensityRange, 
+    public HeatMapRendererRB(double minimumOfIntensityRange, double maximumOfIntensityRange,
         int channel, double relMaxColdestIntensity, double relMinHottestIntensity) : base(
         minimumOfIntensityRange, maximumOfIntensityRange, 
         channel, relMaxColdestIntensity, relMinHottestIntensity)
@@ -54,7 +54,7 @@ public class HeatMapRendererRB : HeatMapRenderer
         return color;
     }
 
-    protected override RenderTypes GetRenderType()
+    public override RenderTypes GetRenderType()
     {
         return RenderTypes.HeatMapRendererRb;
     }
@@ -72,7 +72,7 @@ public class HeatMapRendererRB : HeatMapRenderer
     protected override SequenceRenderer Create(int minimumOfIntensityRange, int maximumOfIntensityRange, double[] displayParameters)
     {
         // TODO remove null
-        if (!CheckParameters(displayParameters, null))
+        if (!CheckParameters(displayParameters))
         {
             throw new InvalidUserArgumentException("Display parameters are invalid.");
         };
@@ -81,7 +81,7 @@ public class HeatMapRendererRB : HeatMapRenderer
     }
 
     //TODO: Check if channel is in range for given Image, not possible yet, if image not attribute
-    protected override bool CheckParameters(double[] displayParameters, IImage image)
+    protected override bool CheckParameters(double[] displayParameters)
     {
         if (displayParameters.Length != 3
             || displayParameters[0] < 0 // the channel
@@ -94,5 +94,10 @@ public class HeatMapRendererRB : HeatMapRenderer
         }
         
         return true;
+    }
+
+    public override object Clone()
+    {
+        return new HeatMapRendererRB(MinimumOfIntensityRange, MaximumOfIntensityRange, Channel, RelMinHottestIntensity, RelMinHottestIntensity);
     }
 }

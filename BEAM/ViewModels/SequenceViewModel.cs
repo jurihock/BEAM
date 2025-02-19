@@ -7,8 +7,10 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using BEAM.Datatypes;
 using BEAM.Docking;
+using BEAM.IMage.Displayer.Scottplot;
 using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
+using BEAM.Renderer;
 using BEAM.Log;
 using BEAM.Renderer;
 using BEAM.Views.Minimap.Popups;
@@ -20,6 +22,15 @@ namespace BEAM.ViewModels;
 
 public partial class SequenceViewModel : ViewModelBase, IDockBase
 {
+    public EventHandler<RenderersUpdatedEventArgs> RenderersUpdated = delegate { };
+    public EventHandler<RenderersUpdatedEventArgs> CutSequence = delegate { };
+
+    public TransformedSequence Sequence { get; set; }
+
+    public SequenceRenderer[] Renderers;
+    public int RendererSelection;
+
+    public SequenceViewModel(ISequence sequence)
     [ObservableProperty] public partial DockingViewModel DockingVm { get; set; } = new();
     [ObservableProperty] public partial Coordinate2D pressedPointerPosition { get; set; } = new();
     [ObservableProperty] public partial Coordinate2D releasedPointerPosition { get; set; } = new();
@@ -37,7 +48,8 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 
     public SequenceViewModel(Sequence sequence, DockingViewModel dockingVm)
     {
-        Sequence = sequence;
+        Sequence = new TransformedSequence(sequence);
+
         DockingVm = dockingVm;
 
         //TODO: Maybe Button for loading the default minimaps on sequence opening
@@ -48,11 +60,30 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             _currentMinimap.SetRenderer(new ChannelMapRenderer(0, 255, 0, 1,2));
             _currentMinimap.StartGeneration(sequence, OnMinimapGenerated);
         }
+        
+        var (min, max) = sequence switch
+        {
+            SkiaSequence => (0, 255),
+            _ => (0, 1)
+        };
 
+        Renderers =
+        [
+            new ChannelMapRenderer(min, max, 2, 1, 0),
+            new HeatMapRendererRB(min, max, 0, 0.1, 0.9),
+            new ArgMaxRendererGrey(min, max)
+        ];
+
+        RendererSelection = sequence switch
+        {
+            SkiaSequence => 0,
+            _ => 1
+        };
     }
-    
-    
 
+    public string Name => Sequence.GetName();
+
+    public SequenceRenderer CurrentRenderer => Renderers[RendererSelection];
     
     public void ChangeCurrentMinimap(Image.Minimap.Minimap minimap)
     {
@@ -114,8 +145,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         
         inspectionViewModel.Update(pressedPointerPosition, this);
     }
-
-    public string Name { get; } = "Eine tolle Sequence";
+    
 
     public void OnClose()
     {
@@ -129,5 +159,4 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     {
         return Name;
     }
-    
 }

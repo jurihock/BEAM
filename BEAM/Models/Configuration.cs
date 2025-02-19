@@ -4,7 +4,8 @@ using System.Text.Json;
 
 namespace BEAM.Models;
 public class Configuration(string version, Language language, string file, string open, string openFolder,
-    string exit, string edit, string paste, string copy, string help, string view, string viewOpenStatusWindow, string showDefaultMinimap)
+    string exit, string edit, string paste, string copy, string help, string view, string viewOpenStatusWindow, 
+    string synchro, string deactivateSynchro, string activateSynchro)
 { 
     public string Version { get; set; } = version;
     public Language Language { get; set; } = language;
@@ -17,9 +18,10 @@ public class Configuration(string version, Language language, string file, strin
     public string Copy {get; set;} = copy;
     public string Help {get; set;} = help;
     public string View {get; set;} = view;
+    public string Synchro {get; set;} = synchro;
+    public string DeactivateSynchro {get; set;} = deactivateSynchro;
+    public string ActivateSynchro {get; set;} = activateSynchro;
     public string ViewOpenStatusWindow {get; set;} = viewOpenStatusWindow;
-    
-    public string ShowDefaultMinimap { get; set; } = showDefaultMinimap;
 
     public static Configuration AttemptLoad(string path)
     {
@@ -29,7 +31,7 @@ public class Configuration(string version, Language language, string file, strin
             var config = JsonSerializer.Deserialize<Configuration>(json);
             return config ?? StandardEnglish();
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return StandardEnglish();
         }
@@ -37,6 +39,6 @@ public class Configuration(string version, Language language, string file, strin
     
     public static Configuration StandardEnglish()
     {
-        return new Configuration("1.0", Language.English, "_File", "_Open...",  "O_pen Folder...", "_Exit", "_Edit", "Paste", "Copy", "Help", "View", "Open Status Window", "Default Minimap");
+        return new Configuration("1.0", Language.English, "_File", "_Open...",  "O_pen Folder...", "_Exit", "_Edit", "Paste", "Copy", "Help", "View", "Open Status Window", "Synchronization", "Deactivate Synchronization", "Activate Synchronization");
     }
 }
