@@ -37,7 +37,7 @@ public class CustomMouseWheelZoom(Key horizontalLockKey, Key verticalLockKey) : 
     /// <summary>
     /// Fraction of the axis range to change when scrolling.
     /// </summary>
-    public double ScrollFraction { get; set; } = 0.075;
+    public double ScrollFraction { get; set; } = 0.75;
 
     private double ZoomInFraction => 1 + ZoomFraction;
     private double ZoomOutFraction => 1 / ZoomInFraction;
@@ -69,7 +69,7 @@ public class CustomMouseWheelZoom(Key horizontalLockKey, Key verticalLockKey) : 
             if (userInput is MouseWheelUp mouseDownInput)
             {
                 var ySize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
-                var pixel = new Pixel(mouseDownInput.Pixel.X, mouseDownInput.Pixel.Y + ScrollFraction * ySize);
+                var pixel = new Pixel(mouseDownInput.Pixel.X, mouseDownInput.Pixel.Y + ScrollFraction * Math.Sqrt(ySize));
                 MouseAxisManipulation.DragPan(plot, mouseDownInput.Pixel, pixel);
                 return new ResponseInfo() { RefreshNeeded = true };
             }
@@ -77,7 +77,7 @@ public class CustomMouseWheelZoom(Key horizontalLockKey, Key verticalLockKey) : 
             if (userInput is MouseWheelDown mouseUpInput)
             {
                 var ySize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
-                var pixel = new Pixel(mouseUpInput.Pixel.X, mouseUpInput.Pixel.Y - ScrollFraction * ySize);
+                var pixel = new Pixel(mouseUpInput.Pixel.X, mouseUpInput.Pixel.Y - ScrollFraction * Math.Sqrt(ySize));
                 MouseAxisManipulation.DragPan(plot, mouseUpInput.Pixel, pixel);
                 return new ResponseInfo() { RefreshNeeded = true };
             }
