@@ -7,20 +7,14 @@ namespace BEAM.Analysis;
 /// <summary>
 /// Utility Class for creating basic, formatted Scottplot plots to display analysis Results.
 /// </summary>
-public class PlotCreator
+public static class PlotCreator
 {
-    // Utility class not instantiable
-    private PlotCreator()
-    {
-        
-    }
-
     /// <summary>
     /// Creates a formatted bar plot, preventing scrolling to far in / out in regards to the given data.
     /// </summary>
     /// <param name="values"></param>
     /// <returns></returns>
-    public static Plot createFormattedBarPlot(double[] values)
+    public static Plot CreateFormattedBarPlot(double[] values)
     {
         Plot plot = new Plot();
         var barPlot = plot.Add.Bars(values);

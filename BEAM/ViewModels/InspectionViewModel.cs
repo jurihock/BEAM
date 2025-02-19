@@ -19,46 +19,37 @@ namespace BEAM.ViewModels;
 
 public partial class InspectionViewModel : ViewModelBase, IDockBase
 {
-    // [ObservableProperty] public partial SequenceViewModel currentSequenceViewModel { get; set; }
-
     [ObservableProperty] private Plot _currentPlot;
     [ObservableProperty] private bool _keepData  = false;
     private SequenceViewModel _currentSequenceViewModel;
     private Analysis.Analysis _currentAnalysis;
     private (Coordinate2D pressed, Coordinate2D released) _pointerRectanglePosition;
-    
     private Plot PlaceholderPlot { get; set; }
-
-    
     public ObservableCollection<SequenceViewModel> ExistingSequenceViewModels { get; private set;  } = new();
-    public List<Analysis.Analysis> AnalysisList { get;  } = new()
+    
+    public static List<Analysis.Analysis> AnalysisList { get;  } = new()
     {
         new PixelAnalysisChannel(),
         new CirclePlot(),
         new RegionAnalysisStandardDeviationOfChannels()
     };
-
-
-    /// <summary>
-    /// The current AnalysisView displayed
-    /// </summary>
-    // public AbstractAnalysisView CurrentAnalysisView
-    // {
-    //     get => _currentAnalysisView;
-    //     set => _currentAnalysisView = value;
-    // }
-
+    
     public InspectionViewModel(SequenceViewModel sequenceViewModel)
     {
         _currentAnalysis = AnalysisList[0];
         _currentSequenceViewModel = sequenceViewModel;
         ExistingSequenceViewModels.Add(sequenceViewModel);
         _currentSequenceViewModel.DockingVm.Items.CollectionChanged += DockingItemsChanged;
-        PlaceholderPlot = createPlaceholderPlot();
+        PlaceholderPlot = _CreatePlaceholderPlot();
     }
     
 
     public string Name { get; } = "Inspection Window";
+    
+    /// <summary>
+    /// When the user interacted with the view, the coordinates of where the
+    /// pointer was pressed and released, are passed to this method.
+    /// </summary>
     public void Update(Coordinate2D pressedPoint, Coordinate2D releasedPoint)
     {
         if(_keepData) return;
@@ -67,32 +58,51 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         CurrentPlot = result;
     }
     
+    
+    /// <summary>
+    /// Creates a new Inspection window
+    /// </summary>
     [RelayCommand]
     public async Task Clone()
     {
         _currentSequenceViewModel.OpenInspectionViewCommand.Execute(null);
     }
     
+    
+    /// <summary>
+    /// When called, this method woll change the currently used analysis method.
+    /// </summary>
+    /// <param name="index">The index of the new analysis mode</param>
     [RelayCommand]
-    public Task ChangeAnalysis(int index)
+    public async Task ChangeAnalysis(int index)
     {
+        if(ExistingSequenceViewModels.IsNullOrEmpty()) return;
         _currentAnalysis = AnalysisList[index];
-        Console.WriteLine("Changed Analysis to: " + _currentAnalysis);
-        _currentPlot = _currentAnalysis.Analyze(_pointerRectanglePosition.pressed, 
+        _currentPlot = _currentAnalysis.Analyze(
+            _pointerRectanglePosition.pressed, 
             _pointerRectanglePosition.released, 
             _currentSequenceViewModel.Sequence);
-        return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// This one will change the currently selected sequence to a new one.
+    /// </summary>
+    /// <param name="index">The index of the new sequence to be used</param>
     [RelayCommand]
     public async Task ChangeSequence(int index)
     {
         _currentSequenceViewModel.UnregisterInspectionViewModel(this);
         _currentSequenceViewModel = ExistingSequenceViewModels[index];
         _currentSequenceViewModel.RegisterInspectionViewModel(this);
-        Console.WriteLine("Changed Sequence to: " + _currentSequenceViewModel.Name);
     }
     
+    
+    /// <summary>
+    /// When the amount of docks registered by the DockingViewModel changes, this method will be called.
+    /// If necessary, the list of existing SequenceVieModels will be updated.
+    /// </summary>
+    /// <param name="sender">the sender of the event</param>
+    /// <param name="e">notification parameters</param>
     private void DockingItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         if (e.NewItems is not null)
@@ -116,7 +126,12 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         }
     }
     
-    private Plot createPlaceholderPlot()
+    
+    /// <summary>
+    /// This method will creat a placeholder plot that will be displayed when no sequence is selected.
+    /// </summary>
+    /// <returns></returns>
+    private Plot _CreatePlaceholderPlot()
     {
         Plot myPlot = new();
         
@@ -137,6 +152,9 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         return myPlot;
     }
     
+    /// <summary>
+    /// This method will simply switch to the first sequence in the list of existing sequences.
+    /// </summary>
     private void SwitchToFirst()
     {
         if (ExistingSequenceViewModels.Count == 0)
@@ -149,6 +167,10 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         _currentSequenceViewModel.RegisterInspectionViewModel(this);
     }
     
+    /// <summary>
+    /// This method will update the new data acceptance.
+    /// </summary>
+    /// <param name="isChecked"></param>
     [RelayCommand]
     public async Task CheckBoxChanged(bool? isChecked)
     {

@@ -1,13 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Avalonia.Controls;
-using BEAM.Datatypes;
+﻿using BEAM.Datatypes;
 using BEAM.ImageSequence;
-using BEAM.ViewModels;
-using BEAM.Views.AnalysisView;
 using ScottPlot;
-using ScottPlot.AxisRules;
-using ScottPlot.Plottables;
+
 
 namespace BEAM.Analysis;
 
@@ -20,7 +14,7 @@ public class PixelAnalysisChannel : Analysis
     {
         double[] channels = sequence.GetPixel((long)pointerPressedPoint.Column, (long)pointerReleasedPoint.Row);
 
-        Plot plot = PlotCreator.createFormattedBarPlot(channels);
+        Plot plot = PlotCreator.CreateFormattedBarPlot(channels);
         plot.Title("Pixel Channel Analysis");
         return plot;
     }

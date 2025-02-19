@@ -2,18 +2,11 @@ using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Input;
-using Avalonia.Input;
-using Avalonia.Markup.Xaml;
-using Avalonia.Remote.Protocol.Input;
 using Avalonia.Styling;
 using BEAM.CustomActions;
 using BEAM.Image.Displayer.ScottPlot;
 using BEAM.Datatypes;
-using BEAM.Image.Bitmap;
-using BEAM.Image.Displayer;
 using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence.Synchronization;
 using BEAM.Models.Log;
@@ -23,7 +16,6 @@ using ScottPlot.Avalonia;
 using ScottPlot.Interactivity;
 using ScottPlot.Interactivity.UserActionResponses;
 using ScottPlot.Plottables;
-using MouseButton = ScottPlot.Interactivity.MouseButton;
 
 namespace BEAM.Views;
 

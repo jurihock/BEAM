@@ -33,16 +33,16 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
         _amountChannels = sequence.Shape.Channels;
         
         // Catch trivial case of only one pixel selected
-        if (Math.Abs(_amountPixels() - 1) < 0.001)
+        if (Math.Abs(_AmountPixels() - 1) < 0.001)
         {
             _sumChannelsSquared = new double[_amountChannels];
-            return PlotCreator.createFormattedBarPlot(_sumChannelsSquared);
+            return PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
         }
         
         // Calculate the standard deviations and store them in _sumChannelsSquared
-        _calculateResult(sequence);
+        _CalculateResult(sequence);
 
-        return PlotCreator.createFormattedBarPlot(_sumChannelsSquared);
+        return PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
     }
     
     
@@ -51,7 +51,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
     /// Calculates the standard deviation of the channels in the region and stores the result in _sumChannelsSquared
     /// </summary>
     /// <param name="sequence"></param>
-    private void _calculateResult(ISequence sequence)
+    private void _CalculateResult(ISequence sequence)
     {
         _sumChannels = new double[_amountChannels];
         _sumChannelsSquared = new double[_amountChannels];
@@ -61,7 +61,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
         {
             for (var column = _topLeft.Column; column <= _bottomRight.Column; column++)
             {
-                _updateWithPixel(sequence.GetPixel((long)column, (long)row));
+                _UpdateWithPixel(sequence.GetPixel((long)column, (long)row));
             }
         }
         
@@ -77,7 +77,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
     /// Update _sumChannels(Squared) with the given pixel.
     /// </summary>
     /// <param name="pixel"></param>
-    private void _updateWithPixel(double[] pixel)
+    private void _UpdateWithPixel(double[] pixel)
     {
         for (int channel = 0; channel < _amountChannels; channel++)
         {
@@ -89,7 +89,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
     /// <summary>
     /// Calculate the amount of pixels in the given region.
     /// </summary>
-    private double _amountPixels()
+    private double _AmountPixels()
     {
         return (_bottomRight.Row - _topLeft.Row + 1) * (_bottomRight.Column - _topLeft.Column + 1);
     }
@@ -99,7 +99,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
     /// </summary>
     private void _calculateMeans()
     {
-        var amountPixels = _amountPixels();
+        var amountPixels = _AmountPixels();
 
         for (int i = 0; i < _amountChannels; i++)
         {
@@ -119,10 +119,10 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
             throw new ArgumentException("Channel Number given ( "+ channel + " ) must be between 0 and " + _amountChannels+"!" );
         }
 
-        var amountPixels = _amountPixels();
+        var amountPixels = _AmountPixels();
         var meanSquared = Math.Pow(_sumChannels[channel], 2);
         var stdDev = (_sumChannelsSquared[channel] - amountPixels * meanSquared) 
-                     / (_amountPixels() - 1);
+                     / (_AmountPixels() - 1);
 
         return Math.Round(Math.Sqrt(stdDev), 3);
     }
