@@ -10,26 +10,20 @@ namespace BEAM.Controls;
 public class ChannelHSVMap
 {
     /// <summary>
-    /// Stores the value of the HSV color of the channel i at position i. 
+    /// Stores the information (index, color, is displayed) of each channel
+    ///  
     /// </summary>
-    private double[] valueArray;
-    
-    /// <summary>
-    /// Stores at index i, if channel i should be considered for the ArgMax function.
-    /// </summary>
-    private bool[] usedChannels;
+    private Channel[] channels;
     
     private HueColorLut hcl = new HueColorLut();
     public int AmountChannels { get; init; }
 
     public ChannelHSVMap(int maxAmountChannels)
     {
-        valueArray = new double[maxAmountChannels];
-        usedChannels = new bool[maxAmountChannels];
-        for (var i = 0; i < valueArray.Length; i++)
+        channels = new Channel[maxAmountChannels];
+        for (var i = 0; i < maxAmountChannels; i++)
         {
-            valueArray[i] = i;
-            usedChannels[i] = true;
+            channels[i] = new Channel(i);
         }
     }
 
@@ -40,7 +34,7 @@ public class ChannelHSVMap
     /// <returns>The color associated with this channel as a HSV color.</returns>
     public HSV GetColorHSV(int channel)
     {
-        return hcl[valueArray[channel]].ToHsv();
+        return hcl[channels[channel].HSVValue].ToHsv();
     }
     
     /// <summary>
@@ -50,32 +44,42 @@ public class ChannelHSVMap
     /// <returns>The color associated with this channel as a BGR color.</returns>
     public BGR GetColorBGR(int channel)
     {
-        return hcl[valueArray[channel]];
+        return hcl[channels[channel].HSVValue];
     }
 
     public void SetColor(int channel, HSV color)
     {
-        valueArray[channel] = color.V;
+        channels[channel].HSVValue = color.V;
     }
 
     public void SetColor(int channel, BGR color)
     {
-        valueArray[channel] = color.ToHsv().V;
+        channels[channel].HSVValue = color.ToHsv().V;
     }
 
     public bool isChannelUsed(int channel)
     {
-        return usedChannels[channel];
+        return channels[channel].IsUsedForArgMax;
     }
 
     public void setUsedChannels(int channel, bool value)
     {
-        usedChannels[channel] = value;
+        channels[channel].IsUsedForArgMax = value;
     }
 
     public int getAmountUsedChannels()
     {
-        return usedChannels.Count(value => value);
+        return channels.Count(value => value.IsUsedForArgMax);
+    }
+
+    /// <summary>
+    /// Sets the channel
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="channel"></param>
+    public void setChannel(int index, Channel channel)
+    {
+        channels[index] = channel;
     }
 
     /// <summary>
@@ -87,26 +91,10 @@ public class ChannelHSVMap
         var clone = new ChannelHSVMap(AmountChannels);
         for (var i = 0; i < AmountChannels; i++)
         {
-            clone.setUsedChannels(i, usedChannels[i]);
-            clone.SetColor(i, this.GetColorHSV(i));
+            clone.setChannel(i, channels[i].Clone());
         }
-    }
 
-    /// <summary>
-    /// Returns pointer to usedChannels array.
-    /// </summary>
-    /// <returns></returns>
-    public bool[] getUsedChannels()
-    {
-        return usedChannels;
+        return clone;
     }
-
-    /// <summary>
-    /// Returns pointer to valueArray
-    /// </summary>
-    /// <returns></returns>
-    public double[] getValueArray()
-    {
-        return valueArray;
-    }
+    
 }
