@@ -74,7 +74,12 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
                 panel.Children.Add(chmView);
                 _controls.Add(chmView);
                 break;
-            case ArgMaxRenderer:
+            case ArgMaxRendererGrey:
+                break;
+            case ArgMaxRendererColorHSV argmHSVRenderer:
+                var argmHSVView = new ArgMaxHSVConfigControlView(argmHSVRenderer, _sequenceViewModel);
+                panel.Children.Add(argmHSVView);
+                _controls.Add(argmHSVView);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(renderer));

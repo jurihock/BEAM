@@ -16,7 +16,7 @@ namespace BEAM.Renderer;
 /// <param name="maximumOfIntensityRange"></param>
 public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maximumOfIntensityRange) : ArgMaxRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
 {
-    private ChannelHSVMap _channelHsvMap;
+    private ChannelHSVMap _channelHsvMap = new ChannelHSVMap(0);
         
     public override RenderTypes GetRenderType()
     {

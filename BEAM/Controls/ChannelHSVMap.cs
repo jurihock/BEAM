@@ -13,18 +13,23 @@ public class ChannelHSVMap
     /// Stores the information (color, is displayed) of each channel
     ///  
     /// </summary>
-    private Channel[] channels;
+    private ChannelToHSV[] channels;
     
     private HueColorLut hcl = new HueColorLut();
     public int AmountChannels { get; init; }
 
     public ChannelHSVMap(int maxAmountChannels)
     {
-        channels = new Channel[maxAmountChannels];
+        channels = new ChannelToHSV[maxAmountChannels];
         for (var i = 0; i < maxAmountChannels; i++)
         {
-            channels[i] = new Channel(i);
+            channels[i] = new ChannelToHSV(i);
         }
+    }
+
+    public ChannelHSVMap(ChannelToHSV[] channels)
+    {
+        this.channels = channels;
     }
 
     /// <summary>
@@ -73,13 +78,23 @@ public class ChannelHSVMap
     }
 
     /// <summary>
-    /// Sets the channel
+    /// Sets the channel to hsv mapping
     /// </summary>
     /// <param name="index"></param>
-    /// <param name="channel"></param>
-    public void setChannel(int index, Channel channel)
+    /// <param name="channelToHsv"></param>
+    public void setChannel(int index, ChannelToHSV channelToHsv)
     {
-        channels[index] = channel;
+        channels[index] = channelToHsv;
+    }
+
+    /// <summary>
+    /// Returns a clone to the Channel instance at the given index.
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    public ChannelToHSV getChannel(int index)
+    {
+        return channels[index].Clone();
     }
 
     /// <summary>
@@ -95,6 +110,15 @@ public class ChannelHSVMap
         }
 
         return clone;
+    }
+
+    /// <summary>
+    /// Returns a pointer to the map of the ChannelToHSV array
+    /// </summary>
+    /// <returns></returns>
+    public ChannelToHSV[] ToArray()
+    {
+        return channels;
     }
     
 }

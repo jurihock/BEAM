@@ -1,4 +1,5 @@
 ﻿using BEAM.Datatypes.Color;
+using BEAM.Exceptions;
 
 namespace BEAM.Controls;
 
@@ -8,32 +9,35 @@ namespace BEAM.Controls;
 /// the HSV value of the color for the channel
 /// if the channel is used for the ArgMaxRenderer (e.g.: alpha channel should be excluded)
 /// </summary>
-public class Channel
+public class ChannelToHSV
 {
     private static readonly HueColorLut hcl = new HueColorLut();
     
-    public Channel(bool isUsed, double hsvValue)
+    public ChannelToHSV(bool isUsed, double hsvValue)
     {
         HSVValue = hsvValue;
         IsUsedForArgMax = isUsed;
     }
 
-    public Channel(int hsvValue)
+    public ChannelToHSV(int index)
     {
-        HSVValue = hcl[hsvValue].ToHsv().V;
+        if (index < 0)
+        {
+            throw new ChannelException("Negative Channel index given!");
+        }
+        
+        HSVValue = hcl[index].ToHsv().V;
+        Index = index;
     }
-
-    public Channel()
-    {
-        HSVValue = 0;
-    }
-
+    
+    public int Index { get; set; }
+    
     public double HSVValue { get; set; } = 0;
 
     public bool IsUsedForArgMax { get; set; } = true;
 
-    public Channel Clone()
+    public ChannelToHSV Clone()
     {
-        return new Channel(IsUsedForArgMax, HSVValue);
+        return new ChannelToHSV(IsUsedForArgMax, HSVValue);
     }
 }
