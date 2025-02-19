@@ -10,7 +10,7 @@ namespace BEAM.Controls;
 public class ChannelHSVMap
 {
     /// <summary>
-    /// Stores the information (index, color, is displayed) of each channel
+    /// Stores the information (color, is displayed) of each channel
     ///  
     /// </summary>
     private Channel[] channels;

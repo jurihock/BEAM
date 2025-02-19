@@ -5,7 +5,6 @@ namespace BEAM.Controls;
 
 /// <summary>
 /// Represents a Channel for the ArgMaxRenderer, containing information for the display of the channel:
-/// the index of the Channel
 /// the HSV value of the color for the channel
 /// if the channel is used for the ArgMaxRenderer (e.g.: alpha channel should be excluded)
 /// </summary>
@@ -19,9 +18,9 @@ public class Channel
         IsUsedForArgMax = isUsed;
     }
 
-    public Channel(int index)
+    public Channel(int hsvValue)
     {
-        HSVValue = hcl[index].ToHsv().V;
+        HSVValue = hcl[hsvValue].ToHsv().V;
     }
 
     public Channel()
