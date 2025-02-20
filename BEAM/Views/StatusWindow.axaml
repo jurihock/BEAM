@@ -7,7 +7,7 @@
         x:Class="BEAM.Views.StatusWindow"
         x:DataType="vm:StatusWindowViewModel"
         xmlns:converter="clr-namespace:BEAM.Converter"
-        Title="BEAM Log"
+        Title="BEAM - Log"
         WindowStartupLocation="CenterScreen"
         Focusable="True"
         CanResize="False"

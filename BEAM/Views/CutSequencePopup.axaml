@@ -7,7 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BEAM.Views.CutSequencePopup"
         x:DataType="viewModels:CutSequencePopupViewModel"
-        Title="CutSequencePopup"
+        Title="BEAM - Cut Sequence"
         SizeToContent="WidthAndHeight">
     <Design.DataContext>
         <viewModels:CutSequencePopupViewModel />
