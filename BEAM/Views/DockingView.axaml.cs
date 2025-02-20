@@ -57,7 +57,9 @@ public partial class DockingView : UserControl
 
     private void _OnItemRemoved(DockItemViewModelBase item)
     {
-        var vm = DataContext as DockingViewModel;
-        vm.RemoveDock(item.Content as IDockBase);
+        var vm = (DockingViewModel)DataContext!;
+        var dock = (IDockBase)item.Content!;
+        vm.RemoveDock(dock);
+        dock.Dispose();
     }
 }

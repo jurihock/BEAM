@@ -114,4 +114,10 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     public string Name => Sequence.GetName();
 
     public SequenceRenderer CurrentRenderer => Renderers[RendererSelection];
+
+    public void Dispose()
+    {
+        Sequence.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }

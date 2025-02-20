@@ -179,5 +179,11 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         _keepData = isChecked ?? false;
     }
-    
+
+    public void Dispose()
+    {
+        CurrentPlot.Dispose();
+        PlaceholderPlot.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }
