@@ -1,7 +1,5 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Markup.Xaml;
 using BEAM.ViewModels;
 
 namespace BEAM.Views;
@@ -14,7 +12,7 @@ public partial class AboutWindow : Window
     public AboutWindow()
     {
         InitializeComponent();
-        AddHandler(KeyDownEvent, (sender, e) =>
+        AddHandler(KeyDownEvent, (_, e) =>
         {
             if (e.Key == Key.Escape) Close();
         });

@@ -2,7 +2,6 @@ using System;
 using ScottPlot;
 using SkiaSharp;
 using System.Collections.Generic;
-using BEAM.Image.Displayer;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
 
@@ -63,7 +62,7 @@ public sealed class SequencePlottable(ISequence sequence, SequenceRenderer rende
         for (var i = 0; i < SequenceImage.GetRenderedPartsCount(); i++)
         {
             var preview = SequenceImage.GetRenderedPart(i);
-            if (preview?.Bitmap is null) continue;
+            if (preview.Bitmap is null) continue;
 
             // positions the rendered images
             var coordinateRect = new CoordinateRect()

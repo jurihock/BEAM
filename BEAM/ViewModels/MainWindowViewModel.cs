@@ -9,7 +9,6 @@ using BEAM.Exceptions;
 using BEAM.ImageSequence;
 using BEAM.ImageSequence.Synchronization;
 using BEAM.ImageSequence.Synchronization.Manipulators;
-using BEAM.Models;
 using BEAM.Models.Log;
 using BEAM.Views;
 using CommunityToolkit.Mvvm.ComponentModel;

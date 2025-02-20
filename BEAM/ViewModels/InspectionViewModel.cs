@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using BEAM.Analysis;
@@ -17,7 +18,7 @@ namespace BEAM.ViewModels;
 /// </summary>
 public partial class InspectionViewModel : ViewModelBase, IDockBase
 {
-    [ObservableProperty] private Plot? _currentPlot = null;
+    [ObservableProperty] private Plot? _currentPlot;
     private bool KeepData { get; set; }
 
    
@@ -184,6 +185,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 
     public void Dispose()
     {
+        if (CurrentPlot is null) return;
         CurrentPlot.Dispose();
         PlaceholderPlot.Dispose();
         GC.SuppressFinalize(this);

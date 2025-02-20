@@ -62,10 +62,4 @@ public partial class InspectionView : UserControl
         if (DataContext is not InspectionViewModel vm) return;
         vm.CheckBoxChanged(KeepDataCheckBox.IsChecked);
     }
-    
-    private void KeepDataCheckBox_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is not InspectionViewModel vm) return;
-        vm.CheckBoxChanged(KeepDataCheckBox.IsChecked);
-    }
 }

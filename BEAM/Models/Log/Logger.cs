@@ -50,7 +50,7 @@ public class Logger : ObservableObject, ILog
     public static Logger GetInstance()
     {
         if (_instance is null) throw new NullReferenceException("The logger has not been initialized yet");
-        return _instance!;
+        return _instance;
     }
 
     public void Error(LogEvent occuredEvent, string logMessage)
