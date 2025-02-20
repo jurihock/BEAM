@@ -1,7 +1,7 @@
 namespace BEAM.Exceptions;
 
 /// <summary>
-/// Not a BeamException
+/// Exception thrown when a sequence cannot be loaded for whatever reason.
 /// </summary>
 public class InvalidSequenceException : BeamException
 {

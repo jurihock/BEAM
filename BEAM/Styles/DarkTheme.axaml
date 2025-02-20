@@ -1,5 +1,6 @@
 <Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime">
     <Design.PreviewWith>
         <Border Padding="20">
             <!-- Add Controls for Previewer Here -->
@@ -25,7 +26,7 @@
                     <Color x:Key="DockHeaderBg">Transparent</Color>
                     <Color x:Key="SelectedDockHeaderBg">CornflowerBlue</Color>
                     <Color x:Key="DockHeaderFg">White</Color>
-
+                    <system:String x:Key="StrokeCss">*{stroke: #ffffff;}</system:String>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>

@@ -5,7 +5,8 @@ using Avalonia.Data.Converters;
 
 namespace BEAM.Converter;
 
-public class LogLevelIconConverter: IValueConverter
+/// Converter to convert log level to an asset url
+public class LogLevelIconConverter : IValueConverter
 {
     
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -14,6 +15,7 @@ public class LogLevelIconConverter: IValueConverter
         {
             return new BindingNotification(new InvalidCastException(), BindingErrorType.Error);
         }
+
         var img = currentLevel switch
         {
             "INFO" => "../Assets/info.svg",
@@ -22,7 +24,6 @@ public class LogLevelIconConverter: IValueConverter
             _ => string.Empty
         };
         return img;
-
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BEAM.ViewModels"
              xmlns:scott="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
+             xmlns:controls="clr-namespace:BEAM.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:InspectionViewModel"
              x:Name="Inspection"
@@ -26,17 +27,31 @@
             <ComboBox x:Name="SequencePicker" 
                       ItemsSource="{Binding ExistingSequenceViewModels}" 
                       MinWidth="200" MaxDropDownHeight="200"
-                      SelectedIndex="-1"  Grid.Column="2" 
-                      SelectionChanged="SequencePicker_SelectionChanged">
+                      SelectedIndex="-1" Grid.Row="0" Grid.Column="1"
+                      SelectionChanged="SequencePicker_SelectionChanged"
+                      Margin="5 5">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-             <CheckBox x:Name="KeepDataCheckBox" Content="Keep Sample" IsCheckedChanged="CheckBox_Changed" Grid.Column="3"/>
-             
-         </Grid>
+
+            <ComboBox x:Name="AnalysisPicker"
+                      ItemsSource="{Binding AnalysisList}"
+                      MinWidth="200" MaxDropDownHeight="200"
+                      SelectedIndex="-1" Grid.Row="1" Grid.Column="1"
+                      SelectionChanged="AnalysisPicker_SelectionChanged"
+                      Margin="5 5">
+            </ComboBox>
+
+            <ToggleButton Margin="10 0" Grid.Row="0" Grid.Column="2" Name="KeepDataCheckBox" IsCheckedChanged="CheckBox_Changed">
+                <Svg Path="../Assets/lock.svg" Width="20" Height="20" Css="{DynamicResource StrokeCss}"></Svg>
+            </ToggleButton>
+            <Button Grid.Row="0" Grid.Column="3" Click="CloneButton_Clicked">
+                <Svg Path="../Assets/copy.svg" Width="20" Height="20" Css="{DynamicResource StrokeCss}"></Svg>
+            </Button>
+        </Grid>
     </Grid>
 
 

@@ -2,6 +2,7 @@ using System;
 
 namespace BEAM.Exceptions;
 
+/// Base for custom exceptions.
 public class BeamException : Exception
 {
     protected BeamException()

@@ -4,12 +4,30 @@ using BEAM.Image;
 
 namespace BEAM.ImageSequence;
 
+/// <summary>
+/// Wrapper for a sequence that has been transformed.
+/// </summary>
+/// <param name="originalSequence"></param>
 public class TransformedSequence(ISequence originalSequence) : ISequence
 {
+    /// <summary>
+    /// The x-axis scale.
+    /// </summary>
     public double ScaleX { get; set; } = 1;
-    public double ScaleY { get; set; } = 1;
 
+    /// <summary>
+    /// The y-axis scale.
+    /// </summary>
+    public double ScaleY { get; set; } = 1;
+    
+    /// <summary>
+    /// The x offset to draw the sequence at (does not actually offset the position inside the original sequence).
+    /// </summary>
     public double DrawOffsetX { get; set; }
+
+    /// <summary>
+    /// The y offset to draw the sequence at (does not actually offset the position inside the original sequence).
+    /// </summary>
     public double DrawOffsetY { get; set; }
 
     public ImageShape Shape => new(_TransformX(originalSequence.Shape.Width),
@@ -79,10 +97,5 @@ public class TransformedSequence(ISequence originalSequence) : ISequence
     private long _TransformY(long y)
     {
         return (long)(y * ScaleY);
-    }
-
-    private (long x, long y) _Transform(long x, long y)
-    {
-        return (_TransformX(x), _TransformY(y));
     }
 }

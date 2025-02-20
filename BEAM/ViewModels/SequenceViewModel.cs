@@ -18,12 +18,16 @@ using BEAM.Views.Minimap.Popups;
 
 namespace BEAM.ViewModels;
 
+/// <summary>
+/// View model controlling the view of a single sequence.
+/// Contains information about possible renderers, the selected renderer and handles redraw events.
+/// </summary>
 public partial class SequenceViewModel : ViewModelBase, IDockBase
 {
     [ObservableProperty] public partial DockingViewModel DockingVm { get; set; } = new();
     [ObservableProperty] public partial Coordinate2D PressedPointerPosition { get; set; } = new();
     [ObservableProperty] public partial Coordinate2D ReleasedPointerPosition { get; set; } = new();
-    
+
     private List<InspectionViewModel> _connectedInspectionViewModels = new();
 
     public EventHandler<RenderersUpdatedEventArgs> RenderersUpdated = delegate { };
@@ -33,15 +37,16 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 
     public SequenceRenderer[] Renderers;
     public int RendererSelection;
-    
-    
+
+
     private Image.Minimap.Minimap? _currentMinimap;
     public EventHandler<EventArgs> MinimapHasChanged = delegate { };
     
     
 
-    
-    [ObservableProperty] public partial ObservableCollection<ViewModelBase> MinimapVms { get; set; }= new ObservableCollection<ViewModelBase>();
+    [ObservableProperty]
+    public partial ObservableCollection<ViewModelBase> MinimapVms { get; set; } =
+        new ObservableCollection<ViewModelBase>();
 
     public SequenceViewModel(ISequence sequence, DockingViewModel dockingVm)
     {
@@ -69,12 +74,11 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             _ => 1
         };
         
-        //_currentMinimap = MinimapSettingsUtilityHelper.GetDefaultClones().Active;
         _currentMinimap = SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultClones().Active;
         if (_currentMinimap is not null)
         {
             //TODO: in up to data branch the SequenceVM knows the renderer
-            if(RendererSelection < Renderers.Length && RendererSelection >= 0)
+            if (RendererSelection < Renderers.Length && RendererSelection >= 0)
             {
                 _currentMinimap.SetRenderer(Renderers[RendererSelection]);
                 _currentMinimap.StartGeneration(sequence, OnMinimapGenerated);
@@ -105,9 +109,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             inspectionViewModel.Update(pointPressed, pointReleased);
         }
     }
-    
-    
-    
+
     private Coordinate2D _correctInvalid(Coordinate2D point)
     {
         double x = point.Row;
@@ -128,7 +130,13 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     public string Name => Sequence.GetName();
 
     public SequenceRenderer CurrentRenderer => Renderers[RendererSelection];
-    
+
+    public void Dispose()
+    {
+        Sequence.Dispose();
+        GC.SuppressFinalize(this);
+    }
+
     public void ChangeCurrentMinimap(Image.Minimap.Minimap minimap)
     {
         if (_currentMinimap is not null)
@@ -154,6 +162,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             Logger.GetInstance().Error(LogEvent.Critical, "Unable to find ApplicationLifetime or MainWindow");
             return;
         }
+
         await minimapPopup.ShowDialog(v.MainWindow);
     }
     
@@ -168,8 +177,6 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             var newMinimapVm = e.Minimap.GetViewModel();
             MinimapVms.Add(newMinimapVm);
             MinimapHasChanged(this, EventArgs.Empty);
-
-
         });
     }
 
@@ -186,10 +193,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 
     public void OnClose()
     {
-        if(_currentMinimap is not null)
-        {
-            _currentMinimap.StopGeneration();
-        }
+        _currentMinimap?.StopGeneration();
     }
 
     public override string ToString()

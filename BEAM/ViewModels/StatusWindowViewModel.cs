@@ -5,6 +5,9 @@ using LogEntry = BEAM.Models.Log.LogEntry;
 
 namespace BEAM.ViewModels;
 
+/// <summary>
+/// View model controlling the log window.
+/// </summary>
 public partial class StatusWindowViewModel : ViewModelBase
 {
     private readonly Logger _logger;
@@ -19,6 +22,6 @@ public partial class StatusWindowViewModel : ViewModelBase
     [RelayCommand]
     private void ClearStatus()
     {
-        _logger.ClearStatusBar();
+        _logger.ClearEntries();
     }
 }

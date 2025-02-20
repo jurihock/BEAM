@@ -5,6 +5,9 @@ using BEAM.ViewModels;
 
 namespace BEAM.Views;
 
+/// <summary>
+/// Code behind the cut sequence popup.
+/// </summary>
 public partial class CutSequencePopup : Window
 {
     public CutSequencePopup(SequenceViewModel sequenceViewModel)
@@ -16,12 +19,22 @@ public partial class CutSequencePopup : Window
         });
         InitializeComponent();
     }
-    
+
+    /// <summary>
+    /// Closes the popup.
+    /// </summary>
+    /// <param name="sender">Unused</param>
+    /// <param name="e">Unused</param>
     private void Close(object? sender, RoutedEventArgs e)
     {
         Close();
     }
-    
+
+    /// <summary>
+    /// Tries to save the current settings and closes if successful.
+    /// </summary>
+    /// <param name="sender">Unused</param>
+    /// <param name="e">Unused</param>
     private void TrySave(object? sender, RoutedEventArgs e)
     {
         if (((DataContext as CutSequencePopupViewModel)!).Save())

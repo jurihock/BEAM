@@ -11,6 +11,12 @@ public class TimerEventArgs(string name, Stopwatch watch)
     public Stopwatch Watch => watch;
 }
 
+/// <summary>
+/// Timer token.
+/// Invokes OnTimerEnd on dispose
+/// </summary>
+/// <param name="name"></param>
+/// <param name="watch"></param>
 public class TimerScopeToken(string name, Stopwatch watch) : IDisposable
 {
     public event TimerEndEvent OnTimerEnd = delegate { };
@@ -22,10 +28,26 @@ public class TimerScopeToken(string name, Stopwatch watch) : IDisposable
     }
 }
 
+/// <summary>
+/// Utility class for timing methods.
+/// Usage:
+/// <code>
+/// using var _ = Timer.Start();
+/// </code>
+/// </summary>
 public static class Timer
 {
     public static event TimerEndEvent TimerEnd = delegate { };
 
+    /// <summary>
+    /// Starts a new timer which automatically invokes TimerEnd when it's stack closes.
+    /// Usage:
+    /// <code>
+    /// using var _ = Timer.Start();
+    /// </code>
+    /// </summary>
+    /// <param name="name">The name of the timer. If null, the name of the current method name is being used</param>
+    /// <returns>A token that automatically disposes or can be disposed manually</returns>
     public static TimerScopeToken Start(string? name = null)
     {
         var method = new StackFrame(1).GetMethod()!;

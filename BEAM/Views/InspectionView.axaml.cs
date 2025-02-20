@@ -6,13 +6,16 @@ using ScottPlot;
 
 namespace BEAM.Views;
 
+/// <summary>
+/// Code behind the inspection view.
+/// </summary>
+// ReSharper disable once UnusedType.Global
 public partial class InspectionView : UserControl
 {
     public InspectionView()
     {
         InitializeComponent();
-        this.DataContextChanged += DataContextChangedHandling;
-        
+        DataContextChanged += DataContextChangedHandling;
     }
     
     /// <summary>
@@ -55,6 +58,12 @@ public partial class InspectionView : UserControl
     }
     
     public void CheckBox_Changed(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not InspectionViewModel vm) return;
+        vm.CheckBoxChanged(KeepDataCheckBox.IsChecked);
+    }
+    
+    private void KeepDataCheckBox_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
     {
         if (DataContext is not InspectionViewModel vm) return;
         vm.CheckBoxChanged(KeepDataCheckBox.IsChecked);

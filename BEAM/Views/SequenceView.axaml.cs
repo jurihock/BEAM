@@ -8,7 +8,6 @@ using Avalonia.Styling;
 using BEAM.CustomActions;
 using BEAM.Datatypes;
 using BEAM.Image.Displayer.ScottPlot;
-using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence.Synchronization;
 using BEAM.Models.Log;
 using BEAM.ViewModels;
@@ -23,10 +22,19 @@ using SizeChangedEventArgs = Avalonia.Controls.SizeChangedEventArgs;
 
 namespace BEAM.Views;
 
+/// <summary>
+/// Code behind the sequence view.
+/// Controls the used plot, events and redraws the sequence.
+/// </summary>
 public partial class SequenceView : UserControl
 {
     private const double MinimapWidthScale = 0.15d;
     
+
+    private SequencePlottable _plottable = null!;
+    private HorizontalLine _horizontalLine;
+    private VerticalLine _verticalLine;
+
     // Hosts the external UserControl
     public static readonly StyledProperty<Control?> DynamicContentProperty =
         AvaloniaProperty.Register<SequenceView, Control?>(nameof(DynamicContent));
@@ -211,31 +219,29 @@ public partial class SequenceView : UserControl
         vm.UpdateInspectionViewModel();
     }
 
-    private void _SetPlottable(BitmapPlottable plottable)
+    private void _SetPlottable(SequencePlottable plottable)
     {
          _plottable = plottable;
         if (_plottable is not null) AvaPlot1.Plot.Remove(_plottable);
         if(_plottable is null) return;
-        AvaPlot1.Plot.Add.Plottable(_plottable);
-        _plottable.SequenceImage.RequestRefreshPlotEvent += (_, _) => AvaPlot1.Refresh();
+        AvaPlot1.Plot.Add.Plottable(_plottable!);
+        _plottable!.SequenceImage.RequestRefreshPlotEvent += (sender, args) => AvaPlot1.Refresh();
         AvaPlot1.Refresh();
     }
 
     private void PointerPressedHandler(object sender, PointerPressedEventArgs args)
     {
-        
+
         var point = args.GetCurrentPoint(sender as Control);
         var x = point.Position.X;
         var y = point.Position.Y;
-    
+
         var coordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
-    
+
         var vm = (SequenceViewModel?)DataContext;
         if (vm is null) return;
         vm.PressedPointerPosition = coordInPlot;
     }
-    
-
 
     private void PointerMovedHandler(object? sender, PointerEventArgs args)
     {
@@ -265,7 +271,7 @@ public partial class SequenceView : UserControl
         AvaPlot1.Plot.Add.Plottable(checkerBoard);
 
         // sets the plottable
-        _SetPlottable(new BitmapPlottable(vm.Sequence, vm.CurrentRenderer));
+        _SetPlottable(new SequencePlottable(vm.Sequence, vm.CurrentRenderer));
 
         // Changed the sequence view -> full rerender
         vm.RenderersUpdated += (_, _) =>
@@ -278,7 +284,7 @@ public partial class SequenceView : UserControl
 
         vm.CutSequence += (_, _) =>
         {
-            _SetPlottable(new BitmapPlottable(vm.Sequence, vm.CurrentRenderer));
+            _SetPlottable(new SequencePlottable(vm.Sequence, vm.CurrentRenderer));
 
             var oldLimits = AvaPlot1.Plot.Axes.GetLimits();
             var ySize = oldLimits.Bottom - oldLimits.Top;
@@ -343,7 +349,7 @@ public partial class SequenceView : UserControl
         AvaPlot1.Refresh();
         UpdateScrollBar();
     }
-    
+
     /// <summary>
     /// This method updates the value of the Scrollbar, setting it to the value corresponding to the displayed position in the sequence.
     /// </summary>

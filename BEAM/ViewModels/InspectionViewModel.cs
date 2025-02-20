@@ -12,11 +12,15 @@ using NP.Utilities;
 
 namespace BEAM.ViewModels;
 
+/// <summary>
+/// View model controlling the inspection dock.
+/// </summary>
 public partial class InspectionViewModel : ViewModelBase, IDockBase
 {
+    [ObservableProperty] private Plot? _currentPlot = null;
+    private bool KeepData { get; set; }
 
-    [ObservableProperty] private Plot? _currentPlot;
-    [ObservableProperty] private bool _keepData;
+   
     private SequenceViewModel _currentSequenceViewModel;
     private Analysis.Analysis _currentAnalysis;
     private (Coordinate2D pressed, Coordinate2D released) _pointerRectanglePosition;
@@ -51,7 +55,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     /// </summary>
     public void Update(Coordinate2D pressedPoint, Coordinate2D releasedPoint)
     {
-        if(KeepData) return;
+        if (KeepData) return;
         _pointerRectanglePosition = (pressedPoint, releasedPoint);
         Plot result = _currentAnalysis.Analyze(pressedPoint, releasedPoint, _currentSequenceViewModel.Sequence);
         CurrentPlot = result;
@@ -79,8 +83,8 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         if(ExistingSequenceViewModels.IsNullOrEmpty()) return;
         _currentAnalysis = AnalysisList[index];
         CurrentPlot = _currentAnalysis.Analyze(
-            _pointerRectanglePosition.pressed, 
-            _pointerRectanglePosition.released, 
+            _pointerRectanglePosition.pressed,
+            _pointerRectanglePosition.released,
             _currentSequenceViewModel.Sequence);
     }
 
@@ -146,6 +150,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             el.LineWidth = 3;
             el.LineColor = Colors.Blue.WithAlpha(0.1 + 0.2 * i);
         }
+
         myPlot.Layout.Frameless();
         myPlot.Axes.Margins(0, 0);
         myPlot.Title("No sequence selected");
@@ -162,6 +167,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             CurrentPlot = PlaceholderPlot;
             return;
         }
+
         _currentSequenceViewModel.UnregisterInspectionViewModel(this);
         _currentSequenceViewModel = ExistingSequenceViewModels[0];
         _currentSequenceViewModel.RegisterInspectionViewModel(this);
@@ -171,10 +177,15 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     /// This method will update the new data acceptance.
     /// </summary>
     /// <param name="isChecked"></param>
-    [RelayCommand]
     public void CheckBoxChanged(bool? isChecked)
     {
         KeepData = isChecked ?? false;
     }
 
+    public void Dispose()
+    {
+        CurrentPlot.Dispose();
+        PlaceholderPlot.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }

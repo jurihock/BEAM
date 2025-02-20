@@ -38,8 +38,7 @@ public readonly struct Coordinate2D : IEquatable<Coordinate2D>
         Column = coordinates.X;
     }
     
-
-    public new string ToString()
+    public override string ToString()
     {
         return $"Row: {Row}, Column: {Column}";
     }
