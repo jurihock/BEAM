@@ -5,7 +5,9 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Styling;
 using BEAM.CustomActions;
+using BEAM.Datatypes;
 using BEAM.Image.Displayer.Scottplot;
+using BEAM.Image.Displayer.ScottPlot;
 using BEAM.ImageSequence.Synchronization;
 using BEAM.Models.Log;
 using BEAM.ViewModels;
@@ -19,7 +21,7 @@ namespace BEAM.Views;
 
 public partial class SequenceView : UserControl
 {
-    private BitmapPlottable _plottable;
+    private SequencePlottable _plottable;
     private HorizontalLine _horizontalLine = new();
     private VerticalLine _verticalLine = new();
 
@@ -141,7 +143,7 @@ public partial class SequenceView : UserControl
             control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
     }
 
-    private void _SetPlottable(BitmapPlottable plottable)
+    private void _SetPlottable(SequencePlottable plottable)
     {
         if (_plottable is not null) AvaPlot1.Plot.Remove(_plottable);
 
