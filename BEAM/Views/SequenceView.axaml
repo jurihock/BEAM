@@ -11,9 +11,7 @@
              PointerPressed="PointerPressedHandler"
              PointerReleased="PointerReleasedHandler"
              PointerMoved="PointerMovedHandler">
-    <Design.DataContext>
-        <vm:SequenceViewModel/>
-    </Design.DataContext>
+
 
     <Grid ColumnDefinitions="*, Auto, Auto">
         <scott:AvaPlot Name="AvaPlot1" Grid.Column="0"/>

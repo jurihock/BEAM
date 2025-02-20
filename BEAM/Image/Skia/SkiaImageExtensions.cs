@@ -3,6 +3,7 @@ using System;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using BEAM.Image.Envi;
 
 namespace BEAM.Image.Skia;
 /// <summary>
@@ -58,7 +59,7 @@ public static class SkiaImageExtensions
     /// </summary>
     /// <param name="bmp">The bitmap used to get data bytes from.</param>
     /// <typeparam name="T">A specific c# type. The data in the accessor's file will be read as if it were representing this type.</typeparam>
-    /// <returns>The offset'th readable element from the file represented by the accessor of the type which is represented by <see cref="EnviData"/>.</returns>
+    /// <returns>The offset'th readable element from the file represented by the accessor of the type which is represented by <see cref="EnviDataType"/>.</returns>
     public static Func<long, T> CreateValueGetter<T>(this SKBitmap bmp)
     {
         var bitmap = Expression.Constant(bmp);
@@ -87,14 +88,13 @@ public static class SkiaImageExtensions
 
         if (rgb) // swap r and b
         {
-            return (int index) => index switch
+            return index => index switch
             {
                 0 => 2, 2 => 0, _ => index
             };
         }
-        else // already bgr
-        {
-            return (int index) => index;
-        }
+
+        // already bgr
+        return index => index;
     }
 }

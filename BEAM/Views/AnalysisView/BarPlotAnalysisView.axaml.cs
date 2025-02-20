@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Globalization;
+using System.Linq;
 using ScottPlot;
 using ScottPlot.AxisRules;
 
@@ -51,7 +52,7 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
         {
             foreach (var bar in barPlot.Bars)
             {
-                bar.Label = bar.Value.ToString();
+                bar.Label = bar.Value.ToString(CultureInfo.InvariantCulture);
             }
         
             barPlot.ValueLabelStyle.Bold = true;

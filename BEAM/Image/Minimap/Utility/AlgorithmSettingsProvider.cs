@@ -12,16 +12,16 @@ public class AlgorithmSettingsProvider : ISettingsProvider<IMinimapAlgorithm>
 
 {
     
-    private List<IMinimapAlgorithm> _defaultAlgorithms;
+    private readonly List<IMinimapAlgorithm> _defaultAlgorithms;
     private IMinimapAlgorithm? _currentDefault;
-    private readonly Type DefaultType = typeof(RenderedPixelThresholdAlgorithm);
+    private readonly Type _defaultType = typeof(RenderedPixelThresholdAlgorithm);
     public AlgorithmSettingsProvider()
     {
         _defaultAlgorithms = new List<IMinimapAlgorithm>(); 
         _defaultAlgorithms.AddAll(Assembly.GetExecutingAssembly().GetTypes()
             .Where(t => t is { IsClass: true, IsAbstract: false } && t.GetInterfaces().Contains(typeof(IMinimapAlgorithm)))
             .ToList().ReplaceEveryEntry(TypeToAlgorithm));
-        var defaults = _defaultAlgorithms.Where(t => t.GetType().Equals(DefaultType)).ToList();
+        var defaults = _defaultAlgorithms.Where(t => t.GetType().Equals(_defaultType)).ToList();
         if (!defaults.IsNullOrEmpty())
         {
             _currentDefault = defaults.First();
@@ -70,7 +70,7 @@ public class AlgorithmSettingsProvider : ISettingsProvider<IMinimapAlgorithm>
     {
         IMinimapAlgorithm? defaultClone = null;
         List<IMinimapAlgorithm> allPossible = new List<IMinimapAlgorithm>();
-        foreach (var entry in _defaultAlgorithms!)
+        foreach (var entry in _defaultAlgorithms)
         {
             IMinimapAlgorithm clone = entry.Clone();
             if (entry.Equals(_currentDefault))

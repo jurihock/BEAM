@@ -74,7 +74,7 @@ public static class EnviExtensions
     /// <summary>
     /// Returns this data type's size per instance in bytes.
     /// </summary>
-    /// <param name="type">The type whose size is meant to be returened. </param>
+    /// <param name="type">The type whose size is meant to be returned. </param>
     /// <returns>This <see cref="EnviDataType"/>'s size in bytes.</returns>
     public static int SizeOf(this EnviDataType type)
     {

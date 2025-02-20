@@ -4,12 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using BEAM.Image.Bitmap;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
-using ScottPlot.Avalonia;
 using SkiaSharp;
 
 namespace BEAM.Image.Displayer;
@@ -149,6 +147,7 @@ public class SequenceImage : IDisposable
     /// </summary>
     /// <param name="sequence">The sequence used</param>
     /// <param name="startLine">The line to start the view from</param>
+    /// <param name="renderer">The renderer used to convert the data into rgba values.</param>
     /// <param name="sectionHeight">The height (in lines) of an individual sequence part.</param>
     public SequenceImage(ISequence sequence, long startLine, SequenceRenderer renderer, long sectionHeight = 1000)
     {

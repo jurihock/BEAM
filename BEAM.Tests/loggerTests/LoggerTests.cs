@@ -1,7 +1,6 @@
-using System.Net;
 using BEAM.Models.Log;
 
-namespace BEAM.Tests;
+namespace BEAM.Tests.loggerTests;
 
 public class LoggerTests
 {

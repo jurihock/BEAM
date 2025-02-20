@@ -2,11 +2,9 @@ using System;
 using ScottPlot;
 using SkiaSharp;
 using System.Collections.Generic;
-using System.Linq;
 using BEAM.Image.Displayer;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
-using ScottPlot.Avalonia;
 
 namespace BEAM.IMage.Displayer.Scottplot;
 
@@ -14,7 +12,7 @@ public sealed class BitmapPlottable(ISequence sequence, SequenceRenderer rendere
 {
     public bool IsVisible { get; set; } = true;
     public IAxes Axes { get; set; } = new Axes();
-    public IEnumerable<LegendItem> LegendItems => Enumerable.Empty<LegendItem>();
+    public IEnumerable<LegendItem> LegendItems => [];
 
     public readonly SequenceImage SequenceImage = new(sequence, startLine, renderer);
 
@@ -56,7 +54,7 @@ public sealed class BitmapPlottable(ISequence sequence, SequenceRenderer rendere
         {
             var preview = SequenceImage.GetRenderedPart(i);
             // TODO: fix bug where Bitmap is null
-            if (preview?.Bitmap is null) continue;
+            if (preview.Bitmap is null) continue;
 
             var coordinateRect = new CoordinateRect()
             {

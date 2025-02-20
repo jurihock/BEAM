@@ -88,7 +88,7 @@ public abstract class Minimap
         MinimapGenerated.Invoke(e.Minimap, e);
     }
 
-    public abstract String GetName();
+    protected abstract String GetName();
     public abstract SaveUserControl? GetSettingsPopupControl();
     
     

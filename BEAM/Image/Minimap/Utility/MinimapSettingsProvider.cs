@@ -9,9 +9,9 @@ namespace BEAM.Image.Minimap.Utility;
 
 public class MinimapSettingsProvider : ISettingsProvider<Minimap>
 {
-    private List<Minimap> _defaultMinimaps;
+    private readonly List<Minimap> _defaultMinimaps;
     private Minimap? _currentDefault;
-    private readonly Type DefaultType = typeof(PlotMinimap);
+    private readonly Type _defaultType = typeof(PlotMinimap);
     public MinimapSettingsProvider()
     {
         _defaultMinimaps = new List<Minimap>();
@@ -20,7 +20,7 @@ public class MinimapSettingsProvider : ISettingsProvider<Minimap>
             .ToList().ReplaceEveryEntry(TypeToMinimap));
         if (_currentDefault is null)
         {
-            var defaults = _defaultMinimaps.Where(t => t.GetType().Equals(DefaultType)).ToList();
+            var defaults = _defaultMinimaps.Where(t => t.GetType().Equals(_defaultType)).ToList();
             if (!defaults.IsNullOrEmpty())
             {
                 _currentDefault = defaults.First();
@@ -70,7 +70,7 @@ public class MinimapSettingsProvider : ISettingsProvider<Minimap>
     {
         Minimap? defaultClone = null;
         List<Minimap> allPossible = new List<Minimap>();
-        foreach (var entry in _defaultMinimaps!)
+        foreach (var entry in _defaultMinimaps)
         {
             Minimap clone = entry.Clone();
             if (entry.Equals(_currentDefault))
