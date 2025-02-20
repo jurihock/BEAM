@@ -10,4 +10,11 @@
         <controls:ArgMaxHSVConfigControlViewModel/>
     </Design.DataContext>
     
+    <DataGrid ItemsSource="{Binding TestData}" 
+              AutoGenerateColumns="False"
+              GridLinesVisibility="All">
+        <DataGrid.Columns>
+            <DataGridTextColumn Header="Column 1" Binding="{Binding Index}" />
+        </DataGrid.Columns>
+    </DataGrid>
 </UserControl>

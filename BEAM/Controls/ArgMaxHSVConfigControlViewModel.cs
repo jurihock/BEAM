@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using BEAM.Datatypes.Color;
 using BEAM.Renderer;
@@ -7,16 +8,15 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BEAM.Controls;
 
-public partial class ArgMaxHSVConfigControlViewModel
-    : ViewModelBase, ISaveControl
+public partial class ArgMaxHSVConfigControlViewModel : ViewModelBase, ISaveControl
 {
     private readonly ArgMaxRendererColorHSV _renderer;
 
-    private ChannelToHSV _selectedItem;
-    
-    public ChannelToHSV SelectedItem 
-    { get => _selectedItem; 
-        set => SetProperty(ref _selectedItem, value); }
+    public ObservableCollection<ChannelToHSV> TestData
+    {
+        get; 
+        set; 
+    } = [];
     
     [ObservableProperty] public partial ObservableCollection<ChannelToHSV> ObsChannels { get; set; } = [];
     
@@ -41,7 +41,15 @@ public partial class ArgMaxHSVConfigControlViewModel
         {
             ObsChannels.Add(chan);
         }
-        SelectedItem = ObsChannels[0];
+        
+        var testData = new List<ChannelToHSV>
+        {
+            new ChannelToHSV(0),
+            new ChannelToHSV(1),
+            new ChannelToHSV(2),
+        };
+        //TestData = new ObservableCollection<ChannelToHSV>(testData);
+        
     }
     
     public void Save()
