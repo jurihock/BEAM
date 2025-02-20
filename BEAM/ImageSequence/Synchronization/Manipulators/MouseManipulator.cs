@@ -51,7 +51,7 @@ public class MouseManipulator : Manipulator
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
-                    ScrollingSynchronizer.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
@@ -71,7 +71,7 @@ public class MouseManipulator : Manipulator
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
-                    ScrollingSynchronizer.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
@@ -91,7 +91,7 @@ public class MouseManipulator : Manipulator
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
-                    ScrollingSynchronizer.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
@@ -117,7 +117,7 @@ public class MouseManipulator : Manipulator
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
-                    ScrollingSynchronizer.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
@@ -137,7 +137,7 @@ public class MouseManipulator : Manipulator
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
-                    ScrollingSynchronizer.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
@@ -153,8 +153,8 @@ public class MouseManipulator : Manipulator
             {
                 plot.Plot.Axes.SetLimits(avaPlot.Plot.Axes.GetLimits());
                 plot.Refresh();
-                ScrollingSynchronizer.UpdateOwnScrollBar(plot);
-                ScrollingSynchronizer.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
+                ScrollingSynchronizerMapper.UpdateOwnScrollBar(plot);
+                ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
             }   
         };
 
@@ -173,7 +173,7 @@ public class MouseManipulator : Manipulator
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
-                    ScrollingSynchronizer.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
@@ -193,7 +193,7 @@ public class MouseManipulator : Manipulator
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
-                    ScrollingSynchronizer.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
@@ -232,7 +232,7 @@ public class MouseManipulator : Manipulator
     /// <summary>
     /// This method is used to activate the synchronization between all plots.
     /// </summary>
-    public override void activate()
+    public override void Activate()
     {
         _isSynchronizing = true;
     }
@@ -240,7 +240,7 @@ public class MouseManipulator : Manipulator
     /// <summary>
     /// This method is used to deactivate the synchronization between all plots.
     /// </summary>
-    public override void deactivate()
+    public override void Deactivate()
     {
         _isSynchronizing = false;
     }

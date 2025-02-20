@@ -15,11 +15,11 @@ public static class EventSourceMapper
     /// <summary>
     /// Used to save the order in which the events were stored.
     /// </summary>
-    private static Queue<RoutedEventArgs> _eventQueue = new();
+    private static readonly Queue<RoutedEventArgs> EventQueue = new();
     /// <summary>
     /// The events mapped to their specific plot sources, from which the event originated,
     /// </summary>
-    private static Dictionary<RoutedEventArgs, AvaPlot?> _sourcePlots = new();
+    private static readonly Dictionary<RoutedEventArgs, AvaPlot?> SourcePlots = new();
 
     /// <summary>
     /// Add an event and its source plot to the mapping.
@@ -28,13 +28,13 @@ public static class EventSourceMapper
     /// <param name="plot">The source plot from which the event originated.</param>
     public static void AddEventSource(RoutedEventArgs eventSource, AvaPlot? plot)
     {
-        if (_eventQueue.Count >= 100)
+        if (EventQueue.Count >= 100)
         {
-            var e = _eventQueue.Dequeue();
-            _sourcePlots.Remove(e);
+            var e = EventQueue.Dequeue();
+            SourcePlots.Remove(e);
         }
-        _eventQueue.Enqueue(eventSource);
-        _sourcePlots.Add(eventSource, plot);
+        EventQueue.Enqueue(eventSource);
+        SourcePlots.Add(eventSource, plot);
     }
     
     /// <summary>
@@ -44,7 +44,7 @@ public static class EventSourceMapper
     /// <param name="plot">The plot which will be checked for being the source.</param>
     /// <returns>A Boolean representing, if the plot is the source of the event.</returns>
     public static bool IsSource(RoutedEventArgs e, AvaPlot plot) {
-        if (_sourcePlots.TryGetValue(e, out var source))
+        if (SourcePlots.TryGetValue(e, out var source))
         {
             return source != null && source.Equals(plot);
         }
@@ -59,7 +59,7 @@ public static class EventSourceMapper
     /// <param name="plot">The plot, which will be mapped to the event.</param>
     public static void AddIfNotExists(RoutedEventArgs e, AvaPlot plot)
     {
-        if (!_sourcePlots.ContainsKey(e))
+        if (!SourcePlots.ContainsKey(e))
         {
             AddEventSource(e, plot);
         }
@@ -70,7 +70,7 @@ public static class EventSourceMapper
     /// </summary>
     public static void Clear()
     {
-        _eventQueue.Clear();
-        _sourcePlots.Clear();
+        EventQueue.Clear();
+        SourcePlots.Clear();
     }
 }

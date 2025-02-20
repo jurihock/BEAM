@@ -92,7 +92,7 @@ public partial class SequenceView : UserControl
         //var panResponse = new ScottPlot.Interactivity.UserActionResponses.MouseDragPan(panButton);
 
         // Remove the standard MouseWheelZoom and replace it with the wanted custom functionality
-        ScrollingSynchronizer.addSequence(this);
+        ScrollingSynchronizerMapper.AddSequence(this);
         AvaPlot1.UserInputProcessor.RemoveAll<MouseWheelZoom>();
         AvaPlot1.UserInputProcessor.RemoveAll<MouseDragZoom>(); // Remove option to zoom with right key
         AvaPlot1.UserInputProcessor.UserActionResponses.Add(new CustomMouseWheelZoom(StandardKeys.Shift,
@@ -110,13 +110,13 @@ public partial class SequenceView : UserControl
             var top = (e.NewValue / 100.0) * vm.Sequence.Shape.Height - 100.0;
             AvaPlot1.Plot.Axes.SetLimitsY(top, top + ySize);
             AvaPlot1.Refresh();
-            ScrollingSynchronizer.synchronize(this);
+            ScrollingSynchronizerMapper.Synchronize(this);
         };
 
         AvaPlot1.PointerWheelChanged += (s, e) =>
         {
             UpdateScrollBar();
-            ScrollingSynchronizer.synchronize(this);
+            ScrollingSynchronizerMapper.Synchronize(this);
         };
 
         AddScrollBarUpdating();
@@ -134,6 +134,7 @@ public partial class SequenceView : UserControl
         AvaPlot1.Refresh();**/
         AvaPlot1.Plot.Axes.InvertY();
         AvaPlot1.Plot.Axes.SquareUnits();
+        // Reset the axis to the inital value of the scrollbar.
         UpdateScrolling(0);
         AvaPlot1.Refresh();
         AvaPlot1.Plot.Add.Annotation("This is an Annotation");
@@ -224,9 +225,9 @@ public partial class SequenceView : UserControl
         menu.Add("Sync to this",
             control =>
             {
-                ScrollingSynchronizer.activateSynchronization();
-                ScrollingSynchronizer.synchronize(this);
-                PlotControllerManager.activateSynchronization();
+                ScrollingSynchronizerMapper.ActivateSynchronization();
+                ScrollingSynchronizerMapper.Synchronize(this);
+                PlotControllerManager.ActivateSynchronization();
             });
         menu.AddSeparator();
         menu.Add("Configure colors", control => _OpenColorsPopup());
@@ -338,6 +339,12 @@ public partial class SequenceView : UserControl
         AvaPlot1.Plot.MoveToTop(Anno);
     }
 
+    /// <summary>
+    /// Updates the Position Annotation to show the given position and the pixel values in the plot
+    /// of this position in the sequence.
+    /// </summary>
+    /// <param name="x">The x coordinate.</param>
+    /// <param name="y">The y coordinate</param>
     public void UpdatePositionAnnotation(long x, long y)
     {
         if (DataContext is not SequenceViewModel vm)
@@ -345,6 +352,7 @@ public partial class SequenceView : UserControl
             return;
         }
         
+        // If outside the sequence just show the position and no values.
         if (x >= vm.Sequence.Shape.Width || y >= vm.Sequence.Shape.Height || x < 0 || y < 0)
         {
             Anno.Text = $"(x: {x}, y: {y}, (r: , g: , b: ))";

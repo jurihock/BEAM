@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using BEAM.Views;
 using ScottPlot.Avalonia;
 
@@ -7,7 +8,7 @@ namespace BEAM.ImageSequence.Synchronization;
 /// <summary>
 /// This class synchronizes scrolling using the ScrollBars between different sequences.
 /// </summary>
-public static class ScrollingSynchronizer
+public static class ScrollingSynchronizerMapper
 {
     /// <summary>
     /// Used to signal, whether the ScrollBars are supposed to be synchronized.
@@ -20,7 +21,7 @@ public static class ScrollingSynchronizer
     /// <summary>
     /// This method is used to activate the synchronization.
     /// </summary>
-    public static void activateSynchronization()
+    public static void ActivateSynchronization()
     {
         _isSynchronizing = true;
     }
@@ -28,7 +29,7 @@ public static class ScrollingSynchronizer
     /// <summary>
     /// This method is used to deactivate the synchronization.
     /// </summary>
-    public static void deactivateSynchronization()
+    public static void DeactivateSynchronization()
     {
         _isSynchronizing = false;
     }
@@ -37,7 +38,7 @@ public static class ScrollingSynchronizer
     /// Adds a Sequence to the synchronization.
     /// </summary>
     /// <param name="sequence">The Sequence which will be added to the synchronization.</param>
-    public static void addSequence(SequenceView sequence)
+    public static void AddSequence(SequenceView sequence)
     {
         Sequences.Add(sequence);
         ViewMapping.Add(sequence.AvaPlot1, sequence);
@@ -57,17 +58,12 @@ public static class ScrollingSynchronizer
     /// Synchronizes the sequences to the value of a given sequence, by setting their values to that of the given sequence.
     /// </summary>
     /// <param name="sequenceView">The SequenceView containing the sequence, which values will be used for all the stored sequences.</param>
-    public static void synchronize(SequenceView sequenceView)
+    public static void Synchronize(SequenceView sequenceView)
     {
-        if (_isSynchronizing)
+        if (!_isSynchronizing) return;
+        foreach (var view in Sequences.Where(view => view != sequenceView))
         {
-            foreach (var view in Sequences)
-            {
-                if (view != sequenceView)
-                {
-                    view.UpdateScrolling(sequenceView.AvaPlot1);
-                }
-            }
+            view.UpdateScrolling(sequenceView.AvaPlot1);
         }
     }
 
