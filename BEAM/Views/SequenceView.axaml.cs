@@ -29,7 +29,6 @@ namespace BEAM.Views;
 /// </summary>
 public partial class SequenceView : UserControl
 {
-
     private SequencePlottable _plottable = null!;
     private HorizontalLine _horizontalLine;
     private VerticalLine _verticalLine;
@@ -37,11 +36,11 @@ public partial class SequenceView : UserControl
     // Hosts the external UserControl
     public static readonly StyledProperty<Control?> DynamicContentProperty =
         AvaloniaProperty.Register<SequenceView, Control?>(nameof(DynamicContent));
-    
+
     // Optional: Bind to the external UserControl's ViewModel
     public static readonly StyledProperty<object?> DynamicContentViewModelProperty =
         AvaloniaProperty.Register<SequenceView, object?>(nameof(DynamicContentViewModel));
-    
+
     public Control? DynamicContent
     {
         get => GetValue(DynamicContentProperty);
@@ -53,15 +52,14 @@ public partial class SequenceView : UserControl
         get => GetValue(DynamicContentViewModelProperty);
         set => SetValue(DynamicContentViewModelProperty, value);
     }
-    
+
     public SequenceView()
     {
         InitializeComponent();
-         _horizontalLine = AvaPlot1.Plot.Add.HorizontalLine(0);
+        _horizontalLine = AvaPlot1.Plot.Add.HorizontalLine(0);
         _verticalLine = AvaPlot1.Plot.Add.VerticalLine(0);
         this.SizeChanged += OnSizeChanged;
         //this.DataContextChanged += StyledElement_OnDataContextChanged;
-
     }
 
     private void OnSizeChanged(object? sender, SizeChangedEventArgs e)
@@ -71,18 +69,19 @@ public partial class SequenceView : UserControl
         {
             return;
         }
-        
-        
-        if(vm.MinimapVms.Any())
+
+
+        if (vm.MinimapVms.Any())
         {
-            if(vm.MinimapVms.First() is not SizeAdjustableViewModelBase mapViewModel) return;
-            mapViewModel.NotifySizeChanged(this, new ViewModels.Utility.SizeChangedEventArgs(e.NewSize.Width * 0.2, e.NewSize.Height));
+            if (vm.MinimapVms.First() is not SizeAdjustableViewModelBase mapViewModel) return;
+            mapViewModel.NotifySizeChanged(this,
+                new ViewModels.Utility.SizeChangedEventArgs(e.NewSize.Width * 0.2, e.NewSize.Height));
         }
     }
 
     private void PreparePlot()
     {
-        _ApplyDarkMode();
+        _ApplyTheme();
         _BuildCustomRightClickMenu();
 
         // TODO: CustomMouseActions
@@ -158,7 +157,7 @@ public partial class SequenceView : UserControl
         AvaPlot1.PointerWheelChanged += (s, e) => { UpdateScrollBar(); };
     }
 
-    private void _ApplyDarkMode()
+    private void _ApplyTheme()
     {
         ThemeVariant currentTheme = Application.Current!.ActualThemeVariant;
 
@@ -167,21 +166,30 @@ public partial class SequenceView : UserControl
         var backgroundColor = (Avalonia.Media.Color)background;
         AvaPlot1.Plot.FigureBackground.Color = new Color(backgroundColor.R, backgroundColor.G, backgroundColor.B);
 
-        Application.Current.TryGetResource("WindowFg", currentTheme, out var foreground);
-        var foregroundColor = (Avalonia.Media.Color)foreground;
-        AvaPlot1.Plot.FigureBackground.Color = Color.FromHex("#181818");
-        
-        AvaPlot1.Plot.DataBackground.Color = Color.FromHex("#1f1f1f");
+        Application.Current.TryGetResource("BackgroundColorDark", currentTheme, out var backgroundDark);
+        var backgroundColorDark = (Avalonia.Media.Color)backgroundDark;
+        AvaPlot1.Plot.DataBackground.Color =
+            new Color(backgroundColorDark.R, backgroundColorDark.G, backgroundColorDark.B);
 
         // change axis and grid colors
-        AvaPlot1.Plot.Axes.Color(new Color(foregroundColor.R, foregroundColor.G, foregroundColor.B));
+        Application.Current.TryGetResource("FontColorScottPlot", currentTheme, out var fontColorScottPlot);
+        var fontColor = (Avalonia.Media.Color)fontColorScottPlot;
+        AvaPlot1.Plot.Axes.Color(new Color(fontColor.R, fontColor.G, fontColor.B));
+
         
-        AvaPlot1.Plot.Grid.MajorLineColor = Color.FromHex("#404040");
+        // AvaPlot1.Plot.Grid.MajorLineColor = Colors.Aqua; 
 
         // change legend colors
-        AvaPlot1.Plot.Legend.BackgroundColor = Color.FromHex("#404040");
-        AvaPlot1.Plot.Legend.FontColor = Color.FromHex("#d7d7d7");
-        AvaPlot1.Plot.Legend.OutlineColor = Color.FromHex("#d7d7d7");
+        // AvaPlot1.Plot.Legend.BackgroundColor = Colors.Aqua; 
+        // AvaPlot1.Plot.Legend.FontColor = Colors.Aqua; 
+        // AvaPlot1.Plot.Legend.OutlineColor = Colors.Aqua; 
+        
+        // AvaPlot1.Plot.Grid.MajorLineColor = Color.FromHex("#404040");
+        //
+        // // change legend colors
+        // AvaPlot1.Plot.Legend.BackgroundColor = Color.FromHex("#404040");
+        // AvaPlot1.Plot.Legend.FontColor = new Color(fontColor.R, fontColor.G, fontColor.B);
+        // AvaPlot1.Plot.Legend.OutlineColor = Color.FromHex("#d7d7d7");
     }
 
     private void _BuildCustomRightClickMenu()
@@ -215,8 +223,8 @@ public partial class SequenceView : UserControl
         menu.Add("Change Minimap settings for this sequence",
             control => vm.OpenMinimapSettingsCommand.Execute(null));
     }
-    
-    
+
+
     private void PointerReleasedHandler(object? sender, PointerReleasedEventArgs args)
     {
         var point = args.GetCurrentPoint(sender as Control);
@@ -233,9 +241,9 @@ public partial class SequenceView : UserControl
 
     private void _SetPlottable(SequencePlottable plottable)
     {
-         _plottable = plottable;
+        _plottable = plottable;
         if (_plottable is not null) AvaPlot1.Plot.Remove(_plottable);
-        
+
         AvaPlot1.Plot.Add.Plottable(_plottable!);
         _plottable!.SequenceImage.RequestRefreshPlotEvent += (sender, args) => AvaPlot1.Refresh();
         AvaPlot1.Refresh();
@@ -243,7 +251,6 @@ public partial class SequenceView : UserControl
 
     private void PointerPressedHandler(object sender, PointerPressedEventArgs args)
     {
-
         var point = args.GetCurrentPoint(sender as Control);
         var x = point.Position.X;
         var y = point.Position.Y;
@@ -276,6 +283,7 @@ public partial class SequenceView : UserControl
         {
             return;
         }
+
         vm.MinimapHasChanged += Layoutable_OnLayoutUpdated;
 
         PreparePlot();
@@ -372,8 +380,7 @@ public partial class SequenceView : UserControl
         var val = ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / vm.Sequence.Shape.Height) * 100;
         Bar1.Value = val <= 0.0 ? 0.0 : double.Min(val, 100.0);
     }
-    
-    
+
 
     private void Layoutable_OnLayoutUpdated(object? sender, EventArgs e)
     {
@@ -382,15 +389,17 @@ public partial class SequenceView : UserControl
         {
             return;
         }
-        
-        if(vm.MinimapVms.Count > 0)
-        {   
+
+        if (vm.MinimapVms.Count > 0)
+        {
             var mapViewModel = (vm.MinimapVms.First() as SizeAdjustableViewModelBase);
             if (mapViewModel is null)
             {
                 return;
             }
-            mapViewModel.NotifySizeChanged(this, new ViewModels.Utility.SizeChangedEventArgs(this.GetSize().X * 0.2, this.GetSize().Y));
+
+            mapViewModel.NotifySizeChanged(this,
+                new ViewModels.Utility.SizeChangedEventArgs(this.GetSize().X * 0.2, this.GetSize().Y));
         }
     }
 }

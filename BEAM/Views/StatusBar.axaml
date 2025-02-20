@@ -10,7 +10,7 @@
 
     <Panel>
         <Border BorderBrush="{DynamicResource Separator}"
-                Background="{DynamicResource StatusBarBg}"
+                Background="{DynamicResource BackgroundColorDark}"
                 BorderThickness="0,1, 0, 0"
                 CornerRadius="0"
                 IsHitTestVisible="False">

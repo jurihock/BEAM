@@ -38,7 +38,7 @@
                     <DataTemplate>
                         <Border Margin="20, 0,20,5"
                                 CornerRadius="5"
-                                BorderBrush="{DynamicResource Accent}" BorderThickness="1"
+                                BorderBrush="{DynamicResource Separator}" BorderThickness="1"
                                 Padding="5">
 
                             <StackPanel Orientation="Horizontal">
