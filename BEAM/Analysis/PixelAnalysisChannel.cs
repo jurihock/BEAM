@@ -1,4 +1,4 @@
-﻿using BEAM.Datatypes;
+using BEAM.Datatypes;
 using BEAM.ImageSequence;
 using ScottPlot;
 
@@ -22,6 +22,5 @@ public class PixelAnalysisChannel : Analysis
     public override string ToString()
     {
         return Name;
-
     }
 }

@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using BEAM.Exceptions;
 using BEAM.ImageSequence;
-using BEAM.Models;
 using BEAM.Models.Log;
 using BEAM.ViewModels;
 

@@ -1,0 +1,22 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="BEAM.Views.Minimap.Popups.EmbeddedSettings.PixelThresholdSumAlgorithmConfigControlView"
+             xmlns:controls="clr-namespace:BEAM.ViewModels.Minimap.Popups.EmbeddedSettings"
+             x:DataType="controls:PixelThresholdSumAlgorithmConfigControlViewModel">
+    <StackPanel>
+        <Grid RowDefinitions="Auto,2, Auto,2, Auto,2, Auto,2, Auto" ColumnDefinitions="Auto, 2, Auto, 2">
+            <TextBlock Grid.Row="0" Grid.Column="0">Minimum red value:</TextBlock>
+            <NumericUpDown Grid.Row="0" Grid.Column ="2" Value="{Binding SelectedRedThreshold}" FormatString="N0" Increment="5" Minimum="0" MinWidth="255" ParsingNumberStyle="Integer" />
+            <TextBlock Grid.Row="2" Grid.Column="0">Minimum green value:</TextBlock>
+            <NumericUpDown Grid.Row="2" Grid.Column ="2" Value="{Binding SelectedGreenThreshold}" FormatString="N0" Increment="5" Minimum="0" MinWidth="255" ParsingNumberStyle="Integer" />
+            <TextBlock Grid.Row="4" Grid.Column="0">Minimum blue value:</TextBlock>
+            <NumericUpDown Grid.Row="4" Grid.Column ="2" Value="{Binding SelectedBlueThreshold}" FormatString="N0" Increment="5" Minimum="0" MinWidth="255" ParsingNumberStyle="Integer" />
+            <TextBlock Grid.Row="6" Grid.Column="0">Minimum alpha value:</TextBlock>
+            <NumericUpDown Grid.Row="6" Grid.Column ="2" Value="{Binding SelectedAlphaThreshold}" FormatString="N0" Increment="5" Minimum="0" MinWidth="255" ParsingNumberStyle="Integer" />
+            <TextBlock Grid.Row="8" Grid.Column="0">(All values are inclusive)</TextBlock>
+        </Grid>
+    </StackPanel>
+</UserControl>

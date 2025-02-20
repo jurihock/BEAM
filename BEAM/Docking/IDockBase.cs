@@ -6,4 +6,5 @@ namespace BEAM.Docking;
 public interface IDockBase : IDisposable
 {
     string Name { get; }
+    public void OnClose();
 }

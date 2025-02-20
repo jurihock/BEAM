@@ -24,6 +24,8 @@ public readonly struct Coordinate2D
             Column = column;
         }
     
+
+
     public Coordinate2D(double row, double column)
     {
         Row = row;
@@ -41,5 +43,4 @@ public readonly struct Coordinate2D
     {
         return $"Row: {Row}, Column: {Column}";
     }
-    
 }
