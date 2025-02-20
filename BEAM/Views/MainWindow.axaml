@@ -61,7 +61,7 @@
 
         <views:StatusBar DockPanel.Dock="Bottom" />
 
-        <DockPanel LastChildFill="True">
+        <DockPanel LastChildFill="True" Background="{DynamicResource WindowBg}">
             <views:DockingView x:Name="DockView" />
         </DockPanel>
 

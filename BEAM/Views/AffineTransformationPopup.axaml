@@ -9,15 +9,16 @@
         Focusable="True"
         WindowStartupLocation="CenterOwner"
         x:DataType="viewModels:AffineTransformationPopupViewModel"
-        SizeToContent="WidthAndHeight">
+        SizeToContent="WidthAndHeight"
+        Background="{DynamicResource WindowBg}">
 
     <Design.DataContext>
         <viewModels:AffineTransformationPopupViewModel />
     </Design.DataContext>
 
-    <StackPanel Orientation="Vertical" Margin="20, 10, 20, 0">
+    <StackPanel Orientation="Vertical" Margin="20, 10, 20, 10">
         <TextBlock FontWeight="Bold">Configure affine transformation</TextBlock>
-        <Separator Background="{DynamicResource ThemeAccentBrush}" Margin="0 10"></Separator>
+        <Separator Background="{DynamicResource Separator}" Margin="0 10"></Separator>
 
         <Grid ColumnDefinitions="Auto, 2, Auto" RowDefinitions="Auto, 2, Auto">
             <TextBlock VerticalAlignment="Center">Scale:</TextBlock>

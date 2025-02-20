@@ -160,14 +160,22 @@ public partial class SequenceView : UserControl
 
     private void _ApplyDarkMode()
     {
-        if (Application.Current!.ActualThemeVariant != ThemeVariant.Dark) return;
+        ThemeVariant currentTheme = Application.Current!.ActualThemeVariant;
 
         // change figure colors
+        Application.Current.TryGetResource("WindowBg", currentTheme, out var background);
+        var backgroundColor = (Avalonia.Media.Color)background;
+        AvaPlot1.Plot.FigureBackground.Color = new Color(backgroundColor.R, backgroundColor.G, backgroundColor.B);
+
+        Application.Current.TryGetResource("WindowFg", currentTheme, out var foreground);
+        var foregroundColor = (Avalonia.Media.Color)foreground;
         AvaPlot1.Plot.FigureBackground.Color = Color.FromHex("#181818");
+        
         AvaPlot1.Plot.DataBackground.Color = Color.FromHex("#1f1f1f");
 
         // change axis and grid colors
-        AvaPlot1.Plot.Axes.Color(Color.FromHex("#d7d7d7"));
+        AvaPlot1.Plot.Axes.Color(new Color(foregroundColor.R, foregroundColor.G, foregroundColor.B));
+        
         AvaPlot1.Plot.Grid.MajorLineColor = Color.FromHex("#404040");
 
         // change legend colors
@@ -211,13 +219,12 @@ public partial class SequenceView : UserControl
     
     private void PointerReleasedHandler(object? sender, PointerReleasedEventArgs args)
     {
-        
         var point = args.GetCurrentPoint(sender as Control);
         var x = point.Position.X;
         var y = point.Position.Y;
-    
+
         var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
-    
+
         var vm = (SequenceViewModel?)DataContext;
         if (vm is null) return;
         vm.releasedPointerPosition = CoordInPlot;
