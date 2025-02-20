@@ -7,13 +7,16 @@ using ScottPlot;
 
 namespace BEAM.Views;
 
+/// <summary>
+/// Code behind the inspection view.
+/// </summary>
+// ReSharper disable once UnusedType.Global
 public partial class InspectionView : UserControl
 {
     public InspectionView()
     {
         InitializeComponent();
-        this.DataContextChanged += DataContextChangedHandling;
-        
+        DataContextChanged += DataContextChangedHandling;
     }
     
     /// <summary>

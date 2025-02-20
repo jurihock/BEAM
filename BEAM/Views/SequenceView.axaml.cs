@@ -19,6 +19,10 @@ using ScottPlot.Plottables;
 
 namespace BEAM.Views;
 
+/// <summary>
+/// Code behind the sequence view.
+/// Controls the used plot, events and redraws the sequence.
+/// </summary>
 public partial class SequenceView : UserControl
 {
     private SequencePlottable _plottable;

@@ -17,6 +17,9 @@ using ShimSkiaSharp;
 
 namespace BEAM.ViewModels;
 
+/// <summary>
+/// View model controlling the inspection dock.
+/// </summary>
 public partial class InspectionViewModel : ViewModelBase, IDockBase
 {
     [ObservableProperty] private Plot _currentPlot;

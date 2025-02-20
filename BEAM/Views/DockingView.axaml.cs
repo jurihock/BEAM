@@ -11,6 +11,9 @@ using NP.Ava.UniDockService;
 
 namespace BEAM.Views;
 
+/// <summary>
+/// Class controlling the dock library.
+/// </summary>
 public partial class DockingView : UserControl
 {
     private DockManager _dockManager;
@@ -25,6 +28,7 @@ public partial class DockingView : UserControl
             vm.Items.CollectionChanged += _ItemsOnCollectionChanged;
         };
 
+        // Dock manager setup
         _dockManager = (DockManager)this.FindResource("TheDockManager")!;
         _dockManager.DockItemsViewModels = [];
         _dockManager.DockItemRemovedEvent += _OnItemRemoved;

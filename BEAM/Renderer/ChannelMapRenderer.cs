@@ -18,14 +18,15 @@ public partial class ChannelMapRenderer : SequenceRenderer
         int channelRed, int channelGreen, int channelBlue)
         : base(minimumOfIntensityRange, maximumOfIntensityRange)
     {
+        ChannelGreen = channelGreen;
         ChannelRed = channelRed;
         ChannelGreen = channelGreen;
         ChannelBlue = channelBlue;
     }
 
-    [ObservableProperty] private int channelRed;
-    [ObservableProperty] private int channelGreen;
-    [ObservableProperty] private int channelBlue;
+    [ObservableProperty] private int _channelRed;
+    [ObservableProperty] private int _channelGreen;
+    [ObservableProperty] private int _channelBlue;
 
     //TODO: RGBA or ARGB?
     /// <summary>

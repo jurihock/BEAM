@@ -18,6 +18,9 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace BEAM.ViewModels;
 
+/// <summary>
+/// View model controlling the main window.
+/// </summary>
 public partial class MainWindowViewModel : ViewModelBase
 {
     [ObservableProperty] private string? _fileText;
