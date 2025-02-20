@@ -84,6 +84,10 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
         }
         _sequenceVm.ChangeCurrentMinimap(SelectedMinimap.Clone());
     }
-    
+
+    public void DisableMinimap()
+    {
+        _sequenceVm.DisableMinimap();
+    }
 }
 

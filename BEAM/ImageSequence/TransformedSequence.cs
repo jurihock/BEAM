@@ -19,16 +19,16 @@ public class TransformedSequence(ISequence originalSequence) : ISequence
     /// The y-axis scale.
     /// </summary>
     public double ScaleY { get; set; } = 1;
-
+    
     /// <summary>
     /// The x offset to draw the sequence at (does not actually offset the position inside the original sequence).
     /// </summary>
-    public double DrawOffsetX { get; set; } = 0;
+    public double DrawOffsetX { get; set; }
 
     /// <summary>
     /// The y offset to draw the sequence at (does not actually offset the position inside the original sequence).
     /// </summary>
-    public double DrawOffsetY { get; set; } = 0;
+    public double DrawOffsetY { get; set; }
 
     public ImageShape Shape => new(_TransformX(originalSequence.Shape.Width),
         _TransformY(originalSequence.Shape.Height),

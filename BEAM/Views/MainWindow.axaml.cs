@@ -17,7 +17,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        DataContextChanged += (sender, args) =>
+        DataContextChanged += (_, _) =>
         {
             if (!IsInitialized) return;
             var viewmodel = (MainWindowViewModel)DataContext!;

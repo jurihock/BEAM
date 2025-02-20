@@ -1,7 +1,6 @@
 using System.Collections.Specialized;
 using Avalonia.Controls;
 using BEAM.Docking;
-using BEAM.Exceptions;
 using BEAM.ViewModels;
 using NP.Ava.UniDock;
 using NP.Ava.UniDockService;
@@ -13,12 +12,12 @@ namespace BEAM.Views;
 /// </summary>
 public partial class DockingView : UserControl
 {
-    private DockManager _dockManager;
+    private readonly DockManager _dockManager;
 
     public DockingView()
     {
         InitializeComponent();
-        DataContextChanged += (s, e) =>
+        DataContextChanged += (_, _) =>
         {
             if (!IsInitialized) return;
             var vm = (DockingViewModel)DataContext!;
@@ -32,7 +31,7 @@ public partial class DockingView : UserControl
         _dockManager.DockItemRemovedEvent += _OnItemRemoved;
     }
 
-    private int _i = 0;
+    private int _i;
 
     private void _ItemsOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
@@ -55,8 +54,13 @@ public partial class DockingView : UserControl
 
     private void _OnItemRemoved(DockItemViewModelBase item)
     {
-        var vm = (DockingViewModel)DataContext!;
-        var dock = (IDockBase)item.Content!;
+        var vm = DataContext as DockingViewModel;
+        if (vm is null  || (item.Content as IDockBase)  is null)
+        {
+            return;
+        }
+
+        var dock = (item.Content as IDockBase)!;
         vm.RemoveDock(dock);
         dock.Dispose();
     }

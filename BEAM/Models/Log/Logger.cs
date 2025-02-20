@@ -12,8 +12,8 @@ namespace BEAM.Models.Log;
 public class Logger : ObservableObject, ILog
 {
     private static Logger? _instance;
-
-    private string _pathToLogFile;
+    
+    private readonly string _pathToLogFile;
     private LogLevel _logLevel;
     private LogEvent _logEvent;
 
@@ -50,7 +50,7 @@ public class Logger : ObservableObject, ILog
     public static Logger GetInstance()
     {
         if (_instance is null) throw new NullReferenceException("The logger has not been initialized yet");
-        return _instance!;
+        return _instance;
     }
 
     public void Error(LogEvent occuredEvent, string logMessage)

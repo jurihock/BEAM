@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
@@ -10,7 +9,6 @@ using BEAM.Exceptions;
 using BEAM.ImageSequence;
 using BEAM.ImageSequence.Synchronization;
 using BEAM.ImageSequence.Synchronization.Manipulators;
-using BEAM.Models;
 using BEAM.Models.Log;
 using BEAM.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -145,13 +143,13 @@ public partial class MainWindowViewModel : ViewModelBase
     private void ActivateSynchronization()
     {
         _syncedPlotController?.Activate();
-        ScrollingSynchronizer.activateSynchronization();
+        ScrollingSynchronizer.ActivateSynchronization();
     }
 
     [RelayCommand]
     private void DeactivateSynchronization()
     {
         _syncedPlotController?.Deactivate();
-        ScrollingSynchronizer.deactivateSynchronization();
+        ScrollingSynchronizer.DeactivateSynchronization();
     }
 }

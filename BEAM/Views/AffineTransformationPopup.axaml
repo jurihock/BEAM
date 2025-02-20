@@ -10,10 +10,7 @@
         WindowStartupLocation="CenterOwner"
         x:DataType="viewModels:AffineTransformationPopupViewModel"
         SizeToContent="WidthAndHeight">
-
-    <Design.DataContext>
-        <viewModels:AffineTransformationPopupViewModel />
-    </Design.DataContext>
+    
 
     <StackPanel Orientation="Vertical" Margin="20, 10, 20, 0">
         <TextBlock FontWeight="Bold">Configure affine transformation</TextBlock>

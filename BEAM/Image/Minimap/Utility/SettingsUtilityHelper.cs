@@ -1,23 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using BEAM.Image.Minimap.MinimapAlgorithms;
 
 namespace BEAM.Image.Minimap.Utility;
 
 public static class SettingsUtilityHelper<T>
 {
-    private static ISettingsProvider<T>? _provider;
+    private static readonly ISettingsProvider<T>? Provider;
     static SettingsUtilityHelper()
     {
         if (typeof(T).IsAssignableTo(typeof(Minimap)))
         {
-            _provider = (ISettingsProvider<T>?)new MinimapSettingsProvider();
+            Provider = (ISettingsProvider<T>?)new MinimapSettingsProvider();
         }
         else if (typeof(T).IsAssignableTo(typeof(IMinimapAlgorithm)))
         {
-            _provider = (ISettingsProvider<T>?)new AlgorithmSettingsProvider();
+            Provider = (ISettingsProvider<T>?)new AlgorithmSettingsProvider();
         }
         else
         {
@@ -27,48 +25,48 @@ public static class SettingsUtilityHelper<T>
     
     public static ImmutableList<T> GetDefaultObjects()
     {
-        if(_provider is null)
+        if(Provider is null)
         {
             throw new InvalidOperationException("Unsupporterd type");
         }
-        return _provider.GetDefaultObjects();
+        return Provider.GetDefaultObjects();
     }
     
     public static void SetDefaultObject(T? newObjectDefault)
     {
-        if(_provider is null)
+        if(Provider is null)
         {
             throw new InvalidOperationException("Unsupporterd type");
         }
-        _provider.SetDefaultObject(newObjectDefault);
+        Provider.SetDefaultObject(newObjectDefault);
     }
     
     
     public static bool ExistAny()
     {
-        if(_provider is null)
+        if(Provider is null)
         {
             throw new InvalidOperationException("Unsupporterd type");
         }
-        return _provider.ExistAny();
+        return Provider.ExistAny();
     }
     
-    public static T GetDefaultObject()
+    public static T? GetDefaultObject()
     {
-        if(_provider is null)
+        if(Provider is null)
         {
             throw new InvalidOperationException("Unsupporterd type");
         }
-        return _provider.GetDefaultObject()!;
+        return Provider.GetDefaultObject();
     }
 
     public static SettingsTransferObject<T> GetDefaultClones()
     {
-        if(_provider is null)
+        if(Provider is null)
         {
             throw new InvalidOperationException("Unsupporterd type");
         }
-        return _provider.GetDefaultClones();
+        return Provider.GetDefaultClones();
     }
     
 }

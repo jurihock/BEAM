@@ -1,4 +1,3 @@
-using System;
 
 namespace BEAM.Image.Envi;
 

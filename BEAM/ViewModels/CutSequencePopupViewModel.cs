@@ -1,4 +1,3 @@
-using System;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
 using CommunityToolkit.Mvvm.ComponentModel;

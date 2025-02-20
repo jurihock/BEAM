@@ -1,3 +1,4 @@
+using System;
 using ScottPlot;
 
 namespace BEAM.Datatypes;
@@ -5,9 +6,7 @@ namespace BEAM.Datatypes;
 /// <summary>
 /// An immutable Coordinate pair.
 /// </summary>
-/// <param name="row"></param>
-/// <param name="column"></param>
-public readonly struct Coordinate2D
+public readonly struct Coordinate2D : IEquatable<Coordinate2D>
 {
     public double Row { get; init; }
     public double Column { get; init; }
@@ -42,5 +41,15 @@ public readonly struct Coordinate2D
     public override string ToString()
     {
         return $"Row: {Row}, Column: {Column}";
+    }
+
+    public bool Equals(Coordinate2D other)
+    {
+        return Row.Equals(other.Row) && Column.Equals(other.Column);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Row, Column);
     }
 }

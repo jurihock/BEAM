@@ -20,12 +20,14 @@ namespace BEAM.Image.Minimap;
 /// </summary>
 public class PlotMinimap : Minimap
 {
+    private const int ScrollBarOffset = 100;
+    
     public int CompactionFactor = 100;
 
     /// <summary>
     /// The underlying algorithm used to calculate values for pixel lines. These values will later be displayed in the plot.
     /// </summary>
-    public IMinimapAlgorithm MinimapAlgorithm;
+    public IMinimapAlgorithm? MinimapAlgorithm;
 
     private Plot _plot = new Plot();
     private MinimapPlotViewModel? _viewModel;
@@ -68,6 +70,7 @@ public class PlotMinimap : Minimap
 
     public override void SetRenderer(SequenceRenderer renderer)
     {
+        if(MinimapAlgorithm is null) return;
         MinimapAlgorithm.SetRenderer(renderer);
     }
 
@@ -86,7 +89,7 @@ public class PlotMinimap : Minimap
     /// </summary>
     private async Task GenerateMinimap()
     {
-        if (Sequence is null)
+        if (Sequence is null || MinimapAlgorithm is null)
         {
             OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Failure));
             return;
@@ -123,7 +126,8 @@ public class PlotMinimap : Minimap
         }
         _plot.Axes.InvertY();
         _plot.Add.Bars(bars);
-        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 , bottom: Sequence.Shape.Height);
+        //TODO: Offset for scrollbar. Remove it or bind it dynamically or leave it static?
+        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence.Shape.Height + ScrollBarOffset);
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -131,31 +135,9 @@ public class PlotMinimap : Minimap
             IsGenerated = true;
             OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Success));
         });
-
-
-
-    }
-    
-
-    /// <summary>
-    /// Returns the algorithm calculation based value for a specific line. Commonly used for plotting.
-    /// </summary>
-    /// <param name="line">The line whose value shall be returned.</param>
-    /// <returns>The specified line's calculated value.</returns>
-    /// <exception cref="InvalidOperationException">Thrown to indicate that
-    /// the minimap has not yet finished its generation process.</exception>
-    public double GetMinimapValue(long line)
-    {
-        if (!IsGenerated)
-        {
-            throw new InvalidOperationException();
-        }
-
-        return MinimapAlgorithm.GetLineValue(line);
     }
 
-
-    public override string GetName()
+    protected override string GetName()
     {
         return "Plot Minimap";
     }
@@ -164,15 +146,6 @@ public class PlotMinimap : Minimap
     {
         return new PlotMinimapConfigControlView(this);
     }
-    
-
-
-    public void SetCompactionFactor(int newFactor)
-    {
-        if (newFactor < 1) return;
-         CompactionFactor = newFactor;
-    }
-    
 
     public override Minimap Clone()
     {
@@ -183,6 +156,4 @@ public class PlotMinimap : Minimap
     {
         return "Plot Minimap";
     }
-    
-    
 }

@@ -8,15 +8,15 @@ namespace BEAM.Image;
 /// </summary>
 public sealed class ZyxImageMemoryLayout : ImageMemoryLayout
 {
-    private readonly long Y;
-    private readonly long Z;
+    private readonly long _y;
+    private readonly long _z;
 
     public ZyxImageMemoryLayout(ImageShape shape) : base(shape)
     {
-        Y = 1L * Shape.Width;
-        Z = 1L * Shape.Height * Shape.Width;
+        _y = 1L * Shape.Width;
+        _z = 1L * Shape.Height * Shape.Width;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public override long Flatten(long x, long y, int z) => x + y * Y + z * Z;
+    public override long Flatten(long x, long y, int z) => x + y * _y + z * _z;
 }
