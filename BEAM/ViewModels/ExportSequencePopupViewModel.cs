@@ -12,6 +12,7 @@ namespace BEAM.ViewModels;
 public partial class ExportSequencePopupViewModel : ViewModelBase
 {
     private readonly SequenceViewModel _sequenceViewModel;
+    private IStorageFolder? _folder;
     
     public ExportSequencePopupViewModel(SequenceViewModel model)
     {
@@ -21,9 +22,7 @@ public partial class ExportSequencePopupViewModel : ViewModelBase
     [RelayCommand]
     public async Task ExportSequence()
     {
-        var folder = await OpenFolderPickerAsync();
-        if (folder == null) return;
-        PngExporter.ExportToPng(folder.Path.ToString(), _sequenceViewModel.Sequence);
+        _folder = await OpenFolderPickerAsync();
     }
     
     private static async Task<IStorageFolder?> OpenFolderPickerAsync()
@@ -39,5 +38,16 @@ public partial class ExportSequencePopupViewModel : ViewModelBase
         });
 
         return folder.Count >= 1 ? folder[0] : null;
+    }
+    
+    public bool Save()
+    {
+        if (_folder == null)
+        {
+            return false;
+        }
+        Task.Run(() => PngExporter.ExportToPng(_folder, _sequenceViewModel.Sequence, 
+            _sequenceViewModel.Renderers[_sequenceViewModel.RendererSelection]));
+        return true;
     }
 }

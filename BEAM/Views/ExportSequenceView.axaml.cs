@@ -19,7 +19,7 @@ public partial class ExportSequenceView : Window
     
     private void TrySave(object? sender, RoutedEventArgs e)
     {
-        if (((DataContext as CutSequencePopupViewModel)!).Save())
+        if (((DataContext as ExportSequencePopupViewModel)!).Save())
         {
             Close();
         }
