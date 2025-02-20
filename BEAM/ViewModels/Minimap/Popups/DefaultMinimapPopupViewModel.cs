@@ -17,7 +17,7 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
     [ObservableProperty] public partial ObservableCollection<Image.Minimap.Minimap> Minimaps { get; set; } = new ObservableCollection<Image.Minimap.Minimap>();
     [ObservableProperty] public partial ObservableCollection<Control> MinimapSubSettings { get; set; } = new ObservableCollection<Control>();
     
-    private ISaveControl _currentControl = new NullSaveConfig();
+    private SaveUserControl _currentControl = new NullSaveConfig();
 
     private readonly SequenceViewModel _sequenceVm;
     
