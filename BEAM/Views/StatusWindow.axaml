@@ -27,7 +27,7 @@
         <DockPanel Margin="20, 10, 20, 0" LastChildFill="True">
             <TextBlock VerticalAlignment="Center" FontWeight="Bold">List of status messages:</TextBlock>
             <Button Background="Transparent" HorizontalAlignment="Right" VerticalAlignment="Center" Command="{Binding ClearStatusCommand}" DockPanel.Dock="Right">
-                <Svg Path="../Assets/trash.svg" Width="20" Height="20"></Svg>
+                <Svg Path="../Assets/trash.svg" Width="20" Height="20" Css="{DynamicResource StrokeCss}"></Svg>
             </Button>
         </DockPanel>
         <Separator Background="{DynamicResource ThemeAccentBrush}" Margin="10"></Separator>
