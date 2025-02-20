@@ -9,7 +9,7 @@ namespace BEAM.Renderer;
 
 /// <summary>
 /// Renderer that maps n given channels to an ARGB color value.
-/// For this three channel numbers i, j, k < n (first channel is 0) are given.
+/// For this three channel numbers i, j, k (less than n, first channel is 0) are given.
 /// Red is set to the intensity of the ith channel, Green to the jth channel, Blue to the kth channel.
 /// </summary>
 public partial class ChannelMapRenderer : SequenceRenderer
@@ -45,6 +45,7 @@ public partial class ChannelMapRenderer : SequenceRenderer
             0
         ]));
 
+        //TODO: WTF warum gibt das anderes Format als die Methode 1 darunter zurück?
         byte[] color =
         [
             255,
@@ -85,6 +86,14 @@ public partial class ChannelMapRenderer : SequenceRenderer
             data[x, 2] = (byte)colors[2];
             // a
             data[x, 3] = 255;
+            
+            
+            //ABGR, see above
+            
+            /*data[x, 0] = 255;
+            data[x, 1] = (byte)colors[0];
+            data[x, 2] = (byte)colors[1];
+            data[x, 3] = (byte)colors[2];*/
         }
 
         return data;

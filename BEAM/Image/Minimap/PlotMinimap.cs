@@ -32,15 +32,12 @@ public class PlotMinimap : Minimap
 
     public PlotMinimap()
     {
-        //MinimapAlgorithm = PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithm();
         MinimapAlgorithm = SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObject();
-
     }
     
     public PlotMinimap(ISequence sequence, MinimapGeneratedEventHandler eventCallbackFunc) : base(sequence, eventCallbackFunc)
     {
         CancellationTokenSource = new CancellationTokenSource();
-        //this.MinimapAlgorithm = PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithm();
         MinimapAlgorithm = SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObject();
         Task.Run(GenerateMinimap, CancellationTokenSource.Token);
     }

@@ -126,16 +126,7 @@ public partial class SequenceView : UserControl
         AddScrollBarUpdating();
 
         PlotControllerManager.AddPlotToAllControllers(AvaPlot1);
-
-        /**AvaPlot1.Plot.Axes.InvertY();
-        AvaPlot1.Plot.Axes.SquareUnits();
-
-        var plottable = new BitmapPlottable(sequence);
-        AvaPlot1.Plot.Add.Plottable(plottable);
-
-        plottable.SequenceImage.RequestRefreshPlotEvent += (sender, args) => AvaPlot1.Refresh();
-
-        AvaPlot1.Refresh();**/
+        
         AvaPlot1.Plot.Axes.InvertY();
         AvaPlot1.Plot.Axes.SquareUnits();
         AvaPlot1.Refresh();

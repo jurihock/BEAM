@@ -21,7 +21,6 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
     Vector4D<byte> _thresholds = new Vector4D<byte>(25, 25, 25, 255);
     public bool AnalyzeSequence(ISequence sequence, CancellationToken ctx)
     {
-        //TODO: Adjust Mapping to match renderer return values
         _thresholds = new Vector4D<byte>(ThresholdBlue, ThresholdGreen, ThresholdRed, ThresholdAlpha);
         _sequence = sequence;
         _ctx = ctx;
@@ -54,6 +53,7 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
             {
                 sum += 1;
             }
+            
         }
         return sum;
     }

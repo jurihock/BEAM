@@ -15,7 +15,7 @@ public abstract partial class SequenceRenderer : ObservableObject, ICloneable
 
     protected double IntensityRange => MaximumOfIntensityRange - MinimumOfIntensityRange;
 
-    private Dictionary<RenderTypes, SequenceRenderer> _mapRenderTypesToRenderers = new();
+    private readonly Dictionary<RenderTypes, SequenceRenderer> _mapRenderTypesToRenderers = new();
 
     // variables used for normalizeintensity simd
     private Vector256<double> minIntensities;
