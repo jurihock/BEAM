@@ -1,4 +1,5 @@
 using System;
+using System.Data.Common;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -41,6 +42,7 @@ public partial class SequenceView : UserControl
     private BitmapPlottable _plottable;
     private HorizontalLine _horizontalLine = new();
     private VerticalLine _verticalLine = new();
+    private Annotation Anno;
 
     public object? DynamicContentViewModel
     {
@@ -133,23 +135,57 @@ public partial class SequenceView : UserControl
         AvaPlot1.Plot.Axes.InvertY();
         AvaPlot1.Plot.Axes.SquareUnits();
         AvaPlot1.Refresh();
+        AvaPlot1.Plot.Add.Annotation("This is an Annotation");
     }
 
     private void AddScrollBarUpdating()
     {
-        AvaPlot1.PointerEntered += (s, e) => { UpdateScrollBar(); };
+        AvaPlot1.PointerEntered += (s, e) =>
+        {
+            var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
+            UpdatePositionAnnotation((long) coordinates.X,(long)  coordinates.Y);
+            UpdateScrollBar();
+        };
 
-        AvaPlot1.PointerExited += (s, e) => { UpdateScrollBar(); };
+        AvaPlot1.PointerExited += (s, e) =>
+        {
+            var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
+            UpdatePositionAnnotation((long) coordinates.X,(long)  coordinates.Y);
+            UpdateScrollBar();
+        };
 
-        AvaPlot1.PointerMoved += (s, e) => { UpdateScrollBar(); };
+        AvaPlot1.PointerMoved += (s, e) =>
+        {
+            var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
+            UpdatePositionAnnotation((long) coordinates.X,(long)  coordinates.Y);
+            UpdateScrollBar();
+        };
 
-        AvaPlot1.PointerPressed += (s, e) => { UpdateScrollBar(); };
+        AvaPlot1.PointerPressed += (s, e) =>
+        {
+            var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
+            UpdatePositionAnnotation((long) coordinates.X,(long)  coordinates.Y);
+            UpdateScrollBar();
+        };
 
-        AvaPlot1.PointerReleased += (s, e) => { UpdateScrollBar(); };
+        AvaPlot1.PointerReleased += (s, e) =>
+        {
+            var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
+            UpdatePositionAnnotation((long) coordinates.X,(long)  coordinates.Y);
+            UpdateScrollBar();
+        };
 
-        AvaPlot1.PointerCaptureLost += (s, e) => { UpdateScrollBar(); };
+        AvaPlot1.PointerCaptureLost += (s, e) =>
+        {
+            UpdateScrollBar();
+        };
 
-        AvaPlot1.PointerWheelChanged += (s, e) => { UpdateScrollBar(); };
+        AvaPlot1.PointerWheelChanged += (s, e) =>
+        {
+            var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
+            UpdatePositionAnnotation((long) coordinates.X,(long) coordinates.Y);
+            UpdateScrollBar();
+        };
     }
 
     private void _ApplyDarkMode()
@@ -281,6 +317,7 @@ public partial class SequenceView : UserControl
         {
             _plottable!.SequenceImage.Reset();
             _plottable!.ChangeRenderer(vm.CurrentRenderer);
+            AvaPlot1.Plot.MoveToTop(Anno);
             AvaPlot1.Refresh();
         };
 
@@ -292,10 +329,21 @@ public partial class SequenceView : UserControl
             var ySize = oldLimits.Bottom - oldLimits.Top;
             var newLimits = new AxisLimits(oldLimits.Left, oldLimits.Right, -ySize / 3, 2 * ySize / 3);
             AvaPlot1.Plot.Axes.SetLimits(newLimits);
+            AvaPlot1.Plot.MoveToTop(Anno);
             AvaPlot1.Refresh();
         };
+        Anno = AvaPlot1.Plot.Add.Annotation("(x: , y: ), (r: , g: , b: )");
+        Anno.LabelShadowColor = Colors.Transparent;
+        AvaPlot1.Plot.MoveToTop(Anno);
     }
 
+    public void UpdatePositionAnnotation(long x, long y)
+    {
+        var vm = DataContext as SequenceViewModel;
+        var bytes = vm?.Renderers[vm.RendererSelection].RenderPixel(vm.Sequence, x, y);
+        Anno.Text = $"(x: {x}, y: {y}, (r: {bytes[1]}, g: {bytes[3]}, b: {bytes[2]})";
+    }
+    
     private void _OpenTransformPopup()
     {
         AffineTransformationPopup popup = new((SequenceViewModel)DataContext!);

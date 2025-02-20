@@ -44,6 +44,16 @@ public static class ScrollingSynchronizer
     }
 
     /// <summary>
+    /// Retrieves the SequenceView associated with the given AvaPlot.
+    /// </summary>
+    /// <param name="plot">The AvaPlot instance.</param>
+    /// <returns>The associated SequenceView.</returns>
+    public static SequenceView GetSequenceView(AvaPlot plot)
+    {
+        return ViewMapping[plot];
+    }
+    
+    /// <summary>
     /// Synchronizes the sequences to the value of a given sequence, by setting their values to that of the given sequence.
     /// </summary>
     /// <param name="sequenceView">The SequenceView containing the sequence, which values will be used for all the stored sequences.</param>
