@@ -22,8 +22,8 @@ namespace BEAM.Views;
 public partial class SequenceView : UserControl
 {
     private SequencePlottable _plottable;
-    private HorizontalLine _horizontalLine = new();
-    private VerticalLine _verticalLine = new();
+    private HorizontalLine _horizontalLine;
+    private VerticalLine _verticalLine;
 
     public SequenceView()
     {
