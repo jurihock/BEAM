@@ -25,7 +25,7 @@ namespace BEAM.Views;
 /// </summary>
 public partial class SequenceView : UserControl
 {
-    private SequencePlottable _plottable;
+    private SequencePlottable _plottable = null!;
     private HorizontalLine _horizontalLine;
     private VerticalLine _verticalLine;
 
@@ -164,10 +164,10 @@ public partial class SequenceView : UserControl
         var x = point.Position.X;
         var y = point.Position.Y;
 
-        var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
+        var coordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
 
         var vm = (SequenceViewModel?)DataContext;
-        vm.pressedPointerPosition = CoordInPlot;
+        vm!.pressedPointerPosition = coordInPlot;
     }
 
     private void PointerReleasedHandler(object? sender, PointerReleasedEventArgs args)
@@ -177,12 +177,11 @@ public partial class SequenceView : UserControl
         var x = point.Position.X;
         var y = point.Position.Y;
 
-        var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
-
+        var coordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
 
         var vm = (SequenceViewModel?)DataContext;
-        vm.releasedPointerPosition = CoordInPlot;
-        vm.UpdateInspectionViewModel();
+        vm!.releasedPointerPosition = coordInPlot;
+        vm!.UpdateInspectionViewModel();
     }
 
     private void PointerMovedHandler(object? sender, PointerEventArgs args)
@@ -258,7 +257,7 @@ public partial class SequenceView : UserControl
 
     private void _OpenInspectionViewModel()
     {
-        SequenceViewModel sequenceViewModel = DataContext as SequenceViewModel;
+        SequenceViewModel sequenceViewModel = (DataContext as SequenceViewModel)!;
         sequenceViewModel.OpenInspectionView();
     }
 

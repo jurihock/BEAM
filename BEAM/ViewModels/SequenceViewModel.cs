@@ -68,7 +68,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     }
 
     [RelayCommand]
-    public async Task UpdateInspectionViewModel()
+    public void UpdateInspectionViewModel()
     {
         Coordinate2D pointPressed = _correctInvalid(pressedPointerPosition);
         Coordinate2D pointReleased = _correctInvalid(releasedPointerPosition);
