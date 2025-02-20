@@ -1,6 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using Avalonia.Controls;
+using Avalonia.Input;
+using BEAM.Analysis;
+using BEAM.Datatypes;
+using BEAM.Docking;
+using BEAM.ImageSequence;
+using BEAM.Views;
+using BEAM.Views.AnalysisView;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using ScottPlot;
+using ScottPlot.Plottables;
+using Rectangle = BEAM.Datatypes.Rectangle;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,6 +34,7 @@ namespace BEAM.ViewModels;
 
 public partial class InspectionViewModel : ViewModelBase, IDockBase
 {
+
     [ObservableProperty] private Plot _currentPlot;
     [ObservableProperty] private bool _keepData  = false;
     private SequenceViewModel _currentSequenceViewModel;
@@ -68,6 +84,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         _currentSequenceViewModel.OpenInspectionViewCommand.Execute(null);
     }
     
+
     
     /// <summary>
     /// When called, this method woll change the currently used analysis method.
@@ -176,5 +193,5 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         _keepData = isChecked ?? false;
     }
-    
+
 }

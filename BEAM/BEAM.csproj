@@ -11,6 +11,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Folder Include="AffTrans\" />
         <Folder Include="Assets\Images\" />
         <Folder Include="Models\" />
         <AvaloniaResource Include="Assets\**" />
@@ -33,6 +34,7 @@
 
     <ItemGroup>
       <UpToDateCheckInput Remove="Views\Titlebar\MenuBar.axaml" />
+      <UpToDateCheckInput Remove="ViewModels\Minimap\Popups\DefaultMinimapPopupViewModel.axaml" />
       <UpToDateCheckInput Remove="Views\AnalysisView\BarPlotAnalysisView.axaml" />
     </ItemGroup>
 

@@ -16,3 +16,5 @@ Thumbs.db
 BEAM.sln.DotSettings.user
 
 BEAM.Tests/loggerTests/testLogs/
+.log
+

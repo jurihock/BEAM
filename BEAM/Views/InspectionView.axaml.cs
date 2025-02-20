@@ -9,6 +9,7 @@ namespace BEAM.Views;
 
 public partial class InspectionView : UserControl
 {
+    private int counter = 0;
     public InspectionView()
     {
         InitializeComponent();

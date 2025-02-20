@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading;
-using Avalonia.Controls;
 using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
+using BEAM.Renderer;
+using BEAM.ViewModels;
+using BEAM.Views.Utility;
 
 namespace BEAM.Image.Minimap;
 
@@ -16,8 +18,8 @@ public abstract class Minimap
     /// <summary>
     /// The sequence based on which the minimap is based.
     /// </summary>
-    protected readonly ISequence Sequence;
-    protected virtual bool IsGenerated { get; set; } = false;
+    protected ISequence? Sequence;
+    protected bool IsGenerated { get; set; }
     /// <summary>
     /// Cancellation Token for the generation process. Any subclass should use this Token for its Threads
     /// </summary>
@@ -28,13 +30,8 @@ public abstract class Minimap
     /// when the data generation process has finished.
     /// </summary>
     public delegate void MinimapGeneratedEventHandler(object sender, MinimapGeneratedEventArgs e);
-    protected event MinimapGeneratedEventHandler MinimapGenerated;
+    protected event MinimapGeneratedEventHandler? MinimapGenerated;
     
-    
-    /// <summary>
-    /// The UI-Element which is displayed in the view.
-    /// </summary>
-    protected UserControl? DisplayedMinimap;
     
     
     /// <summary>
@@ -53,19 +50,21 @@ public abstract class Minimap
         CancellationTokenSource = new();
         MinimapGenerated += eventCallbackFunc;
     }
-    
-    /// <summary>
-    /// Returns a UI element which can be included by a view.
-    /// </summary>
-    /// <returns>The UI-Element as a <see cref="Avalonia.Controls.UserControl"/></returns>
-    public  UserControl GetMinimap()
+
+    public Minimap()
     {
-        if (!IsGenerated || DisplayedMinimap is null)
-        {
-            throw new InvalidOperationException();
-        }
-        return DisplayedMinimap;
+        CancellationTokenSource = new();
     }
+
+    public void SetParameters(ISequence sequence, MinimapGeneratedEventHandler eventCallbackFunc)
+    {
+        ArgumentNullException.ThrowIfNull(sequence);
+        ArgumentNullException.ThrowIfNull(eventCallbackFunc);
+        this.Sequence = sequence;
+        MinimapGenerated += eventCallbackFunc;
+    }
+
+    
 
     /// <summary>
     /// Interrupts the generation process as well as all additional threads running.
@@ -85,6 +84,22 @@ public abstract class Minimap
     protected  void OnMinimapGenerated(MinimapGeneratedEventArgs e)
     {
         // TODO: e.Minimap vs this
+        if (MinimapGenerated is null) return;
         MinimapGenerated.Invoke(e.Minimap, e);
     }
+
+    public abstract String GetName();
+    public abstract ISaveControl? GetSettingsPopupControl();
+    
+    
+
+    public abstract Minimap Clone();
+
+    public String Name => GetName();
+    
+    public abstract void StartGeneration(ISequence sequence, MinimapGeneratedEventHandler eventCallbackFunc);
+
+    public abstract void SetRenderer(SequenceRenderer renderer);
+
+    public abstract ViewModelBase GetViewModel();
 }

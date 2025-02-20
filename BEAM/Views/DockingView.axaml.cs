@@ -1,10 +1,7 @@
-using System;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using BEAM.Docking;
+using BEAM.Exceptions;
 using BEAM.ViewModels;
 using NP.Ava.UniDock;
 using NP.Ava.UniDockService;
@@ -27,6 +24,7 @@ public partial class DockingView : UserControl
 
         _dockManager = (DockManager)this.FindResource("TheDockManager")!;
         _dockManager.DockItemsViewModels = [];
+
         _dockManager.DockItemRemovedEvent += _OnItemRemoved;
     }
 

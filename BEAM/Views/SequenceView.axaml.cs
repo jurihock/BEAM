@@ -1,16 +1,20 @@
 using System;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Styling;
 using BEAM.CustomActions;
+using BEAM.Datatypes;
 using BEAM.Image.Displayer.ScottPlot;
 using BEAM.Datatypes;
 using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence.Synchronization;
 using BEAM.Models.Log;
 using BEAM.ViewModels;
+using BEAM.ViewModels.Utility;
+using NP.Ava.Visuals;
 using ScottPlot;
 using ScottPlot.Avalonia;
 using ScottPlot.Interactivity;
@@ -21,15 +25,53 @@ namespace BEAM.Views;
 
 public partial class SequenceView : UserControl
 {
+    // Hosts the external UserControl
+    public static readonly StyledProperty<Control?> DynamicContentProperty =
+        AvaloniaProperty.Register<SequenceView, Control?>(nameof(DynamicContent));
+    
+    // Optional: Bind to the external UserControl's ViewModel
+    public static readonly StyledProperty<object?> DynamicContentViewModelProperty =
+        AvaloniaProperty.Register<SequenceView, object?>(nameof(DynamicContentViewModel));
+    
+    public Control? DynamicContent
+    {
+        get => GetValue(DynamicContentProperty);
+        set => SetValue(DynamicContentProperty, value);
+    }
     private BitmapPlottable _plottable;
     private HorizontalLine _horizontalLine = new();
     private VerticalLine _verticalLine = new();
 
+    public object? DynamicContentViewModel
+    {
+        get => GetValue(DynamicContentViewModelProperty);
+        set => SetValue(DynamicContentViewModelProperty, value);
+    }
+    
     public SequenceView()
     {
         InitializeComponent();
-        _horizontalLine = AvaPlot1.Plot.Add.HorizontalLine(0);
+         _horizontalLine = AvaPlot1.Plot.Add.HorizontalLine(0);
         _verticalLine = AvaPlot1.Plot.Add.VerticalLine(0);
+        this.SizeChanged += OnSizeChanged;
+        //this.DataContextChanged += StyledElement_OnDataContextChanged;
+
+    }
+
+    private void OnSizeChanged(object? sender, SizeChangedEventArgs e)
+    {
+        var vm = DataContext as SequenceViewModel;
+        if (vm == null || vm.MinimapVms.Count == 0)
+        {
+            return;
+        }
+        
+        
+        if(vm.MinimapVms.Any())
+        {
+            if(vm.MinimapVms.First() is not SizeAdjustableViewModelBase mapViewModel) return;
+            mapViewModel.NotifySizeChanged(this, new ViewModels.Utility.SizeChangedEventArgs(e.NewSize.Width * 0.2, e.NewSize.Height));
+        }
     }
 
     private void PreparePlot()
@@ -79,6 +121,15 @@ public partial class SequenceView : UserControl
 
         PlotControllerManager.AddPlotToAllControllers(AvaPlot1);
 
+        /**AvaPlot1.Plot.Axes.InvertY();
+        AvaPlot1.Plot.Axes.SquareUnits();
+
+        var plottable = new BitmapPlottable(sequence);
+        AvaPlot1.Plot.Add.Plottable(plottable);
+
+        plottable.SequenceImage.RequestRefreshPlotEvent += (sender, args) => AvaPlot1.Refresh();
+
+        AvaPlot1.Refresh();**/
         AvaPlot1.Plot.Axes.InvertY();
         AvaPlot1.Plot.Axes.SquareUnits();
         AvaPlot1.Refresh();
@@ -121,7 +172,13 @@ public partial class SequenceView : UserControl
 
     private void _BuildCustomRightClickMenu()
     {
-        var vm = DataContext as SequenceViewModel;
+        var vm = (SequenceViewModel?)DataContext;
+        if (vm is null)
+        {
+            return;
+        }
+
+
         var menu = AvaPlot1.Menu!;
         menu.Clear();
         menu.Add("Inspect Pixel",
@@ -141,13 +198,44 @@ public partial class SequenceView : UserControl
         menu.Add("Cut Sequence", control => _OpenCutPopup());
         menu.Add("Export sequence",
             control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+        menu.Add("Change Minimap settings for this sequence",
+            control => vm.OpenMinimapSettingsCommand.Execute(null));
+    }
+
+    private void PointerPressedHandler(object sender, PointerPressedEventArgs args)
+    {
+        
+        var point = args.GetCurrentPoint(sender as Control);
+        var x = point.Position.X;
+        var y = point.Position.Y;
+    
+        var coordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
+    
+        var vm = (SequenceViewModel?)DataContext;
+        if (vm is null) return;
+        vm.pressedPointerPosition = coordInPlot;
+    }
+    
+    private void PointerReleasedHandler(object? sender, PointerReleasedEventArgs args)
+    {
+        
+        var point = args.GetCurrentPoint(sender as Control);
+        var x = point.Position.X;
+        var y = point.Position.Y;
+    
+        var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
+    
+        var vm = (SequenceViewModel?)DataContext;
+        if (vm is null) return;
+        vm.releasedPointerPosition = CoordInPlot;
+        vm.UpdateInspectionViewModel(CoordInPlot);
     }
 
     private void _SetPlottable(BitmapPlottable plottable)
     {
+         _plottable = plottable;
         if (_plottable is not null) AvaPlot1.Plot.Remove(_plottable);
-
-        _plottable = plottable;
+        
         AvaPlot1.Plot.Add.Plottable(_plottable);
         _plottable.SequenceImage.RequestRefreshPlotEvent += (sender, args) => AvaPlot1.Refresh();
         AvaPlot1.Refresh();
@@ -198,7 +286,12 @@ public partial class SequenceView : UserControl
 
     private void StyledElement_OnDataContextChanged(object? sender, EventArgs e)
     {
-        var vm = (SequenceViewModel)DataContext!;
+        var vm = DataContext as SequenceViewModel;
+        if (vm == null)
+        {
+            return;
+        }
+        vm.MinimapHasChanged += Layoutable_OnLayoutUpdated;
 
         PreparePlot();
 
@@ -293,5 +386,26 @@ public partial class SequenceView : UserControl
         var vm = (DataContext as SequenceViewModel)!;
         var val = ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / vm.Sequence.Shape.Height) * 100;
         Bar1.Value = val <= 0.0 ? 0.0 : double.Min(val, 100.0);
+    }
+    
+    
+
+    private void Layoutable_OnLayoutUpdated(object? sender, EventArgs e)
+    {
+        var vm = DataContext as SequenceViewModel;
+        if (vm == null || vm.MinimapVms.Count == 0)
+        {
+            return;
+        }
+        
+        if(vm.MinimapVms.Count > 0)
+        {   
+            var mapViewModel = (vm.MinimapVms.First() as SizeAdjustableViewModelBase);
+            if (mapViewModel is null)
+            {
+                return;
+            }
+            mapViewModel.NotifySizeChanged(this, new ViewModels.Utility.SizeChangedEventArgs(this.GetSize().X * 0.2, this.GetSize().Y));
+        }
     }
 }

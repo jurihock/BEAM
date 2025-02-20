@@ -24,6 +24,8 @@ public readonly struct Coordinate2D
             Column = column;
         }
     
+
+
     public Coordinate2D(double row, double column)
     {
         Row = row;
@@ -37,9 +39,9 @@ public readonly struct Coordinate2D
         Column = coordinates.X;
     }
     
+
     public string ToString()
     {
         return $"Row: {Row}, Column: {Column}";
     }
-    
 }
