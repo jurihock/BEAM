@@ -42,17 +42,13 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     public SequenceRenderer[] Renderers;
     public int RendererSelection;
     
-    [ObservableProperty] public partial DockingViewModel DockingVm { get; set; } = new();
-    [ObservableProperty] public partial Coordinate2D pressedPointerPosition { get; set; } = new();
-    [ObservableProperty] public partial Coordinate2D releasedPointerPosition { get; set; } = new();
     
     private Image.Minimap.Minimap? _currentMinimap;
     public EventHandler<EventArgs> MinimapHasChanged = delegate { };
 
 
     //public ISequence Sequence { get; }
-
-    private List<InspectionViewModel> _ConnectedInspectionViewModels = new();
+    
 
     
     [ObservableProperty] public partial ObservableCollection<ViewModelBase> MinimapVms { get; set; }= new ObservableCollection<ViewModelBase>();
@@ -119,22 +115,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             inspectionViewModel.Update(pointPressed, pointReleased);
         }
     }
-
-    [RelayCommand]
-    public Task OpenInspectionView()
-    {
-        
-        InspectionViewModel inspectionViewModel = new InspectionViewModel(this);
-        _ConnectedInspectionViewModels.Add(inspectionViewModel);
-        DockingVm.OpenDock(inspectionViewModel);
-        //here instead of 0, 0 the clicked position should be passed, this caused 
-        //crashes sometimes, when corners were selected 
-        inspectionViewModel.Update(
-            new Coordinate2D(0,0), 
-            new Coordinate2D(0,0)
-            );
-        return Task.CompletedTask;
-    }
+    
     
     
     private Coordinate2D _correctInvalid(Coordinate2D point)
@@ -171,14 +152,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         _currentMinimap.StartGeneration(Sequence, OnMinimapGenerated);
     }
 
-    [RelayCommand]
-    public void UpdateInspectionViewModel(Coordinate2D point)
-    {
-        foreach (var inspectionViewModel in _ConnectedInspectionViewModels)
-        {
-            inspectionViewModel.Update(point, this);
-        }
-    }
+   
     
     [RelayCommand]
     public async Task OpenMinimapSettings()
@@ -216,7 +190,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         _ConnectedInspectionViewModels.Add(inspectionViewModel);
         DockingVm.OpenDock(inspectionViewModel);
         
-        inspectionViewModel.Update(pressedPointerPosition, this);
+        inspectionViewModel.Update(pressedPointerPosition, releasedPointerPosition);
     }
     
 

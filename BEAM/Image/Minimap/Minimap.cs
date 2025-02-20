@@ -89,7 +89,7 @@ public abstract class Minimap
     }
 
     public abstract String GetName();
-    public abstract ISaveControl? GetSettingsPopupControl();
+    public abstract SaveUserControl? GetSettingsPopupControl();
     
     
 

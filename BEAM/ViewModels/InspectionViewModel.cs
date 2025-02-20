@@ -61,7 +61,11 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     
 
     public string Name { get; } = "Inspection Window";
-    
+    public void OnClose()
+    {
+        return;
+    }
+
     /// <summary>
     /// When the user interacted with the view, the coordinates of where the
     /// pointer was pressed and released, are passed to this method.

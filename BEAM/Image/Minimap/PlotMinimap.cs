@@ -163,7 +163,7 @@ public class PlotMinimap : Minimap
         return "Plot Minimap";
     }
 
-    public override ISaveControl GetSettingsPopupControl()
+    public override SaveUserControl GetSettingsPopupControl()
     {
         return new PlotMinimapConfigControlView(this);
     }

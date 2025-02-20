@@ -24,7 +24,7 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
     [ObservableProperty] public partial ObservableCollection<Control> AlgorithmSubSettings { get; set; } = new ObservableCollection<Control>();
     
     
-    private ISaveControl _currentConfigControl = new NullSaveConfig();
+    private SaveUserControl _currentConfigControl = new NullSaveConfig();
     public void Save()
     {
         _plotMinimap.CompactionFactor = LineCompaction;

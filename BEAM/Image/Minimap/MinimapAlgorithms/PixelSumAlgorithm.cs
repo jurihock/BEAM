@@ -55,7 +55,7 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
         return "Pixel Sum";
     }
 
-    public ISaveControl? GetSettingsPopupControl()
+    public SaveUserControl? GetSettingsPopupControl()
     {
         return null;
     }

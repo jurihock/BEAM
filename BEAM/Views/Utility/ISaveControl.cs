@@ -2,7 +2,7 @@
 
 namespace BEAM.Views.Utility;
 
-public abstract class ISaveControl : UserControl
+public abstract class SaveUserControl : UserControl
 {
     public abstract void Save();
 }

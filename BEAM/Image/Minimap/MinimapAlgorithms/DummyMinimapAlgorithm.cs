@@ -31,7 +31,7 @@ public class DummyMinimapAlgorithm : IMinimapAlgorithm
         return "Dummy Algorithm";
     }
 
-    public ISaveControl? GetSettingsPopupControl()
+    public SaveUserControl? GetSettingsPopupControl()
     {
         return null;
     }

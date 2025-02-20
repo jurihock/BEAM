@@ -2,7 +2,7 @@
 
 namespace BEAM.Views.Minimap.Popups.EmbeddedSettings;
 
-public class NullSaveConfig : ISaveControl
+public class NullSaveConfig : SaveUserControl
 {
     public override void Save()
     {

@@ -8,7 +8,6 @@ using Avalonia.Styling;
 using BEAM.CustomActions;
 using BEAM.Datatypes;
 using BEAM.Image.Displayer.ScottPlot;
-using BEAM.Datatypes;
 using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence.Synchronization;
 using BEAM.Models.Log;
@@ -20,6 +19,7 @@ using ScottPlot.Avalonia;
 using ScottPlot.Interactivity;
 using ScottPlot.Interactivity.UserActionResponses;
 using ScottPlot.Plottables;
+using SizeChangedEventArgs = Avalonia.Controls.SizeChangedEventArgs;
 
 namespace BEAM.Views;
 
@@ -201,20 +201,7 @@ public partial class SequenceView : UserControl
         menu.Add("Change Minimap settings for this sequence",
             control => vm.OpenMinimapSettingsCommand.Execute(null));
     }
-
-    private void PointerPressedHandler(object sender, PointerPressedEventArgs args)
-    {
-        
-        var point = args.GetCurrentPoint(sender as Control);
-        var x = point.Position.X;
-        var y = point.Position.Y;
     
-        var coordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
-    
-        var vm = (SequenceViewModel?)DataContext;
-        if (vm is null) return;
-        vm.pressedPointerPosition = coordInPlot;
-    }
     
     private void PointerReleasedHandler(object? sender, PointerReleasedEventArgs args)
     {
@@ -228,7 +215,7 @@ public partial class SequenceView : UserControl
         var vm = (SequenceViewModel?)DataContext;
         if (vm is null) return;
         vm.releasedPointerPosition = CoordInPlot;
-        vm.UpdateInspectionViewModel(CoordInPlot);
+        vm.UpdateInspectionViewModel();
     }
 
     private void _SetPlottable(BitmapPlottable plottable)
@@ -254,20 +241,7 @@ public partial class SequenceView : UserControl
         vm.pressedPointerPosition = CoordInPlot;
     }
     
-    private void PointerReleasedHandler(object? sender, PointerReleasedEventArgs args)
-    {
-        
-        var point = args.GetCurrentPoint(sender as Control);
-        var x = point.Position.X;
-        var y = point.Position.Y;
-    
-        var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
-        
-    
-        var vm = (SequenceViewModel?)DataContext;
-        vm.releasedPointerPosition = CoordInPlot;
-        vm.UpdateInspectionViewModel();
-    }
+
 
     private void PointerMovedHandler(object? sender, PointerEventArgs args)
     {
