@@ -86,10 +86,12 @@ public abstract class HeatMapRenderer : SequenceRenderer
         for (var i = 0; i < xs.Length; i++)
         {
             var color = GetColor(img.GetPixel(i, 0, 0), MinimumOfIntensityRange, MaximumOfIntensityRange);
-            data[i, 0] = color[1];
-            data[i, 1] = color[2];
-            data[i, 2] = color[3];
-            data[i, 3] = color[0];
+            //RGBA
+            data[i, 0] = color[2];
+            data[i, 1] = color[1];
+            data[i, 2] = color[0];
+            data[i, 3] = color[3];
+            
         }
 
         return data;
