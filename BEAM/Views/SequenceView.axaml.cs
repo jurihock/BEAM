@@ -134,6 +134,7 @@ public partial class SequenceView : UserControl
         AvaPlot1.Refresh();**/
         AvaPlot1.Plot.Axes.InvertY();
         AvaPlot1.Plot.Axes.SquareUnits();
+        UpdateScrolling(0);
         AvaPlot1.Refresh();
         AvaPlot1.Plot.Add.Annotation("This is an Annotation");
     }
@@ -339,8 +340,18 @@ public partial class SequenceView : UserControl
 
     public void UpdatePositionAnnotation(long x, long y)
     {
-        var vm = DataContext as SequenceViewModel;
-        var bytes = vm?.Renderers[vm.RendererSelection].RenderPixel(vm.Sequence, x, y);
+        if (DataContext is not SequenceViewModel vm)
+        {
+            return;
+        }
+        
+        if (x >= vm.Sequence.Shape.Width || y >= vm.Sequence.Shape.Height || x < 0 || y < 0)
+        {
+            Anno.Text = $"(x: {x}, y: {y}, (r: , g: , b: ))";
+            return;
+        }
+        
+        var bytes = vm.Renderers[vm.RendererSelection].RenderPixel(vm.Sequence, x, y);
         Anno.Text = $"(x: {x}, y: {y}, (r: {bytes[1]}, g: {bytes[3]}, b: {bytes[2]})";
     }
     
