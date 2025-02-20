@@ -2,9 +2,11 @@ using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using Avalonia.Styling;
 using BEAM.CustomActions;
 using BEAM.Image.Displayer.ScottPlot;
+using BEAM.Datatypes;
 using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence.Synchronization;
 using BEAM.Models.Log;
@@ -13,16 +15,21 @@ using ScottPlot;
 using ScottPlot.Avalonia;
 using ScottPlot.Interactivity;
 using ScottPlot.Interactivity.UserActionResponses;
+using ScottPlot.Plottables;
 
 namespace BEAM.Views;
 
 public partial class SequenceView : UserControl
 {
-    private BitmapPlottable? _plottable;
+    private BitmapPlottable _plottable;
+    private HorizontalLine _horizontalLine = new();
+    private VerticalLine _verticalLine = new();
 
     public SequenceView()
     {
         InitializeComponent();
+        _horizontalLine = AvaPlot1.Plot.Add.HorizontalLine(0);
+        _verticalLine = AvaPlot1.Plot.Add.VerticalLine(0);
     }
 
     private void PreparePlot()
@@ -43,9 +50,13 @@ public partial class SequenceView : UserControl
         // Remove the standard MouseWheelZoom and replace it with the wanted custom functionality
         ScrollingSynchronizer.addSequence(this);
         AvaPlot1.UserInputProcessor.RemoveAll<MouseWheelZoom>();
+        AvaPlot1.UserInputProcessor.RemoveAll<MouseDragZoom>(); // Remove option to zoom with right key
         AvaPlot1.UserInputProcessor.UserActionResponses.Add(new CustomMouseWheelZoom(StandardKeys.Shift,
             StandardKeys.Control));
 
+        // Add ability to select area with right mouse button pressed
+        AvaPlot1.UserInputProcessor.UserActionResponses.Add(new CustomAreaSelection(StandardMouseButtons.Right));
+        
         Bar1.Scroll += (s, e) =>
         {
             var vm = (DataContext as SequenceViewModel)!;
@@ -110,10 +121,11 @@ public partial class SequenceView : UserControl
 
     private void _BuildCustomRightClickMenu()
     {
+        var vm = DataContext as SequenceViewModel;
         var menu = AvaPlot1.Menu!;
         menu.Clear();
         menu.Add("Inspect Pixel",
-            control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+            control => _OpenInspectionViewModel());
         menu.AddSeparator();
         menu.Add("Sync to this",
             control =>
@@ -138,6 +150,49 @@ public partial class SequenceView : UserControl
         _plottable = plottable;
         AvaPlot1.Plot.Add.Plottable(_plottable);
         _plottable.SequenceImage.RequestRefreshPlotEvent += (sender, args) => AvaPlot1.Refresh();
+        AvaPlot1.Refresh();
+    }
+
+    private void PointerPressedHandler(object sender, PointerPressedEventArgs args)
+    {
+        
+        var point = args.GetCurrentPoint(sender as Control);
+        var x = point.Position.X;
+        var y = point.Position.Y;
+    
+        var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
+    
+        var vm = (SequenceViewModel?)DataContext;
+        vm.pressedPointerPosition = CoordInPlot;
+    }
+    
+    private void PointerReleasedHandler(object? sender, PointerReleasedEventArgs args)
+    {
+        
+        var point = args.GetCurrentPoint(sender as Control);
+        var x = point.Position.X;
+        var y = point.Position.Y;
+    
+        var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
+        
+    
+        var vm = (SequenceViewModel?)DataContext;
+        vm.releasedPointerPosition = CoordInPlot;
+        vm.UpdateInspectionViewModel();
+    }
+
+    private void PointerMovedHandler(object? sender, PointerEventArgs args)
+    {
+        var point = args.GetCurrentPoint(sender as Control);
+        var x = point.Position.X;
+        var y = point.Position.Y;
+
+        var pointInPlot = AvaPlot1.Plot.GetCoordinates(
+            (float)args.GetPosition(AvaPlot1).X * AvaPlot1.DisplayScale,
+            (float)args.GetPosition(AvaPlot1).Y * AvaPlot1.DisplayScale);
+        
+        _horizontalLine.Position = pointInPlot.Y;
+        _verticalLine.Position = pointInPlot.X;
         AvaPlot1.Refresh();
     }
 
@@ -197,6 +252,12 @@ public partial class SequenceView : UserControl
         popup.ShowDialog(v!.MainWindow!);
     }
 
+    private void _OpenInspectionViewModel()
+    {
+        SequenceViewModel sequenceViewModel = DataContext as SequenceViewModel;
+        sequenceViewModel.OpenInspectionView();
+    }
+
     /// <summary>
     /// This method updates the value of the Scrollbar and display the corresponding position in the sequence.
     /// </summary>
@@ -223,7 +284,7 @@ public partial class SequenceView : UserControl
         AvaPlot1.Refresh();
         UpdateScrollBar();
     }
-
+    
     /// <summary>
     /// This method updates the value of the Scrollbar, setting it to the value corresponding to the displayed position in the sequence.
     /// </summary>
