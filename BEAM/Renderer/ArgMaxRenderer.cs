@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Threading;
-using BEAM.Exceptions;
+using BEAM.Image;
 using BEAM.ImageSequence;
 
 namespace BEAM.Renderer;
@@ -26,7 +25,19 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
     //TODO: implement. Currently do not understand LineImage
     public override byte[,] RenderPixels(ISequence sequence, long[] xs, long y)
     {
-        throw new System.NotImplementedException();
+        byte[,] data = new byte[xs.Length,sequence.Shape.Channels];
+        for(var i = 0; i < xs.Length; i++)
+        {
+            var channels = sequence.GetPixel(xs[i], y);
+            var argMaxChannel = ArgMax(channels);
+            var color = GetColor(argMaxChannel, channels.Length);
+            for(var j = 0; j < sequence.Shape.Channels; j++)
+            {
+                data[i,j] = color[j];
+            }
+        }
+
+        return data;
     }
 
     /// <summary>

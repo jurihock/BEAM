@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using BEAM.Exceptions;
+﻿using BEAM.Exceptions;
 using BEAM.ImageSequence;
 
 namespace BEAM.Renderer;
@@ -19,25 +18,18 @@ public abstract class HeatMapRenderer : SequenceRenderer
     private double _relMaxColdestIntensity = 0; // initial value
     private double _relMinHottestIntensity = 1; // initial value
 
-    // The highest absolute intensity that is represented with the coldest color.
-    private double _absMaxColdestIntensity;
-
-    // The lowest absolute intensity that is represented with the hottest color.
-    private double _absMinHottestIntensity;
-
     /// <summary>
     /// The highest relative intensity between 0 and 1 that is represented with the coldest color.
     /// --> value between 0 and 100% of intensity range
     /// </summary>
     public double RelMaxColdestIntensity
     {
-        get { return _relMaxColdestIntensity; }
+        get => _relMaxColdestIntensity;
         set
         {
             if (value >= 0 && value <= _relMinHottestIntensity)
             {
                 _relMaxColdestIntensity = value;
-                _absMaxColdestIntensity = value * IntensityRange + MinimumOfIntensityRange;
             }
             else
             {
@@ -53,13 +45,12 @@ public abstract class HeatMapRenderer : SequenceRenderer
     /// </summary>
     public double RelMinHottestIntensity
     {
-        get { return _relMinHottestIntensity; }
+        get => _relMinHottestIntensity;
         set
         {
             if (value <= 1 && value >= _relMaxColdestIntensity)
             {
                 _relMinHottestIntensity = value;
-                _absMinHottestIntensity = value * IntensityRange + MinimumOfIntensityRange;
             }
             else
             {
@@ -112,7 +103,7 @@ public abstract class HeatMapRenderer : SequenceRenderer
     /// <param name="min">The highest intensity of the channel, that is displayed as the coldest intensity.</param>
     /// <param name="max">The lowest intensity of the channel, that is displayed as the highest intensity.</param>
     /// <returns>The ARGB values of the final Color to be displayed.
-    /// (A, R, G, B) each color from 0 - 255. A = 0 : fully transparent</returns>
+    /// (A, R, G, B) each color from 0 to 255. A = 0 : fully transparent</returns>
     protected abstract byte[] GetColor(double value, double min, double max);
 
     public override string GetName() => "Heatmap";

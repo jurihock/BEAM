@@ -1,7 +1,5 @@
 ﻿using System.Runtime.Intrinsics;
-using System.Threading;
 using BEAM.Exceptions;
-using BEAM.Image;
 using BEAM.ImageSequence;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -9,7 +7,7 @@ namespace BEAM.Renderer;
 
 /// <summary>
 /// Renderer that maps n given channels to an ARGB color value.
-/// For this three channel numbers i, j, k < n (first channel is 0) are given.
+/// For this three channel numbers i, j, (smaller than n, first channel is 0) are given.
 /// Red is set to the intensity of the ith channel, Green to the jth channel, Blue to the kth channel.
 /// </summary>
 public partial class ChannelMapRenderer : SequenceRenderer
@@ -37,7 +35,7 @@ public partial class ChannelMapRenderer : SequenceRenderer
     /// <returns></returns>
     public override byte[] RenderPixel(ISequence sequence, long x, long y)
     {
-        var colors = NormalizeIntensity(Vector256.Create([
+        var colors = base.NormalizeIntensity(Vector256.Create([
             sequence.GetPixel(x, y, ChannelRed),
             sequence.GetPixel(x, y, ChannelGreen),
             sequence.GetPixel(x, y, ChannelBlue),
@@ -69,7 +67,7 @@ public partial class ChannelMapRenderer : SequenceRenderer
 
         for (var x = 0; x < xs.Length; x++)
         {
-            var colors = NormailizeIntensity(Vector256.Create([
+            var colors = NormalizeIntensity(Vector256.Create([
                 img.GetPixel(x, 0, 0),
                 img.GetPixel(x, 0, 1),
                 img.GetPixel(x, 0, 2),
@@ -101,8 +99,7 @@ public partial class ChannelMapRenderer : SequenceRenderer
         {
             throw new InvalidUserArgumentException("Display parameters are invalid.");
         }
-
-        ;
+        
         return new ChannelMapRenderer(
             minimumOfIntensityRange,
             maximumOfIntensityRange,
@@ -133,7 +130,7 @@ public partial class ChannelMapRenderer : SequenceRenderer
             ChannelBlue);
     }
 
-    private Vector256<double> NormailizeIntensity(Vector256<double> intensities)
+    private new Vector256<double> NormalizeIntensity(Vector256<double> intensities)
     {
         var minIntensities = Vector256.Create<double>(MinimumOfIntensityRange);
         var maxIntensities = Vector256.Create<double>(MaximumOfIntensityRange);
