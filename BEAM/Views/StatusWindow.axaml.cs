@@ -7,6 +7,9 @@ using BEAM.ViewModels;
 
 namespace BEAM.Views;
 
+/// <summary>
+/// The status window.
+/// </summary>
 public partial class StatusWindow : Window
 {
     public StatusWindow()

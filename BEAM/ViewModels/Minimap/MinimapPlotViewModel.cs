@@ -19,5 +19,9 @@ public partial class MinimapPlotViewModel : SizeAdjustableViewModelBase, IDockBa
         _currentPlot = plot;
         CurrentPlot = plot;
     }
-    
+
+    public void Dispose()
+    {
+        CurrentPlot.Dispose();
+    }
 }

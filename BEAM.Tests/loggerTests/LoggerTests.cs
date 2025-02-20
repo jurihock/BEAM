@@ -14,8 +14,6 @@ public class LoggerTests
         // Act
         logger.Error(LogEvent.FileNotFound, "Test");
         
-        logger.Warning(LogEvent.UnknownFileFormat);
-        
         logger.Info(LogEvent.ClosedFile, "A File was closed");
         
         logger.LogMessage("This is a test log message");

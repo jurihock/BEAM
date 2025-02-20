@@ -9,6 +9,10 @@ using LogEntry = BEAM.Models.Log.LogEntry;
 
 namespace BEAM.ViewModels;
 
+/// <summary>
+/// View model controlling the status bar.
+/// Event counts are controlled in here.
+/// </summary>
 public partial class StatusBarViewModel : ViewModelBase
 {
     private static StatusBarViewModel? _instance;

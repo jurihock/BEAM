@@ -59,7 +59,7 @@ public static class SettingsUtilityHelper<T>
         {
             throw new InvalidOperationException("Unsupporterd type");
         }
-        return _provider.GetDefaultObject();
+        return _provider.GetDefaultObject()!;
     }
 
     public static SettingsTransferObject<T> GetDefaultClones()

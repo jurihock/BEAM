@@ -39,8 +39,7 @@ public readonly struct Coordinate2D
         Column = coordinates.X;
     }
     
-
-    public string ToString()
+    public override string ToString()
     {
         return $"Row: {Row}, Column: {Column}";
     }

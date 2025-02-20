@@ -8,6 +8,9 @@ using NP.Ava.UniDockService;
 
 namespace BEAM.Views;
 
+/// <summary>
+/// Class controlling the dock library.
+/// </summary>
 public partial class DockingView : UserControl
 {
     private DockManager _dockManager;
@@ -22,6 +25,7 @@ public partial class DockingView : UserControl
             vm.Items.CollectionChanged += _ItemsOnCollectionChanged;
         };
 
+        // Dock manager setup
         _dockManager = (DockManager)this.FindResource("TheDockManager")!;
         _dockManager.DockItemsViewModels = [];
 
@@ -51,7 +55,9 @@ public partial class DockingView : UserControl
 
     private void _OnItemRemoved(DockItemViewModelBase item)
     {
-        var vm = DataContext as DockingViewModel;
-        vm.RemoveDock(item.Content as IDockBase);
+        var vm = (DockingViewModel)DataContext!;
+        var dock = (IDockBase)item.Content!;
+        vm.RemoveDock(dock);
+        dock.Dispose();
     }
 }

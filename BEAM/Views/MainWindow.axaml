@@ -24,35 +24,31 @@
 
     <NativeMenu.Menu>
         <NativeMenu>
-            <NativeMenuItem Header="{Binding File}">
+            <NativeMenuItem Header="_File">
                 <NativeMenu>
-                    <NativeMenuItem Header="{Binding Open}" Command="{Binding OpenSequenceCommand}" />
-                    <NativeMenuItem Header="{Binding OpenFolder}" Command="{Binding OpenSequenceFromFolderCommand}"></NativeMenuItem>
+                    <NativeMenuItem Header="Open Sequence from Files" Command="{Binding OpenSequenceCommand}" />
+                    <NativeMenuItem Header="Open Sequence from Folder"
+                                    Command="{Binding OpenSequenceFromFolderCommand}">
+                    </NativeMenuItem>
                     <NativeMenuItemSeparator />
-                    <NativeMenuItem Header="{Binding Exit}" Command="{Binding ExitBeam}"
+                    <NativeMenuItem Header="Exit" Command="{Binding ExitBeamCommand}"
                                     IsVisible="{OnPlatform macOS=False, Default=True}" />
                 </NativeMenu>
             </NativeMenuItem>
-            <NativeMenuItem Header="{Binding Edit}">
+            <NativeMenuItem Header="_View">
                 <NativeMenu>
-                    <NativeMenuItem Header="{Binding Copy}" />
-                    <NativeMenuItem Header="{Binding Paste}" />
+                    <NativeMenuItem Header="Open Log Window" Command="{Binding OpenStatusWindowCommand}" />
                 </NativeMenu>
             </NativeMenuItem>
-            <NativeMenuItem Header="{Binding View}">
+            <NativeMenuItem Header="_Synchronization">
                 <NativeMenu>
-                    <NativeMenuItem Header="{Binding ViewOpenStatusWindow}" Command="{Binding OpenStatusWindowCommand}"/>
+                    <NativeMenuItem Header="Activate" Command="{Binding ActivateSynchronizationCommand}"></NativeMenuItem>
+                    <NativeMenuItem Header="Deactivate" Command="{Binding DeactivateSynchronizationCommand}"></NativeMenuItem>
                 </NativeMenu>
             </NativeMenuItem>
-            <NativeMenuItem Header="{Binding Help}">
+            <NativeMenuItem Header="_Help">
                 <NativeMenu>
-                    <NativeMenuItem Header="{Binding Help}" Command="{Binding OpenAboutWindowCommand}"/>
-                </NativeMenu>
-            </NativeMenuItem>
-            <NativeMenuItem Header = "{Binding Synchro}">
-                <NativeMenu>
-                    <NativeMenuItem Header="{Binding ActivateSynchro}" Command="{Binding ActivateSynchronizationCommand}"></NativeMenuItem>
-                    <NativeMenuItem Header="{Binding DeactivateSynchro}" Command="{Binding DeactivateSynchronizationCommand}"></NativeMenuItem>
+                    <NativeMenuItem Header="About" Command="{Binding OpenAboutWindowCommand}" />
                 </NativeMenu>
             </NativeMenuItem>
         </NativeMenu>
@@ -60,10 +56,10 @@
     </NativeMenu.Menu>
 
     <DockPanel LastChildFill="True" Margin="{Binding #Main.OffScreenMargin}">
-        
+
         <views:TitleBar Name="TitleBar" DockPanel.Dock="Top" Height="{Binding TitleBarHeight}" />
 
-        <views:StatusBar DockPanel.Dock="Bottom"/>
+        <views:StatusBar DockPanel.Dock="Bottom" />
 
         <DockPanel LastChildFill="True">
             <views:DockingView x:Name="DockView" />

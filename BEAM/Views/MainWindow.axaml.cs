@@ -8,6 +8,9 @@ using BEAM.ViewModels;
 
 namespace BEAM.Views;
 
+/// <summary>
+/// Code behind the main window.
+/// </summary>
 public partial class MainWindow : Window
 {
     public MainWindow()

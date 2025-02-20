@@ -9,7 +9,7 @@ using BEAM.Image;
 namespace BEAM.ImageSequence;
 
 /// <summary>
-/// Loads and manages an entire sequence.
+/// Abstraction of a sequence that got data from disk.
 /// </summary>
 /// <param name="imagePaths">The paths of the images to use inside the sequence.</param>
 public abstract class DiskSequence(List<string> imagePaths, string name) : ISequence

@@ -2,6 +2,10 @@ using System.Runtime.CompilerServices;
 
 namespace BEAM.Image;
 
+/// <summary>
+/// XYZ Cube layout in image data.
+/// Data is stored in x pos order, then y pos order, lastly channel number order.
+/// </summary>
 public sealed class XyzImageMemoryLayout : ImageMemoryLayout
 {
     private readonly long X;
