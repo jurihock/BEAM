@@ -24,7 +24,8 @@ public partial class DockingView : UserControl
 
         _dockManager = (DockManager)this.FindResource("TheDockManager")!;
         _dockManager.DockItemsViewModels = [];
-        _dockManager.DockItemRemovedEvent += OnDockItemRemoved;
+
+        _dockManager.DockItemRemovedEvent += _OnItemRemoved;
     }
 
     private int _i = 0;
@@ -47,17 +48,10 @@ public partial class DockingView : UserControl
         };
         _dockManager.DockItemsViewModels!.Add(model);
     }
-    
-    private void OnDockItemRemoved(DockItemViewModelBase dockItem)
+
+    private void _OnItemRemoved(DockItemViewModelBase item)
     {
-        try
-        {
-            IDockBase dock = (IDockBase)dockItem.Content!;
-            dock.OnClose();
-        }
-        catch
-        {
-            throw new CriticalBeamException("An Item was closed through the docking library, yet its viewmodel did not implement IDockBase");
-        }
+        var vm = DataContext as DockingViewModel;
+        vm.RemoveDock(item.Content as IDockBase);
     }
 }

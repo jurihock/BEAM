@@ -1,20 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics.X86;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using Avalonia.Media;
-using BEAM.Analysis;
+using BEAM.Docking;
 using BEAM.ViewModels;
-using NP.Utilities;
 using ScottPlot;
-using ScottPlot.Avalonia;
-using ScottPlot.Statistics;
 
 namespace BEAM.Views;
 
@@ -25,10 +14,16 @@ public partial class InspectionView : UserControl
     {
         InitializeComponent();
         this.DataContextChanged += DataContextChangedHandling;
+        
     }
-    public void FillPlot(Plot newPlot)
+    
+    /// <summary>
+    /// Updates the Plot with the given new plot.
+    /// </summary>
+    /// <param name="newPlot">The new plot to be displayed</param>
+    private void FillPlot(Plot newPlot)
     {
-        var vm = DataContext as InspectionViewModel;
+        newPlot.PlotControl = AnalysisPlot;
         AnalysisPlot.Reset(newPlot);
         AnalysisPlot.Refresh();
     }
@@ -37,7 +32,9 @@ public partial class InspectionView : UserControl
     {
         var vm = DataContext as InspectionViewModel;
         vm.PropertyChanged += (s, e) => FillPlot(vm.CurrentPlot);
-        FillPlot(vm.CurrentPlot);        
+        FillPlot(vm.CurrentPlot);
+        SequencePicker.SelectedIndex = 0;
+        AnalysisPicker.SelectedIndex = 0;
     }
     
     public void CloneButton_Clicked(object sender, RoutedEventArgs e)
@@ -50,5 +47,18 @@ public partial class InspectionView : UserControl
     {
         var vm = DataContext as InspectionViewModel;
         vm.ChangeAnalysis(AnalysisPicker.SelectedIndex);
+        FillPlot(vm.CurrentPlot);
+    }
+    
+    public void SequencePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var vm = DataContext as InspectionViewModel;
+        vm.ChangeSequence(SequencePicker.SelectedIndex);
+    }
+    
+    public void CheckBox_Changed(object sender, RoutedEventArgs e)
+    {
+        var vm = DataContext as InspectionViewModel;
+        vm.CheckBoxChanged(KeepDataCheckBox.IsChecked);
     }
 }

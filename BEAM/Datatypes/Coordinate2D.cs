@@ -25,10 +25,23 @@ public readonly struct Coordinate2D
         }
     
 
+
+    public Coordinate2D(double row, double column)
+    {
+        Row = row;
+        Column = column;
+    }
+    
+
     public Coordinate2D(Coordinates coordinates)
     {
         Row = coordinates.Y;
         Column = coordinates.X;
     }
     
+
+    public string ToString()
+    {
+        return $"Row: {Row}, Column: {Column}";
+    }
 }

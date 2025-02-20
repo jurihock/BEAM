@@ -35,6 +35,7 @@
     <ItemGroup>
       <UpToDateCheckInput Remove="Views\Titlebar\MenuBar.axaml" />
       <UpToDateCheckInput Remove="ViewModels\Minimap\Popups\DefaultMinimapPopupViewModel.axaml" />
+      <UpToDateCheckInput Remove="Views\AnalysisView\BarPlotAnalysisView.axaml" />
     </ItemGroup>
 
     <ItemGroup>

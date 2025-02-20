@@ -1,32 +1,26 @@
-﻿using System.Collections.Generic;
-using Avalonia.Controls;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
-using BEAM.ViewModels;
-using BEAM.Views.AnalysisView;
 using ScottPlot;
-using ScottPlot.Plottables;
+
 
 namespace BEAM.Analysis;
 
-public class PixelAnalysisChannel : IPixelAnalysis
+public class PixelAnalysisChannel : Analysis
 {
-    public Plot analysePixel(ISequence sequence, Coordinate2D position)
+    
+    private const string Name = "Pixel Channel Analysis";
+    
+    public override Plot Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint, ISequence sequence)
     {
-        double[] channels = sequence.GetPixel((long)position.Column, (long)position.Row);
+        double[] channels = sequence.GetPixel((long)pointerPressedPoint.Column, (long)pointerReleasedPoint.Row);
 
-        Plot plot = new Plot();
-        plot.Add.Bars(channels);
+        Plot plot = PlotCreator.CreateFormattedBarPlot(channels);
+        plot.Title("Pixel Channel Analysis");
         return plot;
-    }
-
-    public Plot analysePixel(SequenceViewModel viewModel, Coordinate2D position)
-    {
-        throw new System.NotImplementedException();
     }
 
     public override string ToString()
     {
-        return "Pixel Channel Analysis";
+        return Name;
     }
 }

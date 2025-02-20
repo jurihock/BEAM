@@ -9,7 +9,11 @@
              x:Class="BEAM.Views.SequenceView"
              DataContextChanged="StyledElement_OnDataContextChanged"
              PointerPressed="PointerPressedHandler"
-             PointerReleased="PointerReleasedHandler">
+             PointerReleased="PointerReleasedHandler"
+             PointerMoved="PointerMovedHandler">
+    <Design.DataContext>
+        <vm:SequenceViewModel/>
+    </Design.DataContext>
 
     <Grid ColumnDefinitions="*, Auto, Auto">
         <scott:AvaPlot Name="AvaPlot1" Grid.Column="0"/>
