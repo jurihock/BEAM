@@ -13,7 +13,6 @@ namespace BEAM.Views;
 // ReSharper disable once UnusedType.Global
 public partial class InspectionView : UserControl
 {
-    private int counter = 0;
     public InspectionView()
     {
         InitializeComponent();

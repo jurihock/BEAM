@@ -4,24 +4,16 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Rendering;
 using Avalonia.Threading;
 using BEAM.Datatypes;
 using BEAM.Docking;
-using BEAM.Image.Minimap;
-using BEAM.Image.Minimap.MinimapAlgorithms;
 using BEAM.Image.Minimap.Utility;
-using System.Threading.Tasks;
-using BEAM.Datatypes;
-using BEAM.Docking;
 using BEAM.ImageSequence;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using BEAM.Renderer;
 using BEAM.Models.Log;
 using BEAM.Views.Minimap.Popups;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 
 
 namespace BEAM.ViewModels;
