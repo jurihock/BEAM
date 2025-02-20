@@ -58,7 +58,7 @@ public static class SkiaImageExtensions
     /// </summary>
     /// <param name="bmp">The bitmap used to get data bytes from.</param>
     /// <typeparam name="T">A specific c# type. The data in the accessor's file will be read as if it were representing this type.</typeparam>
-    /// <returns>The offset'th readable element from the file represented by the accessor of the type which is represented by <see cref="EnviDataType"/>.</returns>
+    /// <returns>The offset'th readable element from the file represented by the accessor of the type which is represented by <see cref="EnviData"/>.</returns>
     public static Func<long, T> CreateValueGetter<T>(this SKBitmap bmp)
     {
         var bitmap = Expression.Constant(bmp);

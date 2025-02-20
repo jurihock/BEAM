@@ -1,5 +1,3 @@
-using System;
-
 namespace BEAM.Image;
 
 public interface IMemoryImage : IImage

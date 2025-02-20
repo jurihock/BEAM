@@ -1,7 +1,6 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using BEAM.Docking;
 using BEAM.ViewModels;
 using ScottPlot;
 
@@ -9,7 +8,6 @@ namespace BEAM.Views;
 
 public partial class InspectionView : UserControl
 {
-    private int counter = 0;
     public InspectionView()
     {
         InitializeComponent();
@@ -30,8 +28,8 @@ public partial class InspectionView : UserControl
 
     private void DataContextChangedHandling(object? sender, EventArgs eventArgs)
     {
-        var vm = DataContext as InspectionViewModel;
-        vm.PropertyChanged += (s, e) => FillPlot(vm.CurrentPlot);
+        if (DataContext is not InspectionViewModel vm || vm.CurrentPlot is null) return;
+        vm.PropertyChanged += (_, _) => FillPlot(vm.CurrentPlot);
         FillPlot(vm.CurrentPlot);
         SequencePicker.SelectedIndex = 0;
         AnalysisPicker.SelectedIndex = 0;
@@ -39,26 +37,26 @@ public partial class InspectionView : UserControl
     
     public void CloneButton_Clicked(object sender, RoutedEventArgs e)
     {
-        var vm = DataContext as InspectionViewModel;
+        if(DataContext is not InspectionViewModel vm) return;
         vm.Clone();
     }
     
     public void AnalysisPicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var vm = DataContext as InspectionViewModel;
+        if (DataContext is not InspectionViewModel vm || vm.CurrentPlot is null) return;
         vm.ChangeAnalysis(AnalysisPicker.SelectedIndex);
         FillPlot(vm.CurrentPlot);
     }
     
     public void SequencePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var vm = DataContext as InspectionViewModel;
+        if (DataContext is not InspectionViewModel vm) return;
         vm.ChangeSequence(SequencePicker.SelectedIndex);
     }
     
     public void CheckBox_Changed(object sender, RoutedEventArgs e)
     {
-        var vm = DataContext as InspectionViewModel;
+        if (DataContext is not InspectionViewModel vm) return;
         vm.CheckBoxChanged(KeepDataCheckBox.IsChecked);
     }
 }

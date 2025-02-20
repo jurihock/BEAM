@@ -25,8 +25,18 @@ public partial class DefaultMinimapPopupView : Window
     private void OnDataContextChanged(object? sender, EventArgs eventArgs)
     {
     }
-    
 
+
+    private void Disable(object? sender, RoutedEventArgs e)
+    {
+        var vm = DataContext as DefaultMinimapPopupViewModel;
+        if (vm is null)
+        {
+            return;
+        }
+
+        vm.DisableMinimap();
+    }
     private void TrySave(object? sender, RoutedEventArgs e)
     {
         if (((DataContext as DefaultMinimapPopupViewModel)!).Save())

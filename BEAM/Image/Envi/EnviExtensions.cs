@@ -52,7 +52,7 @@ public static class EnviExtensions
     /// </summary>
     /// <param name="type">The type whose corresponding primitive c# type is meant to be returned.</param>
     /// <returns>The corresponding primitive c# type.</returns>
-    /// <exception cref="NotSupportedException">If the type can not be matched to a existing primitive c# type.</exception>
+    /// <exception cref="NotSupportedException">If the type can not be matched to an existing primitive c# type.</exception>
     public static Type TypeOf(this EnviDataType type)
     {
         return type switch
@@ -80,18 +80,19 @@ public static class EnviExtensions
     {
         return Marshal.SizeOf(type.TypeOf());
     }
-
+    
+    
+    
     /// <summary>
     /// Creates a function which takes an offset to a file as an argument and returns an object of the EnviDataType's corresponding primitive c# type.
     /// The offset determines how many readable object are skipped. This means that an offset of 2 means the third readable object is being returned.
     /// E.g. type is int32 and offset is 3. The bytes 13-16 (4*3 + 1 - 4*3+4 | 4 = sizeof(int32)) are being read, interpreted as an integer and returned.
-    /// Format: (long index) => (T)(accessor.Read<c# Type of type>(index * type.SizeOf()));
-
     /// </summary>
     /// <param name="accessor">An accessor to a memory mapped File.</param>
     /// <param name="type">An EnviDataType whose value should be read from the file represented by the accessor.</param>
     /// <typeparam name="T">A specific c# type. The data in the accessor's file will be read as if it were representing this type.</typeparam>
     /// <returns>The offset'th readable element from the file represented by the accessor of the type which is represented by <see cref="EnviDataType"/>.</returns>
+    //TODO: Format:   <code>Format: (long index) => (T)(accessor.Read<c# Type of type>(index * type.SizeOf()));</code>
     public static Func<long, T> CreateValueGetter<T>(this MemoryMappedViewAccessor accessor, EnviDataType type)
     {
         var instance = Expression.Constant(accessor);

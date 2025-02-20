@@ -10,7 +10,7 @@ public partial class CutSequencePopup : Window
     public CutSequencePopup(SequenceViewModel sequenceViewModel)
     {
         DataContext = new CutSequencePopupViewModel(sequenceViewModel);
-        AddHandler(KeyDownEvent, (sender, e) =>
+        AddHandler(KeyDownEvent, (_, e) =>
         {
             if (e.Key == Key.Escape) Close();
         });

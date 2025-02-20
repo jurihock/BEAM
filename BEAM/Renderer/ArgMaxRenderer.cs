@@ -1,5 +1,4 @@
 ﻿using System;
-using BEAM.Image;
 using BEAM.ImageSequence;
 
 namespace BEAM.Renderer;

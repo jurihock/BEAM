@@ -14,7 +14,7 @@
         
          <Grid ColumnDefinitions="Auto, 3*, 3*, Auto" Grid.Row="0">
              
-             <Button Content="Nochmal" Click="CloneButton_Clicked" Grid.Column="0"/>
+             <Button Content="Again" Click="CloneButton_Clicked" Grid.Column="0"/>
         
              <ComboBox x:Name="AnalysisPicker" 
                        ItemsSource="{Binding AnalysisList}" 

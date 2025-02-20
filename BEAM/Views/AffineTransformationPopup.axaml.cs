@@ -10,7 +10,7 @@ public partial class AffineTransformationPopup : Window
     public AffineTransformationPopup(SequenceViewModel model)
     {
         DataContext = new AffineTransformationPopupViewModel(model);
-        AddHandler(KeyDownEvent, (sender, e) =>
+        AddHandler(KeyDownEvent, (_, e) =>
         {
             if (e.Key == Key.Escape) Close();
         });

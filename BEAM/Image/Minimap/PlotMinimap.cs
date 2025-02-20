@@ -20,6 +20,8 @@ namespace BEAM.Image.Minimap;
 /// </summary>
 public class PlotMinimap : Minimap
 {
+    private const int ScrollBarOffset = 100;
+    
     public int CompactionFactor = 100;
 
     /// <summary>
@@ -126,7 +128,8 @@ public class PlotMinimap : Minimap
         }
         _plot.Axes.InvertY();
         _plot.Add.Bars(bars);
-        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 , bottom: Sequence.Shape.Height);
+        //TODO: Offset for scrollbar. Remove it or bind it dynamically or leave it static?
+        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence.Shape.Height + ScrollBarOffset);
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {

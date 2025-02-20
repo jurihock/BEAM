@@ -1,33 +1,13 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using Avalonia.Controls;
-using Avalonia.Input;
 using BEAM.Analysis;
 using BEAM.Datatypes;
 using BEAM.Docking;
-using BEAM.ImageSequence;
-using BEAM.Views;
-using BEAM.Views.AnalysisView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ScottPlot;
-using ScottPlot.Plottables;
-using Rectangle = BEAM.Datatypes.Rectangle;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Threading.Tasks;
-using Avalonia.Controls;
-using BEAM.Analysis;
-using BEAM.Datatypes;
-using BEAM.Docking;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using NP.Utilities;
-using ScottPlot;
-using ShimSkiaSharp;
 
 
 namespace BEAM.ViewModels;
@@ -35,20 +15,20 @@ namespace BEAM.ViewModels;
 public partial class InspectionViewModel : ViewModelBase, IDockBase
 {
 
-    [ObservableProperty] private Plot _currentPlot;
-    [ObservableProperty] private bool _keepData  = false;
+    [ObservableProperty] private Plot? _currentPlot;
+    [ObservableProperty] private bool _keepData;
     private SequenceViewModel _currentSequenceViewModel;
     private Analysis.Analysis _currentAnalysis;
     private (Coordinate2D pressed, Coordinate2D released) _pointerRectanglePosition;
     private Plot PlaceholderPlot { get; set; }
     public ObservableCollection<SequenceViewModel> ExistingSequenceViewModels { get; private set;  } = new();
     
-    public static List<Analysis.Analysis> AnalysisList { get;  } = new()
-    {
+    public static List<Analysis.Analysis> AnalysisList { get;  } =
+    [
         new PixelAnalysisChannel(),
         new CirclePlot(),
         new RegionAnalysisStandardDeviationOfChannels()
-    };
+    ];
     
     public InspectionViewModel(SequenceViewModel sequenceViewModel)
     {
@@ -63,7 +43,6 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     public string Name { get; } = "Inspection Window";
     public void OnClose()
     {
-        return;
     }
 
     /// <summary>
@@ -72,7 +51,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     /// </summary>
     public void Update(Coordinate2D pressedPoint, Coordinate2D releasedPoint)
     {
-        if(_keepData) return;
+        if(KeepData) return;
         _pointerRectanglePosition = (pressedPoint, releasedPoint);
         Plot result = _currentAnalysis.Analyze(pressedPoint, releasedPoint, _currentSequenceViewModel.Sequence);
         CurrentPlot = result;
@@ -83,7 +62,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     /// Creates a new Inspection window
     /// </summary>
     [RelayCommand]
-    public async Task Clone()
+    public void Clone()
     {
         _currentSequenceViewModel.OpenInspectionViewCommand.Execute(null);
     }
@@ -91,15 +70,15 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 
     
     /// <summary>
-    /// When called, this method woll change the currently used analysis method.
+    /// When called, this method changes the currently used analysis method.
     /// </summary>
     /// <param name="index">The index of the new analysis mode</param>
     [RelayCommand]
-    public async Task ChangeAnalysis(int index)
+    public void ChangeAnalysis(int index)
     {
         if(ExistingSequenceViewModels.IsNullOrEmpty()) return;
         _currentAnalysis = AnalysisList[index];
-        _currentPlot = _currentAnalysis.Analyze(
+        CurrentPlot = _currentAnalysis.Analyze(
             _pointerRectanglePosition.pressed, 
             _pointerRectanglePosition.released, 
             _currentSequenceViewModel.Sequence);
@@ -110,7 +89,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     /// </summary>
     /// <param name="index">The index of the new sequence to be used</param>
     [RelayCommand]
-    public async Task ChangeSequence(int index)
+    public void ChangeSequence(int index)
     {
         _currentSequenceViewModel.UnregisterInspectionViewModel(this);
         _currentSequenceViewModel = ExistingSequenceViewModels[index];
@@ -124,7 +103,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     /// </summary>
     /// <param name="sender">the sender of the event</param>
     /// <param name="e">notification parameters</param>
-    private void DockingItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
+    private void DockingItemsChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         if (e.NewItems is not null)
         {
@@ -193,9 +172,9 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     /// </summary>
     /// <param name="isChecked"></param>
     [RelayCommand]
-    public async Task CheckBoxChanged(bool? isChecked)
+    public void CheckBoxChanged(bool? isChecked)
     {
-        _keepData = isChecked ?? false;
+        KeepData = isChecked ?? false;
     }
 
 }

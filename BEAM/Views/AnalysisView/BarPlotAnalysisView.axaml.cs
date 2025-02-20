@@ -1,19 +1,6 @@
-﻿using System;
-using System.Linq;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using Avalonia.Media;
-using BEAM.Analysis;
-using BEAM.Datatypes;
-using BEAM.ImageSequence;
-using BEAM.ViewModels.AnalysisViewModels;
-using ExCSS;
+﻿using System.Linq;
 using ScottPlot;
-using ScottPlot.Avalonia;
 using ScottPlot.AxisRules;
-using ScottPlot.Plottables;
-using Rectangle = BEAM.Datatypes.Rectangle;
 
 namespace BEAM.Views.AnalysisView;
 

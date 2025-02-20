@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using BEAM.Controls;
@@ -14,12 +13,12 @@ namespace BEAM.ViewModels;
 
 public partial class ColorSettingsPopupViewModel : ViewModelBase
 {
-    public ObservableCollection<Control> RendererSelectionControls { get; } = [];
-    private SequenceViewModel _sequenceViewModel;
+    public ObservableCollection<Control> RendererSelectionControls { get; } = new();
+    private readonly SequenceViewModel _sequenceViewModel;
 
     private int _selection;
 
-    private List<ISaveControl> _controls = [];
+    private readonly List<ISaveControl> _controls = [];
 
     [ObservableProperty] private decimal _min;
     [ObservableProperty] private decimal _max;
@@ -49,7 +48,7 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
             Content = renderer.GetName(),
             IsChecked = (_selection == index),
         };
-        button.IsCheckedChanged += (s, e) =>
+        button.IsCheckedChanged += (s, _) =>
         {
             var btn = (RadioButton)s!;
             if (btn.IsChecked ?? false) _selection = index;

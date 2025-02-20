@@ -4,24 +4,16 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Rendering;
 using Avalonia.Threading;
 using BEAM.Datatypes;
 using BEAM.Docking;
-using BEAM.Image.Minimap;
-using BEAM.Image.Minimap.MinimapAlgorithms;
 using BEAM.Image.Minimap.Utility;
-using System.Threading.Tasks;
-using BEAM.Datatypes;
-using BEAM.Docking;
 using BEAM.ImageSequence;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using BEAM.Renderer;
 using BEAM.Models.Log;
 using BEAM.Views.Minimap.Popups;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 
 
 namespace BEAM.ViewModels;
@@ -29,10 +21,10 @@ namespace BEAM.ViewModels;
 public partial class SequenceViewModel : ViewModelBase, IDockBase
 {
     [ObservableProperty] public partial DockingViewModel DockingVm { get; set; } = new();
-    [ObservableProperty] public partial Coordinate2D pressedPointerPosition { get; set; } = new();
-    [ObservableProperty] public partial Coordinate2D releasedPointerPosition { get; set; } = new();
+    [ObservableProperty] public partial Coordinate2D PressedPointerPosition { get; set; } = new();
+    [ObservableProperty] public partial Coordinate2D ReleasedPointerPosition { get; set; } = new();
     
-    private List<InspectionViewModel> _ConnectedInspectionViewModels = new();
+    private List<InspectionViewModel> _connectedInspectionViewModels = new();
 
     public EventHandler<RenderersUpdatedEventArgs> RenderersUpdated = delegate { };
     public EventHandler<RenderersUpdatedEventArgs> CutSequence = delegate { };
@@ -45,9 +37,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     
     private Image.Minimap.Minimap? _currentMinimap;
     public EventHandler<EventArgs> MinimapHasChanged = delegate { };
-
-
-    //public ISequence Sequence { get; }
+    
     
 
     
@@ -96,21 +86,21 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 
     public void RegisterInspectionViewModel(InspectionViewModel inspectionViewModel)
     {
-        _ConnectedInspectionViewModels.Add(inspectionViewModel);
-        inspectionViewModel.Update(pressedPointerPosition, releasedPointerPosition);
+        _connectedInspectionViewModels.Add(inspectionViewModel);
+        inspectionViewModel.Update(PressedPointerPosition, ReleasedPointerPosition);
     }
     
     public void UnregisterInspectionViewModel(InspectionViewModel inspectionViewModel)
     {
-        _ConnectedInspectionViewModels.Remove(inspectionViewModel);
+        _connectedInspectionViewModels.Remove(inspectionViewModel);
     }
 
     [RelayCommand]
-    public async Task UpdateInspectionViewModel()
+    public void UpdateInspectionViewModel()
     {
-        Coordinate2D pointPressed = _correctInvalid(pressedPointerPosition);
-        Coordinate2D pointReleased = _correctInvalid(releasedPointerPosition);
-        foreach (var inspectionViewModel in _ConnectedInspectionViewModels)
+        Coordinate2D pointPressed = _correctInvalid(PressedPointerPosition);
+        Coordinate2D pointReleased = _correctInvalid(ReleasedPointerPosition);
+        foreach (var inspectionViewModel in _connectedInspectionViewModels)
         {
             inspectionViewModel.Update(pointPressed, pointReleased);
         }
@@ -184,13 +174,13 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     }
 
     [RelayCommand]
-    public async Task OpenInspectionView()
+    public void OpenInspectionView()
     {
         InspectionViewModel inspectionViewModel = new InspectionViewModel(this);
-        _ConnectedInspectionViewModels.Add(inspectionViewModel);
+        _connectedInspectionViewModels.Add(inspectionViewModel);
         DockingVm.OpenDock(inspectionViewModel);
         
-        inspectionViewModel.Update(pressedPointerPosition, releasedPointerPosition);
+        inspectionViewModel.Update(PressedPointerPosition, ReleasedPointerPosition);
     }
     
 
@@ -205,5 +195,11 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     public override string ToString()
     {
         return Name;
+    }
+
+    public void DisableMinimap()
+    {
+        _currentMinimap?.StopGeneration();
+        MinimapVms.Clear();
     }
 }
