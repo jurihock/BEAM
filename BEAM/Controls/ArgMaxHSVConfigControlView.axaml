@@ -6,8 +6,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="controls:ArgMaxHSVConfigControlViewModel"
              x:Class="BEAM.Controls.ArgMaxHSVConfigControlView">
-    <TreeDataGrid Source="{Binding ChannelSource}">
-    </TreeDataGrid>
-    
+    <Design.DataContext>
+        <controls:ArgMaxHSVConfigControlViewModel/>
+    </Design.DataContext>
     
 </UserControl>

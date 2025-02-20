@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using BEAM.Controls;
 using BEAM.Datatypes;
@@ -16,7 +17,7 @@ namespace BEAM.Renderer;
 /// <param name="maximumOfIntensityRange"></param>
 public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maximumOfIntensityRange) : ArgMaxRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
 {
-    private ChannelHSVMap _channelHsvMap = new ChannelHSVMap(0);
+    private ChannelHSVMap _channelHsvMap = new(0);
         
     public override RenderTypes GetRenderType()
     {
@@ -110,6 +111,8 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
     /// <summary>
     /// Sets the ChannelHSVMap to the newly given ChannelHSVMap, but only if the amount of channels
     /// does not change.
+    /// If the amount of channels originally was zero, the update takes place,
+    /// initializing the ChannelHSVMap
     /// </summary>
     /// <param name="hsvMap"></param>
     /// <exception cref="ChannelException"></exception>
@@ -123,6 +126,30 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
         _channelHsvMap = hsvMap;
     }
 
+    /// <summary>
+    /// Sets the ChannelHSVMap to a new ChannelHSVMap created from the given Array of ChannelToHSVs,
+    ///  but only if the amount of channels does not change.
+    /// If the amount of channels originally was zero, the update takes place,
+    /// initializing the ChannelHSVMap
+    /// </summary>
+    /// <param name="channels"></param>
+    /// <exception cref="ChannelException"></exception>
+    public void UpdateChannelHSVMap(ChannelToHSV[] channels)
+    {
+        if (_channelHsvMap.AmountChannels != 0 && channels.Length != _channelHsvMap.AmountChannels)
+        {
+            throw new ChannelException("Channel count mismatch for ChannelHSVMap of ArgMax! Changed from: " 
+                                       + _channelHsvMap.AmountChannels + " to " + channels.Length);
+        }
+        
+        _channelHsvMap = new ChannelHSVMap(channels);
+    }
+
+    public void UpdateChannelHSVMap(ObservableCollection<ChannelToHSV> channels)
+    {
+        UpdateChannelHSVMap(channels.ToArray());
+    }
+    
     public ChannelHSVMap getChannelHsvMap()
     {
         return _channelHsvMap.Clone();

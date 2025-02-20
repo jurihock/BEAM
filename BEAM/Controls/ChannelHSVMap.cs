@@ -15,7 +15,7 @@ public class ChannelHSVMap
     /// </summary>
     private ChannelToHSV[] channels;
     
-    private HueColorLut hcl = new HueColorLut();
+    private static readonly HueColorLut hcl = new HueColorLut();
     public int AmountChannels { get; init; }
 
     public ChannelHSVMap(int maxAmountChannels)

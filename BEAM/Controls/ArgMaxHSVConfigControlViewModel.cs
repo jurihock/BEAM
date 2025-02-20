@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Data;
-using Avalonia.Controls;
-using Avalonia.Controls.Models.TreeDataGrid;
-using Avalonia.Controls.Primitives;
+using System.Collections.ObjectModel;
 using BEAM.Datatypes.Color;
 using BEAM.Renderer;
 using BEAM.ViewModels;
@@ -13,42 +10,42 @@ namespace BEAM.Controls;
 public partial class ArgMaxHSVConfigControlViewModel
     : ViewModelBase, ISaveControl
 {
-    private static readonly HueColorLut hcl = new HueColorLut();
-    private ArgMaxRendererColorHSV renderer;
-    [ObservableProperty] private partial ChannelHSVMap ChannelHsvMap { get; set; }
-    
-    public FlatTreeDataGridSource<ChannelToHSV> ChannelSource { get; }
+    private readonly ArgMaxRendererColorHSV _renderer;
 
+    private ChannelToHSV _selectedItem;
+    
+    public ChannelToHSV SelectedItem 
+    { get => _selectedItem; 
+        set => SetProperty(ref _selectedItem, value); }
+    
+    [ObservableProperty] public partial ObservableCollection<ChannelToHSV> ObsChannels { get; set; } = [];
+    
     public ArgMaxHSVConfigControlViewModel(ArgMaxRendererColorHSV renderer, SequenceViewModel model)
     {
         if (renderer == null) throw new ArgumentNullException(nameof(renderer));
         if (model == null) throw new ArgumentNullException(nameof(model));
-        this.renderer = renderer ?? throw new ArgumentNullException(nameof(renderer));
+        _renderer = renderer ?? throw new ArgumentNullException(nameof(renderer));
 
-        if (this.renderer.getChannelHsvMap().AmountChannels == 0)
+        ChannelToHSV[] channels;
+        
+        if (_renderer.getChannelHsvMap().AmountChannels == 0)
         {
-            ChannelHsvMap = new ChannelHSVMap(model.Sequence.Shape.Channels);
+            channels = new ChannelHSVMap(model.Sequence.Shape.Channels).ToArray();
         }
         else
         {
-            ChannelHsvMap = renderer.getChannelHsvMap();
+            channels = renderer.getChannelHsvMap().ToArray();
         }
-        
-        ChannelSource = new FlatTreeDataGridSource<ChannelToHSV>(ChannelHsvMap.ToArray())
+
+        foreach (var chan in channels)
         {
-            Columns =
-            {
-                new TextColumn<ChannelToHSV, int>
-                    ("Index", x => x.Index),
-                new CheckBoxColumn<ChannelToHSV>
-                    ("Used", x => x.IsUsedForArgMax),
-            },
-        };
+            ObsChannels.Add(chan);
+        }
+        SelectedItem = ObsChannels[0];
     }
     
     public void Save()
     {
-        renderer.UpdateChannelHSVMap(ChannelHsvMap);
-        ChannelHsvMap = renderer.getChannelHsvMap();
+        _renderer.UpdateChannelHSVMap(ObsChannels);
     }
 }
