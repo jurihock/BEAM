@@ -20,7 +20,7 @@ public sealed class SequencePlottable(ISequence sequence, SequenceRenderer rende
 {
     public bool IsVisible { get; set; } = true;
     public IAxes Axes { get; set; } = new Axes();
-    public IEnumerable<LegendItem> LegendItems => Enumerable.Empty<LegendItem>();
+    public IEnumerable<LegendItem> LegendItems => [];
 
     public readonly SequenceImage SequenceImage = new(sequence, startLine, renderer);
 
@@ -43,12 +43,12 @@ public sealed class SequencePlottable(ISequence sequence, SequenceRenderer rende
     public void Render(RenderPack rp)
     {
         // Drawing offset for transformed sequence
-        var xOffset = 0.0;
-        var yOffset = 0.0;
+        var xOffset = -0.5;
+        var yOffset = -0.5;
         if (sequence is TransformedSequence transformedSequence)
         {
-            xOffset = transformedSequence.DrawOffsetX;
-            yOffset = transformedSequence.DrawOffsetY;
+            xOffset += transformedSequence.DrawOffsetX;
+            yOffset += transformedSequence.DrawOffsetY;
         }
 
         rp.Plot.Axes.InvertY();
