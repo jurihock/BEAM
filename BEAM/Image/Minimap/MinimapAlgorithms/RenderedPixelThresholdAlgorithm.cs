@@ -14,15 +14,15 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
     public byte ThresholdRed { get; set; } = 25;
     public byte ThresholdBlue { get; set; } = 25;
     public byte ThresholdGreen { get; set; } = 25;
-    public byte ThresholdGamma {get; set;} = 255 ;
+    public byte ThresholdAlpha {get; set;} = 255 ;
     private ISequence? _sequence;
     private CancellationToken? _ctx;
     private SequenceRenderer? _renderer;
-    Vector4D<byte> _thresholds = new Vector4D<byte>(0, 0, 0, 255);
+    Vector4D<byte> _thresholds = new Vector4D<byte>(25, 25, 25, 255);
     public bool AnalyzeSequence(ISequence sequence, CancellationToken ctx)
     {
         //TODO: Adjust Mapping to match renderer return values
-        _thresholds = new Vector4D<byte>(ThresholdRed, ThresholdGreen, ThresholdBlue, ThresholdGamma);
+        _thresholds = new Vector4D<byte>(ThresholdBlue, ThresholdGreen, ThresholdRed, ThresholdAlpha);
         _sequence = sequence;
         _ctx = ctx;
         return true;
@@ -71,7 +71,7 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
 
     public IMinimapAlgorithm Clone()
     {
-        return new RenderedPixelThresholdAlgorithm { _renderer = _renderer , ThresholdRed = ThresholdRed, ThresholdGreen = ThresholdGreen, ThresholdBlue = ThresholdBlue, ThresholdGamma = ThresholdGamma};
+        return new RenderedPixelThresholdAlgorithm { _renderer = _renderer , ThresholdRed = ThresholdRed, ThresholdGreen = ThresholdGreen, ThresholdBlue = ThresholdBlue, ThresholdAlpha = ThresholdAlpha};
     }
 
     public void SetRenderer(SequenceRenderer renderer)
@@ -83,13 +83,13 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
     {
         private T[] Entries { get;  }
 
-        public Vector4D(T r, T g, T b, T gamma)
+        public Vector4D(T entry1, T entry2, T entry3, T entry4)
         {
             Entries = new T[4];
-            Entries[1] = r;
-            Entries[2] = g;
-            Entries[3] = b;
-            Entries[0] = gamma;
+            Entries[1] = entry1;
+            Entries[2] = entry2;
+            Entries[3] = entry3;
+            Entries[0] = entry4;
         }
         public Vector4D(ref T[] data) {
             Entries = data;

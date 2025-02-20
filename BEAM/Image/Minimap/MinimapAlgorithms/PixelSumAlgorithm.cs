@@ -11,7 +11,6 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
 {
     private ISequence? _sequence;
     private CancellationToken? _ctx;
-    private int[]? _channelFetchMask;
     private SequenceRenderer? _renderer;
 
 
@@ -19,14 +18,7 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
     {
         _sequence = sequence;
         _ctx = ctx;
-        _channelFetchMask = new int[sequence.Shape.Channels];
-
-        for (int i = 0; i < sequence.Shape.Channels; i++)
-        {
-            _channelFetchMask[i] = i;
-        }
-
-
+        
         return true;
     }
 
@@ -38,7 +30,7 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
             var renderedData = _renderer!.RenderPixel(_sequence, j, line);
             foreach (byte channelValue in renderedData)
             {
-                sum += (double) channelValue;
+                sum += channelValue;
             }
         }
         return sum;
@@ -46,7 +38,7 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
 
     public double GetLineValue(long line)
     {
-        if (_sequence is null || _ctx is null || _channelFetchMask is null || _renderer is null)
+        if (_sequence is null || _ctx is null || _renderer is null)
         {
             throw new InvalidStateException("Data must first be initialized!");
         }
