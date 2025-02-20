@@ -38,34 +38,6 @@ public partial class Logger : ObservableObject, ILog
         if (_instance is null) throw new Exception("Logger instance is null");
         return _instance!;
     }
-    
-    public void Error(LogEvent occuredEvent)
-    {
-        _logLevel = LogLevel.Error;
-        _logEvent = occuredEvent;
-        Write("ERROR! --> " + occuredEvent);
-    }
-
-    public void Warning(LogEvent occuredEvent)
-    {
-        _logLevel = LogLevel.Warning;
-        _logEvent = occuredEvent;
-        Write("Warning --> " + occuredEvent);
-    }
-
-    public void Debug(LogEvent occuredEvent)
-    {
-        _logLevel = LogLevel.Debug;
-        _logEvent = occuredEvent;
-        Write("Debug -->  " + occuredEvent);
-    }
-
-    public void Info(LogEvent occuredEvent)
-    {
-        _logLevel = LogLevel.Info;
-        _logEvent = occuredEvent;
-        Write("Info: " + occuredEvent);
-    }
 
     public void Error(LogEvent occuredEvent, string logMessage)
     {
