@@ -127,8 +127,7 @@ public partial class SequenceView : UserControl
         menu.Add("Affine Transformation", control => _OpenTransformPopup());
         menu.AddSeparator();
         menu.Add("Cut Sequence", control => _OpenCutPopup());
-        menu.Add("Export sequence",
-            control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+        menu.Add("Export sequence", control => _OpenExportPopup());
     }
 
     private void _SetPlottable(BitmapPlottable plottable)
@@ -192,6 +191,14 @@ public partial class SequenceView : UserControl
     private void _OpenCutPopup()
     {
         CutSequencePopup popup = new((SequenceViewModel)DataContext!);
+        var v = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+
+        popup.ShowDialog(v!.MainWindow!);
+    }
+    
+    private void _OpenExportPopup()
+    {
+        ExportSequenceView popup = new((SequenceViewModel)DataContext!);
         var v = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
 
         popup.ShowDialog(v!.MainWindow!);
