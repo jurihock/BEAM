@@ -20,7 +20,8 @@
             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10 0">Starting index of new sequence:</TextBlock>
             <NumericUpDown Value="{Binding StartOffset}" MinWidth="300" HorizontalAlignment="Right" ParsingNumberStyle="Integer" Minimum="0" Maximum="{Binding MaxOffset}"/>
         </StackPanel>
-        <StackPanel Orientation="Horizontal">
+
+        <StackPanel Orientation="Horizontal" Margin="0 10">
             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10 0">End index of the new sequence:</TextBlock>
             <NumericUpDown Value="{Binding EndOffset}" MinWidth="300" HorizontalAlignment="Right" ParsingNumberStyle="Integer" Minimum="0" Maximum="{Binding MaxOffset}"/>
         </StackPanel>
