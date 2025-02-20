@@ -38,8 +38,7 @@
                       Margin="5 5">
             </ComboBox>
 
-            <ToggleButton Margin="10 0" Grid.Row="0" Grid.Column="2" Name="KeepDataCheckBox"
-                          IsCheckedChanged="CheckBox_Changed">
+            <ToggleButton Margin="10 0" Grid.Row="0" Grid.Column="2" Name="KeepDataCheckBox" IsCheckedChanged="CheckBox_Changed">
                 <Svg Path="../Assets/lock.svg" Width="20" Height="20" Css="{DynamicResource StrokeCss}"></Svg>
             </ToggleButton>
             <Button Grid.Row="0" Grid.Column="3" Click="CloneButton_Clicked">

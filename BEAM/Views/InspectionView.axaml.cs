@@ -63,4 +63,10 @@ public partial class InspectionView : UserControl
         var vm = DataContext as InspectionViewModel;
         vm!.CheckBoxChanged(KeepDataCheckBox.IsChecked);
     }
+
+    private void KeepDataCheckBox_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
+    {
+        var vm = (DataContext as InspectionViewModel)!;
+        vm.CheckBoxChanged(KeepDataCheckBox.IsChecked);
+    }
 }

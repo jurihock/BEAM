@@ -19,7 +19,8 @@ namespace BEAM.ViewModels;
 public partial class InspectionViewModel : ViewModelBase, IDockBase
 {
     [ObservableProperty] private Plot _currentPlot = null!;
-    [ObservableProperty] private bool _keepData = false;
+    private bool KeepData { get; set; }
+
     private SequenceViewModel _currentSequenceViewModel;
     private Analysis.Analysis _currentAnalysis;
     private (Coordinate2D pressed, Coordinate2D released) _pointerRectanglePosition;
@@ -175,7 +176,6 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     /// This method will update the new data acceptance.
     /// </summary>
     /// <param name="isChecked"></param>
-    [RelayCommand]
     public void CheckBoxChanged(bool? isChecked)
     {
         KeepData = isChecked ?? false;
