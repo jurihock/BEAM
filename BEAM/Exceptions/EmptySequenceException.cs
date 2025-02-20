@@ -1,5 +1,3 @@
-using BEAM.Models.Log;
-
 namespace BEAM.Exceptions;
 
 public class EmptySequenceException : BeamException

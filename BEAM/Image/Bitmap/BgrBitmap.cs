@@ -8,19 +8,19 @@ namespace BEAM.Image.Bitmap;
 public sealed partial class BgrBitmap : IBitmap<BGR>
 {
   private const int BytesPerPixel = BitmapBytesPerPixel;
-  private int BytesPerLine;
+  private int _bytesPerLine;
 
   public int Width { get; private set; }
   public int Height { get; private set; }
 
-  public byte[] Bytes { get; private set; } = [];
+  public byte[] Bytes { get; private set; }
 
   public ref BGR this[int x, int y]
   {
     get
     {
       var bytes = Bytes.AsSpan(
-        y * BytesPerLine +
+        y * _bytesPerLine +
         x * BytesPerPixel +
         BitmapHeaderSize,
         BytesPerPixel);
@@ -37,7 +37,7 @@ public sealed partial class BgrBitmap : IBitmap<BGR>
       var y = (int)(i / Width);
 
       var bytes = Bytes.AsSpan(
-        y * BytesPerLine +
+        y * _bytesPerLine +
         x * BytesPerPixel +
         BitmapHeaderSize,
         BytesPerPixel);
@@ -55,7 +55,7 @@ public sealed partial class BgrBitmap : IBitmap<BGR>
 
     MemoryMarshal.Write(bytes, header);
 
-    BytesPerLine = header.BytesPerLine;
+    _bytesPerLine = header.BytesPerLine;
     Width = header.Width;
     Height = header.Height;
     Bytes = bytes;
@@ -73,7 +73,7 @@ public sealed partial class BgrBitmap : IBitmap<BGR>
     var bytes = File.ReadAllBytes(path);
     var header = MemoryMarshal.Read<Header>(bytes);
 
-    BytesPerLine = header.BytesPerLine;
+    _bytesPerLine = header.BytesPerLine;
     Width = header.Width;
     Height = header.Height;
     Bytes = bytes;

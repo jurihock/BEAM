@@ -90,7 +90,7 @@ public partial class SequenceView : UserControl
         //var panResponse = new ScottPlot.Interactivity.UserActionResponses.MouseDragPan(panButton);
 
         // Remove the standard MouseWheelZoom and replace it with the wanted custom functionality
-        ScrollingSynchronizer.addSequence(this);
+        ScrollingSynchronizer.AddSequence(this);
         AvaPlot1.UserInputProcessor.RemoveAll<MouseWheelZoom>();
         AvaPlot1.UserInputProcessor.RemoveAll<MouseDragZoom>(); // Remove option to zoom with right key
         AvaPlot1.UserInputProcessor.UserActionResponses.Add(new CustomMouseWheelZoom(StandardKeys.Shift,
@@ -108,13 +108,13 @@ public partial class SequenceView : UserControl
             var top = (e.NewValue / 100.0) * vm.Sequence.Shape.Height - 100.0;
             AvaPlot1.Plot.Axes.SetLimitsY(top, top + ySize);
             AvaPlot1.Refresh();
-            ScrollingSynchronizer.synchronize(this);
+            ScrollingSynchronizer.Synchronize(this);
         };
 
         AvaPlot1.PointerWheelChanged += (s, e) =>
         {
             UpdateScrollBar();
-            ScrollingSynchronizer.synchronize(this);
+            ScrollingSynchronizer.Synchronize(this);
         };
 
         AddScrollBarUpdating();
@@ -187,9 +187,9 @@ public partial class SequenceView : UserControl
         menu.Add("Sync to this",
             control =>
             {
-                ScrollingSynchronizer.activateSynchronization();
-                ScrollingSynchronizer.synchronize(this);
-                PlotControllerManager.activateSynchronization();
+                ScrollingSynchronizer.ActivateSynchronization();
+                ScrollingSynchronizer.Synchronize(this);
+                PlotControllerManager.ActivateSynchronization();
             });
         menu.AddSeparator();
         menu.Add("Configure colors", control => _OpenColorsPopup());

@@ -1,12 +1,11 @@
 using SkiaSharp;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
 
 namespace BEAM.Image.Bitmap;
 
-public sealed partial class BgraBitmap : SKBitmap, IBitmap<BGRA>
+public sealed class BgraBitmap : SKBitmap, IBitmap<BGRA>
 {
   
   public ref BGRA this[int x, int y]
@@ -53,9 +52,8 @@ public sealed partial class BgraBitmap : SKBitmap, IBitmap<BGRA>
   /// </summary>
   /// <returns>A byte span to the memory region of the pixel data.</returns>
   public new unsafe Span<byte> GetPixelSpan()
-  { 
-    IntPtr length;
-    return new Span<byte>((void*) base.GetPixels(out length), (int)length);
+  {
+    return new Span<byte>((void*) GetPixels(out var length), (int)length);
   }
 
   public void Read(string path)

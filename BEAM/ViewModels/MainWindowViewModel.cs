@@ -158,13 +158,13 @@ public partial class MainWindowViewModel : ViewModelBase
     private void ActivateSynchronization()
     {
         _syncedPlotController?.Activate();
-        ScrollingSynchronizer.activateSynchronization();
+        ScrollingSynchronizer.ActivateSynchronization();
     }
 
     [RelayCommand]
     private void DeactivateSynchronization()
     {
         _syncedPlotController?.Deactivate();
-        ScrollingSynchronizer.deactivateSynchronization();
+        ScrollingSynchronizer.DeactivateSynchronization();
     }
 }

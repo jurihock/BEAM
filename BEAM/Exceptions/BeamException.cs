@@ -1,5 +1,4 @@
 using System;
-using BEAM.Models.Log;
 
 namespace BEAM.Exceptions;
 

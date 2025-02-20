@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using BEAM.Models.Log;
 
 namespace BEAM.Image.Bitmap;
 
@@ -39,11 +40,9 @@ public static class BitmapExtensions
     var pixels = MemoryMarshal.Cast<byte, BGRA>(bytes);
     if (bytes.Length % Marshal.SizeOf<BGRA>() != 0)
     {
-      //throw new InvalidOperationException("Pixel span size is not a multiple of BGRA size.");
-      Console.WriteLine(bytes.Length % Marshal.SizeOf<BGRA>());
-      Console.WriteLine(bytes.Length);
-      Console.WriteLine(Marshal.SizeOf<BGRA>());
-      Console.WriteLine("Length missmatch");
+      
+      Logger.GetInstance().Error(LogEvent.Critical, "Pixel span size is not a multiple of BGRA size.");
+      throw new InvalidOperationException();
     }
 
     pixels.Fill(pixel);

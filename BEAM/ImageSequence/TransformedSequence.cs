@@ -9,8 +9,8 @@ public class TransformedSequence(ISequence originalSequence) : ISequence
     public double ScaleX { get; set; } = 1;
     public double ScaleY { get; set; } = 1;
 
-    public double DrawOffsetX { get; set; } = 0;
-    public double DrawOffsetY { get; set; } = 0;
+    public double DrawOffsetX { get; set; }
+    public double DrawOffsetY { get; set; }
 
     public ImageShape Shape => new(_TransformX(originalSequence.Shape.Width),
         _TransformY(originalSequence.Shape.Height),

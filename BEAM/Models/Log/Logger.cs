@@ -5,19 +5,19 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BEAM.Models.Log;
 
-public partial class Logger : ObservableObject, ILog
+public class Logger : ObservableObject, ILog
 {
     private static Logger? _instance;
     
-    private string _pathToLogFile;
+    private readonly string _pathToLogFile;
     private LogLevel _logLevel;
     private LogEvent _logEvent;
 
-    private ObservableCollection<Models.Log.LogEntry> _LogEntries;
+    private readonly ObservableCollection<LogEntry> _logEntries;
 
     private Logger(string pathToLogFile)
     {
-        _LogEntries = [];
+        _logEntries = [];
         _pathToLogFile = pathToLogFile;
         if (!File.Exists(pathToLogFile))
         {
@@ -36,7 +36,7 @@ public partial class Logger : ObservableObject, ILog
     public static Logger GetInstance()
     {
         if (_instance is null) throw new Exception("Logger instance is null");
-        return _instance!;
+        return _instance;
     }
     
     public void Error(LogEvent occuredEvent)
@@ -116,16 +116,16 @@ public partial class Logger : ObservableObject, ILog
         {
             outputFile.WriteLine(DateTime.Now + " " +message);
         }
-        _LogEntries.Add(new LogEntry(_logLevel, Enum.GetName(_logEvent)!, message));
+        _logEntries.Add(new LogEntry(_logLevel, Enum.GetName(_logEvent)!, message));
     }
     
     public void ClearStatusBar()
     {
-        _LogEntries.Clear();
+        _logEntries.Clear();
     }
     
-    public ObservableCollection<Models.Log.LogEntry> GetLogEntries()
+    public ObservableCollection<LogEntry> GetLogEntries()
     {
-        return _LogEntries;
+        return _logEntries;
     }
 }
