@@ -27,6 +27,7 @@ public partial class DockingView : UserControl
 
         _dockManager = (DockManager)this.FindResource("TheDockManager")!;
         _dockManager.DockItemsViewModels = [];
+        _dockManager.DockItemRemovedEvent += _OnItemRemoved;
     }
 
     private int _i = 0;
@@ -48,5 +49,11 @@ public partial class DockingView : UserControl
             IsSelected = false,
         };
         _dockManager.DockItemsViewModels!.Add(model);
+    }
+
+    private void _OnItemRemoved(DockItemViewModelBase item)
+    {
+        var vm = DataContext as DockingViewModel;
+        vm.RemoveDock(item.Content as IDockBase);
     }
 }

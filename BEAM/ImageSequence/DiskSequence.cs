@@ -298,6 +298,15 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
         return (DiskSequence)ctor.Invoke([paths, name]);
     }
 
+    /// <summary>
+    /// Return the amount of channels of the images of the sequence.
+    /// </summary>
+    /// <returns>The amount of channels.</returns>
+    public int GetChannelAmount()
+    {
+        return Shape.Channels;
+    }
+
     private void ReleaseUnmanagedResources()
     {
         for (var i = 0; i < _loadedImages.Length; i++)
