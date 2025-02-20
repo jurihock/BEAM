@@ -45,17 +45,18 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 
     public SequenceRenderer[] Renderers;
     public int RendererSelection;
-    
-    
+
+
     private Image.Minimap.Minimap? _currentMinimap;
     public EventHandler<EventArgs> MinimapHasChanged = delegate { };
 
 
     //public ISequence Sequence { get; }
-    
 
-    
-    [ObservableProperty] public partial ObservableCollection<ViewModelBase> MinimapVms { get; set; }= new ObservableCollection<ViewModelBase>();
+
+    [ObservableProperty]
+    public partial ObservableCollection<ViewModelBase> MinimapVms { get; set; } =
+        new ObservableCollection<ViewModelBase>();
 
     public SequenceViewModel(ISequence sequence, DockingViewModel dockingVm)
     {
@@ -82,19 +83,18 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             SkiaSequence => 0,
             _ => 1
         };
-        
+
         //_currentMinimap = MinimapSettingsUtilityHelper.GetDefaultClones().Active;
         _currentMinimap = SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultClones().Active;
         if (_currentMinimap is not null)
         {
             //TODO: in up to data branch the SequenceVM knows the renderer
-            if(RendererSelection < Renderers.Length && RendererSelection >= 0)
+            if (RendererSelection < Renderers.Length && RendererSelection >= 0)
             {
                 _currentMinimap.SetRenderer(Renderers[RendererSelection]);
                 _currentMinimap.StartGeneration(sequence, OnMinimapGenerated);
             }
         }
-        
     }
 
     public void RegisterInspectionViewModel(InspectionViewModel inspectionViewModel)
@@ -133,7 +133,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         );
         return Task.CompletedTask;
     }
-    
+
     private Coordinate2D _correctInvalid(Coordinate2D point)
     {
         double x = point.Row;
@@ -159,6 +159,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     {
         Sequence.Dispose();
         GC.SuppressFinalize(this);
+    }
 
     public void ChangeCurrentMinimap(Image.Minimap.Minimap minimap)
     {
@@ -166,15 +167,14 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         {
             _currentMinimap.StopGeneration();
         }
-        
+
         MinimapVms.Clear();
         _currentMinimap = minimap;
-        _currentMinimap.SetRenderer(new ChannelMapRenderer(0, 255, 0, 1,2));
+        _currentMinimap.SetRenderer(new ChannelMapRenderer(0, 255, 0, 1, 2));
         _currentMinimap.StartGeneration(Sequence, OnMinimapGenerated);
     }
 
-   
-    
+
     [RelayCommand]
     public async Task OpenMinimapSettings()
     {
@@ -185,39 +185,27 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             Logger.GetInstance().Error(LogEvent.Critical, "Unable to find ApplicationLifetime or MainWindow");
             return;
         }
+
         await minimapPopup.ShowDialog(v.MainWindow);
     }
-    
-    
+
+
     public void OnMinimapGenerated(object sender, MinimapGeneratedEventArgs e)
     {
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             // Clear the existing minimap controls
             MinimapVms.Clear();
-            
+
             var newMinimapVm = e.Minimap.GetViewModel();
             MinimapVms.Add(newMinimapVm);
             MinimapHasChanged(this, EventArgs.Empty);
-
-
         });
     }
 
-    [RelayCommand]
-    public async Task OpenInspectionView()
-    {
-        InspectionViewModel inspectionViewModel = new InspectionViewModel(this);
-        _ConnectedInspectionViewModels.Add(inspectionViewModel);
-        DockingVm.OpenDock(inspectionViewModel);
-        
-        inspectionViewModel.Update(pressedPointerPosition, releasedPointerPosition);
-    }
-    
-
     public void OnClose()
     {
-        if(_currentMinimap is not null)
+        if (_currentMinimap is not null)
         {
             _currentMinimap.StopGeneration();
         }

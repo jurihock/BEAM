@@ -9,8 +9,6 @@ using BEAM.CustomActions;
 using BEAM.Datatypes;
 using BEAM.Image.Displayer.Scottplot;
 using BEAM.Image.Displayer.ScottPlot;
-using BEAM.Image.Displayer.ScottPlot;
-using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence.Synchronization;
 using BEAM.Models.Log;
 using BEAM.ViewModels;
@@ -49,10 +47,6 @@ public partial class SequenceView : UserControl
         get => GetValue(DynamicContentProperty);
         set => SetValue(DynamicContentProperty, value);
     }
-    private BitmapPlottable _plottable;
-    private HorizontalLine _horizontalLine = new();
-    private VerticalLine _verticalLine = new();
-
 
     public object? DynamicContentViewModel
     {
@@ -251,20 +245,6 @@ public partial class SequenceView : UserControl
 
         var vm = (SequenceViewModel?)DataContext;
         vm!.pressedPointerPosition = coordInPlot;
-    }
-
-    private void PointerReleasedHandler(object? sender, PointerReleasedEventArgs args)
-    {
-
-        var point = args.GetCurrentPoint(sender as Control);
-        var x = point.Position.X;
-        var y = point.Position.Y;
-
-        var coordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
-
-        var vm = (SequenceViewModel?)DataContext;
-        vm!.releasedPointerPosition = coordInPlot;
-        vm!.UpdateInspectionViewModel();
     }
 
     private void PointerMovedHandler(object? sender, PointerEventArgs args)
