@@ -31,7 +31,6 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     public static List<Analysis.Analysis> AnalysisList { get;  } =
     [
         new PixelAnalysisChannel(),
-        new CirclePlot(),
         new RegionAnalysisStandardDeviationOfChannels(),
         new RegionAnalysisAverageOfChannels()
     ];
