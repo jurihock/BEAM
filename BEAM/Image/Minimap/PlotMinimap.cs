@@ -1,5 +1,3 @@
-using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using BEAM.Image.Minimap.MinimapAlgorithms;
@@ -16,14 +14,30 @@ namespace BEAM.Image.Minimap;
 
 /// <summary>
 /// The minimap for a corresponding sequence. It creates an overview over it by calculating specific values based on an algorithm for each line.
-/// Must be supplied with a concrete algorithm which is used for calculations.
+/// Has an algorithm which is used for concrete value calculation. Displays its result as a scottplot bar chart.
 /// </summary>
 public class PlotMinimap : Minimap
 {
+    
+    /// <summary>
+    /// The number of pixels the axis limit is offset from the first/last bar.
+    /// </summary>
     private const int ScrollBarOffset = 100;
     
+    /// <summary>
+    /// Every x's line value will be calculated and displayed in the plot.
+    /// </summary>
     public int CompactionFactor = 100;
 
+    /// <summary>
+    /// If a sequence has less row, use ReplacementCompaction instead.
+    /// </summary>
+    private const int MinSequenceHeightForFullCompaction = 2000;
+
+    /// <summary>
+    /// The compaction used if sequences are smaller than MinSequenceHeightForFullCompaction.
+    /// </summary>
+    private const int ReplacementCompaction = 5;
     /// <summary>
     /// The underlying algorithm used to calculate values for pixel lines. These values will later be displayed in the plot.
     /// </summary>
@@ -37,29 +51,6 @@ public class PlotMinimap : Minimap
         MinimapAlgorithm = SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObject();
     }
     
-    public PlotMinimap(ISequence sequence, MinimapGeneratedEventHandler eventCallbackFunc) : base(sequence, eventCallbackFunc)
-    {
-        CancellationTokenSource = new CancellationTokenSource();
-        MinimapAlgorithm = SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObject();
-        Task.Run(GenerateMinimap, CancellationTokenSource.Token);
-    }
-    
-    
-    /// <summary>
-    /// Initializes the minimap creation process. It creates a separately running Task which generates the values.
-    /// Therefor, the minimap is not instantly ready after this method call ends hence a method which is used as a callback must be supplied.
-    /// </summary>
-    /// <param name="sequence">The sequence based on which the minimap is based.</param>
-    /// <param name="eventCallbackFunc">A function which is invoked once the minimap has finished generating its values.
-    /// This is being done through the <see cref="Minimap"/>'s MinimapGeneratedEventHandler event.</param>
-    /// <param name="algorithm">The concrete algorithm used for value calculation.</param>
-    /// <exception cref="ArgumentNullException">If any of the parameters is null.</exception>
-    public PlotMinimap(ISequence sequence, MinimapGeneratedEventHandler eventCallbackFunc, IMinimapAlgorithm algorithm) : base(sequence, eventCallbackFunc)
-    {
-        ArgumentNullException.ThrowIfNull(algorithm);
-        MinimapAlgorithm = algorithm;
-        Task.Run(GenerateMinimap, CancellationTokenSource.Token);
-    }
 
     public override void StartGeneration(ISequence sequence, MinimapGeneratedEventHandler eventCallbackFunc)
     {
@@ -76,7 +67,7 @@ public class PlotMinimap : Minimap
 
     public override ViewModelBase GetViewModel()
     {
-        if (_viewModel is null)
+        if (!IsGenerated || _viewModel is null)
         {
             return new MinimapPlotViewModel(_plot);
         } 
@@ -100,14 +91,21 @@ public class PlotMinimap : Minimap
             OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Failure));
             return;
         }
-        
+
+        int actualCompactionUsed = CompactionFactor;
         _plot = new Plot();
         Bar[] bars = new Bar[Sequence.Shape.Height / CompactionFactor];
         double maxValue = 0;
         double minValue = 0;
-        for (int i = 0; i < Sequence.Shape.Height / CompactionFactor; i++)
+        
+        if(MinSequenceHeightForFullCompaction < Sequence.Shape.Height)
         {
-            double calculation = MinimapAlgorithm.GetLineValue(i * CompactionFactor);
+            actualCompactionUsed = ReplacementCompaction;
+        }
+        
+        for (int i = 0; i < Sequence.Shape.Height / actualCompactionUsed; i++)
+        {
+            double calculation = MinimapAlgorithm.GetLineValue(i * actualCompactionUsed);
             if(calculation > maxValue)
             {
                 maxValue = calculation;
@@ -117,7 +115,7 @@ public class PlotMinimap : Minimap
             }
             Bar bar = new Bar
             {
-                Position = i * CompactionFactor,
+                Position = i * actualCompactionUsed,
                 Value =  calculation,
                 Orientation = Orientation.Horizontal
             };
@@ -126,7 +124,6 @@ public class PlotMinimap : Minimap
         }
         _plot.Axes.InvertY();
         _plot.Add.Bars(bars);
-        //TODO: Offset for scrollbar. Remove it or bind it dynamically or leave it static?
         _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence.Shape.Height + ScrollBarOffset);
 
         await Dispatcher.UIThread.InvokeAsync(() =>

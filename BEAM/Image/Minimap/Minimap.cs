@@ -11,6 +11,9 @@ namespace BEAM.Image.Minimap;
 /// <summary>
 /// An abstraction of a minimap which is based on a sequence. It displays
 /// information about a sequence's contents through visual means to the user.
+/// It must therefore specify its view itself.
+///
+/// Beware: Any concrete class implementing this class must provide a parameterless constructor due to reflection invocation.
 /// </summary>
 public abstract class Minimap
 
@@ -32,39 +35,13 @@ public abstract class Minimap
     public delegate void MinimapGeneratedEventHandler(object sender, MinimapGeneratedEventArgs e);
     protected event MinimapGeneratedEventHandler? MinimapGenerated;
     
-    
-    
     /// <summary>
-    /// Initializes the minimap creation process. It is intended to create a separately running Task which generates the values.
-    /// Therefor, the minimap is not instantly ready after this method call ends hence a method which is used as a callback must be supplied.
+    /// A parameterless constructor. Required by every concrete class which inherits from this class for reflection invocation.
     /// </summary>
-    /// <param name="sequence">The sequence based on which the minimap is based.</param>
-    /// <param name="eventCallbackFunc">A function which is invoked once the minimap has finished generating its values.
-    /// This is being done through the <see cref="MinimapGeneratedEventHandler"/> event.</param>
-    /// <exception cref="ArgumentNullException">If any of the parameters is null.</exception>
-    public Minimap(ISequence sequence, MinimapGeneratedEventHandler eventCallbackFunc )
-    {
-        ArgumentNullException.ThrowIfNull(sequence);
-        ArgumentNullException.ThrowIfNull(eventCallbackFunc);
-        this.Sequence = sequence;
-        CancellationTokenSource = new();
-        MinimapGenerated += eventCallbackFunc;
-    }
-
     public Minimap()
     {
         CancellationTokenSource = new();
     }
-
-    public void SetParameters(ISequence sequence, MinimapGeneratedEventHandler eventCallbackFunc)
-    {
-        ArgumentNullException.ThrowIfNull(sequence);
-        ArgumentNullException.ThrowIfNull(eventCallbackFunc);
-        this.Sequence = sequence;
-        MinimapGenerated += eventCallbackFunc;
-    }
-
-    
 
     /// <summary>
     /// Interrupts the generation process as well as all additional threads running.
@@ -83,7 +60,6 @@ public abstract class Minimap
     /// They also specify the caller.</param>
     protected  void OnMinimapGenerated(MinimapGeneratedEventArgs e)
     {
-        // TODO: e.Minimap vs this
         if (MinimapGenerated is null) return;
         MinimapGenerated.Invoke(e.Minimap, e);
     }
