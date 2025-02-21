@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Specialized;
-using System.IO.Pipelines;
 using BEAM.Models.Log;
 using BEAM.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -9,13 +7,17 @@ using LogEntry = BEAM.Models.Log.LogEntry;
 
 namespace BEAM.ViewModels;
 
+/// <summary>
+/// View model controlling the status bar.
+/// Event counts are controlled in here.
+/// </summary>
 public partial class StatusBarViewModel : ViewModelBase
 {
     private static StatusBarViewModel? _instance;
     
-    private long _infoCounter = 0;
-    private long _warningCounter = 0;
-    private long _errorCounter = 0;
+    private long _infoCounter;
+    private long _warningCounter;
+    private long _errorCounter;
 
     [ObservableProperty] public partial bool InfoVisible { get; set; } = false;
     [ObservableProperty] public partial bool WarningVisible { get; set; } = false;

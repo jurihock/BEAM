@@ -12,12 +12,14 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
     private ISequence? _sequence;
     private CancellationToken? _ctx;
     private SequenceRenderer? _renderer;
+    private long _pixelsPerLine = 1;
 
 
     public bool AnalyzeSequence(ISequence sequence, CancellationToken ctx)
     {
         _sequence = sequence;
         _ctx = ctx;
+        _pixelsPerLine = sequence.Shape.Width;
         
         return true;
     }
@@ -33,7 +35,7 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
                 sum += channelValue;
             }
         }
-        return sum;
+        return sum/_pixelsPerLine;
     }
 
     public double GetLineValue(long line)

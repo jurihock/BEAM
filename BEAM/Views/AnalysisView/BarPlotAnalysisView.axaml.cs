@@ -1,19 +1,7 @@
-﻿using System;
+﻿using System.Globalization;
 using System.Linq;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using Avalonia.Media;
-using BEAM.Analysis;
-using BEAM.Datatypes;
-using BEAM.ImageSequence;
-using BEAM.ViewModels.AnalysisViewModels;
-using ExCSS;
 using ScottPlot;
-using ScottPlot.Avalonia;
 using ScottPlot.AxisRules;
-using ScottPlot.Plottables;
-using Rectangle = BEAM.Datatypes.Rectangle;
 
 namespace BEAM.Views.AnalysisView;
 
@@ -64,7 +52,7 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
         {
             foreach (var bar in barPlot.Bars)
             {
-                bar.Label = bar.Value.ToString();
+                bar.Label = bar.Value.ToString(CultureInfo.InvariantCulture);
             }
         
             barPlot.ValueLabelStyle.Bold = true;

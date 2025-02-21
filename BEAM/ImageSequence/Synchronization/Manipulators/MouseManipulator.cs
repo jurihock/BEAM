@@ -1,12 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Avalonia.Input;
-using Avalonia.Interactivity;
-using NP.Ava.Visuals;
-using ScottPlot;
 using ScottPlot.Avalonia;
-using Svg;
 
 namespace BEAM.ImageSequence.Synchronization.Manipulators;
 
@@ -18,9 +12,9 @@ public class MouseManipulator : Manipulator
     /// <summary>
     /// The list of the plots, which will share mouse events.
     /// </summary>
-    private List<AvaPlot> _avaPlots = [];
+    private readonly List<AvaPlot> _avaPlots = [];
 
-    private bool _isSynchronizing = false;
+    private bool _isSynchronizing;
     
     /// <summary>
     /// Synchronizes a plot with all the other plots, which are already registered.
@@ -36,7 +30,7 @@ public class MouseManipulator : Manipulator
         
         _avaPlots.Add(avaPlot);
         
-        avaPlot.PointerEntered += (s, e) =>
+        avaPlot.PointerEntered += (_, e) =>
         {
             if (!_isSynchronizing)
             {
@@ -56,7 +50,7 @@ public class MouseManipulator : Manipulator
             }
         };
 
-        avaPlot.PointerExited += (s, e) =>
+        avaPlot.PointerExited += (_, e) =>
         {
             if (!_isSynchronizing)
             {
@@ -76,7 +70,7 @@ public class MouseManipulator : Manipulator
             }
         };
 
-        avaPlot.PointerMoved += (s, e) =>
+        avaPlot.PointerMoved += (_, e) =>
         {
             if (!_isSynchronizing)
             {
@@ -96,14 +90,14 @@ public class MouseManipulator : Manipulator
             }
         };
 
-        avaPlot.PointerPressed += (s, e) =>
+        avaPlot.PointerPressed += (_, e) =>
         {
             if (!_isSynchronizing)
             {
                 return;
             }
             
-            // check for right click -> only opens context push menu (scottplot intern)
+            // check for right click -> only opens context push menu (Scottplot internal)
             if (e.GetCurrentPoint(avaPlot).Properties.IsRightButtonPressed)
             {
                 return;
@@ -122,7 +116,7 @@ public class MouseManipulator : Manipulator
             }
         };
 
-        avaPlot.PointerReleased += (s, e) =>
+        avaPlot.PointerReleased += (_, e) =>
         {
             if (!_isSynchronizing)
             {
@@ -142,7 +136,7 @@ public class MouseManipulator : Manipulator
             }
         };
 
-        avaPlot.PointerWheelChanged += (s, e) =>
+        avaPlot.PointerWheelChanged += (_, _) =>
         {
             if (!_isSynchronizing)
             {
@@ -158,7 +152,7 @@ public class MouseManipulator : Manipulator
             }   
         };
 
-        avaPlot.Tapped += (s, e) =>
+        avaPlot.Tapped += (_, e) =>
         {
             if (!_isSynchronizing)
             {
@@ -178,7 +172,7 @@ public class MouseManipulator : Manipulator
             }
         };
 
-        avaPlot.DoubleTapped += (s, e) =>
+        avaPlot.DoubleTapped += (_, e) =>
         {
             if (!_isSynchronizing)
             {
@@ -198,7 +192,7 @@ public class MouseManipulator : Manipulator
             }
         };
 
-        avaPlot.Holding += (s, e) =>
+        avaPlot.Holding += (_, e) =>
         {
             if (!_isSynchronizing)
             {

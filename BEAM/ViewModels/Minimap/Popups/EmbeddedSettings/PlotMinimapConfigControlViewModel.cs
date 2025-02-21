@@ -19,7 +19,7 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
     private readonly PlotMinimap _plotMinimap;
     [ObservableProperty] public partial int LineCompaction { get; set; }
     
-    [ObservableProperty] public partial IMinimapAlgorithm SelectedAlgorithm { get; set; }
+    [ObservableProperty] public partial IMinimapAlgorithm? SelectedAlgorithm { get; set; }
     [ObservableProperty] public partial ObservableCollection<IMinimapAlgorithm> Algorithms { get; set; } = new ObservableCollection<IMinimapAlgorithm>();
     [ObservableProperty] public partial ObservableCollection<Control> AlgorithmSubSettings { get; set; } = new ObservableCollection<Control>();
     
@@ -30,7 +30,6 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
         _plotMinimap.CompactionFactor = LineCompaction;
         _currentConfigControl.Save();
         _plotMinimap.MinimapAlgorithm = SelectedAlgorithm;
-        //PlotAlgorithmSettingsUtilityHelper.SetDefaultAlgorithm(SelectedAlgorithm);
         SettingsUtilityHelper<IMinimapAlgorithm>.SetDefaultObject(SelectedAlgorithm);
     }
     
@@ -40,7 +39,7 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
         _plotMinimap = plotMinimap;
         LineCompaction = plotMinimap.CompactionFactor;
         SelectedAlgorithm = _plotMinimap.MinimapAlgorithm;
-        if (!SettingsUtilityHelper<IMinimapAlgorithm>.ExistAny() /*PlotAlgorithmSettingsUtilityHelper.ExistAny()*/)
+        if (!SettingsUtilityHelper<IMinimapAlgorithm>.ExistAny() )
         {
             TextBlock textBlock = new TextBlock(){Text= "There are no Algorithms to choose from"};
             AlgorithmSubSettings.Add(textBlock);
@@ -55,7 +54,6 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
 
         try
         {
-            //SelectedAlgorithm = PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithm();
             SelectedAlgorithm = SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObject();
         }
         catch (InvalidStateException ex)

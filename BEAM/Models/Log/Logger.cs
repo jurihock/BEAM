@@ -5,27 +5,36 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BEAM.Models.Log;
 
-public partial class Logger : ObservableObject, ILog
+/// <summary>
+/// The logger.
+/// This Logger logs to a file by default. Other sinks can be added by observing the log entries.
+/// </summary>
+public class Logger : ObservableObject, ILog
 {
     private static Logger? _instance;
     
-    private string _pathToLogFile;
+    private readonly string _pathToLogFile;
     private LogLevel _logLevel;
     private LogEvent _logEvent;
 
-    private ObservableCollection<Models.Log.LogEntry> _LogEntries;
+    private readonly ObservableCollection<LogEntry> _logEntries;
 
     private Logger(string pathToLogFile)
     {
-        _LogEntries = [];
+        _logEntries = [];
         _pathToLogFile = pathToLogFile;
         if (!File.Exists(pathToLogFile))
         {
-            CreateNewLogFile(pathToLogFile);
+            _CreateNewLogFile(pathToLogFile);
         }
     }
 
-    public static Logger Init(string? pathToLogFile=null)
+    /// <summary>
+    /// Sets up the logger with a path to a log file.
+    /// </summary>
+    /// <param name="pathToLogFile">The path to the written log file</param>
+    /// <returns></returns>
+    public static Logger Init(string? pathToLogFile = null)
     {
         pathToLogFile ??= "log.txt";
 
@@ -33,38 +42,15 @@ public partial class Logger : ObservableObject, ILog
         return _instance;
     }
 
+    /// <summary>
+    /// Returns the singleton instance of the logger.
+    /// </summary>
+    /// <returns>The instance of the logger</returns>
+    /// <exception cref="NullReferenceException">When the Init method has not been called before</exception>
     public static Logger GetInstance()
     {
-        if (_instance is null) throw new Exception("Logger instance is null");
-        return _instance!;
-    }
-    
-    public void Error(LogEvent occuredEvent)
-    {
-        _logLevel = LogLevel.Error;
-        _logEvent = occuredEvent;
-        Write("ERROR! --> " + occuredEvent);
-    }
-
-    public void Warning(LogEvent occuredEvent)
-    {
-        _logLevel = LogLevel.Warning;
-        _logEvent = occuredEvent;
-        Write("Warning --> " + occuredEvent);
-    }
-
-    public void Debug(LogEvent occuredEvent)
-    {
-        _logLevel = LogLevel.Debug;
-        _logEvent = occuredEvent;
-        Write("Debug -->  " + occuredEvent);
-    }
-
-    public void Info(LogEvent occuredEvent)
-    {
-        _logLevel = LogLevel.Info;
-        _logEvent = occuredEvent;
-        Write("Info: " + occuredEvent);
+        if (_instance is null) throw new NullReferenceException("The logger has not been initialized yet");
+        return _instance;
     }
 
     public void Error(LogEvent occuredEvent, string logMessage)
@@ -101,31 +87,39 @@ public partial class Logger : ObservableObject, ILog
         _logEvent = LogEvent.BasicMessage;
         Write("Unspecified Log: " + logMessage);
     }
-    
-    private void CreateNewLogFile(string pathToLogFile)
+
+    private static void _CreateNewLogFile(string pathToLogFile)
     {
         using var fs = new FileStream(pathToLogFile, FileMode.CreateNew);
         using var w = new BinaryWriter(fs);
 
         w.Write("New log file created at: " + DateTime.Now + "\n");
     }
-    
+
     private void Write(string message)
     {
         using (var outputFile = new StreamWriter(_pathToLogFile, true))
         {
-            outputFile.WriteLine(DateTime.Now + " " +message);
+            outputFile.WriteLine(DateTime.Now + " " + message);
         }
-        _LogEntries.Add(new LogEntry(_logLevel, Enum.GetName(_logEvent)!, message));
+
+        _logEntries.Add(new LogEntry(_logLevel, Enum.GetName(_logEvent)!, message));
     }
-    
-    public void ClearStatusBar()
+
+    /// <summary>
+    /// Clears the log entries list.
+    /// </summary>
+    public void ClearEntries()
     {
-        _LogEntries.Clear();
+        _logEntries.Clear();
     }
-    
-    public ObservableCollection<Models.Log.LogEntry> GetLogEntries()
+
+    /// <summary>
+    /// Gets an observable reference to the log entry list.
+    /// </summary>
+    /// <returns>The log entries</returns>
+    public ObservableCollection<LogEntry> GetLogEntries()
     {
-        return _LogEntries;
+        return _logEntries;
     }
 }

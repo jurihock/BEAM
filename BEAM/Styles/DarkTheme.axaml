@@ -1,5 +1,6 @@
 <Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime">
     <Design.PreviewWith>
         <Border Padding="20">
             <!-- Add Controls for Previewer Here -->
@@ -11,21 +12,32 @@
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Dark">
-                    <Color x:Key="TitleBarBg">Black</Color>
-                    <Color x:Key="TitleBarFg">White</Color>
+                    <Color x:Key="BackgroundColorDark">#1E202F</Color>
+                    
+                    <!-- <Color x:Key="StatusBarBg">#1E202F</Color> -->
+                    <!-- <Color x:Key="StatusBarFg">Aqua</Color> -->
+                    
+                    <!-- <Color x:Key="TitleBarBg">#1E202F</Color> -->
+                    <!-- <Color x:Key="TitleBarFg">White</Color> -->
 
-                    <Color x:Key="WindowBg">Black</Color>
-                    <Color x:Key="WindowFg">White</Color>
+                    <Color x:Key="WindowBg">#252739</Color>
+                    <!-- <Color x:Key="WindowFg">White</Color> -->
+
+                    <Color x:Key="MinimapAccent">#ff6f00</Color>
+                    
+                    <Color x:Key="Separator">#36394B</Color>
 
                     <Color x:Key="Accent">CornflowerBlue</Color>
                     <Color x:Key="AccentForeground">White</Color>
 
                     <Color x:Key="DockSeparatorColor">CornflowerBlue </Color>
 
+                    <Color x:Key="FontColorScottPlot">White</Color>
+                    
                     <Color x:Key="DockHeaderBg">Transparent</Color>
                     <Color x:Key="SelectedDockHeaderBg">CornflowerBlue</Color>
                     <Color x:Key="DockHeaderFg">White</Color>
-
+                    <system:String x:Key="StrokeCss">*{stroke: #ffffff;}</system:String>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>

@@ -36,5 +36,6 @@ public interface IMinimapAlgorithm
     public IMinimapAlgorithm Clone();
     
     public void SetRenderer(SequenceRenderer renderer);
+    
 
 }

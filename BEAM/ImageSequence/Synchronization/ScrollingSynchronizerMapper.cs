@@ -13,7 +13,7 @@ public static class ScrollingSynchronizerMapper
     /// <summary>
     /// Used to signal, whether the ScrollBars are supposed to be synchronized.
     /// </summary>
-    private static bool _isSynchronizing = false;
+    private static bool _isSynchronizing;
     
     private static readonly List<SequenceView> Sequences = new List<SequenceView>();
     private static readonly Dictionary<AvaPlot, SequenceView> ViewMapping = new Dictionary<AvaPlot, SequenceView>();

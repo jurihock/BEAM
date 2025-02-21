@@ -8,13 +8,16 @@ using BEAM.ViewModels;
 
 namespace BEAM.Views;
 
+/// <summary>
+/// Code behind the main window.
+/// </summary>
 public partial class MainWindow : Window
 {
     public MainWindow()
     {
         InitializeComponent();
 
-        DataContextChanged += (sender, args) =>
+        DataContextChanged += (_, _) =>
         {
             if (!IsInitialized) return;
             var viewmodel = (MainWindowViewModel)DataContext!;

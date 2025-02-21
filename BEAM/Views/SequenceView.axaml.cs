@@ -8,7 +8,6 @@ using Avalonia.Input;
 using Avalonia.Styling;
 using BEAM.CustomActions;
 using BEAM.Datatypes;
-using BEAM.Image.Displayer.ScottPlot;
 using BEAM.IMage.Displayer.Scottplot;
 using BEAM.ImageSequence.Synchronization;
 using BEAM.Models.Log;
@@ -40,9 +39,9 @@ public partial class SequenceView : UserControl
         set => SetValue(DynamicContentProperty, value);
     }
     private BitmapPlottable _plottable;
-    private HorizontalLine _horizontalLine = new();
-    private VerticalLine _verticalLine = new();
     private Annotation Anno;
+    private readonly HorizontalLine _horizontalLine = new();
+    private readonly VerticalLine _verticalLine = new();
 
     public object? DynamicContentViewModel
     {
@@ -72,13 +71,13 @@ public partial class SequenceView : UserControl
         if(vm.MinimapVms.Any())
         {
             if(vm.MinimapVms.First() is not SizeAdjustableViewModelBase mapViewModel) return;
-            mapViewModel.NotifySizeChanged(this, new ViewModels.Utility.SizeChangedEventArgs(e.NewSize.Width * 0.2, e.NewSize.Height));
+            mapViewModel.NotifySizeChanged(this, new ViewModels.Utility.SizeChangedEventArgs(e.NewSize.Width * MinimapWidthScale, e.NewSize.Height));
         }
     }
 
     private void PreparePlot()
     {
-        _ApplyDarkMode();
+        _ApplyTheme();
         _BuildCustomRightClickMenu();
 
         // TODO: CustomMouseActions
@@ -123,15 +122,6 @@ public partial class SequenceView : UserControl
 
         PlotControllerManager.AddPlotToAllControllers(AvaPlot1);
 
-        /**AvaPlot1.Plot.Axes.InvertY();
-        AvaPlot1.Plot.Axes.SquareUnits();
-
-        var plottable = new BitmapPlottable(sequence);
-        AvaPlot1.Plot.Add.Plottable(plottable);
-
-        plottable.SequenceImage.RequestRefreshPlotEvent += (sender, args) => AvaPlot1.Refresh();
-
-        AvaPlot1.Refresh();**/
         AvaPlot1.Plot.Axes.InvertY();
         AvaPlot1.Plot.Axes.SquareUnits();
         // Reset the axis to the inital value of the scrollbar.
@@ -190,22 +180,39 @@ public partial class SequenceView : UserControl
         };
     }
 
-    private void _ApplyDarkMode()
+    private void _ApplyTheme()
     {
-        if (Application.Current!.ActualThemeVariant != ThemeVariant.Dark) return;
+        var currentTheme = Application.Current!.ActualThemeVariant;
 
         // change figure colors
-        AvaPlot1.Plot.FigureBackground.Color = Color.FromHex("#181818");
-        AvaPlot1.Plot.DataBackground.Color = Color.FromHex("#1f1f1f");
+        Application.Current.TryGetResource("WindowBg", currentTheme, out var background);
+        var backgroundColor = (Avalonia.Media.Color)background;
+        AvaPlot1.Plot.FigureBackground.Color = new Color(backgroundColor.R, backgroundColor.G, backgroundColor.B);
+
+        Application.Current.TryGetResource("BackgroundColorDark", currentTheme, out var backgroundDark);
+        var backgroundColorDark = (Avalonia.Media.Color)backgroundDark;
+        AvaPlot1.Plot.DataBackground.Color =
+            new Color(backgroundColorDark.R, backgroundColorDark.G, backgroundColorDark.B);
 
         // change axis and grid colors
-        AvaPlot1.Plot.Axes.Color(Color.FromHex("#d7d7d7"));
-        AvaPlot1.Plot.Grid.MajorLineColor = Color.FromHex("#404040");
+        Application.Current.TryGetResource("FontColorScottPlot", currentTheme, out var fontColorScottPlot);
+        var fontColor = (Avalonia.Media.Color)fontColorScottPlot;
+        AvaPlot1.Plot.Axes.Color(new Color(fontColor.R, fontColor.G, fontColor.B));
+
+
+        // AvaPlot1.Plot.Grid.MajorLineColor = Colors.Aqua;
 
         // change legend colors
-        AvaPlot1.Plot.Legend.BackgroundColor = Color.FromHex("#404040");
-        AvaPlot1.Plot.Legend.FontColor = Color.FromHex("#d7d7d7");
-        AvaPlot1.Plot.Legend.OutlineColor = Color.FromHex("#d7d7d7");
+        // AvaPlot1.Plot.Legend.BackgroundColor = Colors.Aqua;
+        // AvaPlot1.Plot.Legend.FontColor = Colors.Aqua;
+        // AvaPlot1.Plot.Legend.OutlineColor = Colors.Aqua;
+
+        // AvaPlot1.Plot.Grid.MajorLineColor = Color.FromHex("#404040");
+        //
+        // // change legend colors
+        // AvaPlot1.Plot.Legend.BackgroundColor = Color.FromHex("#404040");
+        // AvaPlot1.Plot.Legend.FontColor = new Color(fontColor.R, fontColor.G, fontColor.B);
+        // AvaPlot1.Plot.Legend.OutlineColor = Color.FromHex("#d7d7d7");
     }
 
     private void _BuildCustomRightClickMenu()
@@ -220,24 +227,24 @@ public partial class SequenceView : UserControl
         var menu = AvaPlot1.Menu!;
         menu.Clear();
         menu.Add("Inspect Pixel",
-            control => _OpenInspectionViewModel());
+            _ => _OpenInspectionViewModel());
         menu.AddSeparator();
         menu.Add("Sync to this",
-            control =>
+            _ =>
             {
                 ScrollingSynchronizerMapper.ActivateSynchronization();
                 ScrollingSynchronizerMapper.Synchronize(this);
                 PlotControllerManager.ActivateSynchronization();
             });
         menu.AddSeparator();
-        menu.Add("Configure colors", control => _OpenColorsPopup());
-        menu.Add("Affine Transformation", control => _OpenTransformPopup());
+        menu.Add("Configure colors", _ => _OpenColorsPopup());
+        menu.Add("Affine Transformation", _ => _OpenTransformPopup());
         menu.AddSeparator();
-        menu.Add("Cut Sequence", control => _OpenCutPopup());
+        menu.Add("Cut Sequence", _ => _OpenCutPopup());
         menu.Add("Export sequence",
-            control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+            _ => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
         menu.Add("Change Minimap settings for this sequence",
-            control => vm.OpenMinimapSettingsCommand.Execute(null));
+            _ => vm.OpenMinimapSettingsCommand.Execute(null));
     }
     
     
@@ -248,44 +255,40 @@ public partial class SequenceView : UserControl
         var x = point.Position.X;
         var y = point.Position.Y;
     
-        var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
+        var coordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
     
         var vm = (SequenceViewModel?)DataContext;
         if (vm is null) return;
-        vm.releasedPointerPosition = CoordInPlot;
+        vm.ReleasedPointerPosition = coordInPlot;
         vm.UpdateInspectionViewModel();
     }
 
-    private void _SetPlottable(BitmapPlottable plottable)
+    private void _SetPlottable(SequencePlottable plottable)
     {
          _plottable = plottable;
         if (_plottable is not null) AvaPlot1.Plot.Remove(_plottable);
-        
-        AvaPlot1.Plot.Add.Plottable(_plottable);
-        _plottable.SequenceImage.RequestRefreshPlotEvent += (sender, args) => AvaPlot1.Refresh();
+        if(_plottable is null) return;
+        AvaPlot1.Plot.Add.Plottable(_plottable!);
+        _plottable!.SequenceImage.RequestRefreshPlotEvent += (_, _) => AvaPlot1.Refresh();
         AvaPlot1.Refresh();
     }
 
     private void PointerPressedHandler(object sender, PointerPressedEventArgs args)
     {
-        
+
         var point = args.GetCurrentPoint(sender as Control);
         var x = point.Position.X;
         var y = point.Position.Y;
-    
-        var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
-    
-        var vm = (SequenceViewModel?)DataContext;
-        vm.pressedPointerPosition = CoordInPlot;
-    }
-    
 
+        var coordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
+
+        var vm = (SequenceViewModel?)DataContext;
+        if (vm is null) return;
+        vm.PressedPointerPosition = coordInPlot;
+    }
 
     private void PointerMovedHandler(object? sender, PointerEventArgs args)
     {
-        var point = args.GetCurrentPoint(sender as Control);
-        var x = point.Position.X;
-        var y = point.Position.Y;
 
         var pointInPlot = AvaPlot1.Plot.GetCoordinates(
             (float)args.GetPosition(AvaPlot1).X * AvaPlot1.DisplayScale,
@@ -312,20 +315,21 @@ public partial class SequenceView : UserControl
         AvaPlot1.Plot.Add.Plottable(checkerBoard);
 
         // sets the plottable
-        _SetPlottable(new BitmapPlottable(vm.Sequence, vm.CurrentRenderer));
+        _SetPlottable(new SequencePlottable(vm.Sequence, vm.CurrentRenderer));
 
         // Changed the sequence view -> full rerender
-        vm.RenderersUpdated += (_, args) =>
+        vm.RenderersUpdated += (_, _) =>
         {
-            _plottable!.SequenceImage.Reset();
+            if (_plottable is null) return;
+            _plottable.SequenceImage.Reset();
             _plottable!.ChangeRenderer(vm.CurrentRenderer);
             AvaPlot1.Plot.MoveToTop(Anno);
             AvaPlot1.Refresh();
         };
 
-        vm.CutSequence += (_, args) =>
+        vm.CutSequence += (_, _) =>
         {
-            _SetPlottable(new BitmapPlottable(vm.Sequence, vm.CurrentRenderer));
+            _SetPlottable(new SequencePlottable(vm.Sequence, vm.CurrentRenderer));
 
             var oldLimits = AvaPlot1.Plot.Axes.GetLimits();
             var ySize = oldLimits.Bottom - oldLimits.Top;
@@ -351,18 +355,18 @@ public partial class SequenceView : UserControl
         {
             return;
         }
-        
+
         // If outside the sequence just show the position and no values.
         if (x >= vm.Sequence.Shape.Width || y >= vm.Sequence.Shape.Height || x < 0 || y < 0)
         {
             Anno.Text = $"(x: {x}, y: {y}, (r: , g: , b: ))";
             return;
         }
-        
+
         var bytes = vm.Renderers[vm.RendererSelection].RenderPixel(vm.Sequence, x, y);
         Anno.Text = $"(x: {x}, y: {y}, (r: {bytes[3]}, g: {bytes[1]}, b: {bytes[2]})";
     }
-    
+
     private void _OpenTransformPopup()
     {
         AffineTransformationPopup popup = new((SequenceViewModel)DataContext!);
@@ -388,7 +392,7 @@ public partial class SequenceView : UserControl
 
     private void _OpenInspectionViewModel()
     {
-        SequenceViewModel sequenceViewModel = DataContext as SequenceViewModel;
+        if (DataContext is not SequenceViewModel sequenceViewModel) return;
         sequenceViewModel.OpenInspectionView();
     }
 
@@ -418,7 +422,7 @@ public partial class SequenceView : UserControl
         AvaPlot1.Refresh();
         UpdateScrollBar();
     }
-    
+
     /// <summary>
     /// This method updates the value of the Scrollbar, setting it to the value corresponding to the displayed position in the sequence.
     /// </summary>
@@ -446,7 +450,7 @@ public partial class SequenceView : UserControl
             {
                 return;
             }
-            mapViewModel.NotifySizeChanged(this, new ViewModels.Utility.SizeChangedEventArgs(this.GetSize().X * 0.2, this.GetSize().Y));
+            mapViewModel.NotifySizeChanged(this, new ViewModels.Utility.SizeChangedEventArgs(this.GetSize().X * MinimapWidthScale, this.GetSize().Y));
         }
     }
 }

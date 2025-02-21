@@ -1,14 +1,13 @@
 ﻿using System;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
-using BEAM.ViewModels;
 using ScottPlot;
 
 namespace BEAM.Analysis;
 
 /// <summary>
 /// Class implementing methods for calculating the standard deviation of the Channel values of all pixels in a region.
-/// Returns a plot depicting the standard deviation of the pixels in the region for each channels.
+/// Returns a plot depicting the standard deviation of the pixels in the region for each channel.
 /// </summary>
 public class RegionAnalysisStandardDeviationOfChannels : Analysis
 {
