@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Avalonia.Media;
 using BEAM.Datatypes.Color;
 using BEAM.Exceptions;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BEAM.Controls;
-
 
 /// <summary>
 /// Represents a Channel for the ArgMaxRenderer, containing information for the display of the channel:
@@ -32,16 +32,22 @@ public class ChannelToHSV : ObservableObject
         set => SetProperty(ref _isUsedForArgMax, value);
     }
 
-    public Avalonia.Media.Color AvaColor
+    private Color? _color;
+
+    public Color AvaColor
     {
-        // Calculate the Avalonia Color from the HSVValue
         get
         {
-            var bgr = hcl[HSVValue];
-            return Avalonia.Media.Color.FromRgb(bgr.R, bgr.G, bgr.B);
+            // calculate the default color
+            if (_color == null)
+            {
+                var bgr = hcl[HSVValue];
+                _color = Color.FromRgb(bgr.R, bgr.G, bgr.B);
+            }
+
+            return _color.Value;
         }
-        // Update the HSVValue
-        set => HSVValue = value.ToHsv().V;
+        set { _color = value; }
     }
 
     public ChannelToHSV(double hsvValue, bool isUsed = true)

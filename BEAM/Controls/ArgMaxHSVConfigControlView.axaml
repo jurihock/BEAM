@@ -30,7 +30,7 @@
         <!-- Rectangle to display the color -->
         <StackPanel Orientation="Horizontal">
             <TextBlock VerticalAlignment="Center" Margin="10 0">Color:</TextBlock>
-            <Rectangle Width="25" Height="25" Fill="{Binding ColorBrush}" Margin="0,10,0,0"/>
+            <ColorPicker Color="{Binding SelectedChannel.AvaColor, Mode=TwoWay}" />
         </StackPanel>
     </StackPanel>
 </UserControl>

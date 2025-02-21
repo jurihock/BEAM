@@ -17,7 +17,7 @@ namespace BEAM.Controls;
 public partial class ArgMaxHSVConfigControlViewModel : ViewModelBase, ISaveControl
 {
     private readonly ArgMaxRendererColorHSV _renderer;
-    
+
     public decimal Min { get; set; } = 0;
 
     public ObservableCollection<ChannelToHSV> ObsChannels
@@ -39,31 +39,35 @@ public partial class ArgMaxHSVConfigControlViewModel : ViewModelBase, ISaveContr
             OnPropertyChanged(nameof(ColorBrush));
         }
     }
-    
-    public ChannelToHSV SelectedChannel =>ObsChannels[SelectedChannelIndex];
+
+    public ChannelToHSV SelectedChannel => ObsChannels[SelectedChannelIndex];
 
     /// <summary>
     /// Displays the color associated with a channel
     /// </summary>
-    public IBrush ColorBrush => new SolidColorBrush(SelectedChannel.AvaColor);
-    
+    public IBrush ColorBrush
+    {
+        get => new SolidColorBrush(SelectedChannel.AvaColor);
+    }
+
     public ArgMaxHSVConfigControlViewModel(ArgMaxRendererColorHSV renderer, SequenceViewModel model)
     {
         ArgumentNullException.ThrowIfNull(renderer);
         ArgumentNullException.ThrowIfNull(model);
-        
+
         _renderer = renderer ?? throw new ArgumentNullException(nameof(renderer));
-        
+
         if (_renderer.getChannelHsvMap().AmountChannels == 0)
         {
-            ObsChannels = new ObservableCollection<ChannelToHSV>(new ChannelHSVMap(model.Sequence.Shape.Channels).ToArray());
+            ObsChannels =
+                new ObservableCollection<ChannelToHSV>(new ChannelHSVMap(model.Sequence.Shape.Channels).ToArray());
         }
         else
         {
             ObsChannels = new ObservableCollection<ChannelToHSV>(renderer.getChannelHsvMap().ToArray());
         }
     }
-    
+
     public void Save()
     {
         var map = new ChannelHSVMap(ObsChannels.ToArray());
@@ -73,6 +77,7 @@ public partial class ArgMaxHSVConfigControlViewModel : ViewModelBase, ISaveContr
             //throw new ChannelException("Channel amount used for ArgMax is zero!");
             return;
         }
+
         _renderer.UpdateChannelHSVMap(ObsChannels.ToArray());
     }
 }

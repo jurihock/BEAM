@@ -12,6 +12,7 @@
 
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Simple/Simple.xaml" />
 
         <!-- UniDock base styles -->
         <StyleInclude Source="avares://NP.Ava.Visuals/Themes/TextStyles.axaml" />
