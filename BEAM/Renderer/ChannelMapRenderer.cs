@@ -1,8 +1,6 @@
 ﻿using System.Runtime.Intrinsics;
-using System.Threading;
 using BEAM.Datatypes.Color;
 using BEAM.Exceptions;
-using BEAM.Image;
 using BEAM.ImageSequence;
 using CommunityToolkit.Mvvm.ComponentModel;
 

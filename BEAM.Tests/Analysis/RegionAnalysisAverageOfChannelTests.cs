@@ -1,9 +1,11 @@
 using System.Runtime.CompilerServices;
+using BEAM.Analysis;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
-using BEAM.Analysis;
 using ScottPlot.Plottables;
 using Xunit.Abstractions;
+
+namespace BEAM.Tests.Analysis;
 
 public class RegionAnalysisAverageOfChannelsTests
 {
@@ -27,7 +29,7 @@ public class RegionAnalysisAverageOfChannelsTests
         Assert.NotNull(result);
 
         var bars = result.GetPlottables<BarPlot>().FirstOrDefault();
-        Assert.NotNull(result);
+        Assert.NotNull(bars);
         Assert.Equal(0, bars.Bars[0].Value);
         Assert.Equal(0, bars.Bars[1].Value);
         Assert.Equal(0, bars.Bars[2].Value);

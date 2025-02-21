@@ -1,6 +1,3 @@
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using BEAM.Image.Minimap.MinimapAlgorithms;
 using BEAM.ViewModels.Minimap.Popups.EmbeddedSettings;
 using BEAM.Views.Utility;

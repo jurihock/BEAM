@@ -50,14 +50,14 @@ public class ArgMaxHSVConfigControlViewModel : ViewModelBase, ISaveControl
 
         _renderer = renderer ?? throw new ArgumentNullException(nameof(renderer));
 
-        if (_renderer.getChannelHsvMap().AmountChannels == 0)
+        if (_renderer.GetChannelHsvMap().AmountChannels == 0)
         {
             ObsChannels =
                 new ObservableCollection<ChannelToHSV>(new ChannelHSVMap(model.Sequence.Shape.Channels).ToArray());
         }
         else
         {
-            ObsChannels = new ObservableCollection<ChannelToHSV>(renderer.getChannelHsvMap().ToArray());
+            ObsChannels = new ObservableCollection<ChannelToHSV>(renderer.GetChannelHsvMap().ToArray());
         }
     }
 

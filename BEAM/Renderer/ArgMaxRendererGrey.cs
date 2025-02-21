@@ -1,5 +1,4 @@
 ﻿using BEAM.Datatypes.Color;
-using BEAM.Image;
 
 namespace BEAM.Renderer;
 

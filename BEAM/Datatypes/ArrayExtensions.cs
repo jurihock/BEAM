@@ -7,9 +7,9 @@ public static class ArrayExtensions
     /// <summary>
     /// Given an Array of channel intensities, return the first index with the highest intensity.
     /// </summary>
-    /// <param name="values"></param>
-    /// <returns></returns>
-    /// <exception cref="ChannelException"></exception>
+    /// <param name="values">The channel values whose max is meant to be found.</param>
+    /// <returns>The index of the channel with the highest value.</returns>
+    /// <exception cref="ArgumentException">If the channels array is empty.</exception>
     public static int ArgMax(this double[] values)
     {
         if (values.Length <= 0)

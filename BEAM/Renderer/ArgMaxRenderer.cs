@@ -1,10 +1,6 @@
-﻿using System;
-using System.Threading;
-using BEAM.Datatypes;
+﻿using BEAM.Datatypes;
 using BEAM.Datatypes.Color;
-using BEAM.Exceptions;
 using BEAM.ImageSequence;
-using Timer = BEAM.Profiling.Timer;
 
 namespace BEAM.Renderer;
 

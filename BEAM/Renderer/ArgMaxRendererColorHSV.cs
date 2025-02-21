@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using BEAM.Controls;
 using BEAM.Datatypes;
 using BEAM.Datatypes.Color;
-using BEAM.Exceptions;
-using BEAM.Image;
 using BEAM.ImageSequence;
 
 namespace BEAM.Renderer;
@@ -65,8 +61,8 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
 
         var argMaxChannel = channels
             .Select((value, index) => new { Value = value, Index = index }) // Create an anonymous type with value and index
-            .Where(x => _channelHsvMap.IsChannelUsed(x.Index)) // Filter based on ChannelUsed
-            .Select(x => x.Value) // Select only the values
+            .Where(t => _channelHsvMap.IsChannelUsed(t.Index)) // Filter based on ChannelUsed
+            .Select(t => t.Value) // Select only the values
             .ToArray() // Convert to array
             .ArgMax(); // Call ArgMax on the filtered array
 
@@ -101,7 +97,7 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
     /// initializing the ChannelHSVMap
     /// </summary>
     /// <param name="hsvMap"></param>
-    /// <exception cref="ChannelException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     public void UpdateChannelHSVMap(ChannelHSVMap hsvMap)
     {
         if (_channelHsvMap.AmountChannels != hsvMap.AmountChannels)
@@ -118,8 +114,8 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
     /// If the amount of channels originally was zero, the update takes place,
     /// initializing the ChannelHSVMap
     /// </summary>
-    /// <param name="channels"></param>
-    /// <exception cref="ChannelException"></exception>
+    /// <param name="channels">The channels to update the map from channels to hsv color.</param>
+    /// <exception cref="ArgumentException">If the numver of channels does not match</exception>
     public void UpdateChannelHSVMap(ChannelToHSV[] channels)
     {
         if (_channelHsvMap.AmountChannels != 0 && channels.Length != _channelHsvMap.AmountChannels)
@@ -131,7 +127,7 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
         _channelHsvMap = new ChannelHSVMap(channels);
     }
 
-    public ChannelHSVMap getChannelHsvMap()
+    public ChannelHSVMap GetChannelHsvMap()
     {
         return _channelHsvMap.Clone();
     }

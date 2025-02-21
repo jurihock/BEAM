@@ -58,18 +58,17 @@ public class RenderedPixelAllThresholdAlgorithm : IMinimapAlgorithm
     private double AnalyzeLine(long line)
     {
         double sum = 0.0f;
-        for (long j = 0; j < _sequence!.Shape.Width; j++)
+        
+        var renderedData = _renderer!.RenderPixels(_sequence!, _fetchMask!, line);
+        foreach (var entry in renderedData)
         {
             _ctx!.Value.ThrowIfCancellationRequested();
-            var renderedData = _renderer!.RenderPixels(_sequence, _fetchMask!, line);
-            foreach (var entry in renderedData)
+            if (entry.EntrywiseAllGreaterEqual(_thresholds))
             {
-                if (entry.EntrywiseAllGreaterEqual(_thresholds))
-                {
-                    sum += 1;
-                }
+                sum += 1;
             }
         }
+        
         return sum;
     }
     

@@ -106,6 +106,7 @@ public class PlotMinimap : Minimap
             actualCompactionUsed = (int) Math.Ceiling(Sequence.Shape.Height / (double) RelHeightCompactionFactor);
         }
         Bar[] bars = new Bar[Sequence.Shape.Height / actualCompactionUsed];
+
         try
         {
             for (int i = 0; i < Sequence.Shape.Height / actualCompactionUsed; i++)
@@ -120,6 +121,7 @@ public class PlotMinimap : Minimap
                 {
                     minValue = calculation;
                 }
+
                 Bar bar = new Bar
                 {
                     Position = i * actualCompactionUsed,
@@ -131,6 +133,7 @@ public class PlotMinimap : Minimap
         }
         catch (OperationCanceledException e)
         {
+            //End routine, Generation process was canceled
             return;
         }
         _plot.Axes.InvertY();
