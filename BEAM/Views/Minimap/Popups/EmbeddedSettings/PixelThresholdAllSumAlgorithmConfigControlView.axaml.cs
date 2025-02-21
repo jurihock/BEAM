@@ -1,24 +1,24 @@
+﻿
 using BEAM.Image.Minimap.MinimapAlgorithms;
 using BEAM.ViewModels.Minimap.Popups.EmbeddedSettings;
 using BEAM.Views.Utility;
 
 namespace BEAM.Views.Minimap.Popups.EmbeddedSettings;
 
-
 /// <summary>
 /// Control view for configuring the pixel
-/// threshold algorithm that sums up all pixels who have a channel whose value is larger than a baseline.
+/// threshold algorithm that sums up all pixels whose channel values are all larger than or equal to a baseline.
 /// </summary>
-public partial class PixelThresholdAnySumAlgorithmConfigControlView : SaveUserControl
+public partial class PixelThresholdAllSumAlgorithmConfigControlView : SaveUserControl
 {
     /// <summary>
     /// Initializes a new instance of the configuration view with the specified algorithm.
     /// </summary>
     /// <param name="algorithm">The algorithm instance to be configured.</param>
-    public PixelThresholdAnySumAlgorithmConfigControlView(RenderedPixelAnyThresholdAlgorithm algorithm)
+    public PixelThresholdAllSumAlgorithmConfigControlView(RenderedPixelAllThresholdAlgorithm algorithm)
     {
         InitializeComponent();
-        DataContext = new PixelThresholdAnySumAlgorithmConfigControlViewModel(algorithm);
+        DataContext = new PixelThresholdAllSumAlgorithmConfigControlViewModel(algorithm);
     }
 
     /// <summary>
@@ -26,6 +26,6 @@ public partial class PixelThresholdAnySumAlgorithmConfigControlView : SaveUserCo
     /// </summary>
     public override void Save()
     {
-        (DataContext as PixelThresholdAnySumAlgorithmConfigControlViewModel)!.Save();
+        (DataContext as PixelThresholdAllSumAlgorithmConfigControlViewModel)!.Save();
     }
 }

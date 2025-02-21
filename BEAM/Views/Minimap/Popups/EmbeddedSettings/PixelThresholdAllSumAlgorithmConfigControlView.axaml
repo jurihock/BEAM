@@ -3,9 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="BEAM.Views.Minimap.Popups.EmbeddedSettings.PixelThresholdSumAlgorithmConfigControlView"
+             x:Class="BEAM.Views.Minimap.Popups.EmbeddedSettings.PixelThresholdAllSumAlgorithmConfigControlView"
              xmlns:controls="clr-namespace:BEAM.ViewModels.Minimap.Popups.EmbeddedSettings"
-             x:DataType="controls:PixelThresholdSumAlgorithmConfigControlViewModel">
+             x:DataType="controls:PixelThresholdAllSumAlgorithmConfigControlViewModel">
     <StackPanel>
         <Grid RowDefinitions="Auto,2, Auto,2, Auto,2, Auto,2, Auto" ColumnDefinitions="Auto, 2, Auto, 2">
             <TextBlock Grid.Row="0" VerticalAlignment="Center" Grid.Column="0">Minimum red value: </TextBlock>

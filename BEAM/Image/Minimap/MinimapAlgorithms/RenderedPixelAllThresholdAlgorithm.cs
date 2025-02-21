@@ -70,7 +70,7 @@ public class RenderedPixelAllThresholdAlgorithm : IMinimapAlgorithm
 
     public SaveUserControl GetSettingsPopupControl()
     {
-        return new PixelThresholdSumAlgorithmConfigControlView(this);
+        return new PixelThresholdAllSumAlgorithmConfigControlView(this);
     }
     
 
