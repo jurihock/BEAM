@@ -40,6 +40,9 @@ public struct BGR(byte b, byte g, byte r)
   }
   public BGR(byte[] input) : this(input[0], input[1], input[2])
   {
-    
+    if (input.Length != 3)
+    {
+      throw new ArgumentException("Input array must have a length of 3.");
+    }
   }
 }

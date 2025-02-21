@@ -38,7 +38,7 @@ public class ChannelHSVMapTests
         map.SetColor(0, newColor);
 
         Assert.True(Math.Abs(0.627 - map.GetColorHSV(0).H) < 0.001);
-        Assert.True(Math.Abs(1.0 - map.GetColorHSV(0).V)< 0.001);
+        Assert.True(Math.Abs(1.0 - map.GetColorHSV(0).V) < 0.001);
         Assert.True(Math.Abs(1.0 - map.GetColorBGR(0).ToHsv().S) < 0.001);
     }
 
