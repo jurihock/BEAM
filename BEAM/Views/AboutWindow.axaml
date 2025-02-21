@@ -10,6 +10,7 @@
         Width="750"
         Height="500"
         SizeToContent="WidthAndHeight"
+        CanResize="False"
         Background="{DynamicResource WindowBg}">
 
     <Design.DataContext>
@@ -30,7 +31,7 @@
         <TextBlock FontWeight="Bold" Margin="0 10 0 0">Licenses of external software</TextBlock>
         <Separator Background="{DynamicResource Separator}" Margin="10 10 10 5"></Separator>
         <ScrollViewer Margin="0 0 0 10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
-                      Width="750" Height="300"
+                      Width="750" Height="348"
                       Padding="0">
             <ItemsControl ItemsSource="{Binding Licenses}">
                 <ItemsControl.ItemTemplate>
@@ -47,6 +48,8 @@
             </ItemsControl>
         </ScrollViewer>
 
+        <Separator Background="{DynamicResource Separator}"></Separator>
+        
         <Grid RowDefinitions="*, Auto, *">
             <Button Grid.Row="1" Background="Transparent" Click="OpenRepoWebpage">
                 <StackPanel Orientation="Horizontal">
