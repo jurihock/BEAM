@@ -313,31 +313,25 @@ public class SequenceImage : IDisposable
         Parallel.For(0, height, j =>
             {
                 //for(var j = 0; j < height; j++) {
-                try
+                var line = startLine + j * (endLine - startLine) / height;
+
+                // rendering each pixel using a renderer
+                var data = Renderer.RenderPixels(_sequence, xs, line);
+
+                var span = bitmap.GetPixelSpan();
+                var pixels = MemoryMarshal.Cast<byte, BGRA>(span);
+
+                // putting the data inside the bitmap
+                for (var i = 0; i < width; i++)
                 {
-                    // calculating the actual line currently processed
-                    var line = startLine + j * (endLine - startLine) / height;
-
-                    // rendering each pixel using a renderer
-                    var data = Renderer.RenderPixels(_sequence, xs, line);
-
-                    var span = bitmap.GetPixelSpan();
-                    var pixels = MemoryMarshal.Cast<byte, BGRA>(span);
-
-                    // putting the data inside the bitmap
-                    for (var i = 0; i < width; i++)
+                    pixels[j * width + i] = new BGRA()
                     {
-                        pixels[j * width + i] = new BGRA()
-                        { // TODO: Implement Copy method for colors
-                            B = data[i].B,
-                            G = data[i].G,
-                            R = data[i].R,
-                            A = 255,
-                        };
-                    }
-                }
-                catch (OperationCanceledException)
-                {
+                        // TODO: Implement Copy method for colors
+                        B = data[i].B,
+                        G = data[i].G,
+                        R = data[i].R,
+                        A = 255,
+                    };
                 }
             }
         );
