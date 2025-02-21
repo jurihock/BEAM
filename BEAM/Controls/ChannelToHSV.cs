@@ -41,7 +41,11 @@ public class ChannelToHSV : ObservableObject
 
             return _color.Value;
         }
-        set { _color = value; }
+        set
+        {
+            _color = value;
+            HSVValue = _color.Value.ToHsv().H;
+        }
     }
 
     public ChannelToHSV(double hsvValue, bool isUsed = true)
