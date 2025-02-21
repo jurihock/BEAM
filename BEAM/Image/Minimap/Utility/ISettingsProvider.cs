@@ -26,14 +26,14 @@ public interface ISettingsProvider<TResult>
     /// Checks whether there are any possible default objects.
     /// This is useful for checking whether the provider has found any manageable objects.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A boolean representing whether there are any possible default objects.</returns>
     public bool ExistAny();
     
     /// <summary>
     /// Sets the object which is currently being marked as the default of all possible default objects.
     /// Returns null only if there are no possible default objects, meaning that <see cref="GetDefaultObjects"/> returns an empty list.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The default object or null of none exists.</returns>
     public TResult? GetDefaultObject();
 
     /// <summary>

@@ -44,7 +44,7 @@ public partial class SequenceView : UserControl
         set => SetValue(DynamicContentProperty, value);
     }
     // created later
-    private SequencePlottable _plottable = null!;
+    private SequencePlottable? _plottable = null!;
     private Annotation _anno;
     private readonly HorizontalLine _horizontalLine;
     private readonly VerticalLine _verticalLine;
@@ -235,6 +235,7 @@ public partial class SequenceView : UserControl
         menu.AddSeparator();
         menu.Add("Cut Sequence", control => _OpenCutPopup());
         menu.Add("Export sequence", control => _OpenExportPopup());
+        menu.Add("Change Minimap settings for this sequence", _ => vm.OpenMinimapSettings());
     }
 
 

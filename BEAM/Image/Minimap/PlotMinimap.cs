@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using BEAM.Image.Minimap.MinimapAlgorithms;
@@ -65,7 +66,7 @@ public class PlotMinimap : Minimap
         MinimapAlgorithm.SetRenderer(renderer);
     }
 
-    public override ViewModelBase GetViewModel()
+    public override ViewModelBase GetDisplayableViewModel()
     {
         if (!IsGenerated || _viewModel is null)
         {
@@ -95,15 +96,16 @@ public class PlotMinimap : Minimap
 
         int actualCompactionUsed = CompactionFactor;
         _plot = new Plot();
-        Bar[] bars = new Bar[Sequence.Shape.Height / CompactionFactor];
+      
         double maxValue = 0;
         double minValue = 0;
         
-        if(MinSequenceHeightForFullCompaction < Sequence.Shape.Height)
+        if(MinSequenceHeightForFullCompaction > Sequence.Shape.Height)
         {
-            actualCompactionUsed = ReplacementCompaction;
+            
+            actualCompactionUsed = (int) Math.Ceiling(Sequence.Shape.Height / (double) MinSequenceHeightForFullCompaction);
         }
-        
+        Bar[] bars = new Bar[Sequence.Shape.Height / actualCompactionUsed];
         for (int i = 0; i < Sequence.Shape.Height / actualCompactionUsed; i++)
         {
             double calculation = MinimapAlgorithm.GetLineValue(i * actualCompactionUsed);
@@ -147,7 +149,7 @@ public class PlotMinimap : Minimap
 
     public override Minimap Clone()
     {
-        return new PlotMinimap() {CompactionFactor = this.CompactionFactor, MinimapAlgorithm = this.MinimapAlgorithm};
+        return new PlotMinimap() {CompactionFactor = CompactionFactor, MinimapAlgorithm = MinimapAlgorithm};
     }
 
     public override string ToString()

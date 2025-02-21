@@ -153,7 +153,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
    
     
     [RelayCommand]
-    public async Task OpenMinimapSettings()
+    public void OpenMinimapSettings()
     {
         DefaultMinimapPopupView minimapPopup = new(this);
         var v = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
@@ -163,7 +163,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             return;
         }
 
-        await minimapPopup.ShowDialog(v.MainWindow);
+        minimapPopup.ShowDialog(v.MainWindow);
     }
     
     
@@ -174,7 +174,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             // Clear the existing minimap controls
             MinimapVms.Clear();
             
-            var newMinimapVm = e.Minimap.GetViewModel();
+            var newMinimapVm = e.Minimap.GetDisplayableViewModel();
             MinimapVms.Add(newMinimapVm);
             MinimapHasChanged(this, EventArgs.Empty);
         });
