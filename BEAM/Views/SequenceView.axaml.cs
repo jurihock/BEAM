@@ -153,7 +153,7 @@ public partial class SequenceView : UserControl
 
     private void _ApplyTheme()
     {
-        ThemeVariant currentTheme = Application.Current!.ActualThemeVariant;
+        var currentTheme = Application.Current!.ActualThemeVariant;
 
         // change figure colors
         Application.Current.TryGetResource("WindowBg", currentTheme, out var background);
