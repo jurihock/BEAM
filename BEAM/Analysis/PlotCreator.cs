@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using Avalonia;
+using Avalonia.Styling;
 using ScottPlot;
 using ScottPlot.AxisRules;
 
@@ -21,10 +22,10 @@ public static class PlotCreator
     {
         Plot plot = new Plot();
 
-        var currentTheme = Application.Current!.ActualThemeVariant;
+        var currentTheme = Application.Current?.ActualThemeVariant ?? ThemeVariant.Default;
 
         // change figure colors
-        Application.Current.TryGetResource("WindowBg", currentTheme, out var background);
+        Application.Current!.TryGetResource("WindowBg", currentTheme, out var background);
         var backgroundColor = (Avalonia.Media.Color)background!;
         plot.FigureBackground.Color = new Color(backgroundColor.R, backgroundColor.G, backgroundColor.B);
 
