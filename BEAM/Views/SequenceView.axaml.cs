@@ -32,11 +32,11 @@ public partial class SequenceView : UserControl
     // Hosts the external UserControl
     public static readonly StyledProperty<Control?> DynamicContentProperty =
         AvaloniaProperty.Register<SequenceView, Control?>(nameof(DynamicContent));
-    
+
     // Optional: Bind to the external UserControl's ViewModel
     public static readonly StyledProperty<object?> DynamicContentViewModelProperty =
         AvaloniaProperty.Register<SequenceView, object?>(nameof(DynamicContentViewModel));
-    
+
     public Control? DynamicContent
     {
         get => GetValue(DynamicContentProperty);
@@ -53,7 +53,7 @@ public partial class SequenceView : UserControl
         get => GetValue(DynamicContentViewModelProperty);
         set => SetValue(DynamicContentViewModelProperty, value);
     }
-    
+
     public SequenceView()
     {
         InitializeComponent();
@@ -70,8 +70,8 @@ public partial class SequenceView : UserControl
         {
             return;
         }
-        
-        
+
+
         if(vm.MinimapVms.Any())
         {
             if(vm.MinimapVms.First() is not SizeAdjustableViewModelBase mapViewModel) return;
@@ -92,7 +92,7 @@ public partial class SequenceView : UserControl
 
         // Add ability to select area with right mouse button pressed
         AvaPlot1.UserInputProcessor.UserActionResponses.Add(new CustomAreaSelection(StandardMouseButtons.Right));
-        
+
         Bar1.Scroll += (s, e) =>
         {
             var vm = (DataContext as SequenceViewModel)!;
@@ -233,23 +233,20 @@ public partial class SequenceView : UserControl
         menu.Add("Configure colors", _ => _OpenColorsPopup());
         menu.Add("Affine Transformation", _ => _OpenTransformPopup());
         menu.AddSeparator();
-        menu.Add("Cut Sequence", _ => _OpenCutPopup());
-        menu.Add("Export sequence",
-            _ => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
-        menu.Add("Change Minimap settings for this sequence",
-            _ => vm.OpenMinimapSettingsCommand.Execute(null));
+        menu.Add("Cut Sequence", control => _OpenCutPopup());
+        menu.Add("Export sequence", control => _OpenExportPopup());
     }
-    
-    
+
+
     private void PointerReleasedHandler(object? sender, PointerReleasedEventArgs args)
     {
-        
+
         var point = args.GetCurrentPoint(sender as Control);
         var x = point.Position.X;
         var y = point.Position.Y;
-    
+
         var coordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
-    
+
         var vm = (SequenceViewModel?)DataContext;
         if (vm is null) return;
         vm.ReleasedPointerPosition = coordInPlot;
@@ -286,7 +283,7 @@ public partial class SequenceView : UserControl
         var pointInPlot = AvaPlot1.Plot.GetCoordinates(
             (float)args.GetPosition(AvaPlot1).X * AvaPlot1.DisplayScale,
             (float)args.GetPosition(AvaPlot1).Y * AvaPlot1.DisplayScale);
-        
+
         _horizontalLine.Position = pointInPlot.Y;
         _verticalLine.Position = pointInPlot.X;
         AvaPlot1.Refresh();
@@ -382,6 +379,14 @@ public partial class SequenceView : UserControl
         popup.ShowDialog(v!.MainWindow!);
     }
 
+    private void _OpenExportPopup()
+    {
+        ExportSequenceView popup = new((SequenceViewModel)DataContext!);
+        var v = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+
+        popup.ShowDialog(v!.MainWindow!);
+    }
+
     private void _OpenInspectionViewModel()
     {
         if (DataContext is not SequenceViewModel sequenceViewModel) return;
@@ -424,8 +429,8 @@ public partial class SequenceView : UserControl
         var val = ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / vm.Sequence.Shape.Height) * 100;
         Bar1.Value = val <= 0.0 ? 0.0 : double.Min(val, 100.0);
     }
-    
-    
+
+
 
     private void Layoutable_OnLayoutUpdated(object? sender, EventArgs e)
     {
@@ -434,9 +439,9 @@ public partial class SequenceView : UserControl
         {
             return;
         }
-        
+
         if(vm.MinimapVms.Count > 0)
-        {   
+        {
             var mapViewModel = (vm.MinimapVms.First() as SizeAdjustableViewModelBase);
             if (mapViewModel is null)
             {
