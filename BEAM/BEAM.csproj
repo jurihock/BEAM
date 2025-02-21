@@ -13,6 +13,8 @@
         <ProductVersion>1.0.0.0</ProductVersion>
         <PackageLicenseUrl>https://github.com/beamsoftware/BEAM/blob/main/LICENSE</PackageLicenseUrl>
         <Description>BEAM is an open-source software which allows the fluent display of super-long picutures, with comfort and ease!</Description>
+
+        <ApplicationIcon>Assets/icon.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
