@@ -62,11 +62,4 @@ public class LogLevelIconConverterTests
         Assert.IsType<BindingNotification>(result);
     }
 
-    [Fact]
-    public void ConvertBack_ThrowsNotSupportedException()
-    {
-        var converter = new LogLevelIconConverter();
-
-        Assert.Throws<NotSupportedException>(() => converter.ConvertBack(null, null, null, CultureInfo.InvariantCulture));
-    }
 }

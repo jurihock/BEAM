@@ -10,7 +10,7 @@ using System.Globalization;
 /// </summary>
 public class LengthToMaxConverter : IValueConverter
 {
-    public object Convert(object? value, Type? targetType, object? parameter, CultureInfo culture)
+    public object Convert(object? value, Type? targetType, object? parameter, CultureInfo? culture)
     {
         if (value is int length)
         {

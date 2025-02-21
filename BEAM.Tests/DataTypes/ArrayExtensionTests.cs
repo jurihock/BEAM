@@ -44,7 +44,7 @@ public class ArrayExtensionsTests
 
         Assert.Equal(1, result);
     }
-    
+    [Fact]
     public void ArgMax_ReturnsCorrectIndex_WhenPositiveInfinityValues()
     {
         var values = new double[] { double.PositiveInfinity, 3.0, -2.0 };

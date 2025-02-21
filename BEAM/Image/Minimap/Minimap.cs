@@ -23,10 +23,11 @@ public abstract class Minimap
     /// </summary>
     protected ISequence? Sequence;
     protected bool IsGenerated { get; set; }
+
     /// <summary>
     /// Cancellation Token for the generation process. Any subclass should use this Token for its Threads
     /// </summary>
-    protected CancellationTokenSource CancellationTokenSource { get; private set; }
+    protected CancellationTokenSource CancellationTokenSource { get; private set; } = new();
     
     /// <summary>
     /// A function blueprint for the callback function which is called concurrently/in parallel
@@ -34,14 +35,6 @@ public abstract class Minimap
     /// </summary>
     public delegate void MinimapGeneratedEventHandler(object sender, MinimapGeneratedEventArgs e);
     protected event MinimapGeneratedEventHandler? MinimapGenerated;
-    
-    /// <summary>
-    /// A parameterless constructor. Required by every concrete class which inherits from this class for reflection invocation.
-    /// </summary>
-    public Minimap()
-    {
-        CancellationTokenSource = new();
-    }
 
     /// <summary>
     /// Interrupts the generation process as well as all additional threads running.

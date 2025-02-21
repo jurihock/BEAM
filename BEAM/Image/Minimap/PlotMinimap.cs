@@ -4,11 +4,13 @@ using Avalonia.Threading;
 using BEAM.Image.Minimap.MinimapAlgorithms;
 using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
+using BEAM.Models.Log;
 using BEAM.Renderer;
 using BEAM.ViewModels;
 using BEAM.ViewModels.Minimap;
 using BEAM.Views.Minimap.Popups.EmbeddedSettings;
 using BEAM.Views.Utility;
+using NP.Utilities;
 using ScottPlot;
 
 namespace BEAM.Image.Minimap;
@@ -131,8 +133,11 @@ public class PlotMinimap : Minimap
                 bars[i] = bar;
             }
         }
+
         catch (OperationCanceledException e)
         {
+            Models.Log.Logger.GetInstance().Info(LogEvent.BasicMessage,$"Minimap Generation was canceled: {e.Source}");
+            ;
             //End routine, Generation process was canceled
             return;
         }

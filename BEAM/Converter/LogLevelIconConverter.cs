@@ -11,7 +11,7 @@ public class LogLevelIconConverter : IValueConverter
     /// <summary>
     /// Converts log level strings to corresponding icon paths.
     /// </summary>
-    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object Convert(object? value, Type? targetType, object? parameter, CultureInfo? culture)
     {
         if (value is not string currentLevel)
         {
@@ -28,7 +28,7 @@ public class LogLevelIconConverter : IValueConverter
         return img;
     }
 
-    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type? targetType, object? parameter, CultureInfo culture)
     {
         throw new NotSupportedException();
     }
