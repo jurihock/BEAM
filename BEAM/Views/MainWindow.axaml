@@ -26,7 +26,7 @@
         <NativeMenu>
             <NativeMenuItem Header="_File">
                 <NativeMenu>
-                    <NativeMenuItem Header="O_pen Files" Command="{Binding OpenSequenceCommand}" Gesture="CTRL+N" />
+                    <NativeMenuItem Header="O_pen Files" Command="{Binding OpenSequenceCommand}" />
                     <NativeMenuItem Header="_Open Folder"
                                     Command="{Binding OpenSequenceFromFolderCommand}">
                     </NativeMenuItem>
@@ -55,10 +55,6 @@
             </NativeMenuItem>
         </NativeMenu>
     </NativeMenu.Menu>
-    
-    <Window.KeyBindings>
-        <KeyBinding Gesture="CTRL+O" Command="{Binding OpenSequenceCommand}"></KeyBinding>
-    </Window.KeyBindings>
 
     <DockPanel LastChildFill="True" Margin="{Binding #Main.OffScreenMargin}">
 
