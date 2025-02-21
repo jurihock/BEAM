@@ -1,5 +1,3 @@
-// (c) Paul Stier, 2025
-
 using BEAM.Renderer;
 using CommunityToolkit.Mvvm.ComponentModel;
 

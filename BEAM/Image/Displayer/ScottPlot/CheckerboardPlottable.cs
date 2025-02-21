@@ -1,4 +1,3 @@
-// (c) Paul Stier, 2025
 using System.Collections.Generic;
 using ScottPlot;
 using SkiaSharp;

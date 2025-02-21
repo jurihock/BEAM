@@ -1,5 +1,3 @@
-// (c) Paul Stier, 2025
-
 namespace BEAM.Image;
 
 /// <summary>

@@ -1,5 +1,3 @@
-// (c) Paul Stier, 2025
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
