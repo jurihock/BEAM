@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using BEAM.ImageSequence.Synchronization.Manipulators;
+using ExCSS;
 using ScottPlot.Avalonia;
 
 namespace BEAM.ImageSequence.Synchronization;
@@ -12,7 +13,7 @@ namespace BEAM.ImageSequence.Synchronization;
 public class SyncedPlotController
 {
     /// <summary>
-    /// THe plots which are being synced.
+    /// The plots which are being synced.
     /// </summary>
     private List<AvaPlot> Plots { get; init; } = [];
     /// <summary>
@@ -103,6 +104,26 @@ public class SyncedPlotController
         return Manipulators.All(manipulator => manipulator.UnsyncPlot(plot));
     }
 
+    /// <summary>
+    /// Checks whether the given plot is already contained in the set of synchronized plots.
+    /// </summary>
+    /// <param name="plot">The plot which will be checked</param>
+    /// <returns>A boolean representing whether the plot is in the set of synchronized plots.</returns>
+    public bool Contains(AvaPlot plot)
+    {
+        return Plots.Contains(plot);
+    }
+    
+    /// <summary>
+    /// Checks whether the given manipulator is already contained in the set of synchronized plots.
+    /// </summary>
+    /// <param name="manipulator">The manipulator which will be checked</param>
+    /// <returns>A boolean representing whether the manipulator is in the set of manipulators.</returns>
+    public bool Contains(Manipulator manipulator)
+    {
+        return Manipulators.Contains(manipulator);
+    }
+    
     /// <summary>
     /// This method is used to activate the synchronization between all manipulators.
     /// </summary>
