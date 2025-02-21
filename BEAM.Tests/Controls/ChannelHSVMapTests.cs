@@ -27,6 +27,32 @@ public class ChannelHSVMapTests
 
         Assert.Equal(0.5, color.ToHsv().H);
     }
+    
+    [Fact]
+    public void GetColorBGR_ReturnsCorrectBGRColor_WhenChannelIsValid_WithBGRColor_Zero()
+    {
+        var channels = new ChannelToHSV[] { new ChannelToHSV(0) };
+        var map = new ChannelHSVMap(channels);
+
+        var color = map.GetColorBGR(0);
+
+        Assert.Equal(color.R, 255);
+        Assert.Equal(color.G, 0);
+        Assert.Equal(color.B, 0);
+    }
+    
+    [Fact]
+    public void GetColorBGR_ReturnsCorrectBGRColor_WhenChannelIsValid_WithBGRColor_Max()
+    {
+        var channels = new ChannelToHSV[] { new ChannelToHSV(1) };
+        var map = new ChannelHSVMap(channels);
+
+        var color = map.GetColorBGR(0);
+
+        Assert.Equal(255, color.R);
+        Assert.Equal(0, color.G);
+        Assert.Equal(0, color.B);
+    }
 
     [Fact]
     public void SetColor_SetsCorrectHSVValue_WhenCalledWithBGRColor()
@@ -41,6 +67,8 @@ public class ChannelHSVMapTests
         Assert.True(Math.Abs(1.0 - map.GetColorHSV(0).V) < 0.001);
         Assert.True(Math.Abs(1.0 - map.GetColorBGR(0).ToHsv().S) < 0.001);
     }
+    
+    
 
     [Fact]
     public void IsChannelUsed_ReturnsTrue_WhenChannelIsUsed()

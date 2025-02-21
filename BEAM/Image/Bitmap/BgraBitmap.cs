@@ -10,7 +10,7 @@ namespace BEAM.Image.Bitmap;
 /// A wrapper around <see cref="SKBitmap"/>, with the ability to modify the data of the bitmap by accessing it's memory layout.
 /// Used to access pixel data as <see cref="BGRA"/> objects
 /// </summary>
-public sealed partial class BgraBitmap : SKBitmap, IBitmap<BGRA>
+public sealed class BgraBitmap : SKBitmap, IBitmap<BGRA>
 {
     public ref BGRA this[int x, int y]
     {

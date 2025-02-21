@@ -14,6 +14,26 @@ public class BGRTests
         Assert.Equal(20, color.G);
         Assert.Equal(30, color.R);
     }
+    
+    [Fact]
+    public void Constructor_SetsCorrectValuesZero()
+    {
+        var color = new BGR(0, 0, 0);
+
+        Assert.Equal(0, color.B);
+        Assert.Equal(0, color.G);
+        Assert.Equal(0, color.R);
+    }
+    
+    [Fact]
+    public void Constructor_SetsCorrectValuesMax()
+    {
+        var color = new BGR(255, 255, 255);
+
+        Assert.Equal(255, color.B);
+        Assert.Equal(255, color.G);
+        Assert.Equal(255, color.R);
+    }
 
     [Fact]
     public void Indexer_Get_ReturnsCorrectValue()
@@ -24,7 +44,7 @@ public class BGRTests
         Assert.Equal(20, color[1]);
         Assert.Equal(30, color[2]);
     }
-
+    
     [Fact]
     public void Indexer_Set_SetsCorrectValue()
     {
