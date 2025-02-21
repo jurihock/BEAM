@@ -75,4 +75,9 @@ public static class ScrollingSynchronizerMapper
     {
         ViewMapping[plot].UpdateScrollBar();
     }
+
+    public static void RemoveSequence(SequenceView sequenceView)
+    {
+        Sequences.Remove(sequenceView);
+    }
 }
