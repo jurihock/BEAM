@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ScottPlot;
 using System.Collections.Specialized;
+using System.Threading.Tasks;
 using NP.Utilities;
 
 
@@ -25,7 +26,6 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     private SequenceViewModel _currentSequenceViewModel;
     private Analysis.Analysis _currentAnalysis;
     private (Coordinate2D pressed, Coordinate2D released) _pointerRectanglePosition;
-    private Plot PlaceholderPlot { get; set; }
     public ObservableCollection<SequenceViewModel> ExistingSequenceViewModels { get; private set;  } = new();
     
     public static List<Analysis.Analysis> AnalysisList { get;  } =
@@ -36,19 +36,26 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         new RegionAnalysisAverageOfChannels()
     ];
     
-    public InspectionViewModel(SequenceViewModel sequenceViewModel)
+    public InspectionViewModel(SequenceViewModel sequenceViewModel, DockingViewModel dock)
     {
         _currentAnalysis = AnalysisList[0];
         _currentSequenceViewModel = sequenceViewModel;
-        ExistingSequenceViewModels.Add(sequenceViewModel);
-        _currentSequenceViewModel.DockingVm.Items.CollectionChanged += DockingItemsChanged;
-        PlaceholderPlot = _CreatePlaceholderPlot();
+        dock.Items.CollectionChanged += DockingItemsChanged;
+
+        foreach (var item in dock.Items)
+        {
+            if (item is SequenceViewModel model)
+            {
+                ExistingSequenceViewModels.Add(model);
+            }
+        }
     }
     
 
     public string Name { get; } = "Inspection Window";
     public void OnClose()
     {
+        _currentSequenceViewModel.UnregisterInspectionViewModel(this);
     }
 
     /// <summary>
@@ -80,14 +87,20 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     /// </summary>
     /// <param name="index">The index of the new analysis mode</param>
     [RelayCommand]
-    public void ChangeAnalysis(int index)
+    public Task ChangeAnalysis(int index)
     {
-        if(ExistingSequenceViewModels.IsNullOrEmpty()) return;
+        if (ExistingSequenceViewModels.IsNullOrEmpty())
+        {
+            CurrentPlot = PlotCreator.CreatePlaceholderPlot();
+            return Task.FromResult(false);
+        }
+
         _currentAnalysis = AnalysisList[index];
         CurrentPlot = _currentAnalysis.Analyze(
             _pointerRectanglePosition.pressed,
             _pointerRectanglePosition.released,
             _currentSequenceViewModel.Sequence);
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -97,6 +110,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public void ChangeSequence(int index)
     {
+        if(index < 0 || index >= ExistingSequenceViewModels.Count) return;
         _currentSequenceViewModel.UnregisterInspectionViewModel(this);
         _currentSequenceViewModel = ExistingSequenceViewModels[index];
         _currentSequenceViewModel.RegisterInspectionViewModel(this);
@@ -119,6 +133,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
                 ExistingSequenceViewModels.Add(sequenceViewModel);
                 if(ExistingSequenceViewModels.Count == 1) SwitchToFirst();
             }
+            
         }
 
         if (e.OldItems is null) return;
@@ -133,31 +148,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     }
     
     
-    /// <summary>
-    /// This method will creat a placeholder plot that will be displayed when no sequence is selected.
-    /// </summary>
-    /// <returns></returns>
-    private Plot _CreatePlaceholderPlot()
-    {
-        Plot myPlot = new();
-        
-        Coordinates center = new(0, 0);
-        double radiusX = 1;
-        double radiusY = 5;
 
-        for (int i = 0; i < 5; i++)
-        {
-            float angle =(i * 20);
-            var el = myPlot.Add.Ellipse(center, radiusX, radiusY, angle);
-            el.LineWidth = 3;
-            el.LineColor = Colors.Blue.WithAlpha(0.1 + 0.2 * i);
-        }
-
-        myPlot.Layout.Frameless();
-        myPlot.Axes.Margins(0, 0);
-        myPlot.Title("No sequence selected");
-        return myPlot;
-    }
     
     /// <summary>
     /// This method will simply switch to the first sequence in the list of existing sequences.
@@ -166,10 +157,9 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         if (ExistingSequenceViewModels.Count == 0)
         {
-            CurrentPlot = PlaceholderPlot;
+            CurrentPlot = PlotCreator.CreatePlaceholderPlot();
             return;
         }
-
         _currentSequenceViewModel.UnregisterInspectionViewModel(this);
         _currentSequenceViewModel = ExistingSequenceViewModels[0];
         _currentSequenceViewModel.RegisterInspectionViewModel(this);
@@ -184,11 +174,20 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         KeepData = isChecked ?? false;
     }
 
+    public int CurrentSequenceIndex()
+    {
+        return ExistingSequenceViewModels.FindIdx(_currentSequenceViewModel);
+    }
+    
+    public int CurrentAnalysisIndex()
+    {
+        return AnalysisList.FindIdx(_currentAnalysis);
+    }
+
     public void Dispose()
     {
         if (CurrentPlot is null) return;
         CurrentPlot.Dispose();
-        PlaceholderPlot.Dispose();
         GC.SuppressFinalize(this);
     }
 }

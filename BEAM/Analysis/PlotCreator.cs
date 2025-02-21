@@ -71,4 +71,51 @@ public static class PlotCreator
 
         return plot;
     }
+    
+    /// <summary>
+    /// This method will creat a placeholder plot that will be displayed when no sequence is selected.
+    /// </summary>
+    /// <returns></returns>
+    public static Plot CreatePlaceholderPlot()
+    {
+        Plot plot = new();
+        
+        Coordinates center = new(0, 0);
+        double radiusX = 1;
+        double radiusY = 5;
+
+        for (int i = 0; i < 5; i++)
+        {
+            float angle =(i * 20);
+            var el = plot.Add.Ellipse(center, radiusX, radiusY, angle);
+            el.LineWidth = 3;
+            el.LineColor = Colors.Blue.WithAlpha(0.1 + 0.2 * i);
+        }
+        
+        // Set limit of X- and Y-Axis
+        plot.Axes.SetLimitsY(-5, 5);
+        plot.Axes.SetLimitsX(-5, 5);
+        
+        // Lock movement of the 
+        var limits = plot.Axes.GetLimits();
+        var lockedVerticalRule = new LockedVertical(plot.Axes.Left, limits.Bottom, limits.Top);
+        plot.Axes.Rules.Add(lockedVerticalRule);
+        
+        // Set X-Axis to have an autoscaling, integer tick step
+        var bottomTickGen = new ScottPlot.TickGenerators.NumericAutomatic
+        {
+            IntegerTicksOnly = true
+        };
+        plot.Axes.Bottom.TickGenerator = bottomTickGen;
+
+        // Define boundary, user can not move outside (data always visible)
+        // Prevents scrolling and panning too far out / away from data
+        var maximumBoundary = new MaximumBoundary(plot.Axes.Bottom, plot.Axes.Left, limits);
+        plot.Axes.Rules.Add(maximumBoundary);
+
+        plot.Layout.Frameless();
+        plot.Axes.Margins(0, 0);
+        plot.Title("No sequence selected");
+        return plot;
+    }
 }
