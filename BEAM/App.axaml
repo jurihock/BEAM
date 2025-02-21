@@ -13,7 +13,7 @@
     <Application.Styles>
         <FluentTheme />
         <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Simple/Simple.xaml" />
-
+        
         <!-- UniDock base styles -->
         <StyleInclude Source="avares://NP.Ava.Visuals/Themes/TextStyles.axaml" />
         <StyleInclude Source="avares://NP.Ava.Visuals/Themes/CustomWindowStyles.axaml" />
@@ -22,14 +22,15 @@
         <!-- Styling -->
         <Style Selector=":is(np|CustomWindow).PlainFloatingWindow">
             <Setter Property="Background" Value="{DynamicResource WindowBg}" />
-            <Setter Property="Foreground" Value="{DynamicResource WindowFg}" />
-            <Setter Property="HeaderBackground" Value="{DynamicResource TitleBarBg}" />
+            <Setter Property="HeaderBackground" Value="{DynamicResource BackgroundColorDark}" />
 
             <!--<Setter Property="SystemDecorations" Value="Full"></Setter>
             <Setter Property="HeaderTemplate"></Setter>-->
 
-            <Setter Property="BorderBrush" Value="{DynamicResource ButtonBackgroundDisabled}"></Setter>
+            <Setter Property="BorderBrush" Value="{DynamicResource Separator}"></Setter>
             <Setter Property="Title" Value="BEAM" />
+            <Setter Property="FontWeight" Value="Medium"></Setter>
+            <Setter Property="Foreground" Value="{DynamicResource FontColor}"></Setter>
             <Setter Property="HeaderHeight" Value="45"></Setter>
             <Setter Property="CustomHeaderIcon" Value="avares://BEAM/Assets/icon.ico"></Setter>
             <Setter Property="CustomHeaderIconHeight" Value="25"></Setter>

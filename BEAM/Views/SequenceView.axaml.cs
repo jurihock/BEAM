@@ -188,7 +188,7 @@ public partial class SequenceView : UserControl
             new Color(backgroundColorDark.R, backgroundColorDark.G, backgroundColorDark.B);
 
         // change axis and grid colors
-        Application.Current.TryGetResource("FontColorScottPlot", currentTheme, out var fontColorScottPlot);
+        Application.Current.TryGetResource("FontColor", currentTheme, out var fontColorScottPlot);
         var fontColor = (Avalonia.Media.Color)fontColorScottPlot!;
         AvaPlot1.Plot.Axes.Color(new Color(fontColor.R, fontColor.G, fontColor.B));
 
@@ -215,10 +215,12 @@ public partial class SequenceView : UserControl
         {
             return;
         }
-
+        
+        
 
         var menu = AvaPlot1.Menu!;
         menu.Clear();
+        
         menu.Add("Inspect Pixel",
             _ => _OpenInspectionViewModel());
         menu.AddSeparator();

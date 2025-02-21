@@ -36,7 +36,7 @@
 
                     <Color x:Key="DockSeparatorColor">CornflowerBlue </Color>
 
-                    <Color x:Key="FontColorScottPlot">White</Color>
+                    <Color x:Key="FontColor">White</Color>
                     
                     <Color x:Key="DockHeaderBg">Transparent</Color>
                     <Color x:Key="SelectedDockHeaderBg">CornflowerBlue</Color>
