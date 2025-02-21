@@ -1,4 +1,5 @@
-﻿using ScottPlot;
+﻿using Avalonia;
+using ScottPlot;
 using ScottPlot.Interactivity;
 using ScottPlot.Plottables;
 
@@ -37,9 +38,17 @@ public class CustomAreaSelection(MouseButton button) : IUserActionResponse
         // If the button is first pressed --> Add rectangle and fix first coordinate
         if (userAction is IMouseButtonAction { IsPressed: true } buttonAction && buttonAction.Button == MouseButton)
         {
+            var currentTheme = Application.Current!.ActualThemeVariant;
+            
+            Application.Current.TryGetResource("OverlayColor", currentTheme, out var overlayColor);
+            var colorAvalonia = (Avalonia.Media.Color)overlayColor;
+            var colorScottPlot = new Color(colorAvalonia.R, colorAvalonia.G, colorAvalonia.B);
+            
             _mouseIsDown = true;
             _selectionRectangle = plot.Add.Rectangle(0, 0, 0, 0);
-            //SelectionRectangle.FillStyle.Color = Colors.Red.WithAlpha(0.4); // Set default color: Red (otherwise random)
+            
+            _selectionRectangle.LineColor = colorScottPlot;
+            _selectionRectangle.FillStyle.Color = colorScottPlot.WithAlpha(0.4); // Set default color: Red (otherwise random)
             _selectionRectangle.IsVisible = true;
             plot.MoveToTop(_selectionRectangle);
             _mouseDownCoordinates = plot.GetCoordinates(buttonAction.Pixel.X, buttonAction.Pixel.Y);

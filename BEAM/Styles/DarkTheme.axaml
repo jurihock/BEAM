@@ -13,6 +13,8 @@
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Dark">
                     <Color x:Key="BackgroundColorDark">#1E202F</Color>
+                   
+                    <Color x:Key="OverlayColor">Magenta</Color>
                     
                     <!-- <Color x:Key="StatusBarBg">#1E202F</Color> -->
                     <!-- <Color x:Key="StatusBarFg">Aqua</Color> -->
