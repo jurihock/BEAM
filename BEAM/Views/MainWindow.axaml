@@ -26,7 +26,7 @@
         <NativeMenu>
             <NativeMenuItem Header="_File">
                 <NativeMenu>
-                    <NativeMenuItem Header="O_pen Files" Command="{Binding OpenSequenceCommand}" />
+                    <NativeMenuItem Header="O_pen Files" Command="{Binding OpenSequenceCommand}" Gesture="CTRL+N" />
                     <NativeMenuItem Header="_Open Folder"
                                     Command="{Binding OpenSequenceFromFolderCommand}">
                     </NativeMenuItem>
