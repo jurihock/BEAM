@@ -7,38 +7,46 @@ namespace BEAM.Datatypes.Color;
 /// Cass representing an 8-bit BGRA color value (with A being transparency).
 /// </summary>
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public struct BGRA
+public struct BGRA(BGR baseColor, byte a)
 {
-  public byte B;
-  public byte G;
-  public byte R;
-  public byte A;
+    public byte B = baseColor.B;
+    public byte G = baseColor.G;
+    public byte R = baseColor.R;
+    public byte A = a;
 
-  public byte this[int index]
-  {
-    readonly get
+    public byte this[int index]
     {
-      switch (index)
-      {
-        case 0: return B;
-        case 1: return G;
-        case 2: return R;
-        case 3: return A;
-      }
+        readonly get
+        {
+            switch (index)
+            {
+                case 0: return B;
+                case 1: return G;
+                case 2: return R;
+                case 3: return A;
+            }
 
-      throw new ArgumentOutOfRangeException(nameof(index));
-    }
-    set
-    {
-      switch (index)
-      {
-        case 0: B = value; return;
-        case 1: G = value; return;
-        case 2: R = value; return;
-        case 3: A = value; return;
-      }
+            throw new ArgumentOutOfRangeException(nameof(index));
+        }
+        set
+        {
+            switch (index)
+            {
+                case 0:
+                    B = value;
+                    return;
+                case 1:
+                    G = value;
+                    return;
+                case 2:
+                    R = value;
+                    return;
+                case 3:
+                    A = value;
+                    return;
+            }
 
-      throw new ArgumentOutOfRangeException(nameof(index));
+            throw new ArgumentOutOfRangeException(nameof(index));
+        }
     }
-  }
 }
