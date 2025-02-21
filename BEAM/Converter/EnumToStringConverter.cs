@@ -17,9 +17,9 @@ public class EnumToStringConverter : IValueConverter
     /// <param name="parameter">Optional parameter (not used).</param>
     /// <param name="culture">The culture to use in the converter (not used).</param>
     /// <returns>The string representation of the enum value.</returns>
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        return value?.ToString();
+        return value?.ToString() ?? throw new NullReferenceException();
     }
 
     /// <summary>
