@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using BEAM.Datatypes.Color;
 using BEAM.Exceptions;
@@ -10,27 +10,30 @@ using BEAM.Views.Utility;
 
 namespace BEAM.Image.Minimap.MinimapAlgorithms;
 
-/// <summary>
-/// An algorithm for <see cref="PlotMinimap"/>'s which counts the number of rendered pixels within a line which
-/// are greater or equal in value than a defined base pixel in every channel.
-/// </summary>
-public class RenderedPixelAllThresholdAlgorithm : IMinimapAlgorithm
+public class RenderedChannelThresholdAlgorithm : IMinimapAlgorithm
 {
-
-    public byte ThresholdRed { get; set; } = 25;
-    public byte ThresholdBlue { get; set; } = 25;
-    public byte ThresholdGreen { get; set; } = 25;
-    public byte ThresholdAlpha {get; set;} = 255 ;
+    public int Channel  {get; set;}
+    
+    public byte ChannelThreshold { get; set; } = 25;
     private ISequence? _sequence;
     private CancellationToken? _ctx;
     private SequenceRenderer? _renderer;
     private BGR _thresholds;
     public bool AnalyzeSequence(ISequence sequence, CancellationToken ctx)
     {
-        _thresholds = new BGR(ThresholdBlue, ThresholdGreen,  ThresholdRed);
+        byte[] data = new byte[] {0, 0, 0};
+        data[Channel] = ChannelThreshold;
+        _thresholds = new BGR(data);
         _sequence = sequence;
         _ctx = ctx;
         return true;
+    }
+
+    public RenderedChannelThresholdAlgorithm()
+    {
+        byte[] data = new byte[] {0, 0, 0};
+        data[Channel] = ChannelThreshold;
+        _thresholds = new BGR(data);
     }
 
 
@@ -64,23 +67,22 @@ public class RenderedPixelAllThresholdAlgorithm : IMinimapAlgorithm
 
     public string GetName()
     {
-        return "Pixel All Threshold Algorithm";
+        return "Channel Threshold Algorithm";
     }
 
     public SaveUserControl GetSettingsPopupControl()
     {
-        return new PixelThresholdAllSumAlgorithmConfigControlView(this);
+        return new RenderedChannelThresholdView(this);
     }
     
 
     public IMinimapAlgorithm Clone()
     {
-        return new RenderedPixelAllThresholdAlgorithm { _renderer = _renderer , ThresholdRed = ThresholdRed, ThresholdGreen = ThresholdGreen, ThresholdBlue = ThresholdBlue, ThresholdAlpha = ThresholdAlpha};
+        return new RenderedChannelThresholdAlgorithm { _renderer = _renderer , Channel = Channel, ChannelThreshold = ChannelThreshold};
     }
 
     public void SetRenderer(SequenceRenderer renderer)
     {
         _renderer = renderer;
     }
-    
 }

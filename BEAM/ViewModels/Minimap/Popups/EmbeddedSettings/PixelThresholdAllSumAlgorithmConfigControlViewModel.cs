@@ -49,4 +49,5 @@ public partial class PixelThresholdAllSumAlgorithmConfigControlViewModel : ViewM
         _algorithm.ThresholdBlue = SelectedBlueThreshold;
         _algorithm.ThresholdAlpha = SelectedAlphaThreshold;
     }
+    
 }

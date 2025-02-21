@@ -1,0 +1,21 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="BEAM.Views.Minimap.Popups.EmbeddedSettings.RenderedChannelThresholdView"
+             xmlns:controls="clr-namespace:BEAM.ViewModels.Minimap.Popups.EmbeddedSettings"
+             x:DataType="controls:RenderedChannelThresholdViewModel">
+    <StackPanel>
+        <Grid RowDefinitions="Auto,2, Auto,2, Auto,2, Auto,2, Auto" ColumnDefinitions="Auto, 2, Auto, 2">
+            <TextBlock Grid.Row="0" VerticalAlignment="Center" Grid.Column="0">Channel to apply the threshold to (bgr = 012): </TextBlock>
+            <NumericUpDown Grid.Row="0" VerticalAlignment="Center" Grid.Column ="2" Value="{Binding Channel}" FormatString="N0" Increment="1" Minimum="0" Maximum="2" MinWidth="255" ParsingNumberStyle="Integer" />
+            <TextBlock Grid.Row="2" VerticalAlignment="Center" Grid.Column="0">Minimum channel value: </TextBlock>
+            <NumericUpDown Grid.Row="2" Grid.Column ="2" Value="{Binding SelectedThreshold}" FormatString="N0" Increment="5" Minimum="0" Maximum="255" MinWidth="255" ParsingNumberStyle="Integer" />
+            <!-- Gamma not required
+            <TextBlock Grid.Row="6" Grid.Column="0">Minimum alpha value:</TextBlock>
+            <NumericUpDown Grid.Row="6" Grid.Column ="2" Value="{Binding SelectedAlphaThreshold}" FormatString="N0" Increment="5" Minimum="0" MinWidth="255" ParsingNumberStyle="Integer" />-->
+            <TextBlock Grid.Row="8" Grid.Column="0">(Channel values are inclusive)</TextBlock>
+        </Grid>
+    </StackPanel>
+</UserControl>

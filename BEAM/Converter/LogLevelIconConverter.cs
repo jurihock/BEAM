@@ -5,10 +5,12 @@ using Avalonia.Data.Converters;
 
 namespace BEAM.Converter;
 
-/// Converter to convert log level to an asset url
 public class LogLevelIconConverter : IValueConverter
 {
     
+    /// <summary>
+    /// Converts log level strings to corresponding icon paths.
+    /// </summary>
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is not string currentLevel)

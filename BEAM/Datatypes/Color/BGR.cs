@@ -38,4 +38,8 @@ public struct BGR(byte b, byte g, byte r)
       throw new ArgumentOutOfRangeException(nameof(index));
     }
   }
+  public BGR(byte[] input) : this(input[0], input[1], input[2])
+  {
+    
+  }
 }
