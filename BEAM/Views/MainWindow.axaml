@@ -26,8 +26,8 @@
         <NativeMenu>
             <NativeMenuItem Header="_File">
                 <NativeMenu>
-                    <NativeMenuItem Header="Open Sequence from Files" Command="{Binding OpenSequenceCommand}" />
-                    <NativeMenuItem Header="Open Sequence from Folder"
+                    <NativeMenuItem Header="Open from files" Command="{Binding OpenSequenceCommand}" />
+                    <NativeMenuItem Header="Open from Folder"
                                     Command="{Binding OpenSequenceFromFolderCommand}">
                     </NativeMenuItem>
                     <NativeMenuItemSeparator />
@@ -42,7 +42,7 @@
             </NativeMenuItem>
             <NativeMenuItem Header="_Synchronization">
                 <NativeMenu>
-                    <NativeMenuItem Header="Activate" Command="{Binding ActivateSynchronizationCommand}"></NativeMenuItem>
+                    <NativeMenuItem Header="Activate (without repositioning)" Command="{Binding ActivateSynchronizationCommand}"></NativeMenuItem>
                     <NativeMenuItem Header="Deactivate" Command="{Binding DeactivateSynchronizationCommand}"></NativeMenuItem>
                 </NativeMenu>
             </NativeMenuItem>
