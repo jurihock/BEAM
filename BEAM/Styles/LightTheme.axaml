@@ -12,19 +12,31 @@
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
-                    <Color x:Key="TitleBarBg">White</Color>
-                    <Color x:Key="TitleBarFg">Black</Color>
+
+                    <Color x:Key="BackgroundColorDark">#f8f8f8</Color>
+
+                    <!-- <Color x:Key="StatusBarBg">#1E202F</Color> -->
+                    <!-- <Color x:Key="StatusBarFg">Aqua</Color> -->
+
+                    <!-- <Color x:Key="TitleBarBg">#1E202F</Color> -->
+                    <!-- <Color x:Key="TitleBarFg">White</Color> -->
 
                     <Color x:Key="WindowBg">White</Color>
-                    <Color x:Key="WindowFg">Black</Color>
+                    <!-- <Color x:Key="WindowFg">White</Color> -->
+
+                    <Color x:Key="MinimapAccent">#ff6f00</Color>
+
+                    <Color x:Key="Separator"> #d3d2d3</Color>
 
                     <Color x:Key="Accent">CornflowerBlue</Color>
                     <Color x:Key="AccentForeground">White</Color>
 
-                    <Color x:Key="DockSeparatorColor">CornflowerBlue</Color>
+                    <Color x:Key="DockSeparatorColor">CornflowerBlue </Color>
 
-                    <Color x:Key="SelectedDockHeaderBg">CornflowerBlue</Color>
+                    <Color x:Key="FontColorScottPlot">Black</Color>
+                    
                     <Color x:Key="DockHeaderBg">Transparent</Color>
+                    <Color x:Key="SelectedDockHeaderBg">CornflowerBlue</Color>
                     <Color x:Key="DockHeaderFg">Black</Color>
                     <system:String x:Key="StrokeCss">*{stroke: #000000;}</system:String>
                 </ResourceDictionary>

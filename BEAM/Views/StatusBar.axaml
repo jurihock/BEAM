@@ -9,8 +9,8 @@
              IsVisible="{Binding StatusBarVisible}">
 
     <Panel>
-        <Border BorderBrush="{DynamicResource ButtonBackgroundDisabled}"
-                Background="{DynamicResource ThemeBackgroundColor}"
+        <Border BorderBrush="{DynamicResource Separator}"
+                Background="{DynamicResource BackgroundColorDark}"
                 BorderThickness="0,1, 0, 0"
                 CornerRadius="0"
                 IsHitTestVisible="False">

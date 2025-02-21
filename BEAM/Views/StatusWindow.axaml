@@ -20,7 +20,7 @@
         <vm:StatusWindowViewModel />
     </Design.DataContext>
 
-    <StackPanel>
+    <StackPanel Background="{DynamicResource WindowBg}">
         <StackPanel.Resources>
             <converter:LogLevelIconConverter x:Key="LogLevelIconConverter" />
         </StackPanel.Resources>
@@ -30,7 +30,7 @@
                 <Svg Path="../Assets/trash.svg" Width="20" Height="20" Css="{DynamicResource StrokeCss}"></Svg>
             </Button>
         </DockPanel>
-        <Separator Background="{DynamicResource ThemeAccentBrush}" Margin="10"></Separator>
+        <Separator Background="{DynamicResource Separator}" Margin="10"></Separator>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Width="750" Height="435" Padding="0">
             <ItemsControl ItemsSource="{Binding StatusList}">
@@ -38,7 +38,7 @@
                     <DataTemplate>
                         <Border Margin="20, 0,20,5"
                                 CornerRadius="5"
-                                BorderBrush="Gray" BorderThickness="1"
+                                BorderBrush="{DynamicResource Separator}" BorderThickness="1"
                                 Padding="5">
 
                             <StackPanel Orientation="Horizontal">

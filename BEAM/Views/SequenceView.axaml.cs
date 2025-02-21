@@ -84,7 +84,7 @@ public partial class SequenceView : UserControl
 
     private void PreparePlot()
     {
-        _ApplyDarkMode();
+        _ApplyTheme();
         _BuildCustomRightClickMenu();
 
         // TODO: CustomMouseActions
@@ -151,22 +151,39 @@ public partial class SequenceView : UserControl
         AvaPlot1.PointerWheelChanged += (_, _) => { UpdateScrollBar(); };
     }
 
-    private void _ApplyDarkMode()
+    private void _ApplyTheme()
     {
-        if (Application.Current!.ActualThemeVariant != ThemeVariant.Dark) return;
+        var currentTheme = Application.Current!.ActualThemeVariant;
 
         // change figure colors
-        AvaPlot1.Plot.FigureBackground.Color = Color.FromHex("#181818");
-        AvaPlot1.Plot.DataBackground.Color = Color.FromHex("#1f1f1f");
+        Application.Current.TryGetResource("WindowBg", currentTheme, out var background);
+        var backgroundColor = (Avalonia.Media.Color)background;
+        AvaPlot1.Plot.FigureBackground.Color = new Color(backgroundColor.R, backgroundColor.G, backgroundColor.B);
+
+        Application.Current.TryGetResource("BackgroundColorDark", currentTheme, out var backgroundDark);
+        var backgroundColorDark = (Avalonia.Media.Color)backgroundDark;
+        AvaPlot1.Plot.DataBackground.Color =
+            new Color(backgroundColorDark.R, backgroundColorDark.G, backgroundColorDark.B);
 
         // change axis and grid colors
-        AvaPlot1.Plot.Axes.Color(Color.FromHex("#d7d7d7"));
-        AvaPlot1.Plot.Grid.MajorLineColor = Color.FromHex("#404040");
+        Application.Current.TryGetResource("FontColorScottPlot", currentTheme, out var fontColorScottPlot);
+        var fontColor = (Avalonia.Media.Color)fontColorScottPlot;
+        AvaPlot1.Plot.Axes.Color(new Color(fontColor.R, fontColor.G, fontColor.B));
+
+        
+        // AvaPlot1.Plot.Grid.MajorLineColor = Colors.Aqua; 
 
         // change legend colors
-        AvaPlot1.Plot.Legend.BackgroundColor = Color.FromHex("#404040");
-        AvaPlot1.Plot.Legend.FontColor = Color.FromHex("#d7d7d7");
-        AvaPlot1.Plot.Legend.OutlineColor = Color.FromHex("#d7d7d7");
+        // AvaPlot1.Plot.Legend.BackgroundColor = Colors.Aqua; 
+        // AvaPlot1.Plot.Legend.FontColor = Colors.Aqua; 
+        // AvaPlot1.Plot.Legend.OutlineColor = Colors.Aqua; 
+        
+        // AvaPlot1.Plot.Grid.MajorLineColor = Color.FromHex("#404040");
+        //
+        // // change legend colors
+        // AvaPlot1.Plot.Legend.BackgroundColor = Color.FromHex("#404040");
+        // AvaPlot1.Plot.Legend.FontColor = new Color(fontColor.R, fontColor.G, fontColor.B);
+        // AvaPlot1.Plot.Legend.OutlineColor = Color.FromHex("#d7d7d7");
     }
 
     private void _BuildCustomRightClickMenu()

@@ -15,8 +15,10 @@
 
     <Grid ColumnDefinitions="*, Auto, Auto">
         <scott:AvaPlot Name="AvaPlot1" Grid.Column="0"/>
-        <ScrollBar Name="Bar1" Orientation="Vertical" Visibility="Visible" AllowAutoHide="False" Grid.Column="1" />
+        <ScrollBar Name="Bar1" Orientation="Vertical" Visibility="Visible" AllowAutoHide="False" Grid.Column="1"  Background="{DynamicResource BackgroundColorDark}" />
         <ItemsControl ItemsSource="{Binding MinimapVms}" Grid.Column="2" LayoutUpdated="Layoutable_OnLayoutUpdated">
         </ItemsControl>
     </Grid>
+    
 </UserControl>
+

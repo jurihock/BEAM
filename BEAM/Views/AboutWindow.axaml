@@ -9,14 +9,15 @@
         Title="BEAM - About"
         Width="750"
         Height="500"
-        SizeToContent="WidthAndHeight">
+        SizeToContent="WidthAndHeight"
+        Background="{DynamicResource WindowBg}">
 
     <Design.DataContext>
         <viewModels:AboutWindowViewModel />
     </Design.DataContext>
 
 
-    <StackPanel Orientation="Vertical" Margin="20, 10, 20, 0">
+    <StackPanel Orientation="Vertical" Margin="20, 10, 20, 10">
         <TextBlock FontSize="24" FontWeight="Bold" Text="About BEAM" />
         <Separator Background="{DynamicResource ThemeAccentBrush}" Margin="10 10 10 5"></Separator>
 
