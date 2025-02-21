@@ -9,6 +9,7 @@
              x:Class="BEAM.Views.ExportSequenceView"
              Title="BEAM - Export Sequence"
              SizeToContent="WidthAndHeight"
+             WindowStartupLocation="CenterOwner"
              CanResize="False"
              Background="{DynamicResource WindowBg}">
     <StackPanel Orientation="Vertical" Margin="20, 10, 20, 0">
