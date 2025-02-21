@@ -19,7 +19,7 @@ namespace BEAM.Renderer;
 public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maximumOfIntensityRange) : ArgMaxRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
 {
     private ChannelHSVMap _channelHsvMap = new(0);
-        
+
     public override RenderTypes GetRenderType()
     {
         return RenderTypes.ArgMaxRendererColorHsva;
@@ -54,7 +54,7 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
         var color = new HueColorLut();
         return color[intensity];
     }
-    
+
     public override BGR RenderPixel(ISequence sequence, long x, long y)
     {
         var channels = sequence.GetPixel(x, y);
@@ -62,30 +62,30 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
         {
             throw new ArgumentException("Channel count mismatch for sequence and ChannelHSVMap of ArgMax!");
         }
-        
+
         var argMaxChannel = channels
             .Select((value, index) => new { Value = value, Index = index }) // Create an anonymous type with value and index
             .Where(x => _channelHsvMap.IsChannelUsed(x.Index)) // Filter based on ChannelUsed
             .Select(x => x.Value) // Select only the values
             .ToArray() // Convert to array
             .ArgMax(); // Call ArgMax on the filtered array
-        
+
         var color = GetColor(argMaxChannel, channels.Length);
-        
+
         return color;
     }
 
     public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y)
     {
         var usedChannelIndices = _channelHsvMap.GetUsedChannels();
-        
+
         var line = sequence.GetPixelLineData(xs, y, usedChannelIndices);
         var data = new BGR[xs.Length];
-        
+
         for (var x = 0; x < xs.Length; x++)
         {
             var argMaxChannel = line.GetPixel(x, 0).ArgMax(); // Call ArgMax on the filtered array
-            
+
             var color = _channelHsvMap.GetColorBGR(usedChannelIndices[argMaxChannel]);
 
             data[x] = color;
@@ -127,10 +127,10 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
             throw new ArgumentException("Channel count mismatch for ChannelHSVMap of ArgMax! Changed from: "
                                         + _channelHsvMap.AmountChannels + " to " + channels.Length);
         }
-        
+
         _channelHsvMap = new ChannelHSVMap(channels);
     }
-    
+
     public ChannelHSVMap getChannelHsvMap()
     {
         return _channelHsvMap.Clone();

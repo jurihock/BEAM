@@ -24,7 +24,7 @@ public class CustomAreaSelection(MouseButton button) : IUserActionResponse
     /// A selection rectangle is started when this button is pressed and dragged
     /// </summary>
     MouseButton MouseButton { get; set; } = button;
-    
+
     public void ResetState(Plot plot)
     {
         _mouseDownCoordinates = Coordinates.NaN;
@@ -39,14 +39,14 @@ public class CustomAreaSelection(MouseButton button) : IUserActionResponse
         if (userAction is IMouseButtonAction { IsPressed: true } buttonAction && buttonAction.Button == MouseButton)
         {
             var currentTheme = Application.Current!.ActualThemeVariant;
-            
+
             Application.Current.TryGetResource("OverlayColor", currentTheme, out var overlayColor);
             var colorAvalonia = (Avalonia.Media.Color)overlayColor!;
             var colorScottPlot = new Color(colorAvalonia.R, colorAvalonia.G, colorAvalonia.B);
-            
+
             _mouseIsDown = true;
             _selectionRectangle = plot.Add.Rectangle(0, 0, 0, 0);
-            
+
             _selectionRectangle.LineColor = colorScottPlot;
             _selectionRectangle.FillStyle.Color = colorScottPlot.WithAlpha(0.4); // Set default color: Red (otherwise random)
             _selectionRectangle.IsVisible = true;
@@ -62,7 +62,7 @@ public class CustomAreaSelection(MouseButton button) : IUserActionResponse
         if (userAction is IMouseAction mouseMoveAction and not IMouseButtonAction && _mouseIsDown)
         {
             _selectionRectangle.IsVisible = true;
-            Coordinates mouseNowCoordinates = 
+            Coordinates mouseNowCoordinates =
                 plot.GetCoordinates(mouseMoveAction.Pixel.X, mouseMoveAction.Pixel.Y);
 
             _mouseSelectionRect = new CoordinateRect(_mouseDownCoordinates, mouseNowCoordinates);
@@ -70,11 +70,11 @@ public class CustomAreaSelection(MouseButton button) : IUserActionResponse
 
             return ResponseInfo.Refresh;
         }
-        
+
         if (userAction is IMouseButtonAction { IsPressed: false } mouseUpAction && mouseUpAction.Button == MouseButton)
         {
             _mouseDownCoordinates = Coordinates.NaN;
-            
+
             if (_selectionRectangle.IsVisible)
             {
                 _selectionRectangle.IsVisible = false;

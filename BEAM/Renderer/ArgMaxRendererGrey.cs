@@ -40,12 +40,12 @@ public class ArgMaxRendererGrey(double minimumOfIntensityRange, double maximumOf
     {
         //calculate the relative position of the given channel in all channels
         // and map it to an int intensity between 0 and 255 for the RGB values.
-        int intensity = (int) ((double)channelNumber / (double)amountChannels * 255);
+        int intensity = (int)((double)channelNumber / (double)amountChannels * 255);
         return new BGR()
         {
-            R = (byte) intensity,
-            G = (byte) intensity,
-            B = (byte) intensity
+            R = (byte)intensity,
+            G = (byte)intensity,
+            B = (byte)intensity
         };
     }
 

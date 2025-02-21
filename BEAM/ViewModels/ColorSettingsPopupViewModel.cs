@@ -42,8 +42,8 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
     {
         _sequenceViewModel = sequenceViewModel;
 
-        Min = (decimal) sequenceViewModel.CurrentRenderer.MinimumOfIntensityRange;
-        Max = (decimal) sequenceViewModel.CurrentRenderer.MaximumOfIntensityRange;
+        Min = (decimal)sequenceViewModel.CurrentRenderer.MinimumOfIntensityRange;
+        Max = (decimal)sequenceViewModel.CurrentRenderer.MaximumOfIntensityRange;
 
         _selection = _sequenceViewModel.RendererSelection;
 
@@ -115,8 +115,8 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
 
         foreach (var renderer in _sequenceViewModel.Renderers)
         {
-            renderer.MinimumOfIntensityRange = (double) Min;
-            renderer.MaximumOfIntensityRange = (double) Max;
+            renderer.MinimumOfIntensityRange = (double)Min;
+            renderer.MaximumOfIntensityRange = (double)Max;
         }
 
         _sequenceViewModel.RendererSelection = _selection;

@@ -28,7 +28,7 @@ public partial class DefaultMinimapPopupView : Window
         });
         DataContextChanged += OnDataContextChanged;
     }
-    
+
     /// <summary>
     /// Handles the window close action.
     /// Invoked through the corresponding button, not the closing x in the corner.
@@ -55,8 +55,8 @@ public partial class DefaultMinimapPopupView : Window
 
         vm.DisableMinimap();
     }
-    
-    
+
+
     /// <summary>
     /// Attempts to save the current minimap configuration.
     /// </summary>
@@ -69,7 +69,7 @@ public partial class DefaultMinimapPopupView : Window
     }
 
     public new string Name { get; } = "Configure Default Minimap settings";
-    
+
 
     /// <summary>
     /// Handles minimap selection changes and updates the UI accordingly.

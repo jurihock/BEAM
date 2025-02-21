@@ -12,7 +12,7 @@ namespace BEAM.Models.Log;
 public class Logger : ObservableObject, ILog
 {
     private static Logger? _instance;
-    
+
     private readonly string _pathToLogFile;
     private LogLevel _logLevel;
     private LogEvent _logEvent;

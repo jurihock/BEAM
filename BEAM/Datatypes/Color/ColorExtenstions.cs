@@ -10,7 +10,7 @@ namespace BEAM.Datatypes.Color;
 public static class ColorExtensions
 {
     private const double Tolerance = 0.0001;
-    
+
     public static HSV ToHsv(this BGR bgr)
     {
         // adapted from https://gist.github.com/mjackson/5311256
@@ -61,7 +61,7 @@ public static class ColorExtensions
         s = Math.Clamp(s, 0, 1);
         v = Math.Clamp(v, 0, 1);
 
-        return new HSV { H = h, S = s, V = v};
+        return new HSV { H = h, S = s, V = v };
     }
 
     public static BGR ToBgr(this HSV hsv)
@@ -101,6 +101,6 @@ public static class ColorExtensions
         g = Math.Clamp(g, 0, 255);
         b = Math.Clamp(b, 0, 255);
 
-        return new BGR { R = (byte)r, G = (byte)g, B = (byte)b};
+        return new BGR { R = (byte)r, G = (byte)g, B = (byte)b };
     }
 }

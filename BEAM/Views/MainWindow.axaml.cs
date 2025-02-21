@@ -52,7 +52,7 @@ public partial class MainWindow : Window
                 Logger.GetInstance().Error(LogEvent.OpenedFile,
                                 $"Cannot open dragged-in files since no suitable sequence type found. (Supported sequences: {string.Join(", ", DiskSequence.SupportedSequences)})");
             }
-            
+
         }
         catch (EmptySequenceException)
         {

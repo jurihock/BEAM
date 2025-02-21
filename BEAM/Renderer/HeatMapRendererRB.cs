@@ -21,7 +21,7 @@ public class HeatMapRendererRB : HeatMapRenderer
     /// <param name="channel"></param>
     public HeatMapRendererRB(double minimumOfIntensityRange, double maximumOfIntensityRange,
         int channel, double relMaxColdestIntensity, double relMinHottestIntensity) : base(
-        minimumOfIntensityRange, maximumOfIntensityRange, 
+        minimumOfIntensityRange, maximumOfIntensityRange,
         channel, relMaxColdestIntensity, relMinHottestIntensity)
     {
     }
@@ -30,16 +30,16 @@ public class HeatMapRendererRB : HeatMapRenderer
     {
         if (value > max) // intensity above maximum --> hottest color displayed
         {
-            return new BGR(){R = 255}; // Color Red;
+            return new BGR() { R = 255 }; // Color Red;
         }
 
         if (value < min) // intensity below minimum --> coldest color displayed
         {
-            return new BGR(){B = 255}; // Color Blue
+            return new BGR() { B = 255 }; // Color Blue
         }
-        
+
         // if max == min, return a mixture of Red and Blue for all pixels, whose intensity = max = min
-        if ((max - min) < 0.001) 
+        if ((max - min) < 0.001)
         {
             return new BGR() { B = 127, R = 127 };
         }
@@ -49,7 +49,7 @@ public class HeatMapRendererRB : HeatMapRenderer
         // the value of the color
         byte intensity = (byte)Math.Floor(relative * (double)255);
 
-        var color = new BGR() {R = intensity, B = (byte)(255 - intensity)};
+        var color = new BGR() { R = intensity, B = (byte)(255 - intensity) };
         return color;
     }
 
@@ -89,7 +89,7 @@ public class HeatMapRendererRB : HeatMapRenderer
         {
             return false;
         }
-        
+
         return true;
     }
 

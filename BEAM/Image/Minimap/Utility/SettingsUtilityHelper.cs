@@ -14,7 +14,7 @@ public static class SettingsUtilityHelper<T>
     /// The provider used to handle the current calls. This is different for every Type T.
     /// </summary>
     private static readonly ISettingsProvider<T>? Provider;
-    
+
     /// <summary>
     /// Static class constructor being called the first time a method if the static class with the concrete generic type is being called.
     /// </summary>
@@ -34,7 +34,7 @@ public static class SettingsUtilityHelper<T>
             throw new InvalidOperationException("Unsupported type");
         }
     }
-    
+
     /// <summary>
     /// Sets the object which is currently being marked as the default of all possible default objects.
     /// Returns null only if there are no possible default objects, meaning that <see cref="GetDefaultObjects"/> returns an empty list.
@@ -42,13 +42,13 @@ public static class SettingsUtilityHelper<T>
     /// <returns></returns>
     public static ImmutableList<T> GetDefaultObjects()
     {
-        if(Provider is null)
+        if (Provider is null)
         {
             throw new InvalidOperationException("Unsupported type");
         }
         return Provider.GetDefaultObjects();
     }
-    
+
     /// <summary>
     /// Sets the object which is currently being marked as the default of all possible default objects.
     /// This parameter should be an element in the list returned by <see cref="GetDefaultObjects"/>.
@@ -56,13 +56,13 @@ public static class SettingsUtilityHelper<T>
     /// <param name="newDefaultObject">The new default object out of all possible default objects.</param>
     public static void SetDefaultObject(T? newDefaultObject)
     {
-        if(Provider is null)
+        if (Provider is null)
         {
             throw new InvalidOperationException("Unsupported type");
         }
         Provider.SetDefaultObject(newDefaultObject);
     }
-    
+
     /// <summary>
     /// Checks whether there are any possible default objects.
     /// This is useful for checking whether the provider has found any manageable objects.
@@ -70,13 +70,13 @@ public static class SettingsUtilityHelper<T>
     /// <returns>A boolean representing whether there are any possible default objects.</returns>
     public static bool ExistAny()
     {
-        if(Provider is null)
+        if (Provider is null)
         {
             throw new InvalidOperationException("Unsupported type");
         }
         return Provider.ExistAny();
     }
-    
+
     /// <summary>
     /// Sets the object which is currently being marked as the default of all possible default objects.
     /// Returns null only if there are no possible default objects, meaning that <see cref="GetDefaultObjects"/> returns an empty list.
@@ -84,7 +84,7 @@ public static class SettingsUtilityHelper<T>
     /// <returns>The default object or null of none exists.</returns>
     public static T? GetDefaultObject()
     {
-        if(Provider is null)
+        if (Provider is null)
         {
             throw new InvalidOperationException("Unsupported type");
         }
@@ -100,11 +100,11 @@ public static class SettingsUtilityHelper<T>
     /// <exception cref="InvalidOperationException">If the type T has no corresponding provider.</exception>
     public static SettingsTransferObject<T> GetDefaultClones()
     {
-        if(Provider is null)
+        if (Provider is null)
         {
             throw new InvalidOperationException("Unsupported type");
         }
         return Provider.GetDefaultClones();
     }
-    
+
 }

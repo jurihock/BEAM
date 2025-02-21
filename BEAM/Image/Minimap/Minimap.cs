@@ -27,14 +27,14 @@ public abstract class Minimap
     /// Cancellation Token for the generation process. Any subclass should use this Token for its Threads
     /// </summary>
     protected CancellationTokenSource CancellationTokenSource { get; init; }
-    
+
     /// <summary>
     /// A function blueprint for the callback function which is called concurrently/in parallel
     /// when the data generation process has finished.
     /// </summary>
     public delegate void MinimapGeneratedEventHandler(object sender, MinimapGeneratedEventArgs e);
     protected event MinimapGeneratedEventHandler? MinimapGenerated;
-    
+
     /// <summary>
     /// A parameterless constructor. Required by every concrete class which inherits from this class for reflection invocation.
     /// </summary>
@@ -51,14 +51,14 @@ public abstract class Minimap
     {
         CancellationTokenSource.Cancel();
     }
-    
+
     /// <summary>
     /// Method for this class subclasses to call whenever they have
     /// finished their generation process so the original caller can be informed.
     /// </summary>
     /// <param name="e">The <see cref="MinimapGeneratedEventArgs"/> which will be used to Invoke the event.
     /// They also specify the caller.</param>
-    protected  void OnMinimapGenerated(MinimapGeneratedEventArgs e)
+    protected void OnMinimapGenerated(MinimapGeneratedEventArgs e)
     {
         if (MinimapGenerated is null) return;
         MinimapGenerated.Invoke(e.Minimap, e);
@@ -69,15 +69,15 @@ public abstract class Minimap
     /// </summary>
     /// <returns>A string representing the name.</returns>
     protected abstract String GetName();
-    
+
     /// <summary>
     /// Returns the settings popup control for this minimap. This SaveUserControl is responsible for changing settings.
     /// </summary>
     /// <returns>The corresponding SaveUserControl or null,
     /// if no settings need to be changed and no custom UI is meant to be displayed.</returns>
     public abstract SaveUserControl? GetSettingsPopupControl();
-    
-    
+
+
 
     /// <summary>
     /// Returns a deep clone of this minimap. A clone must especially keep the changable settings of its origin.
@@ -89,8 +89,8 @@ public abstract class Minimap
     /// An attribute wrapper for this minimap's name.
     /// </summary>
     public String Name => GetName();
-    
-    
+
+
     /// <summary>
     /// Start the generation of the minimap based on the given sequence.
     /// It is recommended that the actual generation process is done in a separate thread.

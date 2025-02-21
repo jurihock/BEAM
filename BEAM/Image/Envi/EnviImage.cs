@@ -183,31 +183,31 @@ public class EnviImage<T> : ITypedImage<T>, IMemoryImage
             // iterate over channels last
             case XyzImageMemoryLayout:
             case YxzImageMemoryLayout:
-            {
-                for (var x = 0; x < xs.Length; x++)
-                {
-                    for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
-                    {
-                        data[x][channelIdx] = GetPixel(xs[x], line, channels[channelIdx]);
-                    }
-                }
-
-                break;
-            }
-            // iterate over x position last
-            case YzxImageMemoryLayout:
-            case ZyxImageMemoryLayout:
-            {
-                for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
                 {
                     for (var x = 0; x < xs.Length; x++)
                     {
-                        data[x][channelIdx] = GetPixel(xs[x], line, channels[channelIdx]);
+                        for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
+                        {
+                            data[x][channelIdx] = GetPixel(xs[x], line, channels[channelIdx]);
+                        }
                     }
-                }
 
-                break;
-            }
+                    break;
+                }
+            // iterate over x position last
+            case YzxImageMemoryLayout:
+            case ZyxImageMemoryLayout:
+                {
+                    for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
+                    {
+                        for (var x = 0; x < xs.Length; x++)
+                        {
+                            data[x][channelIdx] = GetPixel(xs[x], line, channels[channelIdx]);
+                        }
+                    }
+
+                    break;
+                }
             default:
                 throw new NotImplementedException($"Efficient pixel data line getter not implemented for  layout type {Layout.GetType()} when using ENVI images");
         }
@@ -229,31 +229,31 @@ public class EnviImage<T> : ITypedImage<T>, IMemoryImage
             // iterate over channels last
             case XyzImageMemoryLayout:
             case YxzImageMemoryLayout:
-            {
-                for (var x = 0; x < Shape.Width; x++)
-                {
-                    for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
-                    {
-                        data[x][channelIdx] = GetPixel(x, line, channels[channelIdx]);
-                    }
-                }
-
-                break;
-            }
-            // iterate over x position last
-            case YzxImageMemoryLayout:
-            case ZyxImageMemoryLayout:
-            {
-                for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
                 {
                     for (var x = 0; x < Shape.Width; x++)
                     {
-                        data[x][channelIdx] = GetPixel(x, line, channels[channelIdx]);
+                        for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
+                        {
+                            data[x][channelIdx] = GetPixel(x, line, channels[channelIdx]);
+                        }
                     }
-                }
 
-                break;
-            }
+                    break;
+                }
+            // iterate over x position last
+            case YzxImageMemoryLayout:
+            case ZyxImageMemoryLayout:
+                {
+                    for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
+                    {
+                        for (var x = 0; x < Shape.Width; x++)
+                        {
+                            data[x][channelIdx] = GetPixel(x, line, channels[channelIdx]);
+                        }
+                    }
+
+                    break;
+                }
             default:
                 throw new NotImplementedException($"Efficient pixel data line getter not implemented for  layout type {Layout.GetType()} when using ENVI images");
         }

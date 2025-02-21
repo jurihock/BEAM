@@ -7,7 +7,7 @@ namespace BEAM.Converter;
 
 public class LogLevelIconConverter : IValueConverter
 {
-    
+
     /// <summary>
     /// Converts log level strings to corresponding icon paths.
     /// </summary>

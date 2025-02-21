@@ -11,7 +11,7 @@ namespace BEAM.ViewModels.Minimap.Popups;
 /// <summary>
 /// Handles minimap selection changes and updates the UI accordingly.
 /// </summary>
-public partial class  DefaultMinimapPopupViewModel : ViewModelBase
+public partial class DefaultMinimapPopupViewModel : ViewModelBase
 {
     private const string DefaultControlText = "This Minimap provides no changeable settings";
     /// <summary>
@@ -26,13 +26,13 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
     /// Gets or sets the collection of minimap-specific setting controls.
     /// </summary>
     [ObservableProperty] public partial ObservableCollection<Control> MinimapSubSettings { get; set; } = new ObservableCollection<Control>();
-    
-    
+
+
     private SaveUserControl _currentControl = new NullSaveConfig();
 
     private readonly SequenceViewModel _sequenceVm;
-    
-    
+
+
     /// <summary>
     /// Creates a new view model for the default minimap popup,
     /// asking the user to select the minimap for a specified sequence.
@@ -43,17 +43,17 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
         _sequenceVm = sequenceVm;
         if (!SettingsUtilityHelper<Image.Minimap.Minimap>.ExistAny() /*!MinimapSettingsUtilityHelper.ExistAny()*/)
         {
-            TextBlock textBlock = new TextBlock(){Text= "There are no Minimaps to choose from"};
+            TextBlock textBlock = new TextBlock() { Text = "There are no Minimaps to choose from" };
             MinimapSubSettings.Add(textBlock);
             return;
         }
-        foreach(var element in SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObjects() /*MinimapSettingsUtilityHelper.GetDefaultMinimaps()*/)
+        foreach (var element in SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObjects() /*MinimapSettingsUtilityHelper.GetDefaultMinimaps()*/)
         {
             Minimaps.Add(element);
         }
         //SelectedMinimap = MinimapSettingsUtilityHelper.GetDefaultMinimap();
         SelectedMinimap = SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultObject();
-        
+
     }
 
     /// <summary>
@@ -67,19 +67,19 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
         Image.Minimap.Minimap? minimap;
         try
         {
-             minimap = (Image.Minimap.Minimap) e.AddedItems[0]!;
+            minimap = (Image.Minimap.Minimap)e.AddedItems[0]!;
         }
         catch (NullReferenceException ex)
         {
             throw new InvalidCastException("The selected Minimap is not a Minimap", ex);
         }
-        
+
         var controls = minimap.GetSettingsPopupControl();
         MinimapSubSettings.Clear();
-        if(controls is null)
+        if (controls is null)
         {
             _currentControl = new NullSaveConfig();
-            MinimapSubSettings.Add(new TextBlock() {Text = DefaultControlText});
+            MinimapSubSettings.Add(new TextBlock() { Text = DefaultControlText });
         }
         else
         {
@@ -87,7 +87,7 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
             MinimapSubSettings.Add(controls);
         }
     }
-    
+
     /// <summary>
     /// Saves the current minimap configuration.
     /// </summary>
@@ -95,7 +95,7 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
     public bool Save()
     {
         _currentControl.Save();
-        
+
         SettingsUtilityHelper<Image.Minimap.Minimap>.SetDefaultObject(SelectedMinimap);
         return true;
     }
@@ -113,7 +113,7 @@ public partial class  DefaultMinimapPopupViewModel : ViewModelBase
         _sequenceVm.ChangeCurrentMinimap(SelectedMinimap.Clone());
     }
 
-    
+
     /// <summary>
     /// Disables the minimap for the current sequence.
     /// </summary>

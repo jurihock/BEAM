@@ -10,25 +10,25 @@ public readonly struct Coordinate2D : IEquatable<Coordinate2D>
 {
     public double Row { get; init; }
     public double Column { get; init; }
-    
+
     public Coordinate2D(int row, int column)
     {
         Row = row;
         Column = column;
     }
-   
+
     public Coordinate2D(long row, long column)
-        {
-            Row = row;
-            Column = column;
-        }
+    {
+        Row = row;
+        Column = column;
+    }
 
     public Coordinate2D(double row, double column)
     {
         Row = row;
         Column = column;
     }
-    
+
 
     public Coordinate2D(Coordinates coordinates)
     {
@@ -40,7 +40,7 @@ public readonly struct Coordinate2D : IEquatable<Coordinate2D>
     {
         return new Coordinate2D(Row + y, Column + x);
     }
-    
+
     public override string ToString()
     {
         return $"Row: {Row}, Column: {Column}";

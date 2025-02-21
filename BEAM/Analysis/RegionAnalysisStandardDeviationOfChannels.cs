@@ -19,7 +19,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
     private Coordinate2D _topLeft;
     private Coordinate2D _bottomRight;
     private int _amountChannels;
-    
+
     public override Plot Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
         ISequence sequence)
     {
@@ -35,16 +35,16 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
         _amountChannels = sequence.Shape.Channels;
 
         Plot plot;
-        
+
         // Catch trivial case of only one pixel selected
         if (Math.Abs(_AmountPixels() - 1) < 0.001)
         {
             _sumChannelsSquared = new double[_amountChannels];
-            
+
             plot = PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
             plot.Title(Name);
             return plot;
-            
+
             //return PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
         }
 

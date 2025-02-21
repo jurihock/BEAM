@@ -22,19 +22,19 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     [ObservableProperty] private Plot? _currentPlot;
     private bool KeepData { get; set; }
 
-   
+
     private SequenceViewModel _currentSequenceViewModel;
     private Analysis.Analysis _currentAnalysis;
     private (Coordinate2D pressed, Coordinate2D released) _pointerRectanglePosition;
-    public ObservableCollection<SequenceViewModel> ExistingSequenceViewModels { get; private set;  } = new();
-    
-    public static List<Analysis.Analysis> AnalysisList { get;  } =
+    public ObservableCollection<SequenceViewModel> ExistingSequenceViewModels { get; private set; } = new();
+
+    public static List<Analysis.Analysis> AnalysisList { get; } =
     [
         new PixelAnalysisChannel(),
         new RegionAnalysisStandardDeviationOfChannels(),
         new RegionAnalysisAverageOfChannels()
     ];
-    
+
     public InspectionViewModel(SequenceViewModel sequenceViewModel, DockingViewModel dock)
     {
         _currentAnalysis = AnalysisList[0];
@@ -49,7 +49,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             }
         }
     }
-    
+
 
     public string Name { get; } = "Inspection Window";
     public void OnClose()
@@ -68,8 +68,8 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         Plot result = _currentAnalysis.Analyze(pressedPoint, releasedPoint, _currentSequenceViewModel.Sequence);
         CurrentPlot = result;
     }
-    
-    
+
+
     /// <summary>
     /// Creates a new Inspection window
     /// </summary>
@@ -78,9 +78,9 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         _currentSequenceViewModel.OpenInspectionViewCommand.Execute(null);
     }
-    
 
-    
+
+
     /// <summary>
     /// When called, this method changes the currently used analysis method.
     /// </summary>
@@ -109,13 +109,13 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public void ChangeSequence(int index)
     {
-        if(index < 0 || index >= ExistingSequenceViewModels.Count) return;
+        if (index < 0 || index >= ExistingSequenceViewModels.Count) return;
         _currentSequenceViewModel.UnregisterInspectionViewModel(this);
         _currentSequenceViewModel = ExistingSequenceViewModels[index];
         _currentSequenceViewModel.RegisterInspectionViewModel(this);
     }
-    
-    
+
+
     /// <summary>
     /// When the amount of docks registered by the DockingViewModel changes, this method will be called.
     /// If necessary, the list of existing SequenceVieModels will be updated.
@@ -130,9 +130,9 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             {
                 if (item is not SequenceViewModel sequenceViewModel) continue;
                 ExistingSequenceViewModels.Add(sequenceViewModel);
-                if(ExistingSequenceViewModels.Count == 1) SwitchToFirst();
+                if (ExistingSequenceViewModels.Count == 1) SwitchToFirst();
             }
-            
+
         }
 
         if (e.OldItems is null) return;
@@ -145,10 +145,10 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             }
         }
     }
-    
-    
 
-    
+
+
+
     /// <summary>
     /// This method will simply switch to the first sequence in the list of existing sequences.
     /// </summary>
@@ -163,7 +163,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         _currentSequenceViewModel = ExistingSequenceViewModels[0];
         _currentSequenceViewModel.RegisterInspectionViewModel(this);
     }
-    
+
     /// <summary>
     /// This method will update the new data acceptance.
     /// </summary>
@@ -177,7 +177,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         return ExistingSequenceViewModels.FindIdx(_currentSequenceViewModel);
     }
-    
+
     public int CurrentAnalysisIndex()
     {
         return AnalysisList.FindIdx(_currentAnalysis);

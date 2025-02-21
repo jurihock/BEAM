@@ -16,14 +16,14 @@ public static class ArrayExtensions
         {
             throw new ArgumentException("Channels must be greater than 0.");
         }
-        
+
         var argindex = -1;
         var maxvalue = double.MinValue;
 
         for (var i = 0; i < values.Length; i++)
         {
             if (!(values[i] > maxvalue)) continue;
-            
+
             argindex = i;
             maxvalue = values[i];
         }

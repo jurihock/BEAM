@@ -19,7 +19,7 @@ public class TransformedSequence(ISequence originalSequence) : ISequence
     /// The y-axis scale.
     /// </summary>
     public double ScaleY { get; set; } = 1;
-    
+
     /// <summary>
     /// The x offset to draw the sequence at (does not actually offset the position inside the original sequence).
     /// </summary>

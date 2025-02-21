@@ -12,7 +12,7 @@ public abstract class SizeAdjustableViewModelBase : ViewModelBase
     /// Event delegate used for invoking the size changed event.
     /// </summary>
     public delegate void SizeChangedEventHandler(object sender, SizeChangedEventArgs e);
-    
+
     /// <summary>
     /// Event used to notify of a change in size.
     /// </summary>
@@ -27,7 +27,7 @@ public abstract class SizeAdjustableViewModelBase : ViewModelBase
     {
         SizeChanged += handleFunc;
     }
-    
+
     /// <summary>
     /// Used to unsubscribe from the size changed event. 
     /// </summary>
@@ -36,7 +36,7 @@ public abstract class SizeAdjustableViewModelBase : ViewModelBase
     {
         SizeChanged -= handleFunc;
     }
-    
+
     /// <summary>
     /// Used to invoke the event, informing all listeners to a size change.
     /// </summary>

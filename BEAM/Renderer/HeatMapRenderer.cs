@@ -18,7 +18,7 @@ public abstract class HeatMapRenderer : SequenceRenderer
 
     private double _relMaxColdestIntensity = 0; // initial value
     private double _relMinHottestIntensity = 1; // initial value
-    
+
 
     /// <summary>
     /// The highest relative intensity between 0 and 1 that is represented with the coldest color.
@@ -86,8 +86,8 @@ public abstract class HeatMapRenderer : SequenceRenderer
 
         for (var i = 0; i < xs.Length; i++)
         {
-            var color = GetColor(img.GetPixel(i, 0, 0), 
-                IntensityRange * RelMaxColdestIntensity + MinimumOfIntensityRange, 
+            var color = GetColor(img.GetPixel(i, 0, 0),
+                IntensityRange * RelMaxColdestIntensity + MinimumOfIntensityRange,
                 IntensityRange * RelMinHottestIntensity + MinimumOfIntensityRange);
             data[i] = color;
         }

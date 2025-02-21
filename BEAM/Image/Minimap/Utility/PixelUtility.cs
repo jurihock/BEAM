@@ -18,7 +18,7 @@ public static class PixelUtility
 
         return (baseline.R >= other.R) && (baseline.G >= other.G) && (baseline.B >= other.B);
     }
-    
+
     /// <summary>
     /// Checks whether this instance's has a channel whose value is greater than another instance's value of the same channel.</summary>
     /// <param name="baseline">The BGR instance which is meant to be compared as a base.</param>

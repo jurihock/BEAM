@@ -7,13 +7,13 @@ namespace BEAM.Controls;
 
 public partial class ArgMaxHSVConfigControlView : UserControl, ISaveControl
 {
-   
+
     public ArgMaxHSVConfigControlView(ArgMaxRendererColorHSV renderer, SequenceViewModel model)
     {
         DataContext = new ArgMaxHSVConfigControlViewModel(renderer, model);
         InitializeComponent();
     }
-    
+
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);

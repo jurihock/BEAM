@@ -40,8 +40,8 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 
     private Image.Minimap.Minimap? _currentMinimap;
     public EventHandler<EventArgs> MinimapHasChanged = delegate { };
-    
-    
+
+
 
     [ObservableProperty]
     public partial ObservableCollection<ViewModelBase> MinimapVms { get; set; } =
@@ -73,7 +73,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             SkiaSequence => 0,
             _ => 1
         };
-        
+
         _currentMinimap = SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultClones().Active;
         if (_currentMinimap is not null)
         {
@@ -83,16 +83,16 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
                 _currentMinimap.StartGeneration(sequence, OnMinimapGenerated);
             }
         }
-        
+
     }
-    
+
 
     public void RegisterInspectionViewModel(InspectionViewModel inspectionViewModel)
     {
         _connectedInspectionViewModels.Add(inspectionViewModel);
         inspectionViewModel.Update(PressedPointerPosition.OffsetBy(0.5, 0.5), ReleasedPointerPosition.OffsetBy(0.5, 0.5));
     }
-    
+
     public void UnregisterInspectionViewModel(InspectionViewModel inspectionViewModel)
     {
         _connectedInspectionViewModels.Remove(inspectionViewModel);
@@ -113,16 +113,16 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     {
         double x = point.Column;
         double y = point.Row;
-        
-        if(x < 0)
+
+        if (x < 0)
             x = 0;
         else if (x >= Sequence.Shape.Width)
             x = Sequence.Shape.Width - 1;
-        if(y < 0)
+        if (y < 0)
             y = 0;
-        else if(y >= Sequence.Shape.Height)
+        else if (y >= Sequence.Shape.Height)
             y = Sequence.Shape.Height - 1;
-        
+
         return new Coordinate2D(y, x);
     }
 
@@ -142,15 +142,15 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         {
             _currentMinimap.StopGeneration();
         }
-        
+
         MinimapVms.Clear();
         _currentMinimap = minimap;
-        _currentMinimap.SetRenderer(new ChannelMapRenderer(0, 255, 0, 1,2));
+        _currentMinimap.SetRenderer(new ChannelMapRenderer(0, 255, 0, 1, 2));
         _currentMinimap.StartGeneration(Sequence, OnMinimapGenerated);
     }
 
-   
-    
+
+
     [RelayCommand]
     public void OpenMinimapSettings()
     {
@@ -164,15 +164,15 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 
         minimapPopup.ShowDialog(v.MainWindow);
     }
-    
-    
+
+
     public void OnMinimapGenerated(object sender, MinimapGeneratedEventArgs e)
     {
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             // Clear the existing minimap controls
             MinimapVms.Clear();
-            
+
             var newMinimapVm = e.Minimap.GetDisplayableViewModel();
             MinimapVms.Add(newMinimapVm);
             MinimapHasChanged(this, EventArgs.Empty);
@@ -185,10 +185,10 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         InspectionViewModel inspectionViewModel = new InspectionViewModel(this, DockingVm);
         _connectedInspectionViewModels.Add(inspectionViewModel);
         DockingVm.OpenDock(inspectionViewModel);
-        
+
         inspectionViewModel.Update(PressedPointerPosition.OffsetBy(0.5, 0.5), ReleasedPointerPosition.OffsetBy(0.5, 0.5));
     }
-    
+
 
     public void OnClose()
     {

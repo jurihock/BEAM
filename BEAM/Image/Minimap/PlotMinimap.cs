@@ -19,12 +19,12 @@ namespace BEAM.Image.Minimap;
 /// </summary>
 public class PlotMinimap : Minimap
 {
-    
+
     /// <summary>
     /// The number of pixels the axis limit is offset from the first/last bar.
     /// </summary>
     private const int ScrollBarOffset = 100;
-    
+
     /// <summary>
     /// Every x's line value will be calculated and displayed in the plot.
     /// </summary>
@@ -38,7 +38,7 @@ public class PlotMinimap : Minimap
     /// If a sequence has less row, use ReplacementCompaction instead.
     /// </summary>
     private const int MaxHeightForRelCompaction = 15000;
-    
+
     /// <summary>
     /// The underlying algorithm used to calculate values for pixel lines. These values will later be displayed in the plot.
     /// </summary>
@@ -51,7 +51,7 @@ public class PlotMinimap : Minimap
     {
         MinimapAlgorithm = SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObject();
     }
-    
+
 
     public override void StartGeneration(ISequence sequence, MinimapGeneratedEventHandler eventCallbackFunc)
     {
@@ -62,7 +62,7 @@ public class PlotMinimap : Minimap
 
     public override void SetRenderer(SequenceRenderer renderer)
     {
-        if(MinimapAlgorithm is null) return;
+        if (MinimapAlgorithm is null) return;
         MinimapAlgorithm.SetRenderer(renderer);
     }
 
@@ -71,7 +71,7 @@ public class PlotMinimap : Minimap
         if (!IsGenerated || _viewModel is null)
         {
             return new MinimapPlotViewModel(_plot);
-        } 
+        }
         return _viewModel;
     }
 
@@ -96,38 +96,39 @@ public class PlotMinimap : Minimap
 
         int actualCompactionUsed = CompactionFactor;
         _plot = new Plot();
-      
+
         double maxValue = 0;
         double minValue = 0;
-        
-        if(MaxHeightForRelCompaction >= Sequence.Shape.Height)
+
+        if (MaxHeightForRelCompaction >= Sequence.Shape.Height)
         {
-            
-            actualCompactionUsed = (int) Math.Ceiling(Sequence.Shape.Height / (double) RelHeightCompactionFactor);
+
+            actualCompactionUsed = (int)Math.Ceiling(Sequence.Shape.Height / (double)RelHeightCompactionFactor);
         }
         Bar[] bars = new Bar[Sequence.Shape.Height / actualCompactionUsed];
         for (int i = 0; i < Sequence.Shape.Height / actualCompactionUsed; i++)
         {
             double calculation = MinimapAlgorithm.GetLineValue(i * actualCompactionUsed);
-            if(calculation > maxValue)
+            if (calculation > maxValue)
             {
                 maxValue = calculation;
-            } else if (calculation < minValue)
+            }
+            else if (calculation < minValue)
             {
                 minValue = calculation;
             }
             Bar bar = new Bar
             {
                 Position = i * actualCompactionUsed,
-                Value =  calculation,
+                Value = calculation,
                 Orientation = Orientation.Horizontal
             };
             bars[i] = bar;
-            
+
         }
         _plot.Axes.InvertY();
         _plot.Add.Bars(bars);
-        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence.Shape.Height + ScrollBarOffset);
+        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset, bottom: Sequence.Shape.Height + ScrollBarOffset);
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -149,7 +150,7 @@ public class PlotMinimap : Minimap
 
     public override Minimap Clone()
     {
-        return new PlotMinimap() {CompactionFactor = CompactionFactor, MinimapAlgorithm = MinimapAlgorithm};
+        return new PlotMinimap() { CompactionFactor = CompactionFactor, MinimapAlgorithm = MinimapAlgorithm };
     }
 
     public override string ToString()

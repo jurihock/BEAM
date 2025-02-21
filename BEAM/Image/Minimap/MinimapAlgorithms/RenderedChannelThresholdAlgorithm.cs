@@ -20,8 +20,8 @@ public class RenderedChannelThresholdAlgorithm : IMinimapAlgorithm
     /// An algorithm for <see cref="PlotMinimap"/>'s which counts the number of rendered pixels within a line which
     /// are greater or equal in value than a defined base pixel in every channel.
     /// </summary>
-    public int Channel  {get; set;}
-    
+    public int Channel { get; set; }
+
     /// <summary>
     /// Gets or sets the threshold value (0-255) for the selected channel.
     /// </summary>
@@ -30,8 +30,8 @@ public class RenderedChannelThresholdAlgorithm : IMinimapAlgorithm
     private CancellationToken? _ctx;
     private SequenceRenderer? _renderer;
     private BGR _thresholds;
-    
-    
+
+
     /// <summary>
     /// Prepares the algorithm for sequence analysis by initializing thresholds and storing sequence data.
     /// </summary>
@@ -54,13 +54,13 @@ public class RenderedChannelThresholdAlgorithm : IMinimapAlgorithm
     /// </summary>
     public RenderedChannelThresholdAlgorithm()
     {
-        byte[] data = new byte[] {0, 0, 0};
+        byte[] data = new byte[] { 0, 0, 0 };
         data[Channel] = ChannelThreshold;
         _thresholds = new BGR(data);
     }
 
 
-    
+
     /// <summary>
     /// Computes the value for a specific line in the sequence based on threshold comparison.
     /// </summary>
@@ -74,15 +74,15 @@ public class RenderedChannelThresholdAlgorithm : IMinimapAlgorithm
         {
             throw new InvalidStateException("Data must first be initialized!");
         }
-        if(line < 0 || line >= _sequence.Shape.Height)
+        if (line < 0 || line >= _sequence.Shape.Height)
         {
             throw new ArgumentOutOfRangeException(nameof(line));
         }
 
         return AnalyzeLine(line);
     }
-    
-    
+
+
     private double AnalyzeLine(long line)
     {
         double sum = 0.0f;
@@ -110,11 +110,11 @@ public class RenderedChannelThresholdAlgorithm : IMinimapAlgorithm
     {
         return new RenderedChannelThresholdView(this);
     }
-    
+
 
     public IMinimapAlgorithm Clone()
     {
-        return new RenderedChannelThresholdAlgorithm { _renderer = _renderer , Channel = Channel, ChannelThreshold = ChannelThreshold};
+        return new RenderedChannelThresholdAlgorithm { _renderer = _renderer, Channel = Channel, ChannelThreshold = ChannelThreshold };
     }
 
     public void SetRenderer(SequenceRenderer renderer)

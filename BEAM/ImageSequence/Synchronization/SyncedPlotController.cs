@@ -19,7 +19,7 @@ public class SyncedPlotController
     /// The manipulators which sync the plot's attributes. Different manipulators sync different attributes.
     /// </summary>
     private List<Manipulator> Manipulators { get; init; } = [];
-    
+
     /// <summary>
     /// Registers and thereby adds a new manipulator which is meant to sync new attributes between plots.
     /// It will start syncing all plots which have already been added.
@@ -45,7 +45,7 @@ public class SyncedPlotController
         manipulator.UnsyncAllPlots(Plots);
         return false;
     }
-    
+
     /// <summary>
     /// Removes an existing manipulator which was meant to sync new attributes between plots.
     /// It will unsync all plots which have already been added by this controller.
@@ -79,12 +79,12 @@ public class SyncedPlotController
         {
             return false;
         }
-        
+
         Plots.Add(plot);
 
         return Manipulators.All(manipulator => manipulator.SyncPlot(plot));
     }
-    
+
     /// <summary>
     /// Removes a previously added plot from the set of synchronized plots. It will be no longer synced to any manipulators from this controller.
     /// </summary>
@@ -113,7 +113,7 @@ public class SyncedPlotController
             manipulator.Activate();
         }
     }
-    
+
     /// <summary>
     /// This method is used to deactivate the synchronization between all manipulators.
     /// </summary>

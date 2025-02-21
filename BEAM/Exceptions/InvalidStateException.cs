@@ -9,5 +9,5 @@ public class InvalidStateException : BeamException
     public InvalidStateException(string message) : base(message)
     {
     }
-    
+
 }

@@ -36,14 +36,15 @@ public static class EventSourceMapper
         EventQueue.Enqueue(eventSource);
         SourcePlots.Add(eventSource, plot);
     }
-    
+
     /// <summary>
     /// Checks whether a given plot is the source of the given event.
     /// </summary>
     /// <param name="e">The event for which the source will be checked.</param>
     /// <param name="plot">The plot which will be checked for being the source.</param>
     /// <returns>A Boolean representing, if the plot is the source of the event.</returns>
-    public static bool IsSource(RoutedEventArgs e, AvaPlot plot) {
+    public static bool IsSource(RoutedEventArgs e, AvaPlot plot)
+    {
         if (SourcePlots.TryGetValue(e, out var source))
         {
             return source != null && source.Equals(plot);
@@ -64,7 +65,7 @@ public static class EventSourceMapper
             AddEventSource(e, plot);
         }
     }
-    
+
     /// <summary>
     /// Clear the event queue and the event and plots mapping.
     /// </summary>

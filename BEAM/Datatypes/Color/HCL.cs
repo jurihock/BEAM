@@ -21,7 +21,7 @@ public sealed class HueColorLut
     {
         get
         {
-            var hsv = new HSV { H = hue, S = Saturation, V = Value};
+            var hsv = new HSV { H = hue, S = Saturation, V = Value };
             var bgr = hsv.ToBgr();
 
             return bgr;

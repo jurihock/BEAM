@@ -22,14 +22,14 @@ public static class PlotControllerManager
     /// Adding an existing set will lead to an unsuccessful operation.</returns>
     public static bool RegisterController(SyncedPlotController controller)
     {
-        if(PlotControllers.Contains(controller))
+        if (PlotControllers.Contains(controller))
         {
             return false;
         }
         PlotControllers.Add(controller);
         return true;
     }
-    
+
     /// <summary>
     /// Removes an already existing and registered synchronization set from the existing ones.
     /// </summary>
@@ -38,14 +38,14 @@ public static class PlotControllerManager
     /// Removing a set which was not stored will lead to an unsuccessful operation.</returns>
     public static bool Unregister(SyncedPlotController controller)
     {
-        if(!PlotControllers.Contains(controller))
+        if (!PlotControllers.Contains(controller))
         {
             return false;
         }
         PlotControllers.Remove(controller);
         return true;
     }
-    
+
     /// <summary>
     /// Adds a plot to all stored synchronization sets.
     /// </summary>
@@ -73,7 +73,7 @@ public static class PlotControllerManager
             controller.Activate();
         }
     }
-    
+
     public static void DeactivateSynchronization()
     {
         foreach (var controller in PlotControllers)

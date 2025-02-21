@@ -24,7 +24,7 @@ public partial class PixelThresholdAnySumAlgorithmConfigControlViewModel : ViewM
     /// Gets or sets the threshold value for the alpha channel.
     /// </summary>
     [ObservableProperty] public partial byte SelectedAlphaThreshold { get; set; }
-    
+
     private readonly RenderedPixelAnyThresholdAlgorithm _algorithm;
     /// <summary>
     /// Initializes a new instance with the specified algorithm and loads its current threshold values.
@@ -38,7 +38,7 @@ public partial class PixelThresholdAnySumAlgorithmConfigControlViewModel : ViewM
         SelectedBlueThreshold = algorithm.ThresholdBlue;
         SelectedAlphaThreshold = algorithm.ThresholdAlpha;
     }
-    
+
     /// <summary>
     /// Saves the current threshold values back to the algorithm.
     /// </summary>

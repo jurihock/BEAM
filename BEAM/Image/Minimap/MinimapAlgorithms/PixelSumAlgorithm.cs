@@ -24,7 +24,7 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
         _sequence = sequence;
         _ctx = ctx;
         _pixelsPerLine = sequence.Shape.Width;
-        
+
         return true;
     }
 
@@ -38,7 +38,7 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
             sum += renderedData.G;
             sum += renderedData.R;
         }
-        return sum/_pixelsPerLine;
+        return sum / _pixelsPerLine;
     }
 
     public double GetLineValue(long line)
@@ -76,4 +76,3 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
         _renderer = renderer;
     }
 }
-    

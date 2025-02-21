@@ -15,8 +15,8 @@ public partial class MinimapPlotViewModel : SizeAdjustableViewModelBase, IDockBa
     /// Gets or sets the current plot being displayed.
     /// </summary>
     [ObservableProperty] private Plot _currentPlot;
-    
-    
+
+
     /// <summary>
     /// Gets the display name of the minimap view.
     /// </summary>

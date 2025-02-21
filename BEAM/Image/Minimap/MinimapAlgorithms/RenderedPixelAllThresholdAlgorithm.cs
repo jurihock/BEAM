@@ -20,14 +20,14 @@ public class RenderedPixelAllThresholdAlgorithm : IMinimapAlgorithm
     public byte ThresholdRed { get; set; } = 25;
     public byte ThresholdBlue { get; set; } = 25;
     public byte ThresholdGreen { get; set; } = 25;
-    public byte ThresholdAlpha {get; set;} = 255 ;
+    public byte ThresholdAlpha { get; set; } = 255;
     private ISequence? _sequence;
     private CancellationToken? _ctx;
     private SequenceRenderer? _renderer;
     private BGR _thresholds;
     public bool AnalyzeSequence(ISequence sequence, CancellationToken ctx)
     {
-        _thresholds = new BGR(ThresholdBlue, ThresholdGreen,  ThresholdRed);
+        _thresholds = new BGR(ThresholdBlue, ThresholdGreen, ThresholdRed);
         _sequence = sequence;
         _ctx = ctx;
         return true;
@@ -40,14 +40,14 @@ public class RenderedPixelAllThresholdAlgorithm : IMinimapAlgorithm
         {
             throw new InvalidStateException("Data must first be initialized!");
         }
-        if(line < 0 || line >= _sequence.Shape.Height)
+        if (line < 0 || line >= _sequence.Shape.Height)
         {
             throw new ArgumentOutOfRangeException(nameof(line));
         }
 
         return AnalyzeLine(line);
     }
-    
+
     private double AnalyzeLine(long line)
     {
         double sum = 0.0f;
@@ -71,16 +71,16 @@ public class RenderedPixelAllThresholdAlgorithm : IMinimapAlgorithm
     {
         return new PixelThresholdAllSumAlgorithmConfigControlView(this);
     }
-    
+
 
     public IMinimapAlgorithm Clone()
     {
-        return new RenderedPixelAllThresholdAlgorithm { _renderer = _renderer , ThresholdRed = ThresholdRed, ThresholdGreen = ThresholdGreen, ThresholdBlue = ThresholdBlue, ThresholdAlpha = ThresholdAlpha};
+        return new RenderedPixelAllThresholdAlgorithm { _renderer = _renderer, ThresholdRed = ThresholdRed, ThresholdGreen = ThresholdGreen, ThresholdBlue = ThresholdBlue, ThresholdAlpha = ThresholdAlpha };
     }
 
     public void SetRenderer(SequenceRenderer renderer)
     {
         _renderer = renderer;
     }
-    
+
 }

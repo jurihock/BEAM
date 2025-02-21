@@ -16,7 +16,7 @@ public class MouseManipulator : Manipulator
     private readonly List<AvaPlot> _avaPlots = [];
 
     private bool _isSynchronizing;
-    
+
     /// <summary>
     /// Synchronizes a plot with all the other plots, which are already registered.
     /// </summary>
@@ -28,16 +28,16 @@ public class MouseManipulator : Manipulator
         {
             return false;
         }
-        
+
         _avaPlots.Add(avaPlot);
-        
+
         avaPlot.PointerEntered += (_, e) =>
         {
             if (!_isSynchronizing)
             {
                 return;
             }
-            
+
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
@@ -57,12 +57,12 @@ public class MouseManipulator : Manipulator
             {
                 return;
             }
-            
+
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
                 var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
-                
+
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
@@ -77,7 +77,7 @@ public class MouseManipulator : Manipulator
             {
                 return;
             }
-            
+
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
@@ -97,13 +97,13 @@ public class MouseManipulator : Manipulator
             {
                 return;
             }
-            
+
             // check for right click -> only opens context push menu (Scottplot internal)
             if (e.GetCurrentPoint(avaPlot).Properties.IsRightButtonPressed)
             {
                 return;
             }
-            
+
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
@@ -123,7 +123,7 @@ public class MouseManipulator : Manipulator
             {
                 return;
             }
-            
+
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
@@ -150,7 +150,7 @@ public class MouseManipulator : Manipulator
                 plot.Refresh();
                 ScrollingSynchronizerMapper.UpdateOwnScrollBar(plot);
                 ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
-            }   
+            }
         };
 
         avaPlot.Tapped += (_, e) =>
@@ -159,7 +159,7 @@ public class MouseManipulator : Manipulator
             {
                 return;
             }
-            
+
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
@@ -179,7 +179,7 @@ public class MouseManipulator : Manipulator
             {
                 return;
             }
-            
+
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
@@ -199,7 +199,7 @@ public class MouseManipulator : Manipulator
             {
                 return;
             }
-            
+
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
@@ -210,7 +210,7 @@ public class MouseManipulator : Manipulator
                 }
             }
         };
-            
+
         return true;
     }
 
@@ -223,7 +223,7 @@ public class MouseManipulator : Manipulator
     {
         return avaPlot != null && _avaPlots.Remove(avaPlot);
     }
-    
+
     /// <summary>
     /// This method is used to activate the synchronization between all plots.
     /// </summary>
@@ -231,7 +231,7 @@ public class MouseManipulator : Manipulator
     {
         _isSynchronizing = true;
     }
-    
+
     /// <summary>
     /// This method is used to deactivate the synchronization between all plots.
     /// </summary>

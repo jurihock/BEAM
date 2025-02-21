@@ -15,7 +15,7 @@ public class ChannelHSVMap
     ///  
     /// </summary>
     private readonly ChannelToHSV[] _channels;
-    
+
     private static readonly HueColorLut Hcl = new HueColorLut();
     public int AmountChannels => _channels.Length;
 
@@ -24,7 +24,7 @@ public class ChannelHSVMap
         _channels = new ChannelToHSV[maxAmountChannels];
         for (var i = 0; i < maxAmountChannels; i++)
         {
-            _channels[i] = new ChannelToHSV(i / (double) maxAmountChannels);
+            _channels[i] = new ChannelToHSV(i / (double)maxAmountChannels);
         }
     }
 
@@ -42,7 +42,7 @@ public class ChannelHSVMap
     {
         return Hcl[_channels[channel].HSVValue].ToHsv();
     }
-    
+
     /// <summary>
     /// Returns color for the channel as a BGR color.
     /// </summary>
@@ -92,7 +92,7 @@ public class ChannelHSVMap
                 usedChannels.Add(i);
             }
         }
-        
+
         return usedChannels.ToArray();
     }
 
@@ -129,5 +129,5 @@ public class ChannelHSVMap
     {
         return _channels;
     }
-    
+
 }

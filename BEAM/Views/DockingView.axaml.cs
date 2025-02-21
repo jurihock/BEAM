@@ -55,7 +55,7 @@ public partial class DockingView : UserControl
     private void _OnItemRemoved(DockItemViewModelBase item)
     {
         var vm = DataContext as DockingViewModel;
-        if (vm is null  || (item.Content as IDockBase)  is null)
+        if (vm is null || (item.Content as IDockBase) is null)
         {
             return;
         }

@@ -80,9 +80,9 @@ public static class EnviExtensions
     {
         return Marshal.SizeOf(type.TypeOf());
     }
-    
-    
-    
+
+
+
     /// <summary>
     /// Creates a function which takes an offset to a file as an argument and returns an object of the EnviDataType's corresponding primitive c# type.
     /// The offset determines how many readable object are skipped. This means that an offset of 2 means the third readable object is being returned.

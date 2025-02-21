@@ -18,7 +18,7 @@ public partial class InspectionView : UserControl
         InitializeComponent();
         DataContextChanged += DataContextChangedHandling;
     }
-    
+
     /// <summary>
     /// Updates the Plot with the given new plot.
     /// </summary>
@@ -38,13 +38,13 @@ public partial class InspectionView : UserControl
         SequencePicker.SelectedIndex = vm.CurrentSequenceIndex();
         AnalysisPicker.SelectedIndex = vm.CurrentAnalysisIndex();
     }
-    
+
     public void CloneButton_Clicked(object sender, RoutedEventArgs e)
     {
-        if(DataContext is not InspectionViewModel vm) return;
+        if (DataContext is not InspectionViewModel vm) return;
         vm.Clone();
     }
-    
+
     public void AnalysisPicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (DataContext is not InspectionViewModel vm || vm.CurrentPlot is null) return;
@@ -58,13 +58,13 @@ public partial class InspectionView : UserControl
             AnalysisPicker.SelectedIndex = vm.CurrentAnalysisIndex();
         }
     }
-    
+
     public void SequencePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (DataContext is not InspectionViewModel vm) return;
         vm.ChangeSequence(SequencePicker.SelectedIndex);
     }
-    
+
     public void CheckBox_Changed(object sender, RoutedEventArgs e)
     {
         if (DataContext is not InspectionViewModel vm) return;

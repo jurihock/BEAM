@@ -15,22 +15,22 @@ namespace BEAM.ViewModels.Minimap.Popups.EmbeddedSettings;
 /// <summary>
 /// View model for configuring plot minimap settings and managing minimap algorithms.
 /// </summary>
-public partial class PlotMinimapConfigControlViewModel: ViewModelBase
+public partial class PlotMinimapConfigControlViewModel : ViewModelBase
 {
     private const String DefaultControlText = "This Algorithm provides no changeable settings";
 
     private readonly PlotMinimap _plotMinimap;
-    
+
     /// <summary>
     /// Gets or sets the line compaction factor for the minimap.
     /// </summary>
     [ObservableProperty] public partial int LineCompaction { get; set; }
-    
+
     /// <summary>
     /// Gets or sets the currently selected minimap algorithm.
     /// </summary>
     [ObservableProperty] public partial IMinimapAlgorithm? SelectedAlgorithm { get; set; }
-    
+
     /// <summary>
     /// Gets or sets the collection of available minimap algorithms.
     /// </summary>
@@ -39,8 +39,8 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
     /// Gets or sets the collection of algorithm-specific setting controls.
     /// </summary>
     [ObservableProperty] public partial ObservableCollection<Control> AlgorithmSubSettings { get; set; } = new ObservableCollection<Control>();
-    
-    
+
+
     private SaveUserControl _currentConfigControl = new NullSaveConfig();
     /// <summary>
     /// Saves the current configuration to the plot minimap.
@@ -52,7 +52,7 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
         _plotMinimap.MinimapAlgorithm = SelectedAlgorithm;
         SettingsUtilityHelper<IMinimapAlgorithm>.SetDefaultObject(SelectedAlgorithm);
     }
-    
+
     /// <summary>
     /// Creates a new instance of this view model for the specified plot minimap.
     /// The corresponding algorithm settings  UI element is loaded.
@@ -63,15 +63,15 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
         _plotMinimap = plotMinimap;
         LineCompaction = plotMinimap.CompactionFactor;
         SelectedAlgorithm = _plotMinimap.MinimapAlgorithm;
-        if (!SettingsUtilityHelper<IMinimapAlgorithm>.ExistAny() )
+        if (!SettingsUtilityHelper<IMinimapAlgorithm>.ExistAny())
         {
-            TextBlock textBlock = new TextBlock(){Text= "There are no Algorithms to choose from"};
+            TextBlock textBlock = new TextBlock() { Text = "There are no Algorithms to choose from" };
             AlgorithmSubSettings.Add(textBlock);
             return;
         }
-        
-        
-        foreach(var element in SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObjects() /*PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithms()*/)
+
+
+        foreach (var element in SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObjects() /*PlotAlgorithmSettingsUtilityHelper.GetDefaultAlgorithms()*/)
         {
             Algorithms.Add(element);
         }
@@ -86,7 +86,7 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
         }
     }
 
-    
+
     /// <summary>
     /// Handles algorithm selection changes and updates the settings UI.
     /// </summary>
@@ -98,20 +98,20 @@ public partial class PlotMinimapConfigControlViewModel: ViewModelBase
         IMinimapAlgorithm? algorithm;
         try
         {
-            algorithm = (IMinimapAlgorithm) e.AddedItems[0]!;
+            algorithm = (IMinimapAlgorithm)e.AddedItems[0]!;
         }
         catch (NullReferenceException ex)
         {
             throw new InvalidCastException("The selected Minimap is not a Minimap", ex);
         }
-        
+
 
         var controls = algorithm.GetSettingsPopupControl();
         AlgorithmSubSettings.Clear();
-        if(controls is null)
+        if (controls is null)
         {
             _currentConfigControl = new NullSaveConfig();
-            AlgorithmSubSettings.Add(new TextBlock() {Text = DefaultControlText});
+            AlgorithmSubSettings.Add(new TextBlock() { Text = DefaultControlText });
         }
         else
         {

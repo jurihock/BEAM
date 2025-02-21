@@ -18,7 +18,7 @@ public abstract class Manipulator
     /// <param name="avaPlot">The plot which will be synced with the existing ones (if any).</param>
     /// <returns>A Boolean representing whether the operation as successful.</returns>
     public abstract bool SyncPlot(AvaPlot? avaPlot);
-    
+
     /// <summary>
     /// Removes a plot from the set of synchronised plots.
     /// Returns true if plot is null.
@@ -37,7 +37,7 @@ public abstract class Manipulator
     {
         return plots is null || plots.All(UnsyncPlot);
     }
-    
+
     /// <summary>
     /// Sync all plots actions according to the attributes this manipulator observers.
     /// The first list entry will be used as the base (aligning every other entry's attributes to it) if no plot has previously been added.
@@ -53,7 +53,7 @@ public abstract class Manipulator
     /// This method is used to activate the synchronization between all plots.
     /// </summary>
     public abstract void Activate();
-    
+
     /// <summary>
     /// This method is used to deactivate the synchronization between all plots.
     /// </summary>

@@ -321,7 +321,7 @@ public class SequenceImage : IDisposable
                 // putting the data inside the bitmap
                 for (var i = 0; i < width; i++)
                 {
-                    pixels[j*width + i] = new BGRA(data[i], 255);
+                    pixels[j * width + i] = new BGRA(data[i], 255);
                 }
             }
         );

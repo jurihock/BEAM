@@ -35,32 +35,32 @@ public interface IMinimapAlgorithm
     /// </summary>
     String GetName();
 
-    
+
     /// <summary>
     /// Gets the name of the minimap algorithm.
     /// </summary>
     /// <returns>A string representing the algorithm's name.</returns>
     public String Name => GetName();
-    
-    
+
+
     /// <summary>
     /// Gets a user control for algorithm-specific settings, if any exist.
     /// </summary>
     /// <returns>A SaveUserControl instance, or null if no settings are available.</returns>
     public SaveUserControl? GetSettingsPopupControl();
-    
+
     /// <summary>
     /// Creates a deep copy of the minimap algorithm instance.
     /// </summary>
     /// <returns>A new instance of the minimap algorithm.</returns>
     public IMinimapAlgorithm Clone();
-    
+
     /// <summary>
     /// Sets the sequence renderer used by the algorithm for pixel rendering.
     /// Must be called before AnalyzeSequence.
     /// </summary>
     /// <param name="renderer">The sequence renderer instance to use.</param>
     public void SetRenderer(SequenceRenderer renderer);
-    
+
 
 }

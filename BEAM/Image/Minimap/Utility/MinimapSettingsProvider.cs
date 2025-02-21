@@ -27,14 +27,15 @@ public class MinimapSettingsProvider : ISettingsProvider<Minimap>
             if (!defaults.IsNullOrEmpty())
             {
                 _currentDefault = defaults.First();
-            } else
+            }
+            else
             {
                 _currentDefault ??= _defaultMinimaps.First();
             }
         }
     }
-    
-    private Minimap TypeToMinimap(Type T) 
+
+    private Minimap TypeToMinimap(Type T)
     {
         var result = T.GetConstructors().Where(t => t.GetParameters().Length == 0).ToList();
         if (!result.Any())
@@ -42,9 +43,9 @@ public class MinimapSettingsProvider : ISettingsProvider<Minimap>
             throw new ArgumentException("Input Type 'T' should have a parameterless constructor");
         }
         return (Minimap)result.First().Invoke([]);
-        
+
     }
-    
+
     public ImmutableList<Minimap> GetDefaultObjects()
     {
         return _defaultMinimaps.ToImmutableList();
@@ -85,5 +86,5 @@ public class MinimapSettingsProvider : ISettingsProvider<Minimap>
         }
         return new SettingsTransferObject<Minimap>(allPossible.ToImmutableList(), defaultClone);
     }
-    
+
 }

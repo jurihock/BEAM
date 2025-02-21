@@ -23,7 +23,7 @@ public partial class RenderedChannelThresholdViewModel : ViewModelBase
     /// Valid values are: 0 (Blue), 1 (Green), 2 (Red).
     /// </summary>
     [ObservableProperty] public partial int Channel { get; set; }
-    
+
     /// <summary>
     /// Initializes a new instance of the RenderedChannelThresholdViewModel with the specified algorithm.
     /// Loads initial threshold and channel values from the algorithm.

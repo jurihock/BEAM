@@ -51,7 +51,7 @@ public static class EnviExporter
         var bands = sequence.Shape.Channels;
         const int headerOffset = 0;
         const string fileType = "ENVI Standard";
-        const int dataType = (int) EnviDataType.Double;
+        const int dataType = (int)EnviDataType.Double;
         const EnviInterleave interleave = EnviInterleave.BIP;
         const int byteOrder = 0;
         var header = $"ENVI\nsamples = {samples}\nlines = {lines}\nbands = {bands}\nheader offset = {headerOffset}\nfile type = {fileType}\ndata type = {dataType}\ninterleave = {interleave.ToString().ToLower()}\nbyte order = {byteOrder}";

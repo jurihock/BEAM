@@ -14,13 +14,13 @@ namespace BEAM.Image.Minimap.Utility;
 public class AlgorithmSettingsProvider : ISettingsProvider<IMinimapAlgorithm>
 
 {
-    
+
     private readonly List<IMinimapAlgorithm> _defaultAlgorithms;
     private IMinimapAlgorithm? _currentDefault;
     private readonly Type _defaultType = typeof(RenderedPixelAllThresholdAlgorithm);
     public AlgorithmSettingsProvider()
     {
-        _defaultAlgorithms = new List<IMinimapAlgorithm>(); 
+        _defaultAlgorithms = new List<IMinimapAlgorithm>();
         _defaultAlgorithms.AddAll(Assembly.GetExecutingAssembly().GetTypes()
             .Where(t => t is { IsClass: true, IsAbstract: false } && t.GetInterfaces().Contains(typeof(IMinimapAlgorithm)))
             .ToList().ReplaceEveryEntry(TypeToAlgorithm));
@@ -28,13 +28,14 @@ public class AlgorithmSettingsProvider : ISettingsProvider<IMinimapAlgorithm>
         if (!defaults.IsNullOrEmpty())
         {
             _currentDefault = defaults.First();
-        } else
+        }
+        else
         {
             _currentDefault ??= _defaultAlgorithms.First();
         }
     }
-    
-    private IMinimapAlgorithm TypeToAlgorithm(Type T) 
+
+    private IMinimapAlgorithm TypeToAlgorithm(Type T)
     {
         var result = T.GetConstructors().Where(t => t.GetParameters().Length == 0).ToList();
         if (!result.Any())
@@ -42,9 +43,9 @@ public class AlgorithmSettingsProvider : ISettingsProvider<IMinimapAlgorithm>
             throw new ArgumentException("Input Type 'T' should have a parameterless constructor");
         }
         return (IMinimapAlgorithm)result.First().Invoke([]);
-        
+
     }
-    
+
     public ImmutableList<IMinimapAlgorithm> GetDefaultObjects()
     {
         return _defaultAlgorithms.ToImmutableList();

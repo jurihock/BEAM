@@ -30,7 +30,7 @@ public static class PngExporter
         var shape = sequence.Shape;
         for (; i < shape.Height / MaxHeight; i++)
         {
-            var bitmap = new SKBitmap((int) shape.Width, (int) MaxHeight, SKColorType.Bgra8888, SKAlphaType.Opaque);
+            var bitmap = new SKBitmap((int)shape.Width, (int)MaxHeight, SKColorType.Bgra8888, SKAlphaType.Opaque);
             for (var j = 0; j < MaxHeight && j + i * MaxHeight < shape.Height; j++)
             {
                 for (var k = 0; k < shape.Width; k++)
@@ -52,7 +52,7 @@ public static class PngExporter
         if (shape.Height % MaxHeight != 0)
         {
             var height = shape.Height % MaxHeight;
-            var bitmap = new SKBitmap((int) shape.Width, (int) height, SKColorType.Bgra8888, SKAlphaType.Opaque);
+            var bitmap = new SKBitmap((int)shape.Width, (int)height, SKColorType.Bgra8888, SKAlphaType.Opaque);
             for (var j = 0; j < height; j++)
             {
                 for (var k = 0; k < shape.Width; k++)

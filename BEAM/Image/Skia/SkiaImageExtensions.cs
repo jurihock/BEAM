@@ -90,7 +90,9 @@ public static class SkiaImageExtensions
         {
             return index => index switch
             {
-                0 => 2, 2 => 0, _ => index
+                0 => 2,
+                2 => 0,
+                _ => index
             };
         }
 

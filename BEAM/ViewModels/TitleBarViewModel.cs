@@ -5,5 +5,5 @@
 /// </summary>
 public partial class TitleBarViewModel : ViewModelBase
 {
-    
+
 }

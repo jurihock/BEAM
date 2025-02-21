@@ -23,15 +23,15 @@ public class RegionAnalysisAverageOfChannels : Analysis
     {
         using var _ = Timer.Start("Region analysis (avg of channels)");
         _topLeft =
-            new Coordinate2D((long) Math.Min(pointerPressedPoint.Row, pointerReleasedPoint.Row),
-                (long) Math.Min(pointerPressedPoint.Column, pointerReleasedPoint.Column));
-        
+            new Coordinate2D((long)Math.Min(pointerPressedPoint.Row, pointerReleasedPoint.Row),
+                (long)Math.Min(pointerPressedPoint.Column, pointerReleasedPoint.Column));
+
         _bottomRight =
-            new Coordinate2D((long) Math.Max(pointerPressedPoint.Row, pointerReleasedPoint.Row),
-                (long) Math.Max(pointerPressedPoint.Column, pointerReleasedPoint.Column));
+            new Coordinate2D((long)Math.Max(pointerPressedPoint.Row, pointerReleasedPoint.Row),
+                (long)Math.Max(pointerPressedPoint.Column, pointerReleasedPoint.Column));
 
         _amountChannels = sequence.Shape.Channels;
-        
+
         // Calculate the average and store them in _sumChannels
         _CalculateResult(sequence);
 
@@ -39,9 +39,9 @@ public class RegionAnalysisAverageOfChannels : Analysis
         plot.Title(Name);
         return plot;
     }
-    
-    
-    
+
+
+
     /// <summary>
     /// Calculates the average of the channels in the region and stores the result in _sumChannels
     /// </summary>
@@ -58,10 +58,10 @@ public class RegionAnalysisAverageOfChannels : Analysis
                 _UpdateWithPixel(sequence.GetPixel((long)column, (long)row));
             }
         }
-        
+
         _calculateAverage();
     }
-    
+
     /// <summary>
     /// Update _sumChannels with the given pixel.
     /// </summary>

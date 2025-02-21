@@ -20,7 +20,7 @@ public partial class PlotMinimapConfigControlView : SaveUserControl
         DataContext = new PlotMinimapConfigControlViewModel(plotMinimap);
         InitializeComponent();
     }
-    
+
     /// <summary>
     /// Saves the current configuration settings through the view model.
     /// </summary>
@@ -28,7 +28,7 @@ public partial class PlotMinimapConfigControlView : SaveUserControl
     {
         ((DataContext as PlotMinimapConfigControlViewModel)!).Save();
     }
-    
+
 
     /// <summary>
     /// Handles algorithm selection changes in the UI.

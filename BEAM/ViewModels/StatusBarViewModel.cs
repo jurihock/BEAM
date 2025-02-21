@@ -14,7 +14,7 @@ namespace BEAM.ViewModels;
 public partial class StatusBarViewModel : ViewModelBase
 {
     private static StatusBarViewModel? _instance;
-    
+
     private long _infoCounter;
     private long _warningCounter;
     private long _errorCounter;
@@ -44,7 +44,7 @@ public partial class StatusBarViewModel : ViewModelBase
 
         if (e is not { Action: NotifyCollectionChangedAction.Add, NewItems.Count: > 0 }) return;
 
-        var item = (LogEntry) e.NewItems[0]!;
+        var item = (LogEntry)e.NewItems[0]!;
         switch (item.Level)
         {
             case LogLevel.Info:
@@ -66,7 +66,7 @@ public partial class StatusBarViewModel : ViewModelBase
     {
         return _instance ?? (_instance = new StatusBarViewModel());
     }
-    
+
     public void AddInfo(string infoMessage)
     {
         _infoCounter += 1;
@@ -74,7 +74,7 @@ public partial class StatusBarViewModel : ViewModelBase
         StatusBarVisible = true;
         InfoText = _infoCounter >= 100 ? "99+ Info" : _infoCounter + " Info";
     }
-    
+
     public void AddWarning(string warningMessage)
     {
         _warningCounter += 1;
@@ -82,7 +82,7 @@ public partial class StatusBarViewModel : ViewModelBase
         StatusBarVisible = true;
         WarningText = _warningCounter >= 100 ? "99+ Warnings" : _warningCounter + " Warnings";
     }
-    
+
     public void AddError(string errorMessage)
     {
         _errorCounter += 1;
@@ -90,7 +90,7 @@ public partial class StatusBarViewModel : ViewModelBase
         ErrorVisible = true;
         StatusBarVisible = true;
     }
-    
+
     public void Clear()
     {
         _infoCounter = 0;
@@ -104,7 +104,7 @@ public partial class StatusBarViewModel : ViewModelBase
         WarningText = "";
         ErrorText = "";
     }
-    
+
     [RelayCommand]
     public void OpenStatusWindow()
     {

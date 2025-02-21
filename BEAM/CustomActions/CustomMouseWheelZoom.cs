@@ -33,7 +33,7 @@ public class CustomMouseWheelZoom(Key horizontalLockKey, Key verticalLockKey) : 
     /// Fraction of the axis range to change when zooming in and out.
     /// </summary>
     public double ZoomFraction { get; set; } = 0.15;
-    
+
     /// <summary>
     /// Fraction of the axis range to change when scrolling.
     /// </summary>
@@ -62,7 +62,7 @@ public class CustomMouseWheelZoom(Key horizontalLockKey, Key verticalLockKey) : 
                 return new ResponseInfo() { RefreshNeeded = true };
             }
 
-            return ResponseInfo.NoActionRequired;   
+            return ResponseInfo.NoActionRequired;
         }
         else
         {
@@ -73,7 +73,7 @@ public class CustomMouseWheelZoom(Key horizontalLockKey, Key verticalLockKey) : 
                 MouseAxisManipulation.DragPan(plot, mouseDownInput.Pixel, pixel);
                 return new ResponseInfo() { RefreshNeeded = true };
             }
-            
+
             if (userInput is MouseWheelDown mouseUpInput)
             {
                 var ySize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
