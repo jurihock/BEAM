@@ -1,11 +1,7 @@
-using System.Collections.ObjectModel;
-using Avalonia.Rendering;
 using BEAM.ViewModels;
-using BEAM.Datatypes;
-using BEAM.Docking;
 using BEAM.ImageSequence;
 using Moq;
-using Xunit;
+
 
 namespace BEAM.Tests.SequenceViewModel;
 
@@ -28,6 +24,4 @@ public class SequenceViewModelTest
         Assert.NotEmpty(viewModel.Renderers);
         Assert.Equal(viewModel.RendererSelection, viewModel.Renderers.Length > 1 ? 1 : 0);
     }
-    
-    
 }
