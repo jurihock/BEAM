@@ -1,5 +1,8 @@
 namespace BEAM.Models.Log;
 
+/// <summary>
+/// Log events inside BEAM.
+/// </summary>
 public enum LogEvent
 {
     Sequence,

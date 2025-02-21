@@ -1,14 +1,18 @@
-using System;
 using System.Collections.ObjectModel;
 using BEAM.Docking;
 using BEAM.ImageSequence;
-using BEAM.ViewModels;
 using CommunityToolkit.Mvvm.Input;
 
 namespace BEAM.ViewModels;
 
+/// <summary>
+/// View model controlling the visible dock.
+/// </summary>
 public partial class DockingViewModel : ViewModelBase
 {
+    /// <summary>
+    /// The visible dock items.
+    /// </summary>
     public ObservableCollection<IDockBase> Items = [];
 
     /// <summary>
@@ -21,16 +25,20 @@ public partial class DockingViewModel : ViewModelBase
         Items.Add(viewModel);
     }
 
-    [RelayCommand]
-    public void Foo()
-    {
-        OpenDock(new InspectionViewModel());
-    }
-
 
     [RelayCommand]
     public void OpenSequenceView(ISequence sequence)
     {
-        OpenDock(new SequenceViewModel(sequence));
+        OpenDock(new SequenceViewModel(sequence, this));
+
+    }
+
+    /// <summary>
+    /// Removed the view model from the visible dock items.
+    /// </summary>
+    /// <param name="viewModel"></param>
+    public void RemoveDock(IDockBase viewModel)
+    {
+        Items.Remove(viewModel);
     }
 }

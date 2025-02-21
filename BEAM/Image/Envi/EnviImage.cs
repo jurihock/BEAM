@@ -177,7 +177,6 @@ public class EnviImage<T> : ITypedImage<T>, IMemoryImage
             data[i] = new double[channels.Length];
         }
 
-        //TODO: Implement in MemoryLayoutClasses for better inheritance
         switch (Layout)
         {
             // checking for memory layout -> better cache accesses
@@ -274,7 +273,7 @@ public static class EnviImage
     /// This method opens a new file as an envi file given the supplied path. Its corresponding header file must be located at the same location with the same name.
     /// </summary>
     /// <param name="filepath">The path to the ENVI file (header and data).</param>
-    /// <returns> A generic <see cref="EnviImage{T}"/> cast to its superclass <see cref="IEnviImage"/> which represents the files found under the supplied path.</returns>
+    /// <returns> A generic <see cref="EnviImage{T}"/> cast to its superclass <see cref="EnviImage"/> which represents the files found under the supplied path.</returns>
     /// <exception cref="FileNotFoundException">If either the header or the raw file were not found in under the supplied path.</exception>
     public static IMemoryImage OpenImage(string filepath)
     {

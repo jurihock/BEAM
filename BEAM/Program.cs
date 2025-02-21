@@ -13,7 +13,7 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        Logger.Init("../../../../BEAM.Tests/loggerTests/testLogs/testLog.log");
+        Logger.Init();
 
         Timer.TimerEnd += (e) =>
         {

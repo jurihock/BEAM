@@ -1,24 +1,20 @@
 // (c) Paul Stier, 2025
-
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using BEAM.Image;
 using ScottPlot;
 using SkiaSharp;
 
 namespace BEAM.Image.Displayer.ScottPlot;
 
-public class CheckerboardPlottable : IPlottable
+/// <summary>
+/// Plottable image for ScottPlot. This plottable renders a checkerboard pattern onto the screen.
+/// Mainly used as a background texture.
+/// The texture will tile is all directions and move with the current position of the top-left visible coordinate in an y-axis inverted plot.
+/// </summary>
+public class CheckerboardPlottable(bool darkMode = false) : IPlottable
 {
-    private AssetImage _assetImage;
-
-    public CheckerboardPlottable(bool darkMode = false)
-    {
-        _assetImage = darkMode
-            ? new AssetImage("avares://BEAM/Assets/Images/CheckerboardDark.png")
-            : new AssetImage("avares://BEAM/Assets/Images/CheckerboardLight.png");
-    }
+    private readonly AssetImage _assetImage = darkMode
+        ? new AssetImage("avares://BEAM/Assets/Images/CheckerboardDark.png")
+        : new AssetImage("avares://BEAM/Assets/Images/CheckerboardLight.png");
 
     public AxisLimits GetAxisLimits()
     {

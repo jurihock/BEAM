@@ -6,10 +6,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using BEAM.Datatypes.Color;
 using BEAM.Image.Bitmap;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
-using ScottPlot.Avalonia;
 using SkiaSharp;
 
 namespace BEAM.Image.Displayer;
@@ -71,7 +71,6 @@ public class SequenceImage : IDisposable
         /// <param name="scaled">Whether the rendering takes place because of a scaling operation of the view.</param>
         public void Render(double resolutionScale, long yRange, bool scaled)
         {
-            // TODO: find a true way to cancel and restart the operation
             // repositioning the part
             Scale = resolutionScale;
             var width = sequence.Shape.Width;
@@ -92,11 +91,13 @@ public class SequenceImage : IDisposable
                     canvas.DrawBitmap(tmp, new SKRectI(0, 0, _bitmap.Width, _bitmap.Height), Paint);
 
                     Bitmap = infoBmp;
+                    seqImg.RequestRefreshPlotEvent.Invoke(this, new RequestRefreshPlotEventArgs());
                 }
                 else
                 {
                     _bitmap = CreateTempBitmap(1, 1, SKColors.Gray);
                     Bitmap = _bitmap;
+                    seqImg.RequestRefreshPlotEvent.Invoke(this, new RequestRefreshPlotEventArgs());
                 }
 
                 // rerendering the sequence part
@@ -149,6 +150,7 @@ public class SequenceImage : IDisposable
     /// </summary>
     /// <param name="sequence">The sequence used</param>
     /// <param name="startLine">The line to start the view from</param>
+    /// <param name="renderer">The renderer used to convert the data into rgba values.</param>
     /// <param name="sectionHeight">The height (in lines) of an individual sequence part.</param>
     public SequenceImage(ISequence sequence, long startLine, SequenceRenderer renderer, long sectionHeight = 1000)
     {
@@ -310,31 +312,18 @@ public class SequenceImage : IDisposable
         Parallel.For(0, height, j =>
             {
                 //for(var j = 0; j < height; j++) {
-                try
+                var line = startLine + j * (endLine - startLine) / height;
+
+                // rendering each pixel using a renderer
+                var data = Renderer.RenderPixels(_sequence, xs, line);
+
+                var span = bitmap.GetPixelSpan();
+                var pixels = MemoryMarshal.Cast<byte, BGRA>(span);
+
+                // putting the data inside the bitmap
+                for (var i = 0; i < width; i++)
                 {
-                    // calculating the actual line currently processed
-                    var line = startLine + j * (endLine - startLine) / height;
-
-                    // rendering each pixel using a renderer
-                    var data = Renderer.RenderPixels(_sequence, xs, line);
-
-                    var span = bitmap.GetPixelSpan();
-                    var pixels = MemoryMarshal.Cast<byte, BGRA>(span);
-
-                    // putting the data inside the bitmap
-                    for (var i = 0; i < width; i++)
-                    {
-                        pixels[j * width + i] = new BGRA()
-                        {
-                            B = data[i, 0],
-                            G = data[i, 1],
-                            R = data[i, 2],
-                            A = data[i, 3],
-                        };
-                    }
-                }
-                catch (OperationCanceledException)
-                {
+                    pixels[j*width + i] = new BGRA(data[i], 255);
                 }
             }
         );

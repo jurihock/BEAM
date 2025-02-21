@@ -10,8 +10,8 @@
     <StackPanel Orientation="Vertical">
        
         <Panel Height="{Binding $parent[Window].ExtendClientAreaTitleBarHeightHint}">
-             <Border BorderBrush="{DynamicResource ButtonBackgroundDisabled}"
-                            Background="{DynamicResource TitleBarBg}"
+             <Border BorderBrush="{DynamicResource Separator}"
+                            Background="{DynamicResource BackgroundColorDark}"
                             BorderThickness="0,0, 0, 1"
                             CornerRadius="0"
                             IsHitTestVisible="False">

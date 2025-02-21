@@ -1,6 +1,6 @@
 ﻿namespace BEAM.Datatypes;
 
-public readonly struct Rectangle(Coordinate2D topLeft, Coordinate2D bottomRight)
+public readonly struct Rectangle(Coordinate2D topLeft, Coordinate2D bottomRight) : IShape
 {
     public Coordinate2D TopLeft { get; init; } = topLeft;
     public Coordinate2D BottomRight { get; init; } = bottomRight;

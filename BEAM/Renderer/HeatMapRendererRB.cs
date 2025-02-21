@@ -1,4 +1,5 @@
 ﻿using System;
+using BEAM.Datatypes.Color;
 using BEAM.Exceptions;
 using IImage = BEAM.Image.IImage;
 
@@ -26,31 +27,30 @@ public class HeatMapRendererRB : HeatMapRenderer
     {
     }
 
-    protected override byte[] GetColor(double value, double min, double max)
+    protected override BGR GetColor(double value, double min, double max)
     {
         if (value > max) // intensity above maximum --> hottest color displayed
         {
-            byte[] hot = [255, 255, 0, 0]; // Color Red
-            return hot;
+            return new BGR(){R = 255}; // Color Red;
         }
 
         if (value < min) // intensity below minimum --> coldest color displayed
         {
-            byte[] cold = [255, 0, 0, 255]; // Color Blue
-            return cold;
+            return new BGR(){B = 255}; // Color Blue
         }
         
         // if max == min, return a mixture of Red and Blue for all pixels, whose intensity = max = min
         if ((max - min) < 0.001) 
         {
-            return new byte[] { 255, 127, 0, 127 }; 
+            return new BGR() { B = 127, R = 127 };
         }
+
         double range = (max - min);
         double relative = (value - min) / range; // calculate the relative intensity inside the range between min and max --> Normalize
         // the value of the color
         byte intensity = (byte)Math.Floor(relative * (double)255);
 
-        byte[] color = [255, intensity, 0, (byte)(255 - intensity)];
+        var color = new BGR() {R = intensity, B = (byte)(255 - intensity)};
         return color;
     }
 
@@ -71,16 +71,14 @@ public class HeatMapRendererRB : HeatMapRenderer
     /// <exception cref="InvalidUserArgumentException"></exception>
     protected override SequenceRenderer Create(int minimumOfIntensityRange, int maximumOfIntensityRange, double[] displayParameters)
     {
-        // TODO remove null
         if (!CheckParameters(displayParameters))
         {
             throw new InvalidUserArgumentException("Display parameters are invalid.");
-        };
+        }
         return new HeatMapRendererRB(minimumOfIntensityRange, maximumOfIntensityRange, (int)displayParameters[0], displayParameters[1], displayParameters[2]);
 
     }
 
-    //TODO: Check if channel is in range for given Image, not possible yet, if image not attribute
     protected override bool CheckParameters(double[] displayParameters)
     {
         if (displayParameters.Length != 3

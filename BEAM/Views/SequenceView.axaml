@@ -7,13 +7,18 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:SequenceViewModel"
              x:Class="BEAM.Views.SequenceView"
-             DataContextChanged="StyledElement_OnDataContextChanged">
-    <Design.DataContext>
-        <vm:SequenceViewModel/>
-    </Design.DataContext>
+             DataContextChanged="StyledElement_OnDataContextChanged"
+             PointerPressed="PointerPressedHandler"
+             PointerReleased="PointerReleasedHandler"
+             PointerMoved="PointerMovedHandler">
 
-    <Grid ColumnDefinitions="*, Auto">
+
+    <Grid ColumnDefinitions="*, Auto, Auto">
         <scott:AvaPlot Name="AvaPlot1" Grid.Column="0"/>
-        <ScrollBar Name="Bar1" Orientation="Vertical" Visibility="Visible" AllowAutoHide="False" Grid.Column="1" />
+        <ScrollBar Name="Bar1" Orientation="Vertical" Visibility="Visible" AllowAutoHide="False" Grid.Column="1"  Background="{DynamicResource BackgroundColorDark}" />
+        <ItemsControl ItemsSource="{Binding MinimapVms}" Grid.Column="2" LayoutUpdated="Layoutable_OnLayoutUpdated">
+        </ItemsControl>
     </Grid>
+    
 </UserControl>
+
