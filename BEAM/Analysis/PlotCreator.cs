@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+using System.Globalization;
+using System;
+using System.Globalization;
 using System.Linq;
 using ScottPlot;
 using ScottPlot.AxisRules;
@@ -25,7 +27,7 @@ public static class PlotCreator
         {
             foreach (var bar in barPlot.Bars)
             {
-                bar.Label = bar.Value.ToString(CultureInfo.InvariantCulture);
+                bar.Label = Math.Round(bar.Value, 3).ToString(CultureInfo.InvariantCulture);
             }
             barPlot.ValueLabelStyle.Bold = true;
             barPlot.ValueLabelStyle.FontSize = 18;
