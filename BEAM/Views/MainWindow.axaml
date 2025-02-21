@@ -42,9 +42,7 @@
             </NativeMenuItem>
             <NativeMenuItem Header="_Synchronization">
                 <NativeMenu>
-                    <NativeMenuItem Header="_Activate (without repositioning)"
-                                    Command="{Binding ActivateSynchronizationCommand}">
-                    </NativeMenuItem>
+                    <NativeMenuItem Header="_Activate (without repositioning)" Command="{Binding ActivateSynchronizationCommand}"></NativeMenuItem>
                     <NativeMenuItem Header="_Deactivate" Command="{Binding DeactivateSynchronizationCommand}"></NativeMenuItem>
                 </NativeMenu>
             </NativeMenuItem>
@@ -57,23 +55,15 @@
 
     </NativeMenu.Menu>
 
-    <DockPanel LastChildFill="True" Margin="{Binding #Main.OffScreenMargin}" Background="{DynamicResource WindowBg}">
+    <DockPanel LastChildFill="True" Margin="{Binding #Main.OffScreenMargin}">
 
         <views:TitleBar Name="TitleBar" DockPanel.Dock="Top" Height="{Binding TitleBarHeight}" />
 
         <views:StatusBar DockPanel.Dock="Bottom" />
 
-        <Panel>
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock FontSize="20" Foreground="{DynamicResource Accent}">Open a sequence</TextBlock>
-                    <TextBlock Margin="10 0" Foreground="Gray" VerticalAlignment="Center">File -> Open Folder</TextBlock>
-                </StackPanel>
-                <TextBlock FontSize="20" Margin="0 10 0 0" Foreground="Gray">Drop files here to open them</TextBlock>
-            </StackPanel>
-            <DockPanel LastChildFill="True" Background="Transparent">
-                <views:DockingView x:Name="DockView" />
-            </DockPanel>
-        </Panel>
+        <DockPanel LastChildFill="True" Background="{DynamicResource WindowBg}">
+            <views:DockingView x:Name="DockView" />
+        </DockPanel>
+
     </DockPanel>
 </Window>

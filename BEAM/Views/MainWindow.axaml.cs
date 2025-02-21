@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -42,8 +43,16 @@ public partial class MainWindow : Window
         }
         catch (UnknownSequenceException)
         {
-            Logger.GetInstance().Error(LogEvent.OpenedFile,
-                $"Cannot open dragged-in files since no suitable sequence type found. (Supported sequences: {string.Join(", ", DiskSequence.SupportedSequences)})");
+            try
+            {
+                vm.DockingVm.OpenSequenceView(DiskSequence.Open(list[0]));
+            }
+            catch (UnknownSequenceException)
+            {
+                Logger.GetInstance().Error(LogEvent.OpenedFile,
+                                $"Cannot open dragged-in files since no suitable sequence type found. (Supported sequences: {string.Join(", ", DiskSequence.SupportedSequences)})");
+            }
+            
         }
         catch (EmptySequenceException)
         {
