@@ -7,11 +7,11 @@ namespace BEAM.Datatypes.Color;
 /// Class representing an 8-bit BGR color Value.
 /// </summary>
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public struct BGR
+public struct BGR(byte b, byte g, byte r)
 {
-  public byte B;
-  public byte G;
-  public byte R;
+  public byte B = b;
+  public byte G = g;
+  public byte R = r;
 
   public byte this[int index]
   {
