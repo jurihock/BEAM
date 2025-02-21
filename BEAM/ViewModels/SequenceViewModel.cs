@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
@@ -71,7 +72,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     /// Event raised when the minimap has been changed.
     /// </summary>
     public EventHandler<EventArgs> MinimapHasChanged = delegate { };
-    
+
     
 
     /// <summary>
