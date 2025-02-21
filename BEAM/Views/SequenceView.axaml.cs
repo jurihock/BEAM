@@ -42,10 +42,11 @@ public partial class SequenceView : UserControl
         get => GetValue(DynamicContentProperty);
         set => SetValue(DynamicContentProperty, value);
     }
-    private SequencePlottable _plottable;
-    private Annotation Anno;
-    private readonly HorizontalLine _horizontalLine = new();
-    private readonly VerticalLine _verticalLine = new();
+    // created later
+    private SequencePlottable _plottable = null!;
+    private Annotation _anno;
+    private readonly HorizontalLine _horizontalLine;
+    private readonly VerticalLine _verticalLine;
 
     public object? DynamicContentViewModel
     {
@@ -58,9 +59,8 @@ public partial class SequenceView : UserControl
         InitializeComponent();
          _horizontalLine = AvaPlot1.Plot.Add.HorizontalLine(0);
         _verticalLine = AvaPlot1.Plot.Add.VerticalLine(0);
-        this.SizeChanged += OnSizeChanged;
-        //this.DataContextChanged += StyledElement_OnDataContextChanged;
-
+        SizeChanged += OnSizeChanged;
+        _anno = AvaPlot1.Plot.Add.Annotation("(x: , y: ), (r: , g: , b: )");
     }
 
     private void OnSizeChanged(object? sender, SizeChangedEventArgs e)
@@ -190,17 +190,17 @@ public partial class SequenceView : UserControl
 
         // change figure colors
         Application.Current.TryGetResource("WindowBg", currentTheme, out var background);
-        var backgroundColor = (Avalonia.Media.Color)background;
+        var backgroundColor = (Avalonia.Media.Color)background!;
         AvaPlot1.Plot.FigureBackground.Color = new Color(backgroundColor.R, backgroundColor.G, backgroundColor.B);
 
         Application.Current.TryGetResource("BackgroundColorDark", currentTheme, out var backgroundDark);
-        var backgroundColorDark = (Avalonia.Media.Color)backgroundDark;
+        var backgroundColorDark = (Avalonia.Media.Color)backgroundDark!;
         AvaPlot1.Plot.DataBackground.Color =
             new Color(backgroundColorDark.R, backgroundColorDark.G, backgroundColorDark.B);
 
         // change axis and grid colors
         Application.Current.TryGetResource("FontColorScottPlot", currentTheme, out var fontColorScottPlot);
-        var fontColor = (Avalonia.Media.Color)fontColorScottPlot;
+        var fontColor = (Avalonia.Media.Color)fontColorScottPlot!;
         AvaPlot1.Plot.Axes.Color(new Color(fontColor.R, fontColor.G, fontColor.B));
 
 
@@ -327,7 +327,7 @@ public partial class SequenceView : UserControl
             if (_plottable is null) return;
             _plottable.SequenceImage.Reset();
             _plottable!.ChangeRenderer(vm.CurrentRenderer);
-            AvaPlot1.Plot.MoveToTop(Anno);
+            AvaPlot1.Plot.MoveToTop(_anno);
             AvaPlot1.Refresh();
         };
 
@@ -339,12 +339,11 @@ public partial class SequenceView : UserControl
             var ySize = oldLimits.Bottom - oldLimits.Top;
             var newLimits = new AxisLimits(oldLimits.Left, oldLimits.Right, -ySize / 3, 2 * ySize / 3);
             AvaPlot1.Plot.Axes.SetLimits(newLimits);
-            AvaPlot1.Plot.MoveToTop(Anno);
+            AvaPlot1.Plot.MoveToTop(_anno);
             AvaPlot1.Refresh();
         };
-        Anno = AvaPlot1.Plot.Add.Annotation("(x: , y: ), (r: , g: , b: )");
-        Anno.LabelShadowColor = Colors.Transparent;
-        AvaPlot1.Plot.MoveToTop(Anno);
+        _anno.LabelShadowColor = Colors.Transparent;
+        AvaPlot1.Plot.MoveToTop(_anno);
     }
 
     /// <summary>
@@ -363,12 +362,12 @@ public partial class SequenceView : UserControl
         // If outside the sequence just show the position and no values.
         if (x >= vm.Sequence.Shape.Width || y >= vm.Sequence.Shape.Height || x < 0 || y < 0)
         {
-            Anno.Text = $"(x: {x}, y: {y}, (r: , g: , b: ))";
+            _anno.Text = $"(x: {x}, y: {y}, (r: , g: , b: ))";
             return;
         }
 
         var bytes = vm.Renderers[vm.RendererSelection].RenderPixel(vm.Sequence, x, y);
-        Anno.Text = $"(x: {x}, y: {y}, (r: {bytes.R}, g: {bytes.G}, b: {bytes.B})";
+        _anno.Text = $"(x: {x}, y: {y}, (r: {bytes.R}, g: {bytes.G}, b: {bytes.B})";
     }
 
     private void _OpenTransformPopup()

@@ -19,15 +19,13 @@ public partial class ArgMaxHSVConfigControlViewModel : ViewModelBase, ISaveContr
     private readonly ArgMaxRendererColorHSV _renderer;
     
     public decimal Min { get; set; } = 0;
-    
-    private ObservableCollection<ChannelToHSV> _obsChannels;
 
     public ObservableCollection<ChannelToHSV> ObsChannels
     {
-        get => _obsChannels;
-        set => SetProperty(ref _obsChannels, value);
+        get;
+        set => SetProperty(ref field, value);
     }
-    
+
     private int _selectedChannelIndex;
 
     public int SelectedChannelIndex
@@ -51,8 +49,9 @@ public partial class ArgMaxHSVConfigControlViewModel : ViewModelBase, ISaveContr
     
     public ArgMaxHSVConfigControlViewModel(ArgMaxRendererColorHSV renderer, SequenceViewModel model)
     {
-        if (renderer == null) throw new ArgumentNullException(nameof(renderer));
-        if (model == null) throw new ArgumentNullException(nameof(model));
+        ArgumentNullException.ThrowIfNull(renderer);
+        ArgumentNullException.ThrowIfNull(model);
+        
         _renderer = renderer ?? throw new ArgumentNullException(nameof(renderer));
         
         if (_renderer.getChannelHsvMap().AmountChannels == 0)

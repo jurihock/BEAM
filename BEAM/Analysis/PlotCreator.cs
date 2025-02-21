@@ -1,6 +1,5 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System;
-using System.Globalization;
 using System.Linq;
 using ScottPlot;
 using ScottPlot.AxisRules;

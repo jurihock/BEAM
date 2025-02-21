@@ -10,9 +10,7 @@
         Title="BEAM - Cut Sequence"
         SizeToContent="WidthAndHeight"
         Background="{DynamicResource WindowBg}">
-    <Design.DataContext>
-        <viewModels:CutSequencePopupViewModel />
-    </Design.DataContext>
+
     <StackPanel Orientation="Vertical" Margin="20, 10, 20, 10">
         <TextBlock FontWeight="Bold">Configure index from which the sequence will be cut</TextBlock>
         <Separator Background="{DynamicResource Separator}" Margin="0 10"></Separator>

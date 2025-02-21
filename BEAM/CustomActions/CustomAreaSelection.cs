@@ -41,7 +41,7 @@ public class CustomAreaSelection(MouseButton button) : IUserActionResponse
             var currentTheme = Application.Current!.ActualThemeVariant;
             
             Application.Current.TryGetResource("OverlayColor", currentTheme, out var overlayColor);
-            var colorAvalonia = (Avalonia.Media.Color)overlayColor;
+            var colorAvalonia = (Avalonia.Media.Color)overlayColor!;
             var colorScottPlot = new Color(colorAvalonia.R, colorAvalonia.G, colorAvalonia.B);
             
             _mouseIsDown = true;

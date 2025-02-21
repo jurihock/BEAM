@@ -12,10 +12,6 @@
         SizeToContent="WidthAndHeight"
         Background="{DynamicResource WindowBg}">
 
-    <Design.DataContext>
-        <viewModels:AffineTransformationPopupViewModel />
-    </Design.DataContext>
-
     <StackPanel Orientation="Vertical" Margin="20, 10, 20, 10">
         <TextBlock FontWeight="Bold">Configure affine transformation</TextBlock>
         <Separator Background="{DynamicResource Separator}" Margin="0 10"></Separator>

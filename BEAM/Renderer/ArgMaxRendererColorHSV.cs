@@ -37,7 +37,7 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
 
     public override object Clone()
     {
-        return new ArgMaxRendererColorHSV(minimumOfIntensityRange, maximumOfIntensityRange);
+        return new ArgMaxRendererColorHSV(MinimumOfIntensityRange, MaximumOfIntensityRange);
     }
 
     /// <summary>

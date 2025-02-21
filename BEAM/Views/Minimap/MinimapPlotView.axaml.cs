@@ -40,7 +40,7 @@ public partial class MinimapPlotView : UserControl
         ThemeVariant currentTheme = Application.Current!.ActualThemeVariant;
 
         Application.Current.TryGetResource("MinimapAccent", currentTheme, out var accent);
-        var accentMinimap = (Avalonia.Media.Color)accent;
+        var accentMinimap = (Avalonia.Media.Color)accent!;
         Color accentMinimapColor = new Color(accentMinimap.R, accentMinimap.G, accentMinimap.B);
 
         foreach (var plottable in MinimapPlot.Plot.GetPlottables())
@@ -59,7 +59,7 @@ public partial class MinimapPlotView : UserControl
 
         // change figure colors
         Application.Current.TryGetResource("WindowBg", currentTheme, out var background);
-        var backgroundColor = (Avalonia.Media.Color)background;
+        var backgroundColor = (Avalonia.Media.Color)background!;
         MinimapPlot.Plot.FigureBackground.Color = new Color(backgroundColor.R, backgroundColor.G, backgroundColor.B);
 
         MinimapPlot.Plot.DataBackground.Color =
@@ -67,11 +67,11 @@ public partial class MinimapPlotView : UserControl
 
         // change axis and grid colors
         Application.Current.TryGetResource("BackgroundColorDark", currentTheme, out var backgroundDark);
-        var backgroundColorDark = (Avalonia.Media.Color)backgroundDark;
+        var backgroundColorDark = (Avalonia.Media.Color)backgroundDark!;
         MinimapPlot.Plot.Axes.Color(new Color(backgroundColorDark.R, backgroundColorDark.G, backgroundColorDark.B));
 
         Application.Current.TryGetResource("Separator", currentTheme, out var separatorColor);
-        var lightAccentColor = (Avalonia.Media.Color)separatorColor;
+        var lightAccentColor = (Avalonia.Media.Color)separatorColor!;
         MinimapPlot.Plot.Grid.MajorLineColor = new Color(lightAccentColor.R, lightAccentColor.G, lightAccentColor.B);
 
         // change legend colors
