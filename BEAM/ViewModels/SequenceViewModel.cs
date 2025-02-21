@@ -138,7 +138,9 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     public void RegisterInspectionViewModel(InspectionViewModel inspectionViewModel)
     {
         _connectedInspectionViewModels.Add(inspectionViewModel);
-        inspectionViewModel.Update(PressedPointerPosition.OffsetBy(0.5, 0.5), ReleasedPointerPosition.OffsetBy(0.5, 0.5));
+        inspectionViewModel.Update(
+            _correctInvalid(PressedPointerPosition.OffsetBy(0.5, 0.5)), 
+            _correctInvalid(ReleasedPointerPosition.OffsetBy(0.5, 0.5)));
     }
     
     /// <summary>
@@ -262,7 +264,9 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         _connectedInspectionViewModels.Add(inspectionViewModel);
         DockingVm.OpenDock(inspectionViewModel);
         
-        inspectionViewModel.Update(PressedPointerPosition.OffsetBy(0.5, 0.5), ReleasedPointerPosition.OffsetBy(0.5, 0.5));
+        inspectionViewModel.Update(
+            _correctInvalid(PressedPointerPosition.OffsetBy(0.5, 0.5)), 
+            _correctInvalid(ReleasedPointerPosition.OffsetBy(0.5, 0.5)));
     }
     
 
