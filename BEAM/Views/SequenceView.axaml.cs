@@ -255,9 +255,9 @@ public partial class SequenceView : UserControl
 
     private void _SetPlottable(SequencePlottable plottable)
     {
-         _plottable = plottable;
         if (_plottable is not null) AvaPlot1.Plot.Remove(_plottable);
-        if(_plottable is null) return;
+
+        _plottable = plottable;
         AvaPlot1.Plot.Add.Plottable(_plottable!);
         _plottable!.SequenceImage.RequestRefreshPlotEvent += (_, _) => AvaPlot1.Refresh();
         AvaPlot1.Refresh();
