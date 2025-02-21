@@ -89,6 +89,7 @@ public class PlotMinimap : Minimap
     /// </summary>
     private async Task GenerateMinimap()
     {
+        using var _ = Profiling.Timer.Start("Generate Minimap");
         if (Sequence is null || MinimapAlgorithm is null)
         {
             OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Failure));

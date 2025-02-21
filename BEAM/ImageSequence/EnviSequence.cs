@@ -4,6 +4,7 @@ using System.Linq;
 using BEAM.Image;
 using BEAM.Image.Envi;
 using BEAM.Models.Log;
+using BEAM.Profiling;
 
 namespace BEAM.ImageSequence;
 
@@ -17,6 +18,7 @@ public class EnviSequence(List<string> imagePaths, string name) : DiskSequence(i
 
     protected internal override bool InitializeSequence()
     {
+        using var _ = Timer.Start("Initialize Envi Sequence");
         var removed = ImagePaths.RemoveAll(path =>
             !(Path.GetExtension(path).Equals(".raw") || Path.GetExtension(path).Equals(".hdr")));
 

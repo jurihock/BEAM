@@ -1,6 +1,7 @@
 ﻿using System;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
+using BEAM.Profiling;
 using BEAM.ViewModels;
 using ScottPlot;
 
@@ -21,6 +22,7 @@ public class RegionAnalysisAverageOfChannels : Analysis
 
     public override Plot Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint, ISequence sequence)
     {
+        using var _ = Timer.Start("Region analysis (avg of channels)");
         _topLeft =
             new Coordinate2D((long) Math.Min(pointerPressedPoint.Row, pointerReleasedPoint.Row),
                 (long) Math.Min(pointerPressedPoint.Column, pointerReleasedPoint.Column));

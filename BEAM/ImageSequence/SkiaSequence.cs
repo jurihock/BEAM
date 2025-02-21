@@ -4,6 +4,7 @@ using System.Linq;
 using BEAM.Image;
 using BEAM.Image.Skia;
 using BEAM.Models.Log;
+using BEAM.Profiling;
 using SkiaSharp;
 
 namespace BEAM.ImageSequence;
@@ -18,6 +19,7 @@ public class SkiaSequence(List<string> imagePaths, string name) : DiskSequence(i
 
     protected internal override bool InitializeSequence()
     {
+        using var _ = Timer.Start("Initialize Skia Sequence");
         var removed = ImagePaths.RemoveAll(path => !Path.GetExtension(path).Equals(".png"));
         if (removed > 0)
             Logger.GetInstance().Info(LogEvent.Sequence, $"{removed} file(s) were not loaded into the sequence.");
