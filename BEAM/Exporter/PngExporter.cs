@@ -7,10 +7,23 @@ using SkiaSharp;
 
 namespace BEAM.Exporter;
 
+/// <summary>
+/// Provides functionality to export image sequences in the PNG format.
+/// </summary>
 public static class PngExporter
 {
+    /// <summary>
+    /// The maximum height for each PNG file.
+    /// </summary>
     private const long MaxHeight = 4096;
-    
+
+    /// <summary>
+    /// Exports the given sequence to the specified path in the PNG format.
+    /// </summary>
+    /// <param name="path">The folder where the files will be saved.</param>
+    /// <param name="name">The base name for the exported files.</param>
+    /// <param name="sequence">The sequence to be exported.</param>
+    /// <param name="renderer">The renderer used for the sequence.</param>
     public static void Export(IStorageFolder? path, string name, TransformedSequence sequence, SequenceRenderer renderer)
     {
         if (path is null)
@@ -37,7 +50,7 @@ public static class PngExporter
 
             using var image = SKImage.FromBitmap(bitmap);
             using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
-            { 
+            {
                 using (var stream = File.OpenWrite(Path.Combine(path.Path.AbsolutePath, name, $"{i:D8}.png")))
                 {
                     data.SaveTo(stream);

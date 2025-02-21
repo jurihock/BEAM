@@ -8,22 +8,30 @@ using Avalonia.Platform.Storage;
 using BEAM.Exporter;
 using BEAM.Image;
 using BEAM.Models.Log;
-using BEAM.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace BEAM.ViewModels;
 
+/// <summary>
+/// ViewModel for the export sequence popup.
+/// </summary>
 public partial class ExportSequencePopupViewModel : ViewModelBase
 {
     private readonly SequenceViewModel _sequenceViewModel;
     private IStorageFolder? _folder;
-    
+
+    /// <summary>
+    /// Gets or sets the name of the sequence.
+    /// </summary>
     [ObservableProperty]
     public partial string SequenceName { get; set; }
-    
+
     private SequenceType _selectedType;
 
+    /// <summary>
+    /// Gets or sets the selected sequence type for export.
+    /// </summary>
     public SequenceType SelectedType
     {
         get => _selectedType;
@@ -36,31 +44,52 @@ public partial class ExportSequencePopupViewModel : ViewModelBase
             }
         }
     }
-    
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExportSequencePopupViewModel"/> class.
+    /// </summary>
+    /// <param name="model">The sequence view model.</param>
     public ExportSequencePopupViewModel(SequenceViewModel model)
     {
         _sequenceViewModel = model;
     }
 
+    /// <summary>
+    /// Gets the collection of available export types.
+    /// </summary>
     public ObservableCollection<SequenceType> ExportTypes { get; } = new()
     {
         SequenceType.Envi,
         SequenceType.Png
     };
-    
+
+    /// <summary>
+    /// Occurs when a property value changes.
+    /// </summary>
     public new event PropertyChangedEventHandler PropertyChanged;
 
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged"/> event.
+    /// </summary>
+    /// <param name="propertyName">The name of the property that changed.</param>
     protected new virtual void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-    
+
+    /// <summary>
+    /// Command to export the sequence.
+    /// </summary>
     [RelayCommand]
     public async Task ExportSequence()
     {
         _folder = await OpenFolderPickerAsync();
     }
-    
+
+    /// <summary>
+    /// Opens a folder picker dialog to select the export folder.
+    /// </summary>
+    /// <returns>The selected folder, or null if no folder was selected.</returns>
     private static async Task<IStorageFolder?> OpenFolderPickerAsync()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
@@ -75,7 +104,11 @@ public partial class ExportSequencePopupViewModel : ViewModelBase
 
         return folder.Count >= 1 ? folder[0] : null;
     }
-    
+
+    /// <summary>
+    /// Saves the sequence to the selected folder.
+    /// </summary>
+    /// <returns>True if the save operation started successfully, otherwise false.</returns>
     public bool Save()
     {
         if (_folder == null)
@@ -90,7 +123,7 @@ public partial class ExportSequencePopupViewModel : ViewModelBase
                     _sequenceViewModel.Renderers[_sequenceViewModel.RendererSelection]));
                 break;
             case SequenceType.Png:
-                Task.Run(() => PngExporter.Export(_folder, SequenceName, _sequenceViewModel.Sequence, 
+                Task.Run(() => PngExporter.Export(_folder, SequenceName, _sequenceViewModel.Sequence,
                     _sequenceViewModel.Renderers[_sequenceViewModel.RendererSelection]));
                 break;
             default:

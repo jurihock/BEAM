@@ -8,15 +8,25 @@ using BEAM.Renderer;
 
 namespace BEAM.Exporter;
 
-public class EnviExporter
+/// <summary>
+/// Provides functionality to export image sequences in the ENVI format.
+/// </summary>
+public static class EnviExporter
 {
+    /// <summary>
+    /// Exports the given sequence to the specified path in the ENVI format.
+    /// </summary>
+    /// <param name="path">The folder where the files will be saved.</param>
+    /// <param name="name">The base name for the exported files.</param>
+    /// <param name="sequence">The sequence to be exported.</param>
+    /// <param name="renderer">The renderer used for the sequence.</param>
     public static void Export(IStorageFolder? path, string name, TransformedSequence sequence, SequenceRenderer renderer)
     {
         if (path == null)
         {
             return;
         }
-        
+
         CreateHeaderFile(path, name, sequence);
         using var stream = File.OpenWrite(Path.Combine(path.Path.AbsolutePath, $"{name}.raw"));
         using var writer = new BinaryWriter(stream);
@@ -33,8 +43,14 @@ public class EnviExporter
         }
         Logger.GetInstance().LogMessage($"Finished exporting sequence {sequence.GetName()} as ENVI to {path.Path.AbsolutePath}");
     }
-    
-    private static void CreateHeaderFile(IStorageFolder path,string name, TransformedSequence sequence)
+
+    /// <summary>
+    /// Creates the header file for the ENVI export.
+    /// </summary>
+    /// <param name="path">The folder where the header file will be saved.</param>
+    /// <param name="name">The base name for the header file.</param>
+    /// <param name="sequence">The sequence for which the header file is created.</param>
+    private static void CreateHeaderFile(IStorageFolder path, string name, TransformedSequence sequence)
     {
         var samples = sequence.Shape.Width;
         var lines = sequence.Shape.Height;
