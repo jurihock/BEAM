@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
@@ -9,7 +8,6 @@ using BEAM.Datatypes;
 using BEAM.Docking;
 using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
-using BEAM.ImageSequence.Synchronization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using BEAM.Renderer;
