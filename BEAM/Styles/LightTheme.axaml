@@ -42,6 +42,8 @@
                     <Color x:Key="SelectedDockHeaderBg">CornflowerBlue</Color>
                     <Color x:Key="DockHeaderFg">Black</Color>
                     <system:String x:Key="StrokeCss">*{stroke: #000000;}</system:String>
+
+                    <SolidColorBrush x:Key="MenuFlyoutPresenterBackground">#f8f8f8</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>

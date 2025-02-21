@@ -12,15 +12,16 @@
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Dark">
+
                     <Color x:Key="BackgroundColorDark">#1E202F</Color>
-                   
+
                     <Color x:Key="OverlayColor">Magenta</Color>
-                    
+
                     <Color x:Key="AnnotationColor">Yellow</Color>
-                    
+
                     <!-- <Color x:Key="StatusBarBg">#1E202F</Color> -->
                     <!-- <Color x:Key="StatusBarFg">Aqua</Color> -->
-                    
+
                     <!-- <Color x:Key="TitleBarBg">#1E202F</Color> -->
                     <!-- <Color x:Key="TitleBarFg">White</Color> -->
 
@@ -28,7 +29,7 @@
                     <!-- <Color x:Key="WindowFg">White</Color> -->
 
                     <Color x:Key="MinimapAccent">#ff6f00</Color>
-                    
+
                     <Color x:Key="Separator">#36394B</Color>
 
                     <Color x:Key="Accent">CornflowerBlue</Color>
@@ -37,11 +38,13 @@
                     <Color x:Key="DockSeparatorColor">CornflowerBlue </Color>
 
                     <Color x:Key="FontColor">White</Color>
-                    
+
                     <Color x:Key="DockHeaderBg">#252739</Color>
                     <Color x:Key="SelectedDockHeaderBg">CornflowerBlue</Color>
                     <Color x:Key="DockHeaderFg">White</Color>
                     <system:String x:Key="StrokeCss">*{stroke: #ffffff;}</system:String>
+
+                    <SolidColorBrush x:Key="MenuFlyoutPresenterBackground">#1E202F</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
