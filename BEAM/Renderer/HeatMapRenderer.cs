@@ -86,7 +86,9 @@ public abstract class HeatMapRenderer : SequenceRenderer
 
         for (var i = 0; i < xs.Length; i++)
         {
-            var color = GetColor(img.GetPixel(i, 0, 0), MinimumOfIntensityRange, MaximumOfIntensityRange);
+            var color = GetColor(img.GetPixel(i, 0, 0), 
+                IntensityRange * RelMaxColdestIntensity + MinimumOfIntensityRange, 
+                IntensityRange * RelMinHottestIntensity + MinimumOfIntensityRange);
             data[i] = color;
         }
 
