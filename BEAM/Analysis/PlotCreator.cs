@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ScottPlot;
 using ScottPlot.AxisRules;
 
@@ -24,7 +25,7 @@ public static class PlotCreator
         {
             foreach (var bar in barPlot.Bars)
             {
-                bar.Label = bar.Value.ToString();
+                bar.Label = Math.Round(bar.Value, 3).ToString();
             }
             barPlot.ValueLabelStyle.Bold = true;
             barPlot.ValueLabelStyle.FontSize = 18;

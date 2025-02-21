@@ -31,7 +31,8 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         new PixelAnalysisChannel(),
         new CirclePlot(),
-        new RegionAnalysisStandardDeviationOfChannels()
+        new RegionAnalysisStandardDeviationOfChannels(),
+        new RegionAnalysisAverageOfChannels()
     };
     
     public InspectionViewModel(SequenceViewModel sequenceViewModel)
