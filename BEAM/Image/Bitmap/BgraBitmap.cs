@@ -16,6 +16,10 @@ public sealed partial class BgraBitmap : SKBitmap, IBitmap<BGRA>
     {
         get
         {
+            if (x < 0 || x >= Width || y < 0 || y >= Height)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
             var bytes = GetPixelSpan().Slice(
                 y * RowBytes +
                 x * BytesPerPixel,

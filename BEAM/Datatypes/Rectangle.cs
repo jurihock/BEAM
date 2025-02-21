@@ -13,8 +13,8 @@ public readonly struct Rectangle(Coordinate2D topLeft, Coordinate2D bottomRight)
     /// <returns></returns>
     public bool Contains(Coordinate2D coordinate)
     {
-        return coordinate.Row > TopLeft.Row || coordinate.Row < BottomRight.Row
-                                            || coordinate.Column > TopLeft.Column
-                                            || coordinate.Column < BottomRight.Column;
+        return TopLeft.Row <= coordinate.Row && coordinate.Row <= BottomRight.Row
+                                         && TopLeft.Column <= coordinate.Column
+                                         && coordinate.Column <= BottomRight.Column;
     }
 }
