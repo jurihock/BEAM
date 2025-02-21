@@ -354,6 +354,11 @@ public partial class SequenceView : UserControl
             AvaPlot1.Refresh();
         };
 
+        vm.CloseEvent += (_, _) =>
+        {
+            ScrollingSynchronizerMapper.RemoveSequence(this);
+            PlotControllerManager.RemovePlotFromAllControllers(AvaPlot1);
+        };
 
         var currentTheme = Application.Current.ActualThemeVariant;
 

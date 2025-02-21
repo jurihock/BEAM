@@ -9,6 +9,7 @@ using BEAM.Datatypes;
 using BEAM.Docking;
 using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
+using BEAM.ImageSequence.Synchronization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using BEAM.Renderer;
@@ -24,6 +25,8 @@ namespace BEAM.ViewModels;
 /// </summary>
 public partial class SequenceViewModel : ViewModelBase, IDockBase
 {
+    public event EventHandler<CloseEventArgs> CloseEvent = delegate { };
+
     /// <summary>
     /// View model for handling docking functionality.
     /// </summary>
@@ -268,6 +271,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     /// </summary>
     public void OnClose()
     {
+        CloseEvent.Invoke(this, new CloseEventArgs());
         _currentMinimap?.StopGeneration();
     }
     
@@ -284,4 +288,8 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         _currentMinimap?.StopGeneration();
         MinimapVms.Clear();
     }
+}
+
+public class CloseEventArgs
+{
 }

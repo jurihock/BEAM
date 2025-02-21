@@ -62,6 +62,7 @@ public partial class DockingView : UserControl
 
         var dock = (item.Content as IDockBase)!;
         vm.RemoveDock(dock);
+        dock.OnClose();
         dock.Dispose();
     }
 }
