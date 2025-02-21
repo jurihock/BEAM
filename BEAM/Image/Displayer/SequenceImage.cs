@@ -71,7 +71,6 @@ public class SequenceImage : IDisposable
         /// <param name="scaled">Whether the rendering takes place because of a scaling operation of the view.</param>
         public void Render(double resolutionScale, long yRange, bool scaled)
         {
-            // TODO: find a true way to cancel and restart the operation
             // repositioning the part
             Scale = resolutionScale;
             var width = sequence.Shape.Width;

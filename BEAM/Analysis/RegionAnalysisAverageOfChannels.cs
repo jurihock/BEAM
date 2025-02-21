@@ -52,7 +52,6 @@ public class RegionAnalysisAverageOfChannels : Analysis
     /// Calculates the average of the channels in the region and stores the result in _sumChannels
     /// </summary>
     /// <param name="sequence"></param>
-    //TODO: Line Image more efficient? Find more efficient implementation
     private void _CalculateResult(ISequence sequence)
     {
         _sumChannels = new double[_amountChannels];

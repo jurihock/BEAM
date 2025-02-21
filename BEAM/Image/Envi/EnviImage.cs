@@ -177,7 +177,6 @@ public class EnviImage<T> : ITypedImage<T>, IMemoryImage
             data[i] = new double[channels.Length];
         }
 
-        //TODO: Implement in MemoryLayoutClasses for better inheritance
         switch (Layout)
         {
             // checking for memory layout -> better cache accesses

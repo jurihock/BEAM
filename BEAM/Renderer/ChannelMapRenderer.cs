@@ -29,7 +29,6 @@ public partial class ChannelMapRenderer : SequenceRenderer
     [ObservableProperty] private int _channelGreen;
     [ObservableProperty] private int _channelBlue;
 
-    //TODO: RGBA or ARGB?
     /// <summary>
     /// Create the RGBA value for a given pixel of a sequence
     /// </summary>
@@ -111,7 +110,6 @@ public partial class ChannelMapRenderer : SequenceRenderer
             (int)displayParameters[2]);
     }
 
-    //TODO: Check if channels are in range for given Image, not possible yet, if image not attribute
     /// <summary>
     /// Verifies that the parameters are valid for the renderer and sequence.
     /// Returns True, if the parameters are valid, false otherwise.

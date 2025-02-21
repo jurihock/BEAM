@@ -92,7 +92,6 @@ public static class EnviExtensions
     /// <param name="type">An EnviDataType whose value should be read from the file represented by the accessor.</param>
     /// <typeparam name="T">A specific c# type. The data in the accessor's file will be read as if it were representing this type.</typeparam>
     /// <returns>The offset'th readable element from the file represented by the accessor of the type which is represented by <see cref="EnviDataType"/>.</returns>
-    //TODO: Format:   <code>Format: (long index) => (T)(accessor.Read<c# Type of type>(index * type.SizeOf()));</code>
     public static Func<long, T> CreateValueGetter<T>(this MemoryMappedViewAccessor accessor, EnviDataType type)
     {
         var instance = Expression.Constant(accessor);

@@ -84,17 +84,6 @@ public partial class SequenceView : UserControl
         _ApplyTheme();
         _BuildCustomRightClickMenu();
 
-        // TODO: CustomMouseActions
-        // https://github.com/ScottPlot/ScottPlot/blob/main/src/ScottPlot5/ScottPlot5%20Demos/ScottPlot5%20WinForms%20Demo/Demos/CustomMouseActions.cs
-
-        //avaPlot1.Interaction.IsEnabled = true;
-        //avaPlot1.UserInputProcessor.IsEnabled = true;
-        //avaPlot1.UserInputProcessor.UserActionResponses.Clear();
-
-        //var panButton = ScottPlot.Interactivity.StandardMouseButtons.Middle;
-        //var panResponse = new ScottPlot.Interactivity.UserActionResponses.MouseDragPan(panButton);
-
-        // Remove the standard MouseWheelZoom and replace it with the wanted custom functionality
         ScrollingSynchronizerMapper.AddSequence(this);
         AvaPlot1.UserInputProcessor.RemoveAll<MouseWheelZoom>();
         AvaPlot1.UserInputProcessor.RemoveAll<MouseDragZoom>(); // Remove option to zoom with right key

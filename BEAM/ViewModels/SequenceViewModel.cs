@@ -78,7 +78,6 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         _currentMinimap = SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultClones().Active;
         if (_currentMinimap is not null)
         {
-            //TODO: in up to data branch the SequenceVM knows the renderer
             if (RendererSelection < Renderers.Length && RendererSelection >= 0)
             {
                 _currentMinimap.SetRenderer(Renderers[RendererSelection]);

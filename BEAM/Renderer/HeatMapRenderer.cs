@@ -92,7 +92,6 @@ public abstract class HeatMapRenderer : SequenceRenderer
         var data = new BGR[xs.Length];
         var img = sequence.GetPixelLineData(xs, y, [Channel]);
 
-        // TODO: SIMD
         for (var i = 0; i < xs.Length; i++)
         {
             var color = GetColor(img.GetPixel(i, 0, 0), MinimumOfIntensityRange, MaximumOfIntensityRange);
