@@ -19,13 +19,7 @@ namespace BEAM.ViewModels;
 public partial class ExportSequencePopupViewModel : ViewModelBase
 {
     private readonly SequenceViewModel _sequenceViewModel;
-    private IStorageFolder? _folder;
-
-    /// <summary>
-    /// Gets or sets the name of the sequence.
-    /// </summary>
-    [ObservableProperty]
-    public partial string SequenceName { get; set; }
+    private IStorageFile? _folder;
 
     private SequenceType _selectedType;
 
@@ -90,19 +84,18 @@ public partial class ExportSequencePopupViewModel : ViewModelBase
     /// Opens a folder picker dialog to select the export folder.
     /// </summary>
     /// <returns>The selected folder, or null if no folder was selected.</returns>
-    private static async Task<IStorageFolder?> OpenFolderPickerAsync()
+    private static async Task<IStorageFile?> OpenFolderPickerAsync()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
             desktop.MainWindow?.StorageProvider is not { } provider)
             throw new NullReferenceException("Missing StorageProvider instance.");
 
-        var folder = await provider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
+        var folder = await provider.SaveFilePickerAsync(new FilePickerSaveOptions()
         {
             Title = "Choose sequence save folder",
-            AllowMultiple = false,
         });
 
-        return folder.Count >= 1 ? folder[0] : null;
+        return folder;
     }
 
     /// <summary>
@@ -119,11 +112,11 @@ public partial class ExportSequencePopupViewModel : ViewModelBase
         switch (_selectedType)
         {
             case SequenceType.Envi:
-                Task.Run(() => EnviExporter.Export(_folder, SequenceName, _sequenceViewModel.Sequence,
+                Task.Run(() => EnviExporter.Export(_folder, _sequenceViewModel.Sequence,
                     _sequenceViewModel.Renderers[_sequenceViewModel.RendererSelection]));
                 break;
             case SequenceType.Png:
-                Task.Run(() => PngExporter.Export(_folder, SequenceName, _sequenceViewModel.Sequence,
+                Task.Run(() => PngExporter.Export(_folder, _sequenceViewModel.Sequence,
                     _sequenceViewModel.Renderers[_sequenceViewModel.RendererSelection]));
                 break;
             default:

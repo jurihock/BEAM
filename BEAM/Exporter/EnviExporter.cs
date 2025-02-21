@@ -16,19 +16,14 @@ public static class EnviExporter
     /// <summary>
     /// Exports the given sequence to the specified path in the ENVI format.
     /// </summary>
-    /// <param name="path">The folder where the files will be saved.</param>
-    /// <param name="name">The base name for the exported files.</param>
+    /// <param name="path">The path where the files will be saved.</param>
     /// <param name="sequence">The sequence to be exported.</param>
     /// <param name="renderer">The renderer used for the sequence.</param>
-    public static void Export(IStorageFolder? path, string name, TransformedSequence sequence, SequenceRenderer renderer)
+    public static void Export(IStorageFile path, TransformedSequence sequence, SequenceRenderer renderer)
     {
-        if (path == null)
-        {
-            return;
-        }
 
-        CreateHeaderFile(path, name, sequence);
-        using var stream = File.OpenWrite(Path.Combine(path.Path.AbsolutePath, $"{name}.raw"));
+        CreateHeaderFile(path, sequence);
+        using var stream = File.OpenWrite($"{path.Path.AbsolutePath}.raw");
         using var writer = new BinaryWriter(stream);
         for (var y = 0; y < sequence.Shape.Height; y++)
         {
@@ -48,9 +43,8 @@ public static class EnviExporter
     /// Creates the header file for the ENVI export.
     /// </summary>
     /// <param name="path">The folder where the header file will be saved.</param>
-    /// <param name="name">The base name for the header file.</param>
     /// <param name="sequence">The sequence for which the header file is created.</param>
-    private static void CreateHeaderFile(IStorageFolder path, string name, TransformedSequence sequence)
+    private static void CreateHeaderFile(IStorageFile path, TransformedSequence sequence)
     {
         var samples = sequence.Shape.Width;
         var lines = sequence.Shape.Height;
@@ -61,7 +55,7 @@ public static class EnviExporter
         const EnviInterleave interleave = EnviInterleave.BIP;
         const int byteOrder = 0;
         var header = $"ENVI\nsamples = {samples}\nlines = {lines}\nbands = {bands}\nheader offset = {headerOffset}\nfile type = {fileType}\ndata type = {dataType}\ninterleave = {interleave.ToString().ToLower()}\nbyte order = {byteOrder}";
-        using var stream = File.OpenWrite(Path.Combine(path.Path.AbsolutePath, $"{name}.hdr"));
+        using var stream = File.OpenWrite($"{path.Path.AbsolutePath}.hdr");
         using var writer = new StreamWriter(stream);
         writer.Write(header);
     }

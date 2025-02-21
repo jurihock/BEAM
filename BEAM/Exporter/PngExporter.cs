@@ -20,17 +20,12 @@ public static class PngExporter
     /// <summary>
     /// Exports the given sequence to the specified path in the PNG format.
     /// </summary>
-    /// <param name="path">The folder where the files will be saved.</param>
-    /// <param name="name">The base name for the exported files.</param>
+    /// <param name="path">The path where the files will be saved.</param>
     /// <param name="sequence">The sequence to be exported.</param>
     /// <param name="renderer">The renderer used for the sequence.</param>
-    public static void Export(IStorageFolder? path, string name, TransformedSequence sequence, SequenceRenderer renderer)
+    public static void Export(IStorageFile path, TransformedSequence sequence, SequenceRenderer renderer)
     {
-        if (path is null)
-        {
-            return;
-        }
-        Directory.CreateDirectory(Path.Combine(path.Path.AbsolutePath, name));
+        Directory.CreateDirectory(path.Path.AbsolutePath);
         var shape = sequence.Shape;
         for (var i = 0; i <= shape.Height / MaxHeight; i++)
         {
@@ -48,7 +43,7 @@ public static class PngExporter
             using var image = SKImage.FromBitmap(bitmap);
             using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
             {
-                using (var stream = File.OpenWrite(Path.Combine(path.Path.AbsolutePath, name, $"{i:D8}.png")))
+                using (var stream = File.OpenWrite(Path.Combine(path.Path.AbsolutePath, $"{i:D8}.png")))
                 {
                     data.SaveTo(stream);
                 }
