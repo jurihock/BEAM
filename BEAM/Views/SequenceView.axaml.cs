@@ -218,7 +218,7 @@ public partial class SequenceView : UserControl
         var menu = AvaPlot1.Menu!;
         menu.Clear();
         
-        menu.Add("Inspect Pixel",
+        menu.Add("Inspect",
             _ => _OpenInspectionViewModel());
         menu.AddSeparator();
         menu.Add("Sync to this",
