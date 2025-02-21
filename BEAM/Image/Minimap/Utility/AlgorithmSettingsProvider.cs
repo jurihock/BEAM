@@ -8,6 +8,9 @@ using NP.Utilities;
 
 namespace BEAM.Image.Minimap.Utility;
 
+/// <summary>
+/// A provider for concrete <see cref="IMinimapAlgorithm"/>.
+/// </summary>
 public class AlgorithmSettingsProvider : ISettingsProvider<IMinimapAlgorithm>
 
 {

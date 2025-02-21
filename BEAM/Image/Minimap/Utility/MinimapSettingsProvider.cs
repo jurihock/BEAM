@@ -7,6 +7,9 @@ using NP.Utilities;
 
 namespace BEAM.Image.Minimap.Utility;
 
+/// <summary>
+/// A provider for concrete <see cref="Minimap"/> implementations.
+/// </summary>
 public class MinimapSettingsProvider : ISettingsProvider<Minimap>
 {
     private readonly List<Minimap> _defaultMinimaps;

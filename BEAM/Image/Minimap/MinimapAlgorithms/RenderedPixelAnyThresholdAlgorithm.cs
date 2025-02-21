@@ -10,6 +10,10 @@ using BEAM.Views.Utility;
 
 namespace BEAM.Image.Minimap.MinimapAlgorithms;
 
+/// <summary>
+/// An algorithm for <see cref="PlotMinimap"/>'s which counts the number of rendered pixels within a line which
+/// are greater in value than a defined base pixel in at least one channel.
+/// </summary>
 public class RenderedPixelAnyThresholdAlgorithm : IMinimapAlgorithm
 {
 
