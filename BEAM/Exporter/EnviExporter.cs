@@ -22,7 +22,7 @@ public static class EnviExporter
     {
 
         CreateHeaderFile(path, sequence);
-        using var stream = File.OpenWrite($"{path.Path.AbsolutePath}.raw");
+        using var stream = File.OpenWrite($"{path.Path.LocalPath}.raw");
         using var writer = new BinaryWriter(stream);
         for (var y = 0; y < sequence.Shape.Height; y++)
         {
@@ -35,7 +35,7 @@ public static class EnviExporter
                 }
             }
         }
-        Logger.GetInstance().LogMessage($"Finished exporting sequence {sequence.GetName()} as ENVI to {path.Path.AbsolutePath}");
+        Logger.GetInstance().LogMessage($"Finished exporting sequence {sequence.GetName()} as ENVI to {path.Path.LocalPath}");
     }
 
     /// <summary>
@@ -54,8 +54,9 @@ public static class EnviExporter
         const EnviInterleave interleave = EnviInterleave.BIP;
         const int byteOrder = 0;
         var header = $"ENVI\nsamples = {samples}\nlines = {lines}\nbands = {bands}\nheader offset = {headerOffset}\nfile type = {fileType}\ndata type = {dataType}\ninterleave = {interleave.ToString().ToLower()}\nbyte order = {byteOrder}";
-        using var stream = File.OpenWrite($"{path.Path.AbsolutePath}.hdr");
+        using var stream = File.OpenWrite($"{path.Path.LocalPath}.hdr");
         using var writer = new StreamWriter(stream);
         writer.Write(header);
+        
     }
 }
