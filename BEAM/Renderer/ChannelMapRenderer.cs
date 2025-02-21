@@ -63,8 +63,7 @@ public partial class ChannelMapRenderer : SequenceRenderer
     /// <param name="xs"></param>
     /// <param name="y"></param>
     /// <returns>[x, argb]</returns>
-    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y,
-        CancellationTokenSource? tokenSource = null)
+    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y)
     {
         var data = new BGR[xs.Length];
         var img = sequence.GetPixelLineData(xs, y, [ChannelBlue, ChannelGreen, ChannelRed]);

@@ -1,4 +1,5 @@
-﻿using BEAM.Exceptions;
+﻿using System;
+using BEAM.Exceptions;
 
 namespace BEAM.Datatypes;
 
@@ -14,7 +15,7 @@ public static class ArrayExtensions
     {
         if (values.Length <= 0)
         {
-            throw new ChannelException("Channels must be greater than 0.");
+            throw new ArgumentException("Channels must be greater than 0.");
         }
         
         var argindex = -1;

@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using Avalonia.Media;
 using BEAM.Datatypes.Color;
 using BEAM.Exceptions;
-using BEAM.Log;
+using BEAM.Models.Log;
 using BEAM.Renderer;
 using BEAM.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;

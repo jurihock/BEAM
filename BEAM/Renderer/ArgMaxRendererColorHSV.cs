@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using BEAM.Controls;
@@ -29,7 +30,7 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
         return new ArgMaxRendererColorHSV(minIntensityRange, maximumOfIntensityRange);
     }
 
-    protected override bool CheckParameters(double[] displayParameters, IImage image)
+    protected override bool CheckParameters(double[] displayParameters)
     {
         return displayParameters.Length == 0;
     }
@@ -59,7 +60,7 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
         var channels = sequence.GetPixel(x, y);
         if (channels.Length != _channelHsvMap.AmountChannels)
         {
-            throw new ChannelException("Channel count mismatch for sequence and ChannelHSVMap of ArgMax!");
+            throw new ArgumentException("Channel count mismatch for sequence and ChannelHSVMap of ArgMax!");
         }
         
         var argMaxChannel = channels
@@ -74,8 +75,7 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
         return color;
     }
 
-    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y,
-        CancellationTokenSource? tokenSource = null)
+    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y)
     {
         var usedChannelIndices = _channelHsvMap.getUsedChannels();
         
@@ -84,8 +84,6 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
         
         for (var x = 0; x < xs.Length; x++)
         {
-            tokenSource?.Token.ThrowIfCancellationRequested();
-
             var argMaxChannel = line.GetPixel(x, 0).ArgMax(); // Call ArgMax on the filtered array
             
             var color = _channelHsvMap.GetColorBGR(usedChannelIndices[argMaxChannel]);
@@ -108,8 +106,8 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
     {
         if (_channelHsvMap.AmountChannels != hsvMap.AmountChannels)
         {
-            throw new ChannelException("Channel count mismatch for ChannelHSVMap of ArgMax! Changed from: " 
-                                       + _channelHsvMap.AmountChannels + " to " + hsvMap.AmountChannels);
+            throw new ArgumentException("Channel count mismatch for ChannelHSVMap of ArgMax! Changed from: "
+                                        + _channelHsvMap.AmountChannels + " to " + hsvMap.AmountChannels);
         }
         _channelHsvMap = hsvMap;
     }
@@ -126,8 +124,8 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
     {
         if (_channelHsvMap.AmountChannels != 0 && channels.Length != _channelHsvMap.AmountChannels)
         {
-            throw new ChannelException("Channel count mismatch for ChannelHSVMap of ArgMax! Changed from: " 
-                                       + _channelHsvMap.AmountChannels + " to " + channels.Length);
+            throw new ArgumentException("Channel count mismatch for ChannelHSVMap of ArgMax! Changed from: "
+                                        + _channelHsvMap.AmountChannels + " to " + channels.Length);
         }
         
         _channelHsvMap = new ChannelHSVMap(channels);
