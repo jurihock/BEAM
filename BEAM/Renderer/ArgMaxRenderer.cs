@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
-using BEAM.Datatypes;
-using BEAM.Datatypes.Color;
+﻿using System.Threading;
 using BEAM.Exceptions;
 using BEAM.ImageSequence;
 using Timer = BEAM.Profiling.Timer;
@@ -17,7 +14,7 @@ namespace BEAM.Renderer;
 public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maximumOfIntensityRange)
     : SequenceRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
 {
-    
+
     public override BGR RenderPixel(ISequence sequence, long x, long y)
     {
         var channels = sequence.GetPixel(x, y);
@@ -27,27 +24,34 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
         return color;
     }
 
-    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y,
-        CancellationTokenSource? tokenSource = null)
+    //TODO: implement. Currently do not understand LineImage
+    public override byte[,] RenderPixels(ISequence sequence, long[] xs, long y, CancellationTokenSource? tokenSource = null)
     {
-        var channels = new int[sequence.Shape.Channels];
-        for (var i = 0; i < sequence.Shape.Channels; i++)
+        throw new System.NotImplementedException();
+    }
+
+    /// <summary>
+    /// Given an Array of channel intensities, return the first index with the highest intensity
+    /// </summary>
+    /// <param name="channels"></param>
+    /// <returns></returns>
+    /// <exception cref="ChannelException"></exception>
+    private int ArgMax(double[] channels)
+    {
+        if (channels.Length <= 0)
         {
-            channels[i] = i;
+            throw new ChannelException("Channels must be greater than 0.");
         }
-
-        var line = sequence.GetPixelLineData(xs, y, channels);
-        var data = new BGR[xs.Length];
         
-        for (var x = 0; x < xs.Length; x++)
+        double maxIntensity = MinimumOfIntensityRange;
+        int maxPosition = 0;
+        for (int i = 0; i < channels.Length; i++)
         {
-            tokenSource?.Token.ThrowIfCancellationRequested();
-
-            var argMax = line.GetPixel(x, 0).ArgMax();
-            
-            var color = GetColor(argMax, channels.Length);
-
-            data[x] = color;
+            if (channels[i] > maxIntensity)
+            {
+                maxIntensity = channels[i];
+                maxPosition = i;
+            }
         }
 
         return data;

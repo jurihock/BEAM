@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace BEAM.Datatypes.Color;
 
+/// <summary>
+/// Class representing an 8-bit BGR color Value.
+/// </summary>
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct BGR
 {

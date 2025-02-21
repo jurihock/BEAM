@@ -1,5 +1,4 @@
-﻿using BEAM.Datatypes.Color;
-using BEAM.Image;
+﻿using BEAM.Image;
 
 namespace BEAM.Renderer;
 
@@ -40,8 +39,14 @@ public class ArgMaxRendererGrey(double minimumOfIntensityRange, double maximumOf
     {
         //calculate the relative position of the given channel in all channels
         // and map it to an int intensity between 0 and 255 for the RGB values.
-        int intensity = (int) ((double)(channelNumber + 1) / (double)amountChannels * 255);
-        var color = new BGR() {B = (byte)intensity, G = (byte)intensity, R = (byte)intensity};
+        int intensity = (int) ((double)channelNumber / (double)amountChannels * 255);
+        byte[] color =
+        [
+            255,
+            (byte)intensity,
+            (byte)intensity,
+            (byte)intensity
+        ];
         return color;
     }
 

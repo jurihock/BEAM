@@ -110,7 +110,7 @@ public class SyncedPlotController
     {
         foreach (var manipulator in Manipulators)
         {
-            manipulator.activate();
+            manipulator.Activate();
         }
     }
     
@@ -121,7 +121,7 @@ public class SyncedPlotController
     {
         foreach (var manipulator in Manipulators)
         {
-            manipulator.deactivate();
+            manipulator.Deactivate();
         }
     }
 }

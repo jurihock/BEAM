@@ -44,7 +44,7 @@ public class HeatMapRendererRB : HeatMapRenderer
         {
             return new BGR() { B = 127, R = 127 };
         }
-        
+
         double range = (max - min);
         double relative = (value - min) / range; // calculate the relative intensity inside the range between min and max --> Normalize
         // the value of the color
@@ -72,16 +72,16 @@ public class HeatMapRendererRB : HeatMapRenderer
     protected override SequenceRenderer Create(int minimumOfIntensityRange, int maximumOfIntensityRange, double[] displayParameters)
     {
         // TODO remove null
-        if (!CheckParameters(displayParameters, null))
+        if (!CheckParameters(displayParameters))
         {
             throw new InvalidUserArgumentException("Display parameters are invalid.");
-        };
+        }
         return new HeatMapRendererRB(minimumOfIntensityRange, maximumOfIntensityRange, (int)displayParameters[0], displayParameters[1], displayParameters[2]);
 
     }
 
     //TODO: Check if channel is in range for given Image, not possible yet, if image not attribute
-    protected override bool CheckParameters(double[] displayParameters, IImage image)
+    protected override bool CheckParameters(double[] displayParameters)
     {
         if (displayParameters.Length != 3
             || displayParameters[0] < 0 // the channel

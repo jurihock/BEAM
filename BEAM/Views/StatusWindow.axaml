@@ -7,8 +7,7 @@
         x:Class="BEAM.Views.StatusWindow"
         x:DataType="vm:StatusWindowViewModel"
         xmlns:converter="clr-namespace:BEAM.Converter"
-        xmlns:log="clr-namespace:BEAM.Log"
-        Title="BEAM Status"
+        Title="BEAM - Log"
         WindowStartupLocation="CenterScreen"
         Focusable="True"
         CanResize="False"
@@ -21,17 +20,17 @@
         <vm:StatusWindowViewModel />
     </Design.DataContext>
 
-    <StackPanel>
+    <StackPanel Background="{DynamicResource WindowBg}">
         <StackPanel.Resources>
             <converter:LogLevelIconConverter x:Key="LogLevelIconConverter" />
         </StackPanel.Resources>
         <DockPanel Margin="20, 10, 20, 0" LastChildFill="True">
             <TextBlock VerticalAlignment="Center" FontWeight="Bold">List of status messages:</TextBlock>
             <Button Background="Transparent" HorizontalAlignment="Right" VerticalAlignment="Center" Command="{Binding ClearStatusCommand}" DockPanel.Dock="Right">
-                <Svg Path="../Assets/trash.svg" Width="20" Height="20"></Svg>
+                <Svg Path="../Assets/trash.svg" Width="20" Height="20" Css="{DynamicResource StrokeCss}"></Svg>
             </Button>
         </DockPanel>
-        <Separator Background="{DynamicResource ThemeAccentBrush}" Margin="10"></Separator>
+        <Separator Background="{DynamicResource Separator}" Margin="10"></Separator>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Width="750" Height="435" Padding="0">
             <ItemsControl ItemsSource="{Binding StatusList}">
@@ -39,7 +38,7 @@
                     <DataTemplate>
                         <Border Margin="20, 0,20,5"
                                 CornerRadius="5"
-                                BorderBrush="Gray" BorderThickness="1"
+                                BorderBrush="{DynamicResource Separator}" BorderThickness="1"
                                 Padding="5">
 
                             <StackPanel Orientation="Horizontal">

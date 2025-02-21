@@ -9,11 +9,13 @@ using BEAM.Image;
 namespace BEAM.ImageSequence;
 
 /// <summary>
-/// Loads and manages an entire sequence.
+/// Abstraction of a sequence that got data from disk.
 /// </summary>
 /// <param name="imagePaths">The paths of the images to use inside the sequence.</param>
 public abstract class DiskSequence(List<string> imagePaths, string name) : ISequence
 {
+    protected List<string> ImagePaths = imagePaths;
+
     /// Do not use -> set internally on first get
     private long? _singleFileHeight;
 
@@ -46,7 +48,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
             }
 
             _InitializeShape();
-            return _shape.Value;
+            return _shape!.Value;
         }
     }
 
@@ -100,8 +102,8 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
         return name;
     }
 
-    private Mutex _loadedImagesMutex = new();
-    private IImage?[] _loadedImages = new IImage?[imagePaths.Count];
+    private readonly Mutex _loadedImagesMutex = new();
+    private readonly IImage?[] _loadedImages = new IImage?[imagePaths.Count];
 
     /// <summary>
     /// Loads the desired image so that it's data can be accessed randomly.
@@ -115,16 +117,16 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     /// </summary>
     /// <returns>True if the sequence has been initialised, false if an error occured (then see log)</returns>
     protected internal abstract bool InitializeSequence();
-    
+
     /// <summary>
     /// A method to get the amount of loaded images in the sequence.
     /// </summary>
     /// <returns>A long representing the amount of images loaded in the sequence</returns>
-    public long getLoadedImageCount()
+    public long GetLoadedImageCount()
     {
         return _loadedImages.Length;
     }
-    
+
     /// <summary>
     /// Returns the desired image. Loads the image into main memory on-demand if necessary.
     /// </summary>
@@ -161,7 +163,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     /// </summary>
     private void _InitializeShape()
     {
-        int length = imagePaths.Count;
+        int length = ImagePaths.Count;
 
         var firstImage = GetImage(0);
         long width = firstImage.Shape.Width;
@@ -183,6 +185,8 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
         _shape = new ImageShape(width, height, firstImage.Shape.Channels);
     }
 
+    public static readonly List<string> SupportedSequences = ["PNG", "ENVI"];
+
     /// <summary>
     /// The supported file types and their respective Sequence type
     /// </summary>
@@ -202,6 +206,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     /// <returns>The sequence</returns>
     /// <exception cref="EmptySequenceException">Thrown when no images are being passed or all found file extensions are unsupported</exception>
     /// <exception cref="UnknownSequenceException">Thrown when no suitable sequence can be found in the paths</exception>
+    /// <exception cref="InvalidSequenceException">Thrown when the sequence could not be loaded</exception>
     public static DiskSequence Open(List<string> paths, string name)
     {
         if (paths.Count == 0) throw new EmptySequenceException("Empty sequences are not supported");
@@ -230,6 +235,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     /// <returns>The opened sequence</returns>
     /// <exception cref="EmptySequenceException">Thrown when no images are being passed or all found file extensions are unsupported.</exception>
     /// <exception cref="UnknownSequenceException">Thrown when the folder does not exist.</exception>
+    /// <exception cref="InvalidSequenceException">Thrown when the sequence could not be loaded</exception>
     public static DiskSequence Open(string folder)
     {
         if (!Directory.Exists(folder)) throw new UnknownSequenceException($"Cannot find folder: {folder}");
@@ -246,7 +252,9 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     /// </summary>
     /// <param name="paths">The image paths the sequence uses.</param>
     /// <returns>The sequence</returns>
+    /// <exception cref="EmptySequenceException">Thrown when no images are being passed or all found file extensions are unsupported</exception>
     /// <exception cref="UnknownSequenceException">Thrown when no suitable sequence can be found in the paths</exception>
+    /// <exception cref="InvalidSequenceException">Thrown when the sequence could not be loaded</exception>
     public static DiskSequence Open(List<Uri> paths)
     {
         var name = string.Join(", ", paths.Select(p => Path.GetFileName(p.AbsolutePath)));
@@ -259,6 +267,8 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     /// <param name="folder">The uri to the folder with the sequence inside</param>
     /// <returns>The opened sequence</returns>
     /// <exception cref="UnknownSequenceException">Thrown when the folder does not exist.</exception>
+    /// <exception cref="EmptySequenceException">Thrown when no images are being passed or all found file extensions are unsupported</exception>
+    /// <exception cref="InvalidSequenceException">Thrown when the sequence could not be loaded</exception>
     public static DiskSequence Open(Uri folder)
     {
         Console.WriteLine(folder.ToString());
@@ -270,6 +280,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     /// </summary>
     /// <param name="type">The type of the sequence.</param>
     /// <param name="paths">The paths of the used images.</param>
+    /// <param name="name">The name of the sequence.</param>
     /// <returns>The sequence object</returns>
     private static DiskSequence _InstantiateFromType(Type type, List<string> paths, string name)
     {
@@ -286,6 +297,15 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
         }
 
         return (DiskSequence)ctor.Invoke([paths, name]);
+    }
+
+    /// <summary>
+    /// Return the amount of channels of the images of the sequence.
+    /// </summary>
+    /// <returns>The amount of channels.</returns>
+    public int GetChannelAmount()
+    {
+        return Shape.Channels;
     }
 
     private void ReleaseUnmanagedResources()

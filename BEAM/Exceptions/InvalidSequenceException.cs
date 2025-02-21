@@ -1,10 +1,7 @@
-using System;
-using BEAM.Log;
-
 namespace BEAM.Exceptions;
 
 /// <summary>
-/// Not a BeamException
+/// Exception thrown when a sequence cannot be loaded for whatever reason.
 /// </summary>
 public class InvalidSequenceException : BeamException
 {
@@ -13,10 +10,6 @@ public class InvalidSequenceException : BeamException
     }
 
     public InvalidSequenceException(string message) : base(message)
-    {
-    }
-
-    public InvalidSequenceException(LogEvent evt, string message) : base(evt, message)
     {
     }
 }

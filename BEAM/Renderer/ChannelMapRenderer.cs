@@ -10,7 +10,7 @@ namespace BEAM.Renderer;
 
 /// <summary>
 /// Renderer that maps n given channels to an ARGB color value.
-/// For this three channel numbers i, j, k < n (first channel is 0) are given.
+/// For this three channel numbers i, j, (smaller than n, first channel is 0) are given.
 /// Red is set to the intensity of the ith channel, Green to the jth channel, Blue to the kth channel.
 /// </summary>
 public partial class ChannelMapRenderer : SequenceRenderer
@@ -19,15 +19,17 @@ public partial class ChannelMapRenderer : SequenceRenderer
         int channelRed, int channelGreen, int channelBlue)
         : base(minimumOfIntensityRange, maximumOfIntensityRange)
     {
+        ChannelGreen = channelGreen;
         ChannelRed = channelRed;
         ChannelGreen = channelGreen;
         ChannelBlue = channelBlue;
     }
 
-    [ObservableProperty] private int channelRed;
-    [ObservableProperty] private int channelGreen;
-    [ObservableProperty] private int channelBlue;
+    [ObservableProperty] private int _channelRed;
+    [ObservableProperty] private int _channelGreen;
+    [ObservableProperty] private int _channelBlue;
 
+    //TODO: RGBA or ARGB?
     /// <summary>
     /// Create the RGBA value for a given pixel of a sequence
     /// </summary>
@@ -38,9 +40,9 @@ public partial class ChannelMapRenderer : SequenceRenderer
     public override BGR RenderPixel(ISequence sequence, long x, long y)
     {
         var colors = NormalizeIntensity(Vector256.Create([
-            sequence.GetPixel(x, y, ChannelBlue),
-            sequence.GetPixel(x, y, ChannelGreen),
             sequence.GetPixel(x, y, ChannelRed),
+            sequence.GetPixel(x, y, ChannelGreen),
+            sequence.GetPixel(x, y, ChannelBlue),
             0
         ]));
 
@@ -69,8 +71,7 @@ public partial class ChannelMapRenderer : SequenceRenderer
 
         for (var x = 0; x < xs.Length; x++)
         {
-            tokenSource?.Token.ThrowIfCancellationRequested();
-            var colors = NormailizeIntensity(Vector256.Create([
+            var colors = NormalizeIntensity(Vector256.Create([
                 img.GetPixel(x, 0, 0),
                 img.GetPixel(x, 0, 1),
                 img.GetPixel(x, 0, 2),
@@ -83,8 +84,8 @@ public partial class ChannelMapRenderer : SequenceRenderer
                 G = (byte)colors[1], // g
                 R = (byte)colors[2], // r
             };
-            
-            
+
+
         }
 
         return data;
@@ -98,13 +99,11 @@ public partial class ChannelMapRenderer : SequenceRenderer
     protected override SequenceRenderer Create(int minimumOfIntensityRange, int maximumOfIntensityRange,
         double[] displayParameters)
     {
-        // TODO remove null
-        if (!CheckParameters(displayParameters, null))
+        if (!CheckParameters(displayParameters))
         {
             throw new InvalidUserArgumentException("Display parameters are invalid.");
         }
 
-        ;
         return new ChannelMapRenderer(
             minimumOfIntensityRange,
             maximumOfIntensityRange,
@@ -119,9 +118,8 @@ public partial class ChannelMapRenderer : SequenceRenderer
     /// Returns True, if the parameters are valid, false otherwise.
     /// </summary>
     /// <param name="displayParameters"></param>
-    /// <param name="image"></param>
     /// <returns></returns>
-    protected override bool CheckParameters(double[] displayParameters, IImage image)
+    protected override bool CheckParameters(double[] displayParameters)
     {
         return displayParameters.Length == 3
                && !(displayParameters[0] < 0)
@@ -136,7 +134,7 @@ public partial class ChannelMapRenderer : SequenceRenderer
             ChannelBlue);
     }
 
-    private Vector256<double> NormailizeIntensity(Vector256<double> intensities)
+    private new Vector256<double> NormalizeIntensity(Vector256<double> intensities)
     {
         var minIntensities = Vector256.Create<double>(MinimumOfIntensityRange);
         var maxIntensities = Vector256.Create<double>(MaximumOfIntensityRange);

@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace BEAM.Datatypes.Color;
 
+/// <summary>
+/// Cass representing an 8-bit BGRA color value (with A being transparency).
+/// </summary>
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct BGRA
 {

@@ -1,15 +1,16 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using BEAM.Log;
-using CommunityToolkit.Mvvm.ComponentModel;
+using BEAM.Models.Log;
 using CommunityToolkit.Mvvm.Input;
+using LogEntry = BEAM.Models.Log.LogEntry;
 
 namespace BEAM.ViewModels;
 
+/// <summary>
+/// View model controlling the log window.
+/// </summary>
 public partial class StatusWindowViewModel : ViewModelBase
 {
-    private Logger? _logger;
+    private readonly Logger _logger;
     public ObservableCollection<LogEntry> StatusList { get; set; }
 
     public StatusWindowViewModel()
@@ -19,8 +20,8 @@ public partial class StatusWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public void ClearStatus()
+    private void ClearStatus()
     {
-        _logger.ClearStatusBar();
+        _logger.ClearEntries();
     }
 }

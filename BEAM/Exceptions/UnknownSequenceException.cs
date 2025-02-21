@@ -1,7 +1,8 @@
-using BEAM.Log;
-
 namespace BEAM.Exceptions;
 
+/// <summary>
+/// Exception thrown when the sequence type is not detectable or unsupported.
+/// </summary>
 public class UnknownSequenceException : BeamException
 {
     public UnknownSequenceException()
@@ -9,10 +10,6 @@ public class UnknownSequenceException : BeamException
     }
 
     public UnknownSequenceException(string message) : base(message)
-    {
-    }
-
-    public UnknownSequenceException(LogEvent evt, string message) : base(evt, message)
     {
     }
 }

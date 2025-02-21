@@ -1,13 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Avalonia.Input;
-using Avalonia.Interactivity;
-using BEAM.Log;
-using NP.Ava.Visuals;
 using ScottPlot;
 using ScottPlot.Avalonia;
-using Svg;
 
 namespace BEAM.ImageSequence.Synchronization.Manipulators;
 
@@ -19,9 +13,9 @@ public class MouseManipulator : Manipulator
     /// <summary>
     /// The list of the plots, which will share mouse events.
     /// </summary>
-    private List<AvaPlot> _avaPlots = [];
+    private readonly List<AvaPlot> _avaPlots = [];
 
-    private bool _isSynchronizing = false;
+    private bool _isSynchronizing;
     
     /// <summary>
     /// Synchronizes a plot with all the other plots, which are already registered.
@@ -37,7 +31,7 @@ public class MouseManipulator : Manipulator
         
         _avaPlots.Add(avaPlot);
         
-        avaPlot.PointerEntered += (s, e) =>
+        avaPlot.PointerEntered += (_, e) =>
         {
             if (!_isSynchronizing)
             {
@@ -47,14 +41,17 @@ public class MouseManipulator : Manipulator
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
+                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
+
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
 
-        avaPlot.PointerExited += (s, e) =>
+        avaPlot.PointerExited += (_, e) =>
         {
             if (!_isSynchronizing)
             {
@@ -64,14 +61,17 @@ public class MouseManipulator : Manipulator
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
+                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
+                
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
 
-        avaPlot.PointerMoved += (s, e) =>
+        avaPlot.PointerMoved += (_, e) =>
         {
             if (!_isSynchronizing)
             {
@@ -81,21 +81,24 @@ public class MouseManipulator : Manipulator
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
+                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
+
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
 
-        avaPlot.PointerPressed += (s, e) =>
+        avaPlot.PointerPressed += (_, e) =>
         {
             if (!_isSynchronizing)
             {
                 return;
             }
             
-            // check for right click -> only opens context push menu (scottplot intern)
+            // check for right click -> only opens context push menu (Scottplot internal)
             if (e.GetCurrentPoint(avaPlot).Properties.IsRightButtonPressed)
             {
                 return;
@@ -104,14 +107,17 @@ public class MouseManipulator : Manipulator
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
+                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
+
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
 
-        avaPlot.PointerReleased += (s, e) =>
+        avaPlot.PointerReleased += (_, e) =>
         {
             if (!_isSynchronizing)
             {
@@ -121,29 +127,33 @@ public class MouseManipulator : Manipulator
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
+                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
+
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
 
-        avaPlot.PointerWheelChanged += (s, e) =>
+        avaPlot.PointerWheelChanged += (_, e) =>
         {
             if (!_isSynchronizing)
             {
                 return;
             }
-            
+            var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
             foreach (var plot in _avaPlots.Where(p => p != avaPlot))
             {
                 plot.Plot.Axes.SetLimits(avaPlot.Plot.Axes.GetLimits());
                 plot.Refresh();
-                ScrollingSynchronizer.UpdateOwnScrollBar(plot);
+                ScrollingSynchronizerMapper.UpdateOwnScrollBar(plot);
+                ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
             }   
         };
 
-        avaPlot.Tapped += (s, e) =>
+        avaPlot.Tapped += (_, e) =>
         {
             if (!_isSynchronizing)
             {
@@ -153,14 +163,17 @@ public class MouseManipulator : Manipulator
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
+                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
+
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
 
-        avaPlot.DoubleTapped += (s, e) =>
+        avaPlot.DoubleTapped += (_, e) =>
         {
             if (!_isSynchronizing)
             {
@@ -170,14 +183,17 @@ public class MouseManipulator : Manipulator
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
+                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
+
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
 
-        avaPlot.Holding += (s, e) =>
+        avaPlot.Holding += (_, e) =>
         {
             if (!_isSynchronizing)
             {
@@ -211,7 +227,7 @@ public class MouseManipulator : Manipulator
     /// <summary>
     /// This method is used to activate the synchronization between all plots.
     /// </summary>
-    public override void activate()
+    public override void Activate()
     {
         _isSynchronizing = true;
     }
@@ -219,7 +235,7 @@ public class MouseManipulator : Manipulator
     /// <summary>
     /// This method is used to deactivate the synchronization between all plots.
     /// </summary>
-    public override void deactivate()
+    public override void Deactivate()
     {
         _isSynchronizing = false;
     }

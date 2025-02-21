@@ -1,7 +1,6 @@
-using System.Net;
-using BEAM.Log;
+using BEAM.Models.Log;
 
-namespace BEAM.Tests;
+namespace BEAM.Tests.loggerTests;
 
 public class LoggerTests
 {
@@ -13,8 +12,6 @@ public class LoggerTests
         
         // Act
         logger.Error(LogEvent.FileNotFound, "Test");
-        
-        logger.Warning(LogEvent.UnknownFileFormat);
         
         logger.Info(LogEvent.ClosedFile, "A File was closed");
         

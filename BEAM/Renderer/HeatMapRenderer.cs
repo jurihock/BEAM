@@ -32,7 +32,7 @@ public abstract class HeatMapRenderer : SequenceRenderer
     /// </summary>
     public double RelMaxColdestIntensity
     {
-        get { return _relMaxColdestIntensity; }
+        get => _relMaxColdestIntensity;
         set
         {
             if (value >= 0 && value <= _relMinHottestIntensity)
@@ -54,7 +54,7 @@ public abstract class HeatMapRenderer : SequenceRenderer
     /// </summary>
     public double RelMinHottestIntensity
     {
-        get { return _relMinHottestIntensity; }
+        get => _relMinHottestIntensity;
         set
         {
             if (value <= 1 && value >= _relMaxColdestIntensity)
@@ -87,8 +87,7 @@ public abstract class HeatMapRenderer : SequenceRenderer
             IntensityRange * RelMinHottestIntensity + MinimumOfIntensityRange);
     }
 
-    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y,
-        CancellationTokenSource? tokenSource = null)
+    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y)
     {
         var data = new BGR[xs.Length];
         var img = sequence.GetPixelLineData(xs, y, [Channel]);
@@ -96,8 +95,6 @@ public abstract class HeatMapRenderer : SequenceRenderer
         // TODO: SIMD
         for (var i = 0; i < xs.Length; i++)
         {
-            tokenSource?.Token.ThrowIfCancellationRequested();
-
             var color = GetColor(img.GetPixel(i, 0, 0), MinimumOfIntensityRange, MaximumOfIntensityRange);
             data[i] = color;
         }

@@ -6,16 +6,16 @@ using NP.Utilities;
 namespace BEAM.Image;
 
 /// <summary>
-/// data[x][channel]
+/// An image with height 1. Used as a way to transfer single line information.
 /// </summary>
 public class LineImage : IImage
 {
     private readonly double[][] _data;
 
     /// <summary>
-    /// data[x][channel]
+    /// The data of the line.
     /// </summary>
-    /// <param name="data"></param>
+    /// <param name="data">The data with layout data[x pos][channel]</param>
     public LineImage(double[][] data)
     {
         _data = data;
@@ -68,8 +68,7 @@ public class LineImage : IImage
     {
         throw new NotImplementedException();
     }
-    //TODO: inconsistent parameter types for overloading
-    //TODO: Naming of parameters: xs = columns? If xs = line, then why line parameter?
+
     public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
     {
         throw new NotImplementedException();

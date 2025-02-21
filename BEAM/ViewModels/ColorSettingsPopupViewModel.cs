@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using BEAM.Controls;
@@ -12,17 +11,34 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BEAM.ViewModels;
 
+/// <summary>
+/// View model controlling the renderer settings popup
+/// </summary>
 public partial class ColorSettingsPopupViewModel : ViewModelBase
 {
+    /// <summary>
+    /// The dynamically created controls based on the available renderers.
+    /// </summary>
     public ObservableCollection<Control> RendererSelectionControls { get; } = [];
-    private SequenceViewModel _sequenceViewModel;
+    private readonly SequenceViewModel _sequenceViewModel;
 
     private int _selection;
 
-    private List<ISaveControl> _controls = [];
+    private readonly List<ISaveControl> _controls = [];
 
-    [ObservableProperty] private decimal _min;
-    [ObservableProperty] private decimal _max;
+    /// <summary>
+    /// The minimum value of the range of raw values the sequence is drawn at.
+    /// e.g.: 8-Bit PNG uses 0
+    /// </summary>
+    [ObservableProperty]
+    public partial decimal Min { get; set; }
+
+    /// <summary>
+    /// The maximum value of the range of raw values the sequence is drawn at.
+    /// e.g.: 8-Bit PNG uses 255
+    /// </summary>
+    [ObservableProperty]
+    public partial decimal Max { get; set; }
 
     public ColorSettingsPopupViewModel(SequenceViewModel sequenceViewModel)
     {
@@ -49,7 +65,7 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
             Content = renderer.GetName(),
             IsChecked = (_selection == index),
         };
-        button.IsCheckedChanged += (s, e) =>
+        button.IsCheckedChanged += (s, _) =>
         {
             var btn = (RadioButton)s!;
             if (btn.IsChecked ?? false) _selection = index;
@@ -88,6 +104,10 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
         return panel;
     }
 
+    /// <summary>
+    /// Saves the current settings to the sequence renderers and redraws the sequence.
+    /// </summary>
+    /// <returns>Whether the settings could be saved successfully</returns>
     public bool Save()
     {
         foreach (var control in _controls)
@@ -102,7 +122,7 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
         }
 
         _sequenceViewModel.RendererSelection = _selection;
-        _sequenceViewModel.RenderersUpdated.Invoke(this, new RenderersUpdatedEventArgs(0));
+        _sequenceViewModel.RenderersUpdated.Invoke(this, new RenderersUpdatedEventArgs());
         return true;
     }
 }

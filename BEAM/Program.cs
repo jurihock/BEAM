@@ -1,6 +1,6 @@
 ﻿using Avalonia;
 using System;
-using BEAM.Log;
+using BEAM.Models.Log;
 using BEAM.Profiling;
 
 namespace BEAM;
@@ -13,7 +13,7 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        Logger.Init("../../../../BEAM.Tests/loggerTests/testLogs/testLog.log");
+        Logger.Init();
 
         Timer.TimerEnd += (e) =>
         {

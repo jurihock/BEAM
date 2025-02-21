@@ -30,6 +30,7 @@
             <Setter Property="BorderBrush" Value="{DynamicResource ButtonBackgroundDisabled}"></Setter>
             <Setter Property="Title" Value="BEAM" />
             <Setter Property="HeaderHeight" Value="45"></Setter>
+            <Setter Property="CustomHeaderIcon" Value="avares://BEAM/Assets/icon.ico"></Setter>
             <Setter Property="CustomHeaderIconHeight" Value="25"></Setter>
             <Setter Property="CustomHeaderIconWidth" Value="25"></Setter>
             <Setter Property="CustomHeaderIconMargin" Value="10 0"></Setter>

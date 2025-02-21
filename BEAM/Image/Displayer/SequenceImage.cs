@@ -10,7 +10,6 @@ using BEAM.Datatypes.Color;
 using BEAM.Image.Bitmap;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
-using ScottPlot.Avalonia;
 using SkiaSharp;
 
 namespace BEAM.Image.Displayer;
@@ -64,21 +63,15 @@ public class SequenceImage : IDisposable
         /// </summary>
         public double Scale { get; private set; }
 
-        private CancellationTokenSource? _cancellationToken;
-
         /// <summary>
         /// Renders the part of the sequence.
         /// </summary>
         /// <param name="resolutionScale">The scale to render the sequence at (1 = the sequence is not being scaled)</param>
         /// <param name="yRange">The amount of lines to render</param>
-        /// <param name="plot">The plot to refresh after rendering has finished</param>
         /// <param name="scaled">Whether the rendering takes place because of a scaling operation of the view.</param>
         public void Render(double resolutionScale, long yRange, bool scaled)
         {
             // TODO: find a true way to cancel and restart the operation
-            _cancellationToken?.Cancel();
-            _cancellationToken = new CancellationTokenSource();
-
             // repositioning the part
             Scale = resolutionScale;
             var width = sequence.Shape.Width;
@@ -88,52 +81,40 @@ public class SequenceImage : IDisposable
             // rendering in background
             Task.Run(() =>
             {
-                try
+                // drawing a faint overlay if the view is being scaled and therefore rerendered
+                if (scaled && _bitmap is not null)
                 {
-                    _cancellationToken.Token.ThrowIfCancellationRequested();
-                    // drawing a faint overlay if the view is being scaled and therefore rerendered
-                    if (scaled && _bitmap is not null)
-                    {
-                        var tmp = CreateTempBitmap(1, 1, SKColors.Gray.WithAlpha(50));
+                    var tmp = CreateTempBitmap(1, 1, SKColors.Gray.WithAlpha(50));
 
-                        var infoBmp = new SKBitmap(new SKImageInfo(_bitmap.Width, _bitmap.Height));
-                        using var canvas = new SKCanvas(infoBmp);
-                        canvas.DrawBitmap(_bitmap, new SKPoint(0, 0), Paint);
-                        canvas.DrawBitmap(tmp, new SKRectI(0, 0, _bitmap.Width, _bitmap.Height), Paint);
+                    var infoBmp = new SKBitmap(new SKImageInfo(_bitmap.Width, _bitmap.Height));
+                    using var canvas = new SKCanvas(infoBmp);
+                    canvas.DrawBitmap(_bitmap, new SKPoint(0, 0), Paint);
+                    canvas.DrawBitmap(tmp, new SKRectI(0, 0, _bitmap.Width, _bitmap.Height), Paint);
 
-                        _cancellationToken.Token.ThrowIfCancellationRequested();
-                        Bitmap = infoBmp;
-                        seqImg.RequestRefreshPlotEvent.Invoke(this, new RequestRefreshPlotEventArgs());
-                    }
-                    else
-                    {
-                        _bitmap = CreateTempBitmap(1, 1, SKColors.Gray);
-                        Bitmap = _bitmap;
-                        seqImg.RequestRefreshPlotEvent.Invoke(this, new RequestRefreshPlotEventArgs());
-                    }
-
-                    // rerendering the sequence part
-                    // TODO: make independent of seqImg
-                    var bmp = seqImg.GetImage(0, sequence.Shape.Width,
-                        YStart, YStart + yRange,
-                        (int) Math.Ceiling(width * resolutionScale), (int)Math.Ceiling(height * resolutionScale),
-                        _cancellationToken);
-
-                    Bitmap = bmp;
-                    _bitmap = bmp;
+                    Bitmap = infoBmp;
                     seqImg.RequestRefreshPlotEvent.Invoke(this, new RequestRefreshPlotEventArgs());
                 }
-                catch (OperationCanceledException)
+                else
                 {
-                    // emtpy since just killing the task
+                    _bitmap = CreateTempBitmap(1, 1, SKColors.Gray);
+                    Bitmap = _bitmap;
+                    seqImg.RequestRefreshPlotEvent.Invoke(this, new RequestRefreshPlotEventArgs());
                 }
-            }, _cancellationToken.Token);
+
+                // rerendering the sequence part
+                var bmp = seqImg.GetImage(0, sequence.Shape.Width,
+                    YStart, YStart + yRange,
+                    (int)Math.Ceiling(width * resolutionScale), (int)Math.Ceiling(height * resolutionScale));
+
+                Bitmap = bmp;
+                _bitmap = bmp;
+                seqImg.RequestRefreshPlotEvent.Invoke(this, new RequestRefreshPlotEventArgs());
+            });
         }
 
         public void Dispose()
         {
             // cleaning up
-            _cancellationToken?.Dispose();
             _bitmap?.Dispose();
             Bitmap?.Dispose();
             GC.SuppressFinalize(this);
@@ -170,6 +151,7 @@ public class SequenceImage : IDisposable
     /// </summary>
     /// <param name="sequence">The sequence used</param>
     /// <param name="startLine">The line to start the view from</param>
+    /// <param name="renderer">The renderer used to convert the data into rgba values.</param>
     /// <param name="sectionHeight">The height (in lines) of an individual sequence part.</param>
     public SequenceImage(ISequence sequence, long startLine, SequenceRenderer renderer, long sectionHeight = 1000)
     {
@@ -305,11 +287,9 @@ public class SequenceImage : IDisposable
     /// <param name="endLine">The bottommost position</param>
     /// <param name="width">The width of the resulting image</param>
     /// <param name="height">The height of the resulting image</param>
-    /// <param name="tokenSource">A cancellation-token to cancel the execution</param>
     /// <returns>The part of the sequence rendered to a bitmap</returns>
     private SKBitmap GetImage(long startX, long endX, long startLine, long endLine, int width,
-        int height,
-        CancellationTokenSource? tokenSource = null)
+        int height)
     {
         // clamping all values
         startX = Math.Clamp(startX, 0, _sequence.Shape.Width);
@@ -339,7 +319,7 @@ public class SequenceImage : IDisposable
                     var line = startLine + j * (endLine - startLine) / height;
 
                     // rendering each pixel using a renderer
-                    var data = Renderer.RenderPixels(_sequence, xs, line, tokenSource);
+                    var data = Renderer.RenderPixels(_sequence, xs, line);
 
                     var span = bitmap.GetPixelSpan();
                     var pixels = MemoryMarshal.Cast<byte, BGRA>(span);
@@ -347,7 +327,6 @@ public class SequenceImage : IDisposable
                     // putting the data inside the bitmap
                     for (var i = 0; i < width; i++)
                     {
-                        tokenSource?.Token.ThrowIfCancellationRequested();
                         pixels[j * width + i] = new BGRA()
                         { // TODO: Implement Copy method for colors
                             B = data[i].B,
