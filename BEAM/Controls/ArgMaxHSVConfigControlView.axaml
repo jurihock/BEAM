@@ -16,6 +16,7 @@
     </UserControl.Resources>
     
     <StackPanel Orientation="Vertical">
+        <!-- NumericUpDown to select the channel index -->
         <StackPanel Orientation="Horizontal">
             <TextBlock VerticalAlignment="Center" Margin="10 0">Channel:</TextBlock>
             <NumericUpDown Value="{Binding SelectedChannelIndex, Mode=TwoWay}" 
@@ -25,9 +26,15 @@
                            MinWidth="110" 
                            ParsingNumberStyle="Integer" />
         </StackPanel>
+        <!-- CheckBox to display / alter if the channel is used -->
         <StackPanel Orientation="Horizontal">
             <TextBlock VerticalAlignment="Center" Margin="10 0">Is Used:</TextBlock>
             <CheckBox IsChecked="{Binding SelectedChannel.IsUsedForArgMax, Mode=TwoWay}" />
+        </StackPanel>
+        <!-- Rectangle to display the color -->
+        <StackPanel Orientation="Horizontal">
+            <TextBlock VerticalAlignment="Center" Margin="10 0">Color:</TextBlock>
+            <Rectangle Width="25" Height="25" Fill="{Binding ColorBrush}" Margin="0,10,0,0"/>
         </StackPanel>
     </StackPanel>
 </UserControl>

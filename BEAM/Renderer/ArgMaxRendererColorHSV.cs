@@ -78,7 +78,7 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
         CancellationTokenSource? tokenSource = null)
     {
         var usedChannelIndices = _channelHsvMap.getUsedChannels();
-
+        
         var line = sequence.GetPixelLineData(xs, y, usedChannelIndices);
         var data = new BGR[xs.Length];
         
@@ -86,14 +86,9 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
         {
             tokenSource?.Token.ThrowIfCancellationRequested();
 
-            var argMaxChannel = line.GetPixel(x, 0)
-                .Select((value, index) => new { Value = value, Index = index }) // Create an anonymous type with value and index
-                .Where(x => _channelHsvMap.isChannelUsed(x.Index)) // Filter based on ChannelUsed
-                .Select(x => x.Value) // Select only the values
-                .ToArray() // Convert to array
-                .ArgMax(); // Call ArgMax on the filtered array
+            var argMaxChannel = line.GetPixel(x, 0).ArgMax(); // Call ArgMax on the filtered array
             
-            var color = _channelHsvMap.GetColorBGR(argMaxChannel);
+            var color = _channelHsvMap.GetColorBGR(usedChannelIndices[argMaxChannel]);
 
             data[x] = color;
         }

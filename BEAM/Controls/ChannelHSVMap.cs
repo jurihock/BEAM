@@ -17,7 +17,7 @@ public class ChannelHSVMap
     private ChannelToHSV[] channels;
     
     private static readonly HueColorLut hcl = new HueColorLut();
-    public int AmountChannels { get; init; }
+    public int AmountChannels => channels.Length;
 
     public ChannelHSVMap(int maxAmountChannels)
     {
@@ -30,7 +30,6 @@ public class ChannelHSVMap
 
     public ChannelHSVMap(ChannelToHSV[] channels)
     {
-        this.AmountChannels = channels.Length;
         this.channels = channels;
     }
 

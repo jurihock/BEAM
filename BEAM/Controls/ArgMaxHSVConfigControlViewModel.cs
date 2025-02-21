@@ -4,7 +4,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Avalonia.Media;
 using BEAM.Datatypes.Color;
+using BEAM.Exceptions;
+using BEAM.Log;
 using BEAM.Renderer;
 using BEAM.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -35,10 +38,16 @@ public partial class ArgMaxHSVConfigControlViewModel : ViewModelBase, ISaveContr
             _selectedChannelIndex = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(SelectedChannel));
+            OnPropertyChanged(nameof(ColorBrush));
         }
     }
     
-    public ChannelToHSV SelectedChannel => _obsChannels[SelectedChannelIndex];
+    public ChannelToHSV SelectedChannel =>ObsChannels[SelectedChannelIndex];
+
+    /// <summary>
+    /// Displays the color associated with a channel
+    /// </summary>
+    public IBrush ColorBrush => new SolidColorBrush(SelectedChannel.AvaColor);
     
     public ArgMaxHSVConfigControlViewModel(ArgMaxRendererColorHSV renderer, SequenceViewModel model)
     {
@@ -48,16 +57,23 @@ public partial class ArgMaxHSVConfigControlViewModel : ViewModelBase, ISaveContr
         
         if (_renderer.getChannelHsvMap().AmountChannels == 0)
         {
-            _obsChannels = new ObservableCollection<ChannelToHSV>(new ChannelHSVMap(model.Sequence.Shape.Channels).ToArray());
+            ObsChannels = new ObservableCollection<ChannelToHSV>(new ChannelHSVMap(model.Sequence.Shape.Channels).ToArray());
         }
         else
         {
-            _obsChannels = new ObservableCollection<ChannelToHSV>(renderer.getChannelHsvMap().ToArray());
+            ObsChannels = new ObservableCollection<ChannelToHSV>(renderer.getChannelHsvMap().ToArray());
         }
     }
     
     public void Save()
     {
+        var map = new ChannelHSVMap(ObsChannels.ToArray());
+        if (map.getAmountUsedChannels() == 0)
+        {
+            // throw exception for logging
+            //throw new ChannelException("Channel amount used for ArgMax is zero!");
+            return;
+        }
         _renderer.UpdateChannelHSVMap(ObsChannels.ToArray());
     }
 }
