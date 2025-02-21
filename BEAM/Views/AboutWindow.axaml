@@ -18,8 +18,11 @@
     </Design.DataContext>
 
 
-    <StackPanel Orientation="Vertical" Margin="20, 10, 20, 10">
-        <TextBlock FontSize="24" FontWeight="Bold" Text="About BEAM" />
+    <StackPanel Orientation="Vertical" Margin="10, 10, 10, 10">
+        <Grid ColumnDefinitions="Auto, *, Auto">
+            <TextBlock FontSize="24" FontWeight="Bold" Text="About BEAM" VerticalAlignment="Center"/>
+            <Svg Grid.Column="2" Path="avares://BEAM/Assets/icon.svg" Width="40" Height="40"></Svg>
+        </Grid>
         <Separator Background="{DynamicResource Separator}" Margin="10 10 10 5"></Separator>
 
         <TextBlock FontWeight="Bold" Margin="0 10 0 0">Version</TextBlock>
@@ -53,7 +56,8 @@
         <Grid RowDefinitions="*, Auto, *">
             <Button Grid.Row="1" Background="Transparent" Click="OpenRepoWebpage">
                 <StackPanel Orientation="Horizontal">
-                    <Svg Width="20" Height="20" Path="avares://BEAM/Assets/github.svg" Css="{DynamicResource StrokeCss}" />
+                    <Svg Width="20" Height="20" Path="avares://BEAM/Assets/github.svg"
+                         Css="{DynamicResource StrokeCss}" />
                     <TextBlock Margin="5 0 0 0">GitHub</TextBlock>
                 </StackPanel>
             </Button>

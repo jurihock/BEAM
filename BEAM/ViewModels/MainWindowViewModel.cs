@@ -136,7 +136,14 @@ public partial class MainWindowViewModel : ViewModelBase
     private void OpenAboutWindow()
     {
         var aboutWindow = new AboutWindow();
-        aboutWindow.Show();
+        var v = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+        if (v is null || v.MainWindow is null)
+        {
+            Logger.GetInstance().Error(LogEvent.Critical, "Unable to find ApplicationLifetime or MainWindow");
+            return;
+        }
+
+        aboutWindow.ShowDialog(v.MainWindow);
     }
 
     [RelayCommand]
