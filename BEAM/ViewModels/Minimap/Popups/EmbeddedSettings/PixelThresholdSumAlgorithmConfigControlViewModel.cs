@@ -10,8 +10,8 @@ public partial class PixelThresholdSumAlgorithmConfigControlViewModel : ViewMode
     [ObservableProperty] public partial byte SelectedBlueThreshold { get; set; }
     [ObservableProperty] public partial byte SelectedAlphaThreshold { get; set; }
     
-    private readonly RenderedPixelThresholdAlgorithm _algorithm;
-    public PixelThresholdSumAlgorithmConfigControlViewModel(RenderedPixelThresholdAlgorithm algorithm)
+    private readonly RenderedPixelAllThresholdAlgorithm _algorithm;
+    public PixelThresholdSumAlgorithmConfigControlViewModel(RenderedPixelAllThresholdAlgorithm algorithm)
     {
         _algorithm = algorithm;
         SelectedRedThreshold = algorithm.ThresholdRed;
