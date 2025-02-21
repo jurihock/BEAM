@@ -7,6 +7,10 @@ using BEAM.Views.Utility;
 
 namespace BEAM.Image.Minimap.MinimapAlgorithms;
 
+/// <summary>
+/// An algorithm for <see cref="PlotMinimap"/>'s which creates the sum over the
+/// rendered image's and divides it through the number of pixels per line.
+/// </summary>
 public class PixelSumAlgorithm : IMinimapAlgorithm
 {
     private ISequence? _sequence;
@@ -26,7 +30,7 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
 
     private double AnalyzeLine(long line)
     {
-        double sum = 0.0f;
+        double sum = 0.0d;
         for (long j = 0; j < _sequence!.Shape.Width; j++)
         {
             var renderedData = _renderer!.RenderPixel(_sequence, j, line);
