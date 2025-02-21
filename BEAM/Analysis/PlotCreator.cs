@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Globalization;
+using System.Linq;
 using ScottPlot;
 using ScottPlot.AxisRules;
 
@@ -10,7 +11,7 @@ namespace BEAM.Analysis;
 public static class PlotCreator
 {
     /// <summary>
-    /// Creates a formatted bar plot, preventing scrolling to far in / out in regards to the given data.
+    /// Creates a formatted bar plot, preventing scrolling to far in / out in regard to the given data.
     /// </summary>
     /// <param name="values"></param>
     /// <returns></returns>
@@ -24,7 +25,7 @@ public static class PlotCreator
         {
             foreach (var bar in barPlot.Bars)
             {
-                bar.Label = bar.Value.ToString();
+                bar.Label = bar.Value.ToString(CultureInfo.InvariantCulture);
             }
             barPlot.ValueLabelStyle.Bold = true;
             barPlot.ValueLabelStyle.FontSize = 18;

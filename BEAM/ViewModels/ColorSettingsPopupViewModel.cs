@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using BEAM.Controls;
@@ -21,11 +20,11 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
     /// The dynamically created controls based on the available renderers.
     /// </summary>
     public ObservableCollection<Control> RendererSelectionControls { get; } = [];
-    private SequenceViewModel _sequenceViewModel;
+    private readonly SequenceViewModel _sequenceViewModel;
 
     private int _selection;
 
-    private List<ISaveControl> _controls = [];
+    private readonly List<ISaveControl> _controls = [];
 
     /// <summary>
     /// The minimum value of the range of raw values the sequence is drawn at.
@@ -66,7 +65,7 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
             Content = renderer.GetName(),
             IsChecked = (_selection == index),
         };
-        button.IsCheckedChanged += (s, e) =>
+        button.IsCheckedChanged += (s, _) =>
         {
             var btn = (RadioButton)s!;
             if (btn.IsChecked ?? false) _selection = index;

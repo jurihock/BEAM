@@ -23,7 +23,7 @@ public class TimerScopeToken(string name, Stopwatch watch) : IDisposable
 
     public void Dispose()
     {
-        OnTimerEnd?.Invoke(new TimerEventArgs(name, watch));
+        OnTimerEnd.Invoke(new TimerEventArgs(name, watch));
         GC.SuppressFinalize(this);
     }
 }

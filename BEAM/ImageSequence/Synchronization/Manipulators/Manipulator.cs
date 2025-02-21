@@ -52,10 +52,10 @@ public abstract class Manipulator
     /// <summary>
     /// This method is used to activate the synchronization between all plots.
     /// </summary>
-    public abstract void activate();
+    public abstract void Activate();
     
     /// <summary>
     /// This method is used to deactivate the synchronization between all plots.
     /// </summary>
-    public abstract void deactivate();
+    public abstract void Deactivate();
 }

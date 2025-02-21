@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using BEAM.Image;
 
 namespace BEAM.ImageSequence;
@@ -8,7 +7,8 @@ namespace BEAM.ImageSequence;
 /// This class is used to represent a sequence, from which a certain portion at the beginning is cut off.
 /// </summary>
 /// <param name="name">The name of the sequence</param>
-/// <param name="offset">The offset in the sequence, which content before, will be cut</param>
+/// <param name="startOffset">The offset in the sequence, before which its content will be cut</param>
+/// /// <param name="endOffset">The offset in the sequence, after which its content will be cut</param>
 /// <param name="originalSequence">The original Sequence</param>
 public class CutSequence(string name, long startOffset, long endOffset, ISequence originalSequence) : ISequence
 {

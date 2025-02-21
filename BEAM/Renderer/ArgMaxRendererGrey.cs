@@ -1,6 +1,4 @@
-﻿using BEAM.Image;
-
-namespace BEAM.Renderer;
+﻿namespace BEAM.Renderer;
 
 /// <summary>
 /// An ArgMaxRenderer, which maps the channel number to shades of grey.
@@ -39,7 +37,7 @@ public class ArgMaxRendererGrey(double minimumOfIntensityRange, double maximumOf
     {
         //calculate the relative position of the given channel in all channels
         // and map it to an int intensity between 0 and 255 for the RGB values.
-        int intensity = (int) ((double)channelNumber / (double)amountChannels * 255);
+        int intensity =  (channelNumber / amountChannels * 255);
         byte[] color =
         [
             255,

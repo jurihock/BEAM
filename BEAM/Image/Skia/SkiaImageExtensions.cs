@@ -3,6 +3,7 @@ using System;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using BEAM.Image.Envi;
 
 namespace BEAM.Image.Skia;
 /// <summary>
@@ -87,14 +88,13 @@ public static class SkiaImageExtensions
 
         if (rgb) // swap r and b
         {
-            return (int index) => index switch
+            return index => index switch
             {
                 0 => 2, 2 => 0, _ => index
             };
         }
-        else // already bgr
-        {
-            return (int index) => index;
-        }
+
+        // already bgr
+        return index => index;
     }
 }
