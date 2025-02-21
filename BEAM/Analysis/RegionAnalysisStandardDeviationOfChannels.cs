@@ -45,7 +45,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
             plot.Title(Name);
             return plot;
             
-            return PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
+            //return PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
         }
 
         // Calculate the standard deviations and store them in _sumChannelsSquared
