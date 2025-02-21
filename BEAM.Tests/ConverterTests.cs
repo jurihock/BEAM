@@ -18,9 +18,9 @@ public class ConverterTests
     public void TestLengthToMaxConverter()
     {
         var converter = new LengthToMaxConverter();
-        Assert.Equal(24, converter.Convert("25", null, null, null));
-        Assert.Equal(0, converter.Convert("1", null, null, null));
-        Assert.Equal(99, converter.Convert("100", null, null, null));
+        Assert.Equal(24, converter.Convert(25, null, null, null));
+        Assert.Equal(0, converter.Convert(1, null, null, null));
+        Assert.Equal(99, converter.Convert(100, null, null, null));
         Assert.Equal(int.MaxValue - 1, converter.Convert(int.MaxValue, null, null, null));
     }
 }
