@@ -9,7 +9,7 @@ public class MinimapSettingsProviderTestsTwo
     public void Constructor_ShouldPopulateDefaultMinimaps()
     {
         var provider = new MinimapSettingsProvider();
-        ImmutableList<Image.Minimap.Minimap> defaults = provider.GetDefaultObjects();
+        var defaults = provider.GetDefaultObjects();
         Assert.NotEmpty(defaults);
     }
 
