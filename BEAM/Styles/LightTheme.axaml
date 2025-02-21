@@ -16,7 +16,7 @@
                     
                     <Color x:Key="OverlayColor">Magenta</Color>
                     
-                    <Color x:Key="AnnotationColor">Yellow</Color>
+                    <Color x:Key="AnnotationColor">White</Color>
                     
                     <!-- <Color x:Key="StatusBarBg">#1E202F</Color> -->
                     <!-- <Color x:Key="StatusBarFg">Aqua</Color> -->
