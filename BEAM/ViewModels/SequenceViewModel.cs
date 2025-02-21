@@ -19,34 +19,74 @@ namespace BEAM.ViewModels;
 
 /// <summary>
 /// View model controlling the view of a single sequence.
-/// Contains information about possible renderers, the selected renderer and handles redraw events.
+/// Manages sequence rendering, minimap generation, and inspection view coordination.
 /// </summary>
 public partial class SequenceViewModel : ViewModelBase, IDockBase
 {
+    /// <summary>
+    /// View model for handling docking functionality.
+    /// </summary>
     [ObservableProperty] public partial DockingViewModel DockingVm { get; set; } = new();
+    /// <summary>
+    /// The position where the pointer was initially pressed.
+    /// </summary>
     [ObservableProperty] public partial Coordinate2D PressedPointerPosition { get; set; } = new();
+    /// <summary>
+    /// The position where the pointer was released.
+    /// </summary>
     [ObservableProperty] public partial Coordinate2D ReleasedPointerPosition { get; set; } = new();
 
+    /// <summary>
+    /// Collection of inspection view models connected to this sequence.
+    /// </summary>
     private List<InspectionViewModel> _connectedInspectionViewModels = new();
 
+    /// <summary>
+    /// Event raised when renderers are updated.
+    /// </summary>
     public EventHandler<RenderersUpdatedEventArgs> RenderersUpdated = delegate { };
+    /// <summary>
+    /// Event raised when the sequence is cut.
+    /// </summary>
     public EventHandler<RenderersUpdatedEventArgs> CutSequence = delegate { };
 
+    /// <summary>
+    /// The sequence being displayed and managed.
+    /// </summary>
     public TransformedSequence Sequence { get; set; }
 
+    /// <summary>
+    /// Available renderers for the sequence.
+    /// </summary>
     public SequenceRenderer[] Renderers;
+    
+    /// <summary>
+    /// Index of the currently selected renderer.
+    /// </summary>
     public int RendererSelection;
 
 
     private Image.Minimap.Minimap? _currentMinimap;
+    /// <summary>
+    /// Event raised when the minimap has been changed.
+    /// </summary>
     public EventHandler<EventArgs> MinimapHasChanged = delegate { };
     
     
 
+    /// <summary>
+    /// Collection of minimap view models.
+    /// </summary>
     [ObservableProperty]
     public partial ObservableCollection<ViewModelBase> MinimapVms { get; set; } =
         new ObservableCollection<ViewModelBase>();
 
+    /// <summary>
+    /// Initializes a new instance of the SequenceViewModel.
+    /// Sets up renderers based on the sequence type.
+    /// </summary>
+    /// <param name="sequence">The sequence to be visualized.</param>
+    /// <param name="dockingVm">The docking view model instance.</param>
     public SequenceViewModel(ISequence sequence, DockingViewModel dockingVm)
     {
         Sequence = new TransformedSequence(sequence);
@@ -87,17 +127,28 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     }
     
 
+    /// <summary>
+    /// Registers an inspection view model to receive updates.
+    /// </summary>
+    /// <param name="inspectionViewModel">The inspection view model to register.</param>
     public void RegisterInspectionViewModel(InspectionViewModel inspectionViewModel)
     {
         _connectedInspectionViewModels.Add(inspectionViewModel);
         inspectionViewModel.Update(PressedPointerPosition.OffsetBy(0.5, 0.5), ReleasedPointerPosition.OffsetBy(0.5, 0.5));
     }
     
+    /// <summary>
+    /// Unregisters an inspection view model from updates.
+    /// </summary>
+    /// <param name="inspectionViewModel">The inspection view model to unregister.</param>
     public void UnregisterInspectionViewModel(InspectionViewModel inspectionViewModel)
     {
         _connectedInspectionViewModels.Remove(inspectionViewModel);
     }
 
+    /// <summary>
+    /// Updates all registered inspection view models with current pointer positions.
+    /// </summary>
     [RelayCommand]
     public void UpdateInspectionViewModel()
     {
@@ -109,6 +160,11 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         }
     }
 
+    /// <summary>
+    /// Ensures coordinate points are within valid sequence bounds.
+    /// </summary>
+    /// <param name="point">The point to validate.</param>
+    /// <returns>A corrected coordinate within sequence bounds.</returns>
     private Coordinate2D _correctInvalid(Coordinate2D point)
     {
         double x = point.Column;
@@ -128,6 +184,9 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 
     public string Name => Sequence.GetName();
 
+    /// <summary>
+    /// Gets the current sequence renderer.
+    /// </summary>
     public SequenceRenderer CurrentRenderer => Renderers[RendererSelection];
 
     public void Dispose()
@@ -136,6 +195,10 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// Changes the current minimap and initiates generation.
+    /// </summary>
+    /// <param name="minimap">The new minimap to use.</param>
     public void ChangeCurrentMinimap(Image.Minimap.Minimap minimap)
     {
         if (_currentMinimap is not null)
@@ -150,7 +213,9 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     }
 
    
-    
+    /// <summary>
+    /// Opens the minimap settings popup.
+    /// </summary> 
     [RelayCommand]
     public void OpenMinimapSettings()
     {
@@ -165,7 +230,11 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         minimapPopup.ShowDialog(v.MainWindow);
     }
     
-    
+    /// <summary>
+    /// Handles minimap generation completion and updates the UI.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">Event arguments containing the generated minimap.</param>
     public void OnMinimapGenerated(object sender, MinimapGeneratedEventArgs e)
     {
         Dispatcher.UIThread.InvokeAsync(() =>
@@ -179,6 +248,9 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         });
     }
 
+    /// <summary>
+    /// Opens a new inspection view for the sequence.
+    /// </summary>
     [RelayCommand]
     public void OpenInspectionView()
     {
@@ -190,16 +262,22 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     }
     
 
+    /// <summary>
+    /// Performs cleanup when closing the view model.
+    /// </summary>
     public void OnClose()
     {
         _currentMinimap?.StopGeneration();
     }
-
+    
     public override string ToString()
     {
         return Name;
     }
 
+    /// <summary>
+    /// Disables and clears the current minimap.
+    /// </summary>
     public void DisableMinimap()
     {
         _currentMinimap?.StopGeneration();

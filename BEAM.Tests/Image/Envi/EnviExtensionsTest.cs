@@ -4,7 +4,6 @@ namespace BEAM.Tests.Image.Envi;
 
 using BEAM.Image.Envi;
 using System;
-using System.IO.MemoryMappedFiles;
 using Xunit;
 
 public class EnviExtensionsTests

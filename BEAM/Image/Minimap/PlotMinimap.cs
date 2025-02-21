@@ -10,7 +10,6 @@ using BEAM.ViewModels;
 using BEAM.ViewModels.Minimap;
 using BEAM.Views.Minimap.Popups.EmbeddedSettings;
 using BEAM.Views.Utility;
-using NP.Utilities;
 using ScottPlot;
 
 namespace BEAM.Image.Minimap;
@@ -136,8 +135,7 @@ public class PlotMinimap : Minimap
 
         catch (OperationCanceledException e)
         {
-            Models.Log.Logger.GetInstance().Info(LogEvent.BasicMessage,$"Minimap Generation was canceled: {e.Source}");
-            ;
+            Logger.GetInstance().Info(LogEvent.BasicMessage,$"Minimap Generation was canceled: {e.Source}");
             //End routine, Generation process was canceled
             return;
         }

@@ -1,6 +1,6 @@
 namespace BEAM.Tests.DataTypes;
 
-using BEAM.Datatypes;
+using Datatypes;
 using Xunit;
 
 public class RectangleTests

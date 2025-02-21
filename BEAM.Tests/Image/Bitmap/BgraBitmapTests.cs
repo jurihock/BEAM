@@ -1,8 +1,7 @@
 namespace BEAM.Tests.Image.Bitmap;
 
 using BEAM.Image.Bitmap;
-using BEAM.Datatypes.Color;
-using SkiaSharp;
+using Datatypes.Color;
 using Xunit;
 using System;
 using System.Runtime.InteropServices;

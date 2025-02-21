@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using BEAM.Image.Minimap.Utility;
+﻿using BEAM.Image.Minimap.Utility;
 
 namespace BEAM.Tests.Minimap;
 

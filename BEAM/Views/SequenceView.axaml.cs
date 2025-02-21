@@ -22,37 +22,62 @@ using SizeChangedEventArgs = Avalonia.Controls.SizeChangedEventArgs;
 
 namespace BEAM.Views;
 
+/// <summary>
+/// User control for displaying and interacting with image sequences.
+/// Provides plot visualization, scrolling, and mouse interaction capabilities.
+/// </summary>
 public partial class SequenceView : UserControl
 {
+    /// <summary>
+    /// Label format for displaying pixel information (coordinates and RGB values).
+    /// </summary>
     private const string PixelLabel = "x: {0, 10}\ny: {1, 10}\n \nR: {2, 10}\nG: {3,10}\nB: {4,10}";
 
+    /// <summary>
+    /// Scale factor for minimap width relative to the main view.
+    /// </summary>
     private const double MinimapWidthScale = 0.15;
 
-    // Hosts the external UserControl
+    /// <summary>
+    /// Property for hosting external user controls.
+    /// </summary>
     public static readonly StyledProperty<Control?> DynamicContentProperty =
         AvaloniaProperty.Register<SequenceView, Control?>(nameof(DynamicContent));
 
-    // Optional: Bind to the external UserControl's ViewModel
+
+    /// <summary>
+    /// Property for binding to the external user control's view model.
+    /// </summary>
     public static readonly StyledProperty<object?> DynamicContentViewModelProperty =
         AvaloniaProperty.Register<SequenceView, object?>(nameof(DynamicContentViewModel));
 
+    /// <summary>
+    /// Gets or sets the dynamically loaded content control.
+    /// </summary>
     public Control? DynamicContent
     {
         get => GetValue(DynamicContentProperty);
         set => SetValue(DynamicContentProperty, value);
     }
-    // created later
+    
     private SequencePlottable? _plottable;
     private Annotation _anno;
     private readonly HorizontalLine _horizontalLine;
     private readonly VerticalLine _verticalLine;
 
+    /// <summary>
+    /// Gets or sets the view model for the dynamic content.
+    /// </summary>
     public object? DynamicContentViewModel
     {
         get => GetValue(DynamicContentViewModelProperty);
         set => SetValue(DynamicContentViewModelProperty, value);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the SequenceView control.
+    /// Sets up plot lines, annotations, and event handlers.
+    /// </summary>
     public SequenceView()
     {
         InitializeComponent();
@@ -117,7 +142,7 @@ public partial class SequenceView : UserControl
 
         AvaPlot1.Plot.Axes.InvertY();
         AvaPlot1.Plot.Axes.SquareUnits();
-        // Reset the axis to the inital value of the scrollbar.
+        // Reset the axis to the initial value of the scrollbar.
         UpdateScrolling(0);
         AvaPlot1.Refresh();
     }
