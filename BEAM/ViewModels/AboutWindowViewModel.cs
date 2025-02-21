@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Avalonia.Controls;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace BEAM.ViewModels;
 
@@ -33,19 +35,12 @@ public partial class AboutWindowViewModel : ViewModelBase
     /// </summary>
     [ObservableProperty] public partial string Version { get; set; }
 
-    /// <summary>
-    /// The copyright string of BEAM.
-    /// Set in BEAM.csproj.
-    /// </summary>
-    [ObservableProperty] public partial string Copyright { get; set; }
-
     public AboutWindowViewModel()
     {
         var assembly = Assembly.GetExecutingAssembly();
         var info = FileVersionInfo.GetVersionInfo(assembly.Location);
 
         Version = info.ProductVersion!;
-        Copyright = info.LegalCopyright!;
 
         var d = AssetLoader.GetAssets(new Uri("avares://BEAM/Assets/Licenses/"), null);
 

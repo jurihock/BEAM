@@ -13,7 +13,6 @@
         <ProductVersion>1.0.0.0</ProductVersion>
         <PackageLicenseUrl>https://github.com/beamsoftware/BEAM/blob/main/LICENSE</PackageLicenseUrl>
         <Description>BEAM is an open-source software which allows the fluent display of super-long picutures, with comfort and ease!</Description>
-        <Copyright>© 2024, 2025: David Siekacz, Josia Dittmann, Linus Kaiser, Moritz Geib, Niklas Hermerding und Paul Stier</Copyright>
     </PropertyGroup>
 
     <ItemGroup>
