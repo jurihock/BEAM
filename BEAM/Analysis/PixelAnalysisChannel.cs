@@ -1,4 +1,4 @@
-using BEAM.Datatypes;
+﻿using BEAM.Datatypes;
 using BEAM.ImageSequence;
 using ScottPlot;
 
@@ -15,7 +15,7 @@ public class PixelAnalysisChannel : Analysis
         double[] channels = sequence.GetPixel((long)pointerPressedPoint.Column, (long)pointerReleasedPoint.Row);
 
         Plot plot = PlotCreator.CreateFormattedBarPlot(channels);
-        plot.Title("Pixel Channel Analysis");
+        plot.Title(Name);
         return plot;
     }
 

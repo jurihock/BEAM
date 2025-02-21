@@ -14,40 +14,49 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
 {
     private const string Name = "Region Analysis Standard Deviation";
 
-    private double[] _sumChannels = [];  // sum of channel values
+    private double[] _sumChannels = []; // sum of channel values
     private double[] _sumChannelsSquared = []; // sum of channel values squared
     private Coordinate2D _topLeft;
     private Coordinate2D _bottomRight;
     private int _amountChannels;
 
-    public override Plot Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint, ISequence sequence)
+    public override Plot Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
+        ISequence sequence)
     {
         using var _ = Timer.Start("Region analysis (std deviation of channels)");
         _topLeft =
-            new Coordinate2D((long) Math.Min(pointerPressedPoint.Row, pointerReleasedPoint.Row),
-                (long) Math.Min(pointerPressedPoint.Column, pointerReleasedPoint.Column));
-        
+            new Coordinate2D((long)Math.Min(pointerPressedPoint.Row, pointerReleasedPoint.Row),
+                (long)Math.Min(pointerPressedPoint.Column, pointerReleasedPoint.Column));
+
         _bottomRight =
-            new Coordinate2D((long) Math.Max(pointerPressedPoint.Row, pointerReleasedPoint.Row),
-                (long) Math.Max(pointerPressedPoint.Column, pointerReleasedPoint.Column));
+            new Coordinate2D((long)Math.Max(pointerPressedPoint.Row, pointerReleasedPoint.Row),
+                (long)Math.Max(pointerPressedPoint.Column, pointerReleasedPoint.Column));
 
         _amountChannels = sequence.Shape.Channels;
+
+        Plot plot;
         
         // Catch trivial case of only one pixel selected
         if (Math.Abs(_AmountPixels() - 1) < 0.001)
         {
             _sumChannelsSquared = new double[_amountChannels];
+            
+            plot = PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
+            plot.Title(Name);
+            return plot;
+            
             return PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
         }
-        
+
         // Calculate the standard deviations and store them in _sumChannelsSquared
         _CalculateResult(sequence);
 
-        return PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
+        plot = PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
+        plot.Title(Name);
+        return plot;
     }
-    
-    
-    
+
+
     /// <summary>
     /// Calculates the standard deviation of the channels in the region and stores the result in _sumChannelsSquared
     /// </summary>
@@ -65,7 +74,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
                 _UpdateWithPixel(sequence.GetPixel((long)column, (long)row));
             }
         }
-        
+
         _calculateMeans();
         for (int i = 0; i < _amountChannels; i++)
         {
@@ -73,7 +82,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
         }
     }
 
-    
+
     /// <summary>
     /// Update _sumChannels(Squared) with the given pixel.
     /// </summary>
@@ -107,7 +116,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
             _sumChannels[i] /= amountPixels;
         }
     }
-    
+
     /// <summary>
     /// Calculate the standard deviation of the given channel.
     /// stdDev(i) = (sumSquared(i) - amountPixels * mean(i)²) / (amountPixels - 1)
@@ -117,12 +126,13 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
     {
         if (channel < 0 || channel >= _amountChannels)
         {
-            throw new ArgumentException("Channel Number given ( "+ channel + " ) must be between 0 and " + _amountChannels+"!" );
+            throw new ArgumentException("Channel Number given ( " + channel + " ) must be between 0 and " +
+                                        _amountChannels + "!");
         }
 
         var amountPixels = _AmountPixels();
         var meanSquared = Math.Pow(_sumChannels[channel], 2);
-        var stdDev = (_sumChannelsSquared[channel] - amountPixels * meanSquared) 
+        var stdDev = (_sumChannelsSquared[channel] - amountPixels * meanSquared)
                      / (_AmountPixels() - 1);
 
         return Math.Sqrt(stdDev);
@@ -132,5 +142,4 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
     {
         return Name;
     }
-
 }
