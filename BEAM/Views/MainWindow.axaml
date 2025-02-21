@@ -26,8 +26,8 @@
         <NativeMenu>
             <NativeMenuItem Header="_File">
                 <NativeMenu>
-                    <NativeMenuItem Header="Open from files" Command="{Binding OpenSequenceCommand}" />
-                    <NativeMenuItem Header="Open from Folder"
+                    <NativeMenuItem Header="Open Files" Command="{Binding OpenSequenceCommand}" />
+                    <NativeMenuItem Header="Open Folder"
                                     Command="{Binding OpenSequenceFromFolderCommand}">
                     </NativeMenuItem>
                     <NativeMenuItemSeparator />
