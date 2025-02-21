@@ -38,7 +38,7 @@
 
                     <Color x:Key="FontColor">Black</Color>
                     
-                    <Color x:Key="DockHeaderBg">Transparent</Color>
+                    <Color x:Key="DockHeaderBg">White</Color>
                     <Color x:Key="SelectedDockHeaderBg">CornflowerBlue</Color>
                     <Color x:Key="DockHeaderFg">Black</Color>
                     <system:String x:Key="StrokeCss">*{stroke: #000000;}</system:String>
