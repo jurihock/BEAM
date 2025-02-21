@@ -8,11 +8,11 @@
              x:DataType="controls:PixelThresholdSumAlgorithmConfigControlViewModel">
     <StackPanel>
         <Grid RowDefinitions="Auto,2, Auto,2, Auto,2, Auto,2, Auto" ColumnDefinitions="Auto, 2, Auto, 2">
-            <TextBlock Grid.Row="0" Grid.Column="0">Minimum red value:</TextBlock>
-            <NumericUpDown Grid.Row="0" Grid.Column ="2" Value="{Binding SelectedRedThreshold}" FormatString="N0" Increment="5" Minimum="0" MinWidth="255" ParsingNumberStyle="Integer" />
-            <TextBlock Grid.Row="2" Grid.Column="0">Minimum green value:</TextBlock>
+            <TextBlock Grid.Row="0" VerticalAlignment="Center" Grid.Column="0">Minimum red value: </TextBlock>
+            <NumericUpDown Grid.Row="0" VerticalAlignment="Center" Grid.Column ="2" Value="{Binding SelectedRedThreshold}" FormatString="N0" Increment="5" Minimum="0" MinWidth="255" ParsingNumberStyle="Integer" />
+            <TextBlock Grid.Row="2" VerticalAlignment="Center" Grid.Column="0">Minimum green value: </TextBlock>
             <NumericUpDown Grid.Row="2" Grid.Column ="2" Value="{Binding SelectedGreenThreshold}" FormatString="N0" Increment="5" Minimum="0" MinWidth="255" ParsingNumberStyle="Integer" />
-            <TextBlock Grid.Row="4" Grid.Column="0">Minimum blue value:</TextBlock>
+            <TextBlock Grid.Row="4" VerticalAlignment="Center" Grid.Column="0">Minimum blue value: </TextBlock>
             <NumericUpDown Grid.Row="4" Grid.Column ="2" Value="{Binding SelectedBlueThreshold}" FormatString="N0" Increment="5" Minimum="0" MinWidth="255" ParsingNumberStyle="Integer" />
             <!-- Gamma not required
             <TextBlock Grid.Row="6" Grid.Column="0">Minimum alpha value:</TextBlock>

@@ -10,8 +10,10 @@
         Title="Beam - Configure Default Minimap"
         Focusable="True"
         WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource WindowBg}"
         x:DataType="viewModels:DefaultMinimapPopupViewModel"
-        SizeToContent="WidthAndHeight">
+        SizeToContent="WidthAndHeight"
+        CanResize="False">
     <StackPanel Orientation="Vertical" Margin="20, 10, 20, 0">
         <TextBlock FontWeight="Bold">Configure the default minimap settings</TextBlock>
         <Separator Background="{DynamicResource ThemeAccentBrush}" Margin="0 10"></Separator>
@@ -27,9 +29,14 @@
                 </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <Separator Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3" Background="{DynamicResource ThemeAccentBrush}" Margin="0 10"></Separator>
         </Grid>
+        
+        <Separator Background="{DynamicResource ThemeAccentBrush}" Margin="0 10"></Separator>
+        
         <ItemsControl  ItemsSource="{Binding MinimapSubSettings}" />
+        
+        <Separator Background="{DynamicResource ThemeAccentBrush}" Margin="0 10"></Separator>
+        
         <StackPanel Margin="0 10" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Click="Disable" Margin="10 0 0 0">Disable Minimap</Button>
             <Button Click="Close" Margin="10 0 0 0">Cancel</Button>

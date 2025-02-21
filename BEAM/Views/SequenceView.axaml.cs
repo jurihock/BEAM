@@ -214,8 +214,6 @@ public partial class SequenceView : UserControl
         {
             return;
         }
-        
-        
 
         var menu = AvaPlot1.Menu!;
         menu.Clear();
@@ -236,7 +234,7 @@ public partial class SequenceView : UserControl
         menu.AddSeparator();
         menu.Add("Cut Sequence", _ => _OpenCutPopup());
         menu.Add("Export sequence", _ => _OpenExportPopup());
-        menu.Add("Change Minimap settings for this sequence", _ => vm.OpenMinimapSettings());
+        menu.Add("Change Minimap", _ => vm.OpenMinimapSettings());
     }
 
 

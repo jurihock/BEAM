@@ -24,13 +24,13 @@
         </StackPanel>
         <!-- CheckBox to display / alter if the channel is used -->
         <StackPanel Orientation="Horizontal">
-            <TextBlock VerticalAlignment="Center" Margin="10 0">Is Used:</TextBlock>
-            <CheckBox IsChecked="{Binding SelectedChannel.IsUsedForArgMax, Mode=TwoWay}" />
+            <TextBlock VerticalAlignment="Center" Margin="10 0">Ignore Channel:</TextBlock>
+            <CheckBox IsChecked="{Binding !SelectedChannel.IsUsedForArgMax, Mode=TwoWay}" />
         </StackPanel>
         <!-- Rectangle to display the color -->
         <StackPanel Orientation="Horizontal">
             <TextBlock VerticalAlignment="Center" Margin="10 0">Color:</TextBlock>
-            <ColorPicker Color="{Binding SelectedChannel.AvaColor, Mode=TwoWay}" />
+            <ColorPicker IsColorComponentsVisible="False" Foreground="Aqua" Background="Aqua" Color="{Binding SelectedChannel.AvaColor, Mode=TwoWay}" />
         </StackPanel>
     </StackPanel>
 </UserControl>
