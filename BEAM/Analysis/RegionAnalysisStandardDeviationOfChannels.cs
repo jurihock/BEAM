@@ -19,7 +19,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
     private Coordinate2D _topLeft;
     private Coordinate2D _bottomRight;
     private int _amountChannels;
-
+    
     public override Plot Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
         ISequence sequence)
     {

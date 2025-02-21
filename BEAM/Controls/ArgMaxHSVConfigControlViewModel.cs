@@ -7,7 +7,7 @@ using BEAM.ViewModels;
 
 namespace BEAM.Controls;
 
-public partial class ArgMaxHSVConfigControlViewModel : ViewModelBase, ISaveControl
+public class ArgMaxHSVConfigControlViewModel : ViewModelBase, ISaveControl
 {
     private readonly ArgMaxRendererColorHSV _renderer;
 
@@ -67,7 +67,6 @@ public partial class ArgMaxHSVConfigControlViewModel : ViewModelBase, ISaveContr
         if (map.GetAmountUsedChannels() == 0)
         {
             // throw exception for logging
-            //throw new ChannelException("Channel amount used for ArgMax is zero!");
             return;
         }
 
