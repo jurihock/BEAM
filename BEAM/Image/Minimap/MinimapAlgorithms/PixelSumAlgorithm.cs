@@ -33,6 +33,7 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
         double sum = 0.0d;
         for (long j = 0; j < _sequence!.Shape.Width; j++)
         {
+            _ctx!.Value.ThrowIfCancellationRequested();
             var renderedData = _renderer!.RenderPixel(_sequence, j, line);
             sum += renderedData.B;
             sum += renderedData.G;

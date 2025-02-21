@@ -1,10 +1,10 @@
 using BEAM.Analysis;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
-using ScottPlot;
-using Xunit;
 using Moq;
 using ScottPlot.Plottables;
+
+namespace BEAM.Tests.Analysis;
 
 public class PixelAnalysisChannelTests
 {

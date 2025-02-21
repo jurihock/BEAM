@@ -1,8 +1,7 @@
-using System.Linq;
 using BEAM.Analysis;
-using ScottPlot;
 using ScottPlot.Plottables;
-using Xunit;
+
+namespace BEAM.Tests.Analysis;
 
 public class PlotCreatorTests
 {

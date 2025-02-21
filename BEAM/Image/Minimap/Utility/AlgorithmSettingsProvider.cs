@@ -17,7 +17,7 @@ public class AlgorithmSettingsProvider : ISettingsProvider<IMinimapAlgorithm>
 
     private readonly List<IMinimapAlgorithm> _defaultAlgorithms;
     private IMinimapAlgorithm? _currentDefault;
-    private readonly Type _defaultType = typeof(RenderedPixelAllThresholdAlgorithm);
+    private readonly Type _defaultType = typeof(RenderedChannelThresholdAlgorithm);
     public AlgorithmSettingsProvider()
     {
         _defaultAlgorithms = new List<IMinimapAlgorithm>();

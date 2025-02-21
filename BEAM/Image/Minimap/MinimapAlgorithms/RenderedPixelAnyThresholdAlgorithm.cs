@@ -20,49 +20,59 @@ public class RenderedPixelAnyThresholdAlgorithm : IMinimapAlgorithm
     public byte ThresholdRed { get; set; } = 25;
     public byte ThresholdBlue { get; set; } = 25;
     public byte ThresholdGreen { get; set; } = 25;
-    public byte ThresholdAlpha { get; set; } = 255;
+    public byte ThresholdAlpha {get; set;} = 255 ;
     private ISequence? _sequence;
     private CancellationToken? _ctx;
     private SequenceRenderer? _renderer;
     private BGR _thresholds;
+    private long[]? _fetchMask;
     public RenderedPixelAnyThresholdAlgorithm()
     {
         _thresholds = new BGR(ThresholdBlue, ThresholdGreen, ThresholdRed);
     }
     public bool AnalyzeSequence(ISequence sequence, CancellationToken ctx)
     {
-        _thresholds = new BGR(ThresholdBlue, ThresholdGreen, ThresholdRed);
+        _thresholds = new BGR(ThresholdBlue, ThresholdGreen,  ThresholdRed);
         _sequence = sequence;
         _ctx = ctx;
+        _fetchMask = new long[sequence.Shape.Width];
+        for (int i = 0; i < _fetchMask.Length; i++)
+        {
+            _fetchMask[i] = i;
+        }
         return true;
     }
 
 
     public double GetLineValue(long line)
     {
-        if (_sequence is null || _ctx is null)
+        if (_sequence is null || _ctx is null || _fetchMask is null)
         {
             throw new InvalidStateException("Data must first be initialized!");
         }
-        if (line < 0 || line >= _sequence.Shape.Height)
+        if(line < 0 || line >= _sequence.Shape.Height)
         {
             throw new ArgumentOutOfRangeException(nameof(line));
         }
 
         return AnalyzeLine(line);
     }
-
+    
     private double AnalyzeLine(long line)
     {
         double sum = 0.0f;
-        for (long j = 0; j < _sequence!.Shape.Width; j++)
+        for(long j = 0; j < _sequence!.Shape.Width; j++)
         {
-            var renderedData = _renderer!.RenderPixel(_sequence, j, line);
-            if (renderedData.EntrywiseAnyGreater(_thresholds))
+            _ctx!.Value.ThrowIfCancellationRequested();
+            var renderedData = _renderer!.RenderPixels(_sequence, _fetchMask!, line);
+            foreach (var entry in renderedData)
             {
-                sum += 1;
+                if (entry.EntrywiseAnyGreater(_thresholds))
+                {
+                    sum += 1;
+                }
             }
-
+            
         }
         return sum;
     }
@@ -76,16 +86,16 @@ public class RenderedPixelAnyThresholdAlgorithm : IMinimapAlgorithm
     {
         return new PixelThresholdAnySumAlgorithmConfigControlView(this);
     }
-
+    
 
     public IMinimapAlgorithm Clone()
     {
-        return new RenderedPixelAnyThresholdAlgorithm { _renderer = _renderer, ThresholdRed = ThresholdRed, ThresholdGreen = ThresholdGreen, ThresholdBlue = ThresholdBlue, ThresholdAlpha = ThresholdAlpha };
+        return new RenderedPixelAnyThresholdAlgorithm { _renderer = _renderer , ThresholdRed = ThresholdRed, ThresholdGreen = ThresholdGreen, ThresholdBlue = ThresholdBlue, ThresholdAlpha = ThresholdAlpha};
     }
 
     public void SetRenderer(SequenceRenderer renderer)
     {
         _renderer = renderer;
     }
-
+    
 }

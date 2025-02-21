@@ -2,10 +2,6 @@ using System.Runtime.CompilerServices;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
 using BEAM.Analysis;
-using ScottPlot;
-using Xunit;
-using Moq;
-using NP.Utilities;
 using ScottPlot.Plottables;
 using Xunit.Abstractions;
 
