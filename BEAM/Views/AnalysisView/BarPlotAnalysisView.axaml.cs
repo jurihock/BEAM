@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Linq;
+using Avalonia;
 using ScottPlot;
 using ScottPlot.AxisRules;
 
@@ -44,8 +45,24 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
     private void FillPlot(double[] dataHeights)
     {
         AvaPlotAnalysis.Plot.Clear();
+        
+        var currentTheme = Application.Current!.ActualThemeVariant;
+                        
+                // change figure colors
+                Application.Current.TryGetResource("WindowBg", currentTheme, out var background);
+                var backgroundColor = (Avalonia.Media.Color)background!;
+                AvaPlotAnalysis.Plot.FigureBackground.Color = new Color(backgroundColor.R, backgroundColor.G, backgroundColor.B);
+       
+                Application.Current.TryGetResource("BackgroundColorDark", currentTheme, out var backgroundDark);
+                var backgroundColorDark = (Avalonia.Media.Color)backgroundDark!;
+                AvaPlotAnalysis.Plot.DataBackground.Color =
+                    new Color(backgroundColorDark.R, backgroundColorDark.G, backgroundColorDark.B);
 
-
+                // change axis and grid colors
+                Application.Current.TryGetResource("FontColor", currentTheme, out var fontColorScottPlot);
+                var fontColor = (Avalonia.Media.Color)fontColorScottPlot!;
+                AvaPlotAnalysis.Plot.Axes.Color(new Color(fontColor.R, fontColor.G, fontColor.B)); 
+                
         var barPlot = AvaPlotAnalysis.Plot.Add.Bars(dataHeights);
 
         if (_showLabels && dataHeights.Length <= 4)
@@ -58,7 +75,6 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
             barPlot.ValueLabelStyle.Bold = true;
             barPlot.ValueLabelStyle.FontSize = 18;
         }
-
         AvaPlotAnalysis.Plot.Benchmark.IsVisible = false;
 
         // AvaPlotAnalysis.Plot.Axes.SetLimitsX(-1, dataHeights.Length);
@@ -68,7 +84,7 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
         {
             yAxisLimit = 1;
         }
-
+        
         double yAxisLimitBuffer = yAxisLimit * 0.15;
         
         AvaPlotAnalysis.Plot.Axes.SetLimitsY(0, yAxisLimit + yAxisLimitBuffer);
@@ -106,7 +122,8 @@ public partial class BarPlotAnalysisView : AbstractAnalysisView
         AvaPlotAnalysis.Plot.Axes.Rules.Add(maxSpanRule);
         
         AvaPlotAnalysis.Plot.Axes.Margins(bottom: 0, top: .2f);
-        AvaPlotAnalysis.Refresh();
+        
+        
     }
 
 

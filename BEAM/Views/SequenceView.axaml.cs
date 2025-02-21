@@ -364,7 +364,7 @@ public partial class SequenceView : UserControl
         }
 
         var bytes = vm.Renderers[vm.RendererSelection].RenderPixel(vm.Sequence, (long)(x), (long)(y));
-        _anno.Text = string.Format(PixelLabel, x, y, bytes.B, bytes.G, bytes.R);
+        _anno.Text = string.Format(PixelLabel, x, y, bytes.R, bytes.G, bytes.B);
     }
 
     private void _OpenTransformPopup()
