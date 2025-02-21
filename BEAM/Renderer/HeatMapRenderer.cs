@@ -1,4 +1,6 @@
-﻿using BEAM.Exceptions;
+﻿using System.Threading;
+using BEAM.Datatypes.Color;
+using BEAM.Exceptions;
 using BEAM.ImageSequence;
 
 namespace BEAM.Renderer;
@@ -18,6 +20,12 @@ public abstract class HeatMapRenderer : SequenceRenderer
     private double _relMaxColdestIntensity = 0; // initial value
     private double _relMinHottestIntensity = 1; // initial value
 
+    // The highest absolute intensity that is represented with the coldest color.
+    private double _absMaxColdestIntensity;
+
+    // The lowest absolute intensity that is represented with the hottest color.
+    private double _absMinHottestIntensity;
+
     /// <summary>
     /// The highest relative intensity between 0 and 1 that is represented with the coldest color.
     /// --> value between 0 and 100% of intensity range
@@ -30,6 +38,7 @@ public abstract class HeatMapRenderer : SequenceRenderer
             if (value >= 0 && value <= _relMinHottestIntensity)
             {
                 _relMaxColdestIntensity = value;
+                _absMaxColdestIntensity = value * IntensityRange + MinimumOfIntensityRange;
             }
             else
             {
@@ -51,6 +60,7 @@ public abstract class HeatMapRenderer : SequenceRenderer
             if (value <= 1 && value >= _relMaxColdestIntensity)
             {
                 _relMinHottestIntensity = value;
+                _absMinHottestIntensity = value * IntensityRange + MinimumOfIntensityRange;
             }
             else
             {
@@ -70,28 +80,23 @@ public abstract class HeatMapRenderer : SequenceRenderer
         RelMinHottestIntensity = relMinHottestIntensity;
     }
 
-    public override byte[] RenderPixel(ISequence sequence, long x, long y)
+    public override BGR RenderPixel(ISequence sequence, long x, long y)
     {
         return GetColor(sequence.GetPixel(x, y, Channel),
             IntensityRange * RelMaxColdestIntensity + MinimumOfIntensityRange,
             IntensityRange * RelMinHottestIntensity + MinimumOfIntensityRange);
     }
 
-    public override byte[,] RenderPixels(ISequence sequence, long[] xs, long y)
+    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y)
     {
-        var data = new byte[xs.Length, 4];
+        var data = new BGR[xs.Length];
         var img = sequence.GetPixelLineData(xs, y, [Channel]);
 
         // TODO: SIMD
         for (var i = 0; i < xs.Length; i++)
         {
             var color = GetColor(img.GetPixel(i, 0, 0), MinimumOfIntensityRange, MaximumOfIntensityRange);
-            //RGBA
-            data[i, 0] = color[2];
-            data[i, 1] = color[1];
-            data[i, 2] = color[0];
-            data[i, 3] = color[3];
-            
+            data[i] = color;
         }
 
         return data;
@@ -105,8 +110,8 @@ public abstract class HeatMapRenderer : SequenceRenderer
     /// <param name="min">The highest intensity of the channel, that is displayed as the coldest intensity.</param>
     /// <param name="max">The lowest intensity of the channel, that is displayed as the highest intensity.</param>
     /// <returns>The ARGB values of the final Color to be displayed.
-    /// (A, R, G, B) each color from 0 to 255. A = 0 : fully transparent</returns>
-    protected abstract byte[] GetColor(double value, double min, double max);
+    /// (A, R, G, B) each color from 0 - 255. A = 0 : fully transparent</returns>
+    protected abstract BGR GetColor(double value, double min, double max);
 
     public override string GetName() => "Heatmap";
 }

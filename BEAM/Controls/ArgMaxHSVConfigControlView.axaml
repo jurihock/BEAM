@@ -1,0 +1,40 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:BEAM.Controls"
+             xmlns:converter="clr-namespace:BEAM.Converter"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="controls:ArgMaxHSVConfigControlViewModel"
+             x:Class="BEAM.Controls.ArgMaxHSVConfigControlView">
+    <Design.DataContext>
+        <controls:ArgMaxHSVConfigControlViewModel/>
+    </Design.DataContext>
+    
+    <UserControl.Resources>
+        <converter:LengthToMaxConverter x:Key="LengthToMaxConverter"/>
+    </UserControl.Resources>
+    
+    <StackPanel Orientation="Vertical">
+        <!-- NumericUpDown to select the channel index -->
+        <StackPanel Orientation="Horizontal">
+            <TextBlock VerticalAlignment="Center" Margin="10 0">Channel:</TextBlock>
+            <NumericUpDown Value="{Binding SelectedChannelIndex, Mode=TwoWay}" 
+                           FormatString="N0" 
+                           Minimum="{Binding Min}" 
+                           Maximum="{Binding ObsChannels.Count, Converter={StaticResource LengthToMaxConverter}}" 
+                           MinWidth="110" 
+                           ParsingNumberStyle="Integer" />
+        </StackPanel>
+        <!-- CheckBox to display / alter if the channel is used -->
+        <StackPanel Orientation="Horizontal">
+            <TextBlock VerticalAlignment="Center" Margin="10 0">Is Used:</TextBlock>
+            <CheckBox IsChecked="{Binding SelectedChannel.IsUsedForArgMax, Mode=TwoWay}" />
+        </StackPanel>
+        <!-- Rectangle to display the color -->
+        <StackPanel Orientation="Horizontal">
+            <TextBlock VerticalAlignment="Center" Margin="10 0">Color:</TextBlock>
+            <Rectangle Width="25" Height="25" Fill="{Binding ColorBrush}" Margin="0,10,0,0"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

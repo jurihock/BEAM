@@ -17,7 +17,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="AffTrans\" />
         <Folder Include="Assets\Images\" />
         <Folder Include="Models\" />
         <AvaloniaResource Include="Assets\**" />

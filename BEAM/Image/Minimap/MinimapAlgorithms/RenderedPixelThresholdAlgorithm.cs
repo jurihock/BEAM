@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Threading;
 using BEAM.Exceptions;
 using BEAM.ImageSequence;
@@ -41,19 +41,19 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
 
         return AnalyzeLine(line);
     }
-    
+
     private double AnalyzeLine(long line)
     {
         double sum = 0.0f;
         for(long j = 0; j < _sequence!.Shape.Width; j++)
         {
             var renderedData = _renderer!.RenderPixel(_sequence, j, line);
-            Vector4D<byte> other = new Vector4D<byte>(ref renderedData);
+            Vector4D<byte> other = new Vector4D<byte>(renderedData.B, renderedData.G, renderedData.R, 255);
             if(_thresholds.EntrywiseGreaterEqual(other))
             {
                 sum += 1;
             }
-            
+
         }
         return sum;
     }
@@ -67,7 +67,7 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
     {
         return new PixelThresholdSumAlgorithmConfigControlView(this);
     }
-    
+
 
     public IMinimapAlgorithm Clone()
     {

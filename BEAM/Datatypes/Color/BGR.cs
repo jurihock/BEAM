@@ -1,18 +1,17 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace BEAM.Image.Bitmap;
+namespace BEAM.Datatypes.Color;
 
 /// <summary>
-/// Cass representing an 8-bit BGRA color value (with A being transparency).
+/// Class representing an 8-bit BGR color Value.
 /// </summary>
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public struct BGRA
+public struct BGR
 {
   public byte B;
   public byte G;
   public byte R;
-  public byte A;
 
   public byte this[int index]
   {
@@ -23,7 +22,6 @@ public struct BGRA
         case 0: return B;
         case 1: return G;
         case 2: return R;
-        case 3: return A;
       }
 
       throw new ArgumentOutOfRangeException(nameof(index));
@@ -35,7 +33,6 @@ public struct BGRA
         case 0: B = value; return;
         case 1: G = value; return;
         case 2: R = value; return;
-        case 3: A = value; return;
       }
 
       throw new ArgumentOutOfRangeException(nameof(index));

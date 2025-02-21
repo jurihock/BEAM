@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
+using BEAM.Datatypes.Color;
 using BEAM.Image.Bitmap;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
@@ -90,11 +92,13 @@ public class SequenceImage : IDisposable
                     canvas.DrawBitmap(tmp, new SKRectI(0, 0, _bitmap.Width, _bitmap.Height), Paint);
 
                     Bitmap = infoBmp;
+                    seqImg.RequestRefreshPlotEvent.Invoke(this, new RequestRefreshPlotEventArgs());
                 }
                 else
                 {
                     _bitmap = CreateTempBitmap(1, 1, SKColors.Gray);
                     Bitmap = _bitmap;
+                    seqImg.RequestRefreshPlotEvent.Invoke(this, new RequestRefreshPlotEventArgs());
                 }
 
                 // rerendering the sequence part
@@ -324,11 +328,11 @@ public class SequenceImage : IDisposable
                     for (var i = 0; i < width; i++)
                     {
                         pixels[j * width + i] = new BGRA()
-                        {
-                            B = data[i, 0],
-                            G = data[i, 1],
-                            R = data[i, 2],
-                            A = data[i, 3],
+                        { // TODO: Implement Copy method for colors
+                            B = data[i].B,
+                            G = data[i].G,
+                            R = data[i].R,
+                            A = 255,
                         };
                     }
                 }

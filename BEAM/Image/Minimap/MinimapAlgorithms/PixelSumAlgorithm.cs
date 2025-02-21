@@ -30,10 +30,9 @@ public class PixelSumAlgorithm : IMinimapAlgorithm
         for (long j = 0; j < _sequence!.Shape.Width; j++)
         {
             var renderedData = _renderer!.RenderPixel(_sequence, j, line);
-            foreach (byte channelValue in renderedData)
-            {
-                sum += channelValue;
-            }
+            sum += renderedData.B;
+            sum += renderedData.G;
+            sum += renderedData.R;
         }
         return sum/_pixelsPerLine;
     }

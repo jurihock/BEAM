@@ -368,7 +368,7 @@ public partial class SequenceView : UserControl
         }
 
         var bytes = vm.Renderers[vm.RendererSelection].RenderPixel(vm.Sequence, x, y);
-        Anno.Text = $"(x: {x}, y: {y}, (r: {bytes[3]}, g: {bytes[1]}, b: {bytes[2]})";
+        Anno.Text = $"(x: {x}, y: {y}, (r: {bytes.R}, g: {bytes.G}, b: {bytes.B})";
     }
 
     private void _OpenTransformPopup()

@@ -1,5 +1,7 @@
 ﻿using System;
+using BEAM.Datatypes.Color;
 using BEAM.Exceptions;
+using IImage = BEAM.Image.IImage;
 
 namespace BEAM.Renderer;
 
@@ -25,31 +27,30 @@ public class HeatMapRendererRB : HeatMapRenderer
     {
     }
 
-    protected override byte[] GetColor(double value, double min, double max)
+    protected override BGR GetColor(double value, double min, double max)
     {
         if (value > max) // intensity above maximum --> hottest color displayed
         {
-            byte[] hot = [0, 0, 255, 255]; // Color Red
-            return hot;
+            return new BGR(){R = 255}; // Color Red;
         }
 
         if (value < min) // intensity below minimum --> coldest color displayed
         {
-            byte[] cold = [255, 0, 0, 255]; // Color Blue
-            return cold;
+            return new BGR(){B = 255}; // Color Blue
         }
         
         // if max == min, return a mixture of Red and Blue for all pixels, whose intensity = max = min
         if ((max - min) < 0.001) 
         {
-            return [127, 0, 127, 255]; 
+            return new BGR() { B = 127, R = 127 };
         }
+
         double range = (max - min);
         double relative = (value - min) / range; // calculate the relative intensity inside the range between min and max --> Normalize
         // the value of the color
-        byte intensity = (byte)Math.Floor(relative * 255);
+        byte intensity = (byte)Math.Floor(relative * (double)255);
 
-        byte[] color = [(byte)(255 - intensity), 0, intensity, 255];
+        var color = new BGR() {R = intensity, B = (byte)(255 - intensity)};
         return color;
     }
 

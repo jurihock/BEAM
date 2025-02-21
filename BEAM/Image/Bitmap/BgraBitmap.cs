@@ -2,6 +2,7 @@ using SkiaSharp;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using BEAM.Datatypes.Color;
 
 namespace BEAM.Image.Bitmap;
 

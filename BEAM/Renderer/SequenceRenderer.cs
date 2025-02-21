@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Intrinsics;
+using BEAM.Image;
+using System.Threading;
+using BEAM.Datatypes.Color;
+using BEAM.Image.Bitmap;
 using BEAM.ImageSequence;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -15,7 +19,7 @@ public abstract partial class SequenceRenderer : ObservableObject, ICloneable
 
     private readonly Dictionary<RenderTypes, SequenceRenderer> _mapRenderTypesToRenderers = new();
 
-    // variables used for NormalizeIntensity 
+    // variables used for NormalizeIntensity
     private Vector256<double> _minIntensities;
     private Vector256<double> _maxIntensities;
     private Vector256<double> _multFactor;
@@ -59,11 +63,20 @@ public abstract partial class SequenceRenderer : ObservableObject, ICloneable
 
         return renderer;
     }
-    
 
-    public abstract byte[] RenderPixel(ISequence sequence, long x, long y);
+    /// <summary>
+    /// Fill the dictionary with default renderers to map the Enums of RenderTypes to their specific classes.
+    /// </summary>
+    private void InitializeMapRenderTypesToRenderers()
+    {
+        _mapRenderTypesToRenderers.Add(RenderTypes.HeatMapRendererRb, new HeatMapRendererRB(0, 0, 0, 0, 0));
+        _mapRenderTypesToRenderers.Add(RenderTypes.ChannelMapRenderer, new ChannelMapRenderer(0, 0, 0, 0, 0));
+        _mapRenderTypesToRenderers.Add(RenderTypes.ArgMaxRendererGrey, new ArgMaxRendererGrey(0, 0));
+    }
 
-    public abstract byte[,] RenderPixels(ISequence sequence, long[] xs, long y);
+    public abstract BGR RenderPixel(ISequence sequence, long x, long y);
+
+    public abstract BGR[] RenderPixels(ISequence sequence, long[] xs, long y);
 
     public abstract RenderTypes GetRenderType();
 

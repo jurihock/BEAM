@@ -1,5 +1,8 @@
 ﻿using System.Runtime.Intrinsics;
+using System.Threading;
+using BEAM.Datatypes.Color;
 using BEAM.Exceptions;
+using BEAM.Image;
 using BEAM.ImageSequence;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -34,22 +37,21 @@ public partial class ChannelMapRenderer : SequenceRenderer
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    public override byte[] RenderPixel(ISequence sequence, long x, long y)
+    public override BGR RenderPixel(ISequence sequence, long x, long y)
     {
-        var colors = base.NormalizeIntensity(Vector256.Create([
+        var colors = NormalizeIntensity(Vector256.Create([
             sequence.GetPixel(x, y, ChannelRed),
             sequence.GetPixel(x, y, ChannelGreen),
             sequence.GetPixel(x, y, ChannelBlue),
             0
         ]));
 
-        byte[] color =
-        [
-            255,
-            (byte)colors[0],
-            (byte)colors[1],
-            (byte)colors[2]
-        ];
+        BGR color = new BGR()
+        {
+            B = (byte)colors[0], // b
+            G = (byte)colors[1], // g
+            R = (byte)colors[2], // r
+        };
 
         return color;
     }
@@ -61,9 +63,9 @@ public partial class ChannelMapRenderer : SequenceRenderer
     /// <param name="xs"></param>
     /// <param name="y"></param>
     /// <returns>[x, argb]</returns>
-    public override byte[,] RenderPixels(ISequence sequence, long[] xs, long y)
+    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y)
     {
-        var data = new byte[xs.Length, 4];
+        var data = new BGR[xs.Length];
         var img = sequence.GetPixelLineData(xs, y, [ChannelBlue, ChannelGreen, ChannelRed]);
 
         for (var x = 0; x < xs.Length; x++)
@@ -75,14 +77,14 @@ public partial class ChannelMapRenderer : SequenceRenderer
                 0
             ]));
 
-            // b
-            data[x, 0] = (byte)colors[0];
-            // g
-            data[x, 1] = (byte)colors[1];
-            // r
-            data[x, 2] = (byte)colors[2];
-            // a
-            data[x, 3] = 255;
+            data[x] = new BGR()
+            {
+                B = (byte)colors[0], // b
+                G = (byte)colors[1], // g
+                R = (byte)colors[2], // r
+            };
+
+
         }
 
         return data;
@@ -100,7 +102,7 @@ public partial class ChannelMapRenderer : SequenceRenderer
         {
             throw new InvalidUserArgumentException("Display parameters are invalid.");
         }
-        
+
         return new ChannelMapRenderer(
             minimumOfIntensityRange,
             maximumOfIntensityRange,

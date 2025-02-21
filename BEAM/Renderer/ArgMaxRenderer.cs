@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Threading;
+using BEAM.Datatypes;
+using BEAM.Datatypes.Color;
+using BEAM.Exceptions;
 using BEAM.ImageSequence;
+using Timer = BEAM.Profiling.Timer;
 
 namespace BEAM.Renderer;
 
@@ -12,61 +17,39 @@ namespace BEAM.Renderer;
 public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maximumOfIntensityRange)
     : SequenceRenderer(minimumOfIntensityRange, maximumOfIntensityRange)
 {
-    public override byte[] RenderPixel(ISequence sequence, long x, long y)
+    public override BGR RenderPixel(ISequence sequence, long x, long y)
     {
         var channels = sequence.GetPixel(x, y);
-        var argMaxChannel = ArgMax(channels);
+        var argMaxChannel = channels.ArgMax();
         var color = GetColor(argMaxChannel, channels.Length);
-        
+
         return color;
     }
 
-    //TODO: implement. Currently do not understand LineImage
-    public override byte[,] RenderPixels(ISequence sequence, long[] xs, long y)
+    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y)
     {
-        byte[,] data = new byte[xs.Length,sequence.Shape.Channels];
-        for(var i = 0; i < xs.Length; i++)
+        var channels = new int[sequence.Shape.Channels];
+        for (var i = 0; i < sequence.Shape.Channels; i++)
         {
-            var channels = sequence.GetPixel(xs[i], y);
-            var argMaxChannel = ArgMax(channels);
-            var color = GetColor(argMaxChannel, channels.Length);
-            for(var j = 0; j < sequence.Shape.Channels; j++)
-            {
-                data[i,j] = color[j];
-            }
+            channels[i] = i;
+        }
+
+        var line = sequence.GetPixelLineData(xs, y, channels);
+        var data = new BGR[xs.Length];
+
+        for (var x = 0; x < xs.Length; x++)
+        {
+            var argMax = line.GetPixel(x, 0).ArgMax();
+
+            var color = GetColor(argMax, channels.Length);
+
+            data[x] = color;
         }
 
         return data;
     }
 
-    /// <summary>
-    /// Given an Array of channel intensities, return the first index with the highest intensity
-    /// </summary>
-    /// <param name="channels"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException">When channels is empty</exception>
-    private int ArgMax(double[] channels)
-    {
-        if (channels.Length == 0)
-        {
-            throw new ArgumentException("Amount of channels must be greater than 0.");
-        }
-        
-        double maxIntensity = MinimumOfIntensityRange;
-        int maxPosition = 0;
-        for (int i = 0; i < channels.Length; i++)
-        {
-            if (channels[i] > maxIntensity)
-            {
-                maxIntensity = channels[i];
-                maxPosition = i;
-            }
-        }
-
-        return maxPosition;
-    }
-    
-    protected abstract byte[] GetColor(int channelNumber, int amountChannels);
+    protected abstract BGR GetColor(int channelNumber, int amountChannels);
 
     public override string GetName() => "ArgMax";
 }

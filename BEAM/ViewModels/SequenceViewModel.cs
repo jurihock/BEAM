@@ -65,7 +65,8 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         [
             new ChannelMapRenderer(min, max, 2, 1, 0),
             new HeatMapRendererRB(min, max, 0, 0.1, 0.9),
-            new ArgMaxRendererGrey(min, max)
+            new ArgMaxRendererGrey(min, max),
+            new ArgMaxRendererColorHSV(min, max)
         ];
 
         RendererSelection = sequence switch
