@@ -58,7 +58,7 @@ public class RenderedPixelAnyThresholdAlgorithm : IMinimapAlgorithm
         for(long j = 0; j < _sequence!.Shape.Width; j++)
         {
             var renderedData = _renderer!.RenderPixel(_sequence, j, line);
-            if(_thresholds.EntrywiseAnyGreater(renderedData))
+            if(renderedData.EntrywiseAnyGreater(_thresholds))
             {
                 sum += 1;
             }

@@ -7,7 +7,7 @@ namespace BEAM.Views.Minimap.Popups.EmbeddedSettings;
 
 public partial class PixelThresholdSumAlgorithmConfigControlView : SaveUserControl
 {
-    public PixelThresholdSumAlgorithmConfigControlView(RenderedPixelThresholdAlgorithm algorithm)
+    public PixelThresholdSumAlgorithmConfigControlView(RenderedPixelAllThresholdAlgorithm algorithm)
     {
         InitializeComponent();
         DataContext = new PixelThresholdSumAlgorithmConfigControlViewModel(algorithm);

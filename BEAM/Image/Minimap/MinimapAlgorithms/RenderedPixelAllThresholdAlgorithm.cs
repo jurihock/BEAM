@@ -14,7 +14,7 @@ namespace BEAM.Image.Minimap.MinimapAlgorithms;
 /// An algorithm for <see cref="PlotMinimap"/>'s which counts the number of rendered pixels within a line which
 /// are greater or equal in value than a defined base pixel in every channel.
 /// </summary>
-public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
+public class RenderedPixelAllThresholdAlgorithm : IMinimapAlgorithm
 {
 
     public byte ThresholdRed { get; set; } = 25;
@@ -55,7 +55,7 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
         {
             var renderedData = _renderer!.RenderPixel(_sequence, j, line);
 
-            if (_thresholds.EntrywiseAllGreaterEqual(renderedData))
+            if (renderedData.EntrywiseAllGreaterEqual(_thresholds))
             {
                 sum += 1;
             }
@@ -76,7 +76,7 @@ public class RenderedPixelThresholdAlgorithm : IMinimapAlgorithm
 
     public IMinimapAlgorithm Clone()
     {
-        return new RenderedPixelThresholdAlgorithm { _renderer = _renderer , ThresholdRed = ThresholdRed, ThresholdGreen = ThresholdGreen, ThresholdBlue = ThresholdBlue, ThresholdAlpha = ThresholdAlpha};
+        return new RenderedPixelAllThresholdAlgorithm { _renderer = _renderer , ThresholdRed = ThresholdRed, ThresholdGreen = ThresholdGreen, ThresholdBlue = ThresholdBlue, ThresholdAlpha = ThresholdAlpha};
     }
 
     public void SetRenderer(SequenceRenderer renderer)
