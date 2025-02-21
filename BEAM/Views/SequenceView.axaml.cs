@@ -23,17 +23,10 @@ using SizeChangedEventArgs = Avalonia.Controls.SizeChangedEventArgs;
 
 namespace BEAM.Views;
 
-/// <summary>
-/// Code behind the sequence view.
-/// Controls the used plot, events and redraws the sequence.
-/// </summary>
 public partial class SequenceView : UserControl
 {
     private const double MinimapWidthScale = 0.15d;
     
-
-    private SequencePlottable? _plottable;
-
     // Hosts the external UserControl
     public static readonly StyledProperty<Control?> DynamicContentProperty =
         AvaloniaProperty.Register<SequenceView, Control?>(nameof(DynamicContent));
@@ -47,6 +40,7 @@ public partial class SequenceView : UserControl
         get => GetValue(DynamicContentProperty);
         set => SetValue(DynamicContentProperty, value);
     }
+    private SequencePlottable? _plottable;
     private readonly HorizontalLine _horizontalLine;
     private readonly VerticalLine _verticalLine;
 
@@ -62,7 +56,6 @@ public partial class SequenceView : UserControl
          _horizontalLine = AvaPlot1.Plot.Add.HorizontalLine(0);
         _verticalLine = AvaPlot1.Plot.Add.VerticalLine(0);
         this.SizeChanged += OnSizeChanged;
-        //this.DataContextChanged += StyledElement_OnDataContextChanged;
 
     }
 
@@ -86,18 +79,7 @@ public partial class SequenceView : UserControl
     {
         _ApplyDarkMode();
         _BuildCustomRightClickMenu();
-
-        // TODO: CustomMouseActions
-        // https://github.com/ScottPlot/ScottPlot/blob/main/src/ScottPlot5/ScottPlot5%20Demos/ScottPlot5%20WinForms%20Demo/Demos/CustomMouseActions.cs
-
-        //avaPlot1.Interaction.IsEnabled = true;
-        //avaPlot1.UserInputProcessor.IsEnabled = true;
-        //avaPlot1.UserInputProcessor.UserActionResponses.Clear();
-
-        //var panButton = ScottPlot.Interactivity.StandardMouseButtons.Middle;
-        //var panResponse = new ScottPlot.Interactivity.UserActionResponses.MouseDragPan(panButton);
-
-        // Remove the standard MouseWheelZoom and replace it with the wanted custom functionality
+        
         ScrollingSynchronizer.AddSequence(this);
         AvaPlot1.UserInputProcessor.RemoveAll<MouseWheelZoom>();
         AvaPlot1.UserInputProcessor.RemoveAll<MouseDragZoom>(); // Remove option to zoom with right key
@@ -222,24 +204,26 @@ public partial class SequenceView : UserControl
          _plottable = plottable;
         if (_plottable is not null) AvaPlot1.Plot.Remove(_plottable);
         if(_plottable is null) return;
-        AvaPlot1.Plot.Add.Plottable(_plottable!);
-        _plottable!.SequenceImage.RequestRefreshPlotEvent += (_, _) => AvaPlot1.Refresh();
+        AvaPlot1.Plot.Add.Plottable(_plottable);
+        _plottable.SequenceImage.RequestRefreshPlotEvent += (_, _) => AvaPlot1.Refresh();
         AvaPlot1.Refresh();
     }
 
     private void PointerPressedHandler(object sender, PointerPressedEventArgs args)
     {
-
+        
         var point = args.GetCurrentPoint(sender as Control);
         var x = point.Position.X;
         var y = point.Position.Y;
-
+    
         var coordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
-
+    
         var vm = (SequenceViewModel?)DataContext;
         if (vm is null) return;
         vm.PressedPointerPosition = coordInPlot;
     }
+    
+
 
     private void PointerMovedHandler(object? sender, PointerEventArgs args)
     {
@@ -347,7 +331,7 @@ public partial class SequenceView : UserControl
         AvaPlot1.Refresh();
         UpdateScrollBar();
     }
-
+    
     /// <summary>
     /// This method updates the value of the Scrollbar, setting it to the value corresponding to the displayed position in the sequence.
     /// </summary>
