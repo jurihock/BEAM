@@ -54,8 +54,7 @@ public static class EnviExporter
         const int dataType = (int)EnviDataType.Double;
         const EnviInterleave interleave = EnviInterleave.BIP;
         const int byteOrder = 0;
-        //var header = $"ENVI\nsamples = {samples}\nlines = {lines}\nbands = {bands}\nheader offset = {headerOffset}\nfile type = {fileType}\ndata type = {dataType}\ninterleave = {interleave.ToString().ToLower()}\nbyte order = {byteOrder}";
-        var header = $"ENVI{Environment.NewLine}samples = {samples}{Environment.NewLine}lines = {lines}{Environment.NewLine}bands = {bands}{Environment.NewLine}header offset = {headerOffset}{Environment.NewLine}file type = {fileType}{Environment.NewLine}data type = {dataType}{Environment.NewLine}interleave = {interleave.ToString().ToLower()}{Environment.NewLine}byte order = {byteOrder}";
+        var header = $"ENVI\r\nsamples = {samples}\r\nlines = {lines}\r\nbands = {bands}\r\nheader offset = {headerOffset}\r\nfile type = {fileType}\r\ndata type = {dataType}\r\ninterleave = {interleave.ToString().ToLower()}\r\nbyte order = {byteOrder}";
         using var stream = File.OpenWrite($"{path.Path.LocalPath}.hdr");
         using var writer = new StreamWriter(stream);
         writer.Write(header);
