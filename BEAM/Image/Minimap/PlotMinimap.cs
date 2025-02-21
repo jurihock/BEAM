@@ -34,11 +34,7 @@ public class PlotMinimap : Minimap
     /// If a sequence has less row, use ReplacementCompaction instead.
     /// </summary>
     private const int MinSequenceHeightForFullCompaction = 2000;
-
-    /// <summary>
-    /// The compaction used if sequences are smaller than MinSequenceHeightForFullCompaction.
-    /// </summary>
-    private const int ReplacementCompaction = 5;
+    
     /// <summary>
     /// The underlying algorithm used to calculate values for pixel lines. These values will later be displayed in the plot.
     /// </summary>

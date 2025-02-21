@@ -1,7 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using Avalonia.Controls;
-using Avalonia.Data;
-using Avalonia.Layout;
+﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using BEAM.Renderer;
 using BEAM.ViewModels;

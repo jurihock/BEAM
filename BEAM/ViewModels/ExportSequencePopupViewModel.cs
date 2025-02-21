@@ -8,7 +8,6 @@ using Avalonia.Platform.Storage;
 using BEAM.Exporter;
 using BEAM.Image;
 using BEAM.Models.Log;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace BEAM.ViewModels;
@@ -60,7 +59,7 @@ public partial class ExportSequencePopupViewModel : ViewModelBase
     /// <summary>
     /// Occurs when a property value changes.
     /// </summary>
-    public new event PropertyChangedEventHandler PropertyChanged;
+    public new event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
     /// Raises the <see cref="PropertyChanged"/> event.

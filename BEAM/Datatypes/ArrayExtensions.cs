@@ -1,5 +1,4 @@
 ﻿using System;
-using BEAM.Exceptions;
 
 namespace BEAM.Datatypes;
 

@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Intrinsics;
-using BEAM.Image;
-using System.Threading;
 using BEAM.Datatypes.Color;
-using BEAM.Image.Bitmap;
 using BEAM.ImageSequence;
 using CommunityToolkit.Mvvm.ComponentModel;
 

@@ -2,7 +2,6 @@
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
 using BEAM.Profiling;
-using BEAM.ViewModels;
 using ScottPlot;
 
 namespace BEAM.Analysis;

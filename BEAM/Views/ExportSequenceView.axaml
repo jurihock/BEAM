@@ -11,7 +11,7 @@
              SizeToContent="WidthAndHeight"
              CanResize="False"
              Background="{DynamicResource WindowBg}">
-    <StackPanel Orientation="Vertical" Margin="20, 10, 20, 10">
+    <StackPanel Orientation="Vertical" Margin="20, 10, 20, 0">
         <Grid Margin="0 10">
             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10 0">Choose path:</TextBlock>
             <Button Command="{Binding ExportSequence}" HorizontalAlignment="Right">Choose file</Button>

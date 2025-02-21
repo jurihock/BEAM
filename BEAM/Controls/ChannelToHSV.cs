@@ -1,9 +1,5 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using Avalonia.Media;
+﻿using Avalonia.Media;
 using BEAM.Datatypes.Color;
-using BEAM.Exceptions;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BEAM.Controls;
@@ -15,22 +11,20 @@ namespace BEAM.Controls;
 /// </summary>
 public class ChannelToHSV : ObservableObject
 {
-    private static readonly HueColorLut hcl = new HueColorLut();
-    private double _hsvValue;
-    private bool _isUsedForArgMax = true;
+    private static readonly HueColorLut Hcl = new HueColorLut();
 
 
     public double HSVValue
     {
-        get => _hsvValue;
-        set => SetProperty(ref _hsvValue, value);
+        get;
+        set => SetProperty(ref field, value);
     }
 
     public bool IsUsedForArgMax
     {
-        get => _isUsedForArgMax;
-        set => SetProperty(ref _isUsedForArgMax, value);
-    }
+        get;
+        set => SetProperty(ref field, value);
+    } = true;
 
     private Color? _color;
 
@@ -41,7 +35,7 @@ public class ChannelToHSV : ObservableObject
             // calculate the default color
             if (_color == null)
             {
-                var bgr = hcl[HSVValue];
+                var bgr = Hcl[HSVValue];
                 _color = Color.FromRgb(bgr.R, bgr.G, bgr.B);
             }
 

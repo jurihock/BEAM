@@ -65,7 +65,7 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
         
         var argMaxChannel = channels
             .Select((value, index) => new { Value = value, Index = index }) // Create an anonymous type with value and index
-            .Where(x => _channelHsvMap.isChannelUsed(x.Index)) // Filter based on ChannelUsed
+            .Where(x => _channelHsvMap.IsChannelUsed(x.Index)) // Filter based on ChannelUsed
             .Select(x => x.Value) // Select only the values
             .ToArray() // Convert to array
             .ArgMax(); // Call ArgMax on the filtered array
@@ -77,7 +77,7 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
 
     public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y)
     {
-        var usedChannelIndices = _channelHsvMap.getUsedChannels();
+        var usedChannelIndices = _channelHsvMap.GetUsedChannels();
         
         var line = sequence.GetPixelLineData(xs, y, usedChannelIndices);
         var data = new BGR[xs.Length];

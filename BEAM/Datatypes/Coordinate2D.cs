@@ -36,7 +36,7 @@ public readonly struct Coordinate2D : IEquatable<Coordinate2D>
         Column = coordinates.X;
     }
 
-    public Coordinate2D offsetBy(double x, double y)
+    public Coordinate2D OffsetBy(double x, double y)
     {
         return new Coordinate2D(Row + y, Column + x);
     }
