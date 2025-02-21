@@ -1,5 +1,6 @@
 ﻿using System;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using BEAM.ViewModels;
 using BEAM.ViewModels.Minimap.Popups;
@@ -11,10 +12,13 @@ public partial class DefaultMinimapPopupView : Window
     public DefaultMinimapPopupView(SequenceViewModel sequenceVm)
     {
         InitializeComponent();
-        var vm = new DefaultMinimapPopupViewModel(sequenceVm);
-        DataContext = vm;
-        
-        this.DataContextChanged += OnDataContextChanged;
+
+        DataContext = new DefaultMinimapPopupViewModel(sequenceVm);
+        AddHandler(KeyDownEvent, (_, e) =>
+        {
+            if (e.Key == Key.Escape) Close();
+        });
+        DataContextChanged += OnDataContextChanged;
     }
     
     

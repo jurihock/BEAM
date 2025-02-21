@@ -7,16 +7,21 @@ using ScottPlot;
 
 namespace BEAM.Views.Minimap;
 
+/// <summary>
+/// A user control that displays a minimap plot visualization.
+/// </summary>
 public partial class MinimapPlotView : UserControl
 {
-    // private bool _isDarkMode;
-
     public MinimapPlotView()
     {
         InitializeComponent();
-        this.DataContextChanged += DataContextChangedHandling;
+        DataContextChanged += DataContextChangedHandling;
     }
 
+    /// <summary>
+    /// Configures a new plot with minimap-specific settings.
+    /// </summary>
+    /// <param name="newPlot">The plot to configure.</param>
     private void FillPlot(Plot newPlot)
     {
         MinimapPlot.Plot.Clear();
@@ -35,6 +40,9 @@ public partial class MinimapPlotView : UserControl
         _ApplyTheme();
     }
 
+    /// <summary>
+    /// Applies the current application theme to the plot elements.
+    /// </summary>
     private void _ApplyTheme()
     {
         ThemeVariant currentTheme = Application.Current!.ActualThemeVariant;
@@ -73,12 +81,6 @@ public partial class MinimapPlotView : UserControl
         Application.Current.TryGetResource("Separator", currentTheme, out var separatorColor);
         var lightAccentColor = (Avalonia.Media.Color)separatorColor!;
         MinimapPlot.Plot.Grid.MajorLineColor = new Color(lightAccentColor.R, lightAccentColor.G, lightAccentColor.B);
-
-        // change legend colors
-        // MinimapPlot.Plot.Legend.BackgroundColor = Color.FromHex("#404040");
-        // MinimapPlot.Plot.Legend.FontColor = Color.FromHex("#d7d7d7");
-        // MinimapPlot.Plot.Legend.OutlineColor = Color.FromHex("#d7d7d7");
-        // _isDarkMode = true;
     }
 
     private void DataContextChangedHandling(object? sender, EventArgs eventArgs)
@@ -98,6 +100,9 @@ public partial class MinimapPlotView : UserControl
         AdaptSize(e.Width, e.Height);
     }
 
+    /// <summary>
+    /// Handles changes to the plot size.
+    /// </summary>
     private void AdaptSize(double newWidth, double newHeight)
     {
         MinimapPlot.Width = newWidth;
