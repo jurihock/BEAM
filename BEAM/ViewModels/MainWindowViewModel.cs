@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
@@ -143,13 +144,13 @@ public partial class MainWindowViewModel : ViewModelBase
     private void ActivateSynchronization()
     {
         _syncedPlotController?.Activate();
-        ScrollingSynchronizer.ActivateSynchronization();
+        ScrollingSynchronizerMapper.ActivateSynchronization();
     }
 
     [RelayCommand]
     private void DeactivateSynchronization()
     {
         _syncedPlotController?.Deactivate();
-        ScrollingSynchronizer.DeactivateSynchronization();
+        ScrollingSynchronizerMapper.DeactivateSynchronization();
     }
 }

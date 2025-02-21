@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using ScottPlot;
 using ScottPlot.Avalonia;
 
 namespace BEAM.ImageSequence.Synchronization.Manipulators;
@@ -40,9 +41,12 @@ public class MouseManipulator : Manipulator
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
+                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
+
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
@@ -57,9 +61,12 @@ public class MouseManipulator : Manipulator
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
+                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
+                
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
@@ -74,9 +81,12 @@ public class MouseManipulator : Manipulator
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
+                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
+
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
@@ -97,9 +107,12 @@ public class MouseManipulator : Manipulator
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
+                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
+
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
@@ -114,25 +127,29 @@ public class MouseManipulator : Manipulator
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
+                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
+
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
 
-        avaPlot.PointerWheelChanged += (_, _) =>
+        avaPlot.PointerWheelChanged += (_, e) =>
         {
             if (!_isSynchronizing)
             {
                 return;
             }
-            
+            var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
             foreach (var plot in _avaPlots.Where(p => p != avaPlot))
             {
                 plot.Plot.Axes.SetLimits(avaPlot.Plot.Axes.GetLimits());
                 plot.Refresh();
-                ScrollingSynchronizer.UpdateOwnScrollBar(plot);
+                ScrollingSynchronizerMapper.UpdateOwnScrollBar(plot);
+                ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
             }   
         };
 
@@ -146,9 +163,12 @@ public class MouseManipulator : Manipulator
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
+                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
+
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
@@ -163,9 +183,12 @@ public class MouseManipulator : Manipulator
             EventSourceMapper.AddIfNotExists(e, avaPlot);
             if (EventSourceMapper.IsSource(e, avaPlot))
             {
+                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
+
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
                 }
             }
         };
