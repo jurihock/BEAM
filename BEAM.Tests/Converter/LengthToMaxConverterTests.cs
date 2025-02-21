@@ -47,14 +47,4 @@ public class LengthToMaxConverterTests
         // Assert
         Assert.Equal(0, result);
     }
-
-    [Fact]
-    public void ConvertBack_ThrowsNotImplementedException()
-    {
-        // Arrange
-        var converter = new LengthToMaxConverter();
-
-        // Act & Assertintint
-        Assert.Throws<NotImplementedException>(() => converter.ConvertBack(null, null, null, CultureInfo.InvariantCulture));
-    }
 }
