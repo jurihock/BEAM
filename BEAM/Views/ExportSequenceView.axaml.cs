@@ -40,7 +40,5 @@ public partial class ExportSequenceView : Window
         {
             Close();
         }
-
-        // If execution is here -> Save failed, hints in controls
     }
 }
