@@ -82,6 +82,11 @@ public class LineImage : IImage
         return this;
     }
 
+    public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
+    {
+        throw new NotImplementedException();
+    }
+
     public void Dispose()
     {
         // class does not manage additional resources -> no need to dispose
