@@ -271,7 +271,6 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     /// <exception cref="InvalidSequenceException">Thrown when the sequence could not be loaded</exception>
     public static DiskSequence Open(Uri folder)
     {
-        Console.WriteLine(folder.ToString());
         return Open(folder.LocalPath);
     }
 
