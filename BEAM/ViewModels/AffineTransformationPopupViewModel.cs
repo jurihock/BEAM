@@ -18,7 +18,7 @@ public partial class AffineTransformationPopupViewModel(SequenceViewModel model)
         model.Sequence.DrawOffsetY = (double) OffsetY;
         model.Sequence.ScaleX = (double) ScaleX;
         model.Sequence.ScaleY = (double) ScaleY;
-        model.RenderersUpdated.Invoke(this, new RenderersUpdatedEventArgs(0));
+        model.RenderersUpdated.Invoke(this, new RenderersUpdatedEventArgs());
         return true;
     }
 }
