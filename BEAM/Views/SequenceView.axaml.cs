@@ -1,40 +1,87 @@
 using System;
+using System.Data.Common;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Styling;
 using BEAM.CustomActions;
-using BEAM.Image.Displayer.ScottPlot;
 using BEAM.Datatypes;
-using BEAM.IMage.Displayer.Scottplot;
+using BEAM.Image.Displayer.Scottplot;
+using BEAM.Image.Displayer.ScottPlot;
 using BEAM.ImageSequence.Synchronization;
 using BEAM.Models.Log;
 using BEAM.ViewModels;
+using BEAM.ViewModels.Utility;
+using NP.Ava.Visuals;
 using ScottPlot;
 using ScottPlot.Avalonia;
 using ScottPlot.Interactivity;
 using ScottPlot.Interactivity.UserActionResponses;
 using ScottPlot.Plottables;
+using SizeChangedEventArgs = Avalonia.Controls.SizeChangedEventArgs;
 
 namespace BEAM.Views;
 
 public partial class SequenceView : UserControl
 {
-    private BitmapPlottable _plottable;
-    private HorizontalLine _horizontalLine = new();
-    private VerticalLine _verticalLine = new();
 
+    private const double MinimapWidthScale = 0.15;
+
+    // Hosts the external UserControl
+    public static readonly StyledProperty<Control?> DynamicContentProperty =
+        AvaloniaProperty.Register<SequenceView, Control?>(nameof(DynamicContent));
+    
+    // Optional: Bind to the external UserControl's ViewModel
+    public static readonly StyledProperty<object?> DynamicContentViewModelProperty =
+        AvaloniaProperty.Register<SequenceView, object?>(nameof(DynamicContentViewModel));
+    
+    public Control? DynamicContent
+    {
+        get => GetValue(DynamicContentProperty);
+        set => SetValue(DynamicContentProperty, value);
+    }
+    private SequencePlottable _plottable;
+    private Annotation Anno;
+    private readonly HorizontalLine _horizontalLine = new();
+    private readonly VerticalLine _verticalLine = new();
+
+    public object? DynamicContentViewModel
+    {
+        get => GetValue(DynamicContentViewModelProperty);
+        set => SetValue(DynamicContentViewModelProperty, value);
+    }
+    
     public SequenceView()
     {
         InitializeComponent();
-        _horizontalLine = AvaPlot1.Plot.Add.HorizontalLine(0);
+         _horizontalLine = AvaPlot1.Plot.Add.HorizontalLine(0);
         _verticalLine = AvaPlot1.Plot.Add.VerticalLine(0);
+        this.SizeChanged += OnSizeChanged;
+        //this.DataContextChanged += StyledElement_OnDataContextChanged;
+
+    }
+
+    private void OnSizeChanged(object? sender, SizeChangedEventArgs e)
+    {
+        var vm = DataContext as SequenceViewModel;
+        if (vm == null || vm.MinimapVms.Count == 0)
+        {
+            return;
+        }
+        
+        
+        if(vm.MinimapVms.Any())
+        {
+            if(vm.MinimapVms.First() is not SizeAdjustableViewModelBase mapViewModel) return;
+            mapViewModel.NotifySizeChanged(this, new ViewModels.Utility.SizeChangedEventArgs(e.NewSize.Width * MinimapWidthScale, e.NewSize.Height));
+        }
     }
 
     private void PreparePlot()
     {
-        _ApplyDarkMode();
+        _ApplyTheme();
         _BuildCustomRightClickMenu();
 
         // TODO: CustomMouseActions
@@ -48,7 +95,7 @@ public partial class SequenceView : UserControl
         //var panResponse = new ScottPlot.Interactivity.UserActionResponses.MouseDragPan(panButton);
 
         // Remove the standard MouseWheelZoom and replace it with the wanted custom functionality
-        ScrollingSynchronizer.addSequence(this);
+        ScrollingSynchronizerMapper.AddSequence(this);
         AvaPlot1.UserInputProcessor.RemoveAll<MouseWheelZoom>();
         AvaPlot1.UserInputProcessor.RemoveAll<MouseDragZoom>(); // Remove option to zoom with right key
         AvaPlot1.UserInputProcessor.UserActionResponses.Add(new CustomMouseWheelZoom(StandardKeys.Shift,
@@ -66,13 +113,13 @@ public partial class SequenceView : UserControl
             var top = (e.NewValue / 100.0) * vm.Sequence.Shape.Height - 100.0;
             AvaPlot1.Plot.Axes.SetLimitsY(top, top + ySize);
             AvaPlot1.Refresh();
-            ScrollingSynchronizer.synchronize(this);
+            ScrollingSynchronizerMapper.Synchronize(this);
         };
 
         AvaPlot1.PointerWheelChanged += (s, e) =>
         {
             UpdateScrollBar();
-            ScrollingSynchronizer.synchronize(this);
+            ScrollingSynchronizerMapper.Synchronize(this);
         };
 
         AddScrollBarUpdating();
@@ -81,90 +128,129 @@ public partial class SequenceView : UserControl
 
         AvaPlot1.Plot.Axes.InvertY();
         AvaPlot1.Plot.Axes.SquareUnits();
+        // Reset the axis to the inital value of the scrollbar.
+        UpdateScrolling(0);
         AvaPlot1.Refresh();
+        AvaPlot1.Plot.Add.Annotation("This is an Annotation");
     }
 
     private void AddScrollBarUpdating()
     {
-        AvaPlot1.PointerEntered += (s, e) => { UpdateScrollBar(); };
+        AvaPlot1.PointerEntered += (s, e) =>
+        {
+            var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
+            UpdatePositionAnnotation((long) coordinates.X,(long)  coordinates.Y);
+            UpdateScrollBar();
+        };
 
-        AvaPlot1.PointerExited += (s, e) => { UpdateScrollBar(); };
+        AvaPlot1.PointerExited += (s, e) =>
+        {
+            var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
+            UpdatePositionAnnotation((long) coordinates.X,(long)  coordinates.Y);
+            UpdateScrollBar();
+        };
 
-        AvaPlot1.PointerMoved += (s, e) => { UpdateScrollBar(); };
+        AvaPlot1.PointerMoved += (s, e) =>
+        {
+            var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
+            UpdatePositionAnnotation((long) coordinates.X,(long)  coordinates.Y);
+            UpdateScrollBar();
+        };
 
-        AvaPlot1.PointerPressed += (s, e) => { UpdateScrollBar(); };
+        AvaPlot1.PointerPressed += (s, e) =>
+        {
+            var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
+            UpdatePositionAnnotation((long) coordinates.X,(long)  coordinates.Y);
+            UpdateScrollBar();
+        };
 
-        AvaPlot1.PointerReleased += (s, e) => { UpdateScrollBar(); };
+        AvaPlot1.PointerReleased += (s, e) =>
+        {
+            var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
+            UpdatePositionAnnotation((long) coordinates.X,(long)  coordinates.Y);
+            UpdateScrollBar();
+        };
 
-        AvaPlot1.PointerCaptureLost += (s, e) => { UpdateScrollBar(); };
+        AvaPlot1.PointerCaptureLost += (s, e) =>
+        {
+            UpdateScrollBar();
+        };
 
-        AvaPlot1.PointerWheelChanged += (s, e) => { UpdateScrollBar(); };
+        AvaPlot1.PointerWheelChanged += (s, e) =>
+        {
+            var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
+            UpdatePositionAnnotation((long) coordinates.X,(long) coordinates.Y);
+            UpdateScrollBar();
+        };
     }
 
-    private void _ApplyDarkMode()
+    private void _ApplyTheme()
     {
-        if (Application.Current!.ActualThemeVariant != ThemeVariant.Dark) return;
+        var currentTheme = Application.Current!.ActualThemeVariant;
 
         // change figure colors
-        AvaPlot1.Plot.FigureBackground.Color = Color.FromHex("#181818");
-        AvaPlot1.Plot.DataBackground.Color = Color.FromHex("#1f1f1f");
+        Application.Current.TryGetResource("WindowBg", currentTheme, out var background);
+        var backgroundColor = (Avalonia.Media.Color)background;
+        AvaPlot1.Plot.FigureBackground.Color = new Color(backgroundColor.R, backgroundColor.G, backgroundColor.B);
+
+        Application.Current.TryGetResource("BackgroundColorDark", currentTheme, out var backgroundDark);
+        var backgroundColorDark = (Avalonia.Media.Color)backgroundDark;
+        AvaPlot1.Plot.DataBackground.Color =
+            new Color(backgroundColorDark.R, backgroundColorDark.G, backgroundColorDark.B);
 
         // change axis and grid colors
-        AvaPlot1.Plot.Axes.Color(Color.FromHex("#d7d7d7"));
-        AvaPlot1.Plot.Grid.MajorLineColor = Color.FromHex("#404040");
+        Application.Current.TryGetResource("FontColorScottPlot", currentTheme, out var fontColorScottPlot);
+        var fontColor = (Avalonia.Media.Color)fontColorScottPlot;
+        AvaPlot1.Plot.Axes.Color(new Color(fontColor.R, fontColor.G, fontColor.B));
+
+
+        // AvaPlot1.Plot.Grid.MajorLineColor = Colors.Aqua;
 
         // change legend colors
-        AvaPlot1.Plot.Legend.BackgroundColor = Color.FromHex("#404040");
-        AvaPlot1.Plot.Legend.FontColor = Color.FromHex("#d7d7d7");
-        AvaPlot1.Plot.Legend.OutlineColor = Color.FromHex("#d7d7d7");
+        // AvaPlot1.Plot.Legend.BackgroundColor = Colors.Aqua;
+        // AvaPlot1.Plot.Legend.FontColor = Colors.Aqua;
+        // AvaPlot1.Plot.Legend.OutlineColor = Colors.Aqua;
+
+        // AvaPlot1.Plot.Grid.MajorLineColor = Color.FromHex("#404040");
+        //
+        // // change legend colors
+        // AvaPlot1.Plot.Legend.BackgroundColor = Color.FromHex("#404040");
+        // AvaPlot1.Plot.Legend.FontColor = new Color(fontColor.R, fontColor.G, fontColor.B);
+        // AvaPlot1.Plot.Legend.OutlineColor = Color.FromHex("#d7d7d7");
     }
 
     private void _BuildCustomRightClickMenu()
     {
-        var vm = DataContext as SequenceViewModel;
+        var vm = (SequenceViewModel?)DataContext;
+        if (vm is null)
+        {
+            return;
+        }
+
+
         var menu = AvaPlot1.Menu!;
         menu.Clear();
         menu.Add("Inspect Pixel",
-            control => _OpenInspectionViewModel());
+            _ => _OpenInspectionViewModel());
         menu.AddSeparator();
         menu.Add("Sync to this",
-            control =>
+            _ =>
             {
-                ScrollingSynchronizer.activateSynchronization();
-                ScrollingSynchronizer.synchronize(this);
-                PlotControllerManager.activateSynchronization();
+                ScrollingSynchronizerMapper.ActivateSynchronization();
+                ScrollingSynchronizerMapper.Synchronize(this);
+                PlotControllerManager.ActivateSynchronization();
             });
         menu.AddSeparator();
-        menu.Add("Configure colors", control => _OpenColorsPopup());
-        menu.Add("Affine Transformation", control => _OpenTransformPopup());
+        menu.Add("Configure colors", _ => _OpenColorsPopup());
+        menu.Add("Affine Transformation", _ => _OpenTransformPopup());
         menu.AddSeparator();
-        menu.Add("Cut Sequence", control => _OpenCutPopup());
+        menu.Add("Cut Sequence", _ => _OpenCutPopup());
         menu.Add("Export sequence",
-            control => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+            _ => Logger.GetInstance().Warning(LogEvent.BasicMessage, "Not implemented yet!"));
+        menu.Add("Change Minimap settings for this sequence",
+            _ => vm.OpenMinimapSettingsCommand.Execute(null));
     }
-
-    private void _SetPlottable(BitmapPlottable plottable)
-    {
-        if (_plottable is not null) AvaPlot1.Plot.Remove(_plottable);
-
-        _plottable = plottable;
-        AvaPlot1.Plot.Add.Plottable(_plottable);
-        _plottable.SequenceImage.RequestRefreshPlotEvent += (sender, args) => AvaPlot1.Refresh();
-        AvaPlot1.Refresh();
-    }
-
-    private void PointerPressedHandler(object sender, PointerPressedEventArgs args)
-    {
-        
-        var point = args.GetCurrentPoint(sender as Control);
-        var x = point.Position.X;
-        var y = point.Position.Y;
     
-        var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
-    
-        var vm = (SequenceViewModel?)DataContext;
-        vm.pressedPointerPosition = CoordInPlot;
-    }
     
     private void PointerReleasedHandler(object? sender, PointerReleasedEventArgs args)
     {
@@ -173,19 +259,40 @@ public partial class SequenceView : UserControl
         var x = point.Position.X;
         var y = point.Position.Y;
     
-        var CoordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
-        
+        var coordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
     
         var vm = (SequenceViewModel?)DataContext;
-        vm.releasedPointerPosition = CoordInPlot;
+        if (vm is null) return;
+        vm.ReleasedPointerPosition = coordInPlot;
         vm.UpdateInspectionViewModel();
+    }
+
+    private void _SetPlottable(SequencePlottable plottable)
+    {
+         _plottable = plottable;
+        if (_plottable is not null) AvaPlot1.Plot.Remove(_plottable);
+        if(_plottable is null) return;
+        AvaPlot1.Plot.Add.Plottable(_plottable!);
+        _plottable!.SequenceImage.RequestRefreshPlotEvent += (_, _) => AvaPlot1.Refresh();
+        AvaPlot1.Refresh();
+    }
+
+    private void PointerPressedHandler(object sender, PointerPressedEventArgs args)
+    {
+
+        var point = args.GetCurrentPoint(sender as Control);
+        var x = point.Position.X;
+        var y = point.Position.Y;
+
+        var coordInPlot = new Coordinate2D(AvaPlot1.Plot.GetCoordinates(new Pixel(x, y)));
+
+        var vm = (SequenceViewModel?)DataContext;
+        if (vm is null) return;
+        vm.PressedPointerPosition = coordInPlot;
     }
 
     private void PointerMovedHandler(object? sender, PointerEventArgs args)
     {
-        var point = args.GetCurrentPoint(sender as Control);
-        var x = point.Position.X;
-        var y = point.Position.Y;
 
         var pointInPlot = AvaPlot1.Plot.GetCoordinates(
             (float)args.GetPosition(AvaPlot1).X * AvaPlot1.DisplayScale,
@@ -198,7 +305,12 @@ public partial class SequenceView : UserControl
 
     private void StyledElement_OnDataContextChanged(object? sender, EventArgs e)
     {
-        var vm = (SequenceViewModel)DataContext!;
+        var vm = DataContext as SequenceViewModel;
+        if (vm == null)
+        {
+            return;
+        }
+        vm.MinimapHasChanged += Layoutable_OnLayoutUpdated;
 
         PreparePlot();
 
@@ -207,26 +319,56 @@ public partial class SequenceView : UserControl
         AvaPlot1.Plot.Add.Plottable(checkerBoard);
 
         // sets the plottable
-        _SetPlottable(new BitmapPlottable(vm.Sequence, vm.CurrentRenderer));
+        _SetPlottable(new SequencePlottable(vm.Sequence, vm.CurrentRenderer));
 
         // Changed the sequence view -> full rerender
-        vm.RenderersUpdated += (_, args) =>
+        vm.RenderersUpdated += (_, _) =>
         {
-            _plottable!.SequenceImage.Reset();
+            if (_plottable is null) return;
+            _plottable.SequenceImage.Reset();
             _plottable!.ChangeRenderer(vm.CurrentRenderer);
+            AvaPlot1.Plot.MoveToTop(Anno);
             AvaPlot1.Refresh();
         };
 
-        vm.CutSequence += (_, args) =>
+        vm.CutSequence += (_, _) =>
         {
-            _SetPlottable(new BitmapPlottable(vm.Sequence, vm.CurrentRenderer));
+            _SetPlottable(new SequencePlottable(vm.Sequence, vm.CurrentRenderer));
 
             var oldLimits = AvaPlot1.Plot.Axes.GetLimits();
             var ySize = oldLimits.Bottom - oldLimits.Top;
             var newLimits = new AxisLimits(oldLimits.Left, oldLimits.Right, -ySize / 3, 2 * ySize / 3);
             AvaPlot1.Plot.Axes.SetLimits(newLimits);
+            AvaPlot1.Plot.MoveToTop(Anno);
             AvaPlot1.Refresh();
         };
+        Anno = AvaPlot1.Plot.Add.Annotation("(x: , y: ), (r: , g: , b: )");
+        Anno.LabelShadowColor = Colors.Transparent;
+        AvaPlot1.Plot.MoveToTop(Anno);
+    }
+
+    /// <summary>
+    /// Updates the Position Annotation to show the given position and the pixel values in the plot
+    /// of this position in the sequence.
+    /// </summary>
+    /// <param name="x">The x coordinate.</param>
+    /// <param name="y">The y coordinate</param>
+    public void UpdatePositionAnnotation(long x, long y)
+    {
+        if (DataContext is not SequenceViewModel vm)
+        {
+            return;
+        }
+
+        // If outside the sequence just show the position and no values.
+        if (x >= vm.Sequence.Shape.Width || y >= vm.Sequence.Shape.Height || x < 0 || y < 0)
+        {
+            Anno.Text = $"(x: {x}, y: {y}, (r: , g: , b: ))";
+            return;
+        }
+
+        var bytes = vm.Renderers[vm.RendererSelection].RenderPixel(vm.Sequence, x, y);
+        Anno.Text = $"(x: {x}, y: {y}, (r: {bytes[3]}, g: {bytes[1]}, b: {bytes[2]})";
     }
 
     private void _OpenTransformPopup()
@@ -254,7 +396,7 @@ public partial class SequenceView : UserControl
 
     private void _OpenInspectionViewModel()
     {
-        SequenceViewModel sequenceViewModel = DataContext as SequenceViewModel;
+        if (DataContext is not SequenceViewModel sequenceViewModel) return;
         sequenceViewModel.OpenInspectionView();
     }
 
@@ -284,7 +426,7 @@ public partial class SequenceView : UserControl
         AvaPlot1.Refresh();
         UpdateScrollBar();
     }
-    
+
     /// <summary>
     /// This method updates the value of the Scrollbar, setting it to the value corresponding to the displayed position in the sequence.
     /// </summary>
@@ -293,5 +435,26 @@ public partial class SequenceView : UserControl
         var vm = (DataContext as SequenceViewModel)!;
         var val = ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / vm.Sequence.Shape.Height) * 100;
         Bar1.Value = val <= 0.0 ? 0.0 : double.Min(val, 100.0);
+    }
+    
+    
+
+    private void Layoutable_OnLayoutUpdated(object? sender, EventArgs e)
+    {
+        var vm = DataContext as SequenceViewModel;
+        if (vm == null || vm.MinimapVms.Count == 0)
+        {
+            return;
+        }
+        
+        if(vm.MinimapVms.Count > 0)
+        {   
+            var mapViewModel = (vm.MinimapVms.First() as SizeAdjustableViewModelBase);
+            if (mapViewModel is null)
+            {
+                return;
+            }
+            mapViewModel.NotifySizeChanged(this, new ViewModels.Utility.SizeChangedEventArgs(this.GetSize().X * MinimapWidthScale, this.GetSize().Y));
+        }
     }
 }

@@ -44,8 +44,8 @@ public readonly struct ImageShape : IEquatable<ImageShape>
     Height = height;
     Channels = channels;
 
-    Area = (long)Width * (long)Height;
-    Volume = (long)Width * (long)Height * (long)Channels;
+    Area = Width * Height;
+    Volume = Width * Height * Channels;
   }
 
   /// <summary>

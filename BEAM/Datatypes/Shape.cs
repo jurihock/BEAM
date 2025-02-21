@@ -1,6 +1,6 @@
 ﻿namespace BEAM.Datatypes;
 
-public interface Shape
+public interface IShape
 {
     public bool Contains(Coordinate2D coordinate);
 }

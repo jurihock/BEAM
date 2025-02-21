@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using BEAM.Image;
 
 namespace BEAM.ImageSequence;
@@ -8,35 +7,36 @@ namespace BEAM.ImageSequence;
 /// This class is used to represent a sequence, from which a certain portion at the beginning is cut off.
 /// </summary>
 /// <param name="name">The name of the sequence</param>
-/// <param name="offset">The offset in the sequence, which content before, will be cut</param>
+/// <param name="startOffset">The offset in the sequence, before which its content will be cut</param>
+/// /// <param name="endOffset">The offset in the sequence, after which its content will be cut</param>
 /// <param name="originalSequence">The original Sequence</param>
-public class CutSequence(string name, long offset, ISequence originalSequence) : ISequence
+public class CutSequence(string name, long startOffset, long endOffset, ISequence originalSequence) : ISequence
 {
     private ImageShape? _shape;
 
     public double GetPixel(long x, long y, int channel)
     {
-        return originalSequence.GetPixel(x, y + offset, channel);
+        return originalSequence.GetPixel(x, y + startOffset, channel);
     }
 
     public double[] GetPixel(long x, long y)
     {
-        return originalSequence.GetPixel(x, y + offset);
+        return originalSequence.GetPixel(x, y + startOffset);
     }
 
     public double[] GetPixel(long x, long y, int[] channels)
     {
-        return originalSequence.GetPixel(x, y + offset, channels);
+        return originalSequence.GetPixel(x, y + startOffset, channels);
     }
 
     public LineImage GetPixelLineData(long line, int[] channels)
     {
-        return originalSequence.GetPixelLineData(line + offset, channels);
+        return originalSequence.GetPixelLineData(line + startOffset, channels);
     }
 
     public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
     {
-        return originalSequence.GetPixelLineData(xs, line + offset, channels);
+        return originalSequence.GetPixelLineData(xs, line + startOffset, channels);
     }
 
     public string GetName()
@@ -61,7 +61,7 @@ public class CutSequence(string name, long offset, ISequence originalSequence) :
     private void _InitializeShape()
     {
         var originalShape = originalSequence.Shape;
-        _shape = new ImageShape(originalShape.Width, originalShape.Height - offset, originalShape.Channels);
+        _shape = new ImageShape(originalShape.Width, endOffset - startOffset, originalShape.Channels);
     }
 
 
