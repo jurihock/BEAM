@@ -183,7 +183,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public void OpenInspectionView()
     {
-        InspectionViewModel inspectionViewModel = new InspectionViewModel(this);
+        InspectionViewModel inspectionViewModel = new InspectionViewModel(this, DockingVm);
         _connectedInspectionViewModels.Add(inspectionViewModel);
         DockingVm.OpenDock(inspectionViewModel);
         

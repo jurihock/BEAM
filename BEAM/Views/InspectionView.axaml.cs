@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using BEAM.ViewModels;
@@ -34,8 +35,8 @@ public partial class InspectionView : UserControl
         if (DataContext is not InspectionViewModel vm || vm.CurrentPlot is null) return;
         vm.PropertyChanged += (_, _) => FillPlot(vm.CurrentPlot);
         FillPlot(vm.CurrentPlot);
-        SequencePicker.SelectedIndex = 0;
-        AnalysisPicker.SelectedIndex = 0;
+        SequencePicker.SelectedIndex = vm.CurrentSequenceIndex();
+        AnalysisPicker.SelectedIndex = vm.CurrentAnalysisIndex();
     }
     
     public void CloneButton_Clicked(object sender, RoutedEventArgs e)
@@ -47,8 +48,15 @@ public partial class InspectionView : UserControl
     public void AnalysisPicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (DataContext is not InspectionViewModel vm || vm.CurrentPlot is null) return;
-        vm.ChangeAnalysis(AnalysisPicker.SelectedIndex);
-        FillPlot(vm.CurrentPlot);
+        Task result = vm.ChangeAnalysis(AnalysisPicker.SelectedIndex);
+        if (result.IsCompletedSuccessfully)
+        {
+            FillPlot(vm.CurrentPlot);
+        }
+        else
+        {
+            AnalysisPicker.SelectedIndex = vm.CurrentAnalysisIndex();
+        }
     }
     
     public void SequencePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
