@@ -8,7 +8,8 @@ using Avalonia.Input;
 using Avalonia.Styling;
 using BEAM.CustomActions;
 using BEAM.Datatypes;
-using BEAM.IMage.Displayer.Scottplot;
+using BEAM.Image.Displayer.Scottplot;
+using BEAM.Image.Displayer.ScottPlot;
 using BEAM.ImageSequence.Synchronization;
 using BEAM.Models.Log;
 using BEAM.ViewModels;
@@ -25,6 +26,9 @@ namespace BEAM.Views;
 
 public partial class SequenceView : UserControl
 {
+
+    private const double MinimapWidthScale = 0.15;
+
     // Hosts the external UserControl
     public static readonly StyledProperty<Control?> DynamicContentProperty =
         AvaloniaProperty.Register<SequenceView, Control?>(nameof(DynamicContent));
@@ -38,7 +42,7 @@ public partial class SequenceView : UserControl
         get => GetValue(DynamicContentProperty);
         set => SetValue(DynamicContentProperty, value);
     }
-    private BitmapPlottable _plottable;
+    private SequencePlottable _plottable;
     private Annotation Anno;
     private readonly HorizontalLine _horizontalLine = new();
     private readonly VerticalLine _verticalLine = new();

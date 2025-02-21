@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using ScottPlot;
 using ScottPlot.Avalonia;
 
 namespace BEAM.ImageSequence.Synchronization.Manipulators;
@@ -136,7 +137,7 @@ public class MouseManipulator : Manipulator
             }
         };
 
-        avaPlot.PointerWheelChanged += (_, _) =>
+        avaPlot.PointerWheelChanged += (_, e) =>
         {
             if (!_isSynchronizing)
             {
