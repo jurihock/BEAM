@@ -17,7 +17,7 @@ public class EnumToStringConverter : IValueConverter
     /// <param name="parameter">Optional parameter (not used).</param>
     /// <param name="culture">The culture to use in the converter (not used).</param>
     /// <returns>The string representation of the enum value.</returns>
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         return value?.ToString();
     }
@@ -30,7 +30,7 @@ public class EnumToStringConverter : IValueConverter
     /// <param name="parameter">Optional parameter (not used).</param>
     /// <param name="culture">The culture to use in the converter (not used).</param>
     /// <returns>The enum value corresponding to the string representation, or null if the conversion fails.</returns>
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (Enum.TryParse(targetType, value?.ToString(), out var result))
         {

@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Avalonia.Media;
-using BEAM.Datatypes.Color;
-using BEAM.Exceptions;
-using BEAM.Models.Log;
 using BEAM.Renderer;
 using BEAM.ViewModels;
-using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BEAM.Controls;
 
@@ -71,7 +64,7 @@ public partial class ArgMaxHSVConfigControlViewModel : ViewModelBase, ISaveContr
     public void Save()
     {
         var map = new ChannelHSVMap(ObsChannels.ToArray());
-        if (map.getAmountUsedChannels() == 0)
+        if (map.GetAmountUsedChannels() == 0)
         {
             // throw exception for logging
             //throw new ChannelException("Channel amount used for ArgMax is zero!");

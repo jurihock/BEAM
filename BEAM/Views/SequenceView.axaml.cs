@@ -1,5 +1,4 @@
 using System;
-using System.Data.Common;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -11,7 +10,6 @@ using BEAM.Datatypes;
 using BEAM.Image.Displayer.Scottplot;
 using BEAM.Image.Displayer.ScottPlot;
 using BEAM.ImageSequence.Synchronization;
-using BEAM.Models.Log;
 using BEAM.ViewModels;
 using BEAM.ViewModels.Utility;
 using NP.Ava.Visuals;
@@ -44,7 +42,7 @@ public partial class SequenceView : UserControl
         set => SetValue(DynamicContentProperty, value);
     }
     // created later
-    private SequencePlottable? _plottable = null!;
+    private SequencePlottable? _plottable;
     private Annotation _anno;
     private readonly HorizontalLine _horizontalLine;
     private readonly VerticalLine _verticalLine;
@@ -94,11 +92,12 @@ public partial class SequenceView : UserControl
         // Add ability to select area with right mouse button pressed
         AvaPlot1.UserInputProcessor.UserActionResponses.Add(new CustomAreaSelection(StandardMouseButtons.Right));
 
-        Bar1.Scroll += (s, e) =>
+        Bar1.Scroll += (_, e) =>
         {
             var vm = (DataContext as SequenceViewModel)!;
             var plot = AvaPlot1.Plot;
-            var ySize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
+            // Difference of bottom and top sometimes negative? Math.Abs required.
+            var ySize = Math.Abs(plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top);
             // Minus 100 to allow to scroll higher than the sequence for a better inspection of the start.
             var top = (e.NewValue / 100.0) * vm.Sequence.Shape.Height - 100.0;
             AvaPlot1.Plot.Axes.SetLimitsY(top, top + ySize);
@@ -106,7 +105,7 @@ public partial class SequenceView : UserControl
             ScrollingSynchronizerMapper.Synchronize(this);
         };
 
-        AvaPlot1.PointerWheelChanged += (s, e) =>
+        AvaPlot1.PointerWheelChanged += (_, _) =>
         {
             UpdateScrollBar();
             ScrollingSynchronizerMapper.Synchronize(this);
@@ -125,47 +124,47 @@ public partial class SequenceView : UserControl
 
     private void AddScrollBarUpdating()
     {
-        AvaPlot1.PointerEntered += (s, e) =>
+        AvaPlot1.PointerEntered += (_, e) =>
         {
             var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
             UpdatePositionAnnotation(coordinates.X, coordinates.Y);
             UpdateScrollBar();
         };
 
-        AvaPlot1.PointerExited += (s, e) =>
+        AvaPlot1.PointerExited += (_, e) =>
         {
             var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
             UpdatePositionAnnotation(coordinates.X,  coordinates.Y);
             UpdateScrollBar();
         };
 
-        AvaPlot1.PointerMoved += (s, e) =>
+        AvaPlot1.PointerMoved += (_, e) =>
         {
             var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
             UpdatePositionAnnotation(coordinates.X, coordinates.Y);
             UpdateScrollBar();
         };
 
-        AvaPlot1.PointerPressed += (s, e) =>
+        AvaPlot1.PointerPressed += (_, e) =>
         {
             var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
             UpdatePositionAnnotation(coordinates.X, coordinates.Y);
             UpdateScrollBar();
         };
 
-        AvaPlot1.PointerReleased += (s, e) =>
+        AvaPlot1.PointerReleased += (_, e) =>
         {
             var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
             UpdatePositionAnnotation(coordinates.X, coordinates.Y);
             UpdateScrollBar();
         };
 
-        AvaPlot1.PointerCaptureLost += (s, e) =>
+        AvaPlot1.PointerCaptureLost += (_, _) =>
         {
             UpdateScrollBar();
         };
 
-        AvaPlot1.PointerWheelChanged += (s, e) =>
+        AvaPlot1.PointerWheelChanged += (_, e) =>
         {
             var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
             UpdatePositionAnnotation( coordinates.X, coordinates.Y);
@@ -188,7 +187,7 @@ public partial class SequenceView : UserControl
             new Color(backgroundColorDark.R, backgroundColorDark.G, backgroundColorDark.B);
 
         // change axis and grid colors
-        Application.Current.TryGetResource("FontColorScottPlot", currentTheme, out var fontColorScottPlot);
+        Application.Current.TryGetResource("FontColor", currentTheme, out var fontColorScottPlot);
         var fontColor = (Avalonia.Media.Color)fontColorScottPlot!;
         AvaPlot1.Plot.Axes.Color(new Color(fontColor.R, fontColor.G, fontColor.B));
 
@@ -215,10 +214,12 @@ public partial class SequenceView : UserControl
         {
             return;
         }
-
+        
+        
 
         var menu = AvaPlot1.Menu!;
         menu.Clear();
+        
         menu.Add("Inspect Pixel",
             _ => _OpenInspectionViewModel());
         menu.AddSeparator();
@@ -233,8 +234,8 @@ public partial class SequenceView : UserControl
         menu.Add("Configure colors", _ => _OpenColorsPopup());
         menu.Add("Affine Transformation", _ => _OpenTransformPopup());
         menu.AddSeparator();
-        menu.Add("Cut Sequence", control => _OpenCutPopup());
-        menu.Add("Export sequence", control => _OpenExportPopup());
+        menu.Add("Cut Sequence", _ => _OpenCutPopup());
+        menu.Add("Export sequence", _ => _OpenExportPopup());
         menu.Add("Change Minimap settings for this sequence", _ => vm.OpenMinimapSettings());
     }
 
@@ -331,11 +332,10 @@ public partial class SequenceView : UserControl
         };
         
        
-        var currentTheme = Application.Current!.ActualThemeVariant;
+        var currentTheme = Application.Current.ActualThemeVariant;
         
         Application.Current.TryGetResource("AnnotationColor", currentTheme, out var annotationColor);
-        var color = (Avalonia.Media.Color)annotationColor;
-        
+        var color = (Avalonia.Media.Color)(annotationColor ?? new Avalonia.Media.Color(255,  39, 191, 179));
         _anno.LabelBackgroundColor = new Color(color.R, color.G, color.B).WithAlpha(0.7);
         _anno.LabelShadowColor = Colors.Transparent;
         AvaPlot1.Plot.MoveToTop(_anno);

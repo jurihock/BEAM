@@ -10,6 +10,7 @@
         WindowStartupLocation="CenterOwner"
         x:DataType="viewModels:ColorSettingsPopupViewModel"
         SizeToContent="WidthAndHeight"
+        CanResize="False"
         Background="{DynamicResource WindowBg}">
 
     <StackPanel Orientation="Vertical" Margin="20, 10, 20, 10">

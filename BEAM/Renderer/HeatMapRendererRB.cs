@@ -1,7 +1,6 @@
 ﻿using System;
 using BEAM.Datatypes.Color;
 using BEAM.Exceptions;
-using IImage = BEAM.Image.IImage;
 
 namespace BEAM.Renderer;
 

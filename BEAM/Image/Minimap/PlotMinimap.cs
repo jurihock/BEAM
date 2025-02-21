@@ -31,14 +31,14 @@ public class PlotMinimap : Minimap
     public int CompactionFactor = 100;
 
     /// <summary>
+    /// Dividend factor to divide height by to get lines per bar
+    /// </summary>
+    private const int RelHeightCompactionFactor = 2000;
+    /// <summary>
     /// If a sequence has less row, use ReplacementCompaction instead.
     /// </summary>
-    private const int MinSequenceHeightForFullCompaction = 2000;
-
-    /// <summary>
-    /// The compaction used if sequences are smaller than MinSequenceHeightForFullCompaction.
-    /// </summary>
-    private const int ReplacementCompaction = 5;
+    private const int MaxHeightForRelCompaction = 15000;
+    
     /// <summary>
     /// The underlying algorithm used to calculate values for pixel lines. These values will later be displayed in the plot.
     /// </summary>
@@ -100,10 +100,10 @@ public class PlotMinimap : Minimap
         double maxValue = 0;
         double minValue = 0;
         
-        if(MinSequenceHeightForFullCompaction > Sequence.Shape.Height)
+        if(MaxHeightForRelCompaction >= Sequence.Shape.Height)
         {
             
-            actualCompactionUsed = (int) Math.Ceiling(Sequence.Shape.Height / (double) MinSequenceHeightForFullCompaction);
+            actualCompactionUsed = (int) Math.Ceiling(Sequence.Shape.Height / (double) RelHeightCompactionFactor);
         }
         Bar[] bars = new Bar[Sequence.Shape.Height / actualCompactionUsed];
         for (int i = 0; i < Sequence.Shape.Height / actualCompactionUsed; i++)

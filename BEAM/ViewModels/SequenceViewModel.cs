@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
@@ -91,7 +90,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     public void RegisterInspectionViewModel(InspectionViewModel inspectionViewModel)
     {
         _connectedInspectionViewModels.Add(inspectionViewModel);
-        inspectionViewModel.Update(PressedPointerPosition.offsetBy(0.5, 0.5), ReleasedPointerPosition.offsetBy(0.5, 0.5));
+        inspectionViewModel.Update(PressedPointerPosition.OffsetBy(0.5, 0.5), ReleasedPointerPosition.OffsetBy(0.5, 0.5));
     }
     
     public void UnregisterInspectionViewModel(InspectionViewModel inspectionViewModel)
@@ -102,8 +101,8 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public void UpdateInspectionViewModel()
     {
-        Coordinate2D pointPressed = _correctInvalid(PressedPointerPosition.offsetBy(0.5, 0.5));
-        Coordinate2D pointReleased = _correctInvalid(ReleasedPointerPosition.offsetBy(0.5, 0.5));
+        Coordinate2D pointPressed = _correctInvalid(PressedPointerPosition.OffsetBy(0.5, 0.5));
+        Coordinate2D pointReleased = _correctInvalid(ReleasedPointerPosition.OffsetBy(0.5, 0.5));
         foreach (var inspectionViewModel in _connectedInspectionViewModels)
         {
             inspectionViewModel.Update(pointPressed, pointReleased);
@@ -187,7 +186,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         _connectedInspectionViewModels.Add(inspectionViewModel);
         DockingVm.OpenDock(inspectionViewModel);
         
-        inspectionViewModel.Update(PressedPointerPosition.offsetBy(0.5, 0.5), ReleasedPointerPosition.offsetBy(0.5, 0.5));
+        inspectionViewModel.Update(PressedPointerPosition.OffsetBy(0.5, 0.5), ReleasedPointerPosition.OffsetBy(0.5, 0.5));
     }
     
 
