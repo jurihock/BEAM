@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using BEAM.Datatypes.Color;
 
 namespace BEAM.Controls;
@@ -23,12 +24,13 @@ public class ChannelHSVMap
         channels = new ChannelToHSV[maxAmountChannels];
         for (var i = 0; i < maxAmountChannels; i++)
         {
-            channels[i] = new ChannelToHSV(i);
+            channels[i] = new ChannelToHSV(i / (double) maxAmountChannels);
         }
     }
 
     public ChannelHSVMap(ChannelToHSV[] channels)
     {
+        this.AmountChannels = channels.Length;
         this.channels = channels;
     }
 
@@ -75,6 +77,24 @@ public class ChannelHSVMap
     public int getAmountUsedChannels()
     {
         return channels.Count(value => value.IsUsedForArgMax);
+    }
+
+    /// <summary>
+    /// Returns the indices of the channels used for the ArgMaxRenderer in ascending order.
+    /// </summary>
+    /// <returns></returns>
+    public int[] getUsedChannels()
+    {
+        var usedChannels = new List<int>();
+        for (int i = 0; i < AmountChannels; i++)
+        {
+            if (channels[i].IsUsedForArgMax)
+            {
+                usedChannels.Add(i);
+            }
+        }
+        
+        return usedChannels.ToArray();
     }
 
     /// <summary>

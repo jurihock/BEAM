@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:BEAM.Controls"
+             xmlns:converter="clr-namespace:BEAM.Converter"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="controls:ArgMaxHSVConfigControlViewModel"
              x:Class="BEAM.Controls.ArgMaxHSVConfigControlView">
@@ -10,11 +11,23 @@
         <controls:ArgMaxHSVConfigControlViewModel/>
     </Design.DataContext>
     
-    <DataGrid ItemsSource="{Binding TestData}" 
-              AutoGenerateColumns="False"
-              GridLinesVisibility="All">
-        <DataGrid.Columns>
-            <DataGridTextColumn Header="Column 1" Binding="{Binding Index}" />
-        </DataGrid.Columns>
-    </DataGrid>
+    <UserControl.Resources>
+        <converter:LengthToMaxConverter x:Key="LengthToMaxConverter"/>
+    </UserControl.Resources>
+    
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock VerticalAlignment="Center" Margin="10 0">Channel:</TextBlock>
+            <NumericUpDown Value="{Binding SelectedChannelIndex, Mode=TwoWay}" 
+                           FormatString="N0" 
+                           Minimum="{Binding Min}" 
+                           Maximum="{Binding ObsChannels.Count, Converter={StaticResource LengthToMaxConverter}}" 
+                           MinWidth="110" 
+                           ParsingNumberStyle="Integer" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock VerticalAlignment="Center" Margin="10 0">Is Used:</TextBlock>
+            <CheckBox IsChecked="{Binding SelectedChannel.IsUsedForArgMax, Mode=TwoWay}" />
+        </StackPanel>
+    </StackPanel>
 </UserControl>

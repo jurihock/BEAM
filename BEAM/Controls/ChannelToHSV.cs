@@ -13,15 +13,24 @@ namespace BEAM.Controls;
 /// the HSV value of the color for the channel
 /// if the channel is used for the ArgMaxRenderer (e.g.: alpha channel should be excluded)
 /// </summary>
-public class ChannelToHSV : INotifyPropertyChanged
+public class ChannelToHSV : ObservableObject
 {
     private static readonly HueColorLut hcl = new HueColorLut();
-        
-    public int Index { get; set; }
-    
-    public double HSVValue { get; set; } = 0;
+    private double _hsvValue;
+    private bool _isUsedForArgMax = true;
 
-    public bool IsUsedForArgMax { get; set; } = true;
+
+    public double HSVValue
+    {
+        get => _hsvValue;
+        set => SetProperty(ref _hsvValue, value);
+    }
+
+    public bool IsUsedForArgMax
+    {
+        get => _isUsedForArgMax;
+        set => SetProperty(ref _isUsedForArgMax, value);
+    }
 
     public Avalonia.Media.Color AvaColor
     {
@@ -35,40 +44,14 @@ public class ChannelToHSV : INotifyPropertyChanged
         set => HSVValue = value.ToHsv().V;
     }
 
-    public ChannelToHSV(bool isUsed, double hsvValue)
+    public ChannelToHSV(double hsvValue, bool isUsed = true)
     {
         HSVValue = hsvValue;
         IsUsedForArgMax = isUsed;
     }
 
-    public ChannelToHSV(int index)
-    {
-        if (index < 0)
-        {
-            throw new ChannelException("Negative Channel index given!");
-        }
-        
-        HSVValue = hcl[index].ToHsv().V;
-        Index = index;
-    }
-
     public ChannelToHSV Clone()
     {
-        return new ChannelToHSV(IsUsedForArgMax, HSVValue);
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
-    {
-        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
-        field = value;
-        OnPropertyChanged(propertyName);
-        return true;
+        return new ChannelToHSV(HSVValue, IsUsedForArgMax);
     }
 }

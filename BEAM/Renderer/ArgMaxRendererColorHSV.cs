@@ -77,16 +77,9 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
     public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y,
         CancellationTokenSource? tokenSource = null)
     {
-        var channels = new int[sequence.Shape.Channels];
-        for (var i = 0; i < sequence.Shape.Channels; i++)
-        {
-            if (_channelHsvMap.isChannelUsed(i)) // ignore the alpa channel
-            {
-                channels[i] = i;
-            }
-        }
+        var usedChannelIndices = _channelHsvMap.getUsedChannels();
 
-        var line = sequence.GetPixelLineData(xs, y, channels);
+        var line = sequence.GetPixelLineData(xs, y, usedChannelIndices);
         var data = new BGR[xs.Length];
         
         for (var x = 0; x < xs.Length; x++)
@@ -143,11 +136,6 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
         }
         
         _channelHsvMap = new ChannelHSVMap(channels);
-    }
-
-    public void UpdateChannelHSVMap(ObservableCollection<ChannelToHSV> channels)
-    {
-        UpdateChannelHSVMap(channels.ToArray());
     }
     
     public ChannelHSVMap getChannelHsvMap()
