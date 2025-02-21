@@ -33,13 +33,6 @@ public class RegionAnalysisAverageOfChannels : Analysis
 
         _amountChannels = sequence.Shape.Channels;
         
-        // Catch trivial case of only one pixel selected
-        if (Math.Abs(_AmountPixels() - 1) < 0.001)
-        {
-            _sumChannels = new double[_amountChannels];
-            return PlotCreator.CreateFormattedBarPlot(_sumChannels);
-        }
-        
         // Calculate the average and store them in _sumChannels
         _CalculateResult(sequence);
 
@@ -67,7 +60,6 @@ public class RegionAnalysisAverageOfChannels : Analysis
         
         _calculateAverage();
     }
-
     
     /// <summary>
     /// Update _sumChannels with the given pixel.

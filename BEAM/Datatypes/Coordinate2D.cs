@@ -22,8 +22,6 @@ public readonly struct Coordinate2D : IEquatable<Coordinate2D>
             Row = row;
             Column = column;
         }
-    
-
 
     public Coordinate2D(double row, double column)
     {
@@ -36,6 +34,11 @@ public readonly struct Coordinate2D : IEquatable<Coordinate2D>
     {
         Row = coordinates.Y;
         Column = coordinates.X;
+    }
+
+    public Coordinate2D offsetBy(double x, double y)
+    {
+        return new Coordinate2D(Row + y, Column + x);
     }
     
     public override string ToString()

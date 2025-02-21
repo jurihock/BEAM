@@ -26,6 +26,7 @@ namespace BEAM.Views;
 
 public partial class SequenceView : UserControl
 {
+    private const string PixelLabel = "x: {0, 10}\ny: {1, 10}\n \nR: {2, 10}\nG: {3,10}\nB: {4,10}";
 
     private const double MinimapWidthScale = 0.15;
 
@@ -60,7 +61,7 @@ public partial class SequenceView : UserControl
          _horizontalLine = AvaPlot1.Plot.Add.HorizontalLine(0);
         _verticalLine = AvaPlot1.Plot.Add.VerticalLine(0);
         SizeChanged += OnSizeChanged;
-        _anno = AvaPlot1.Plot.Add.Annotation("(x: , y: ), (r: , g: , b: )");
+        _anno = AvaPlot1.Plot.Add.Annotation(string.Format(PixelLabel, 0,0,0,0,0));
     }
 
     private void OnSizeChanged(object? sender, SizeChangedEventArgs e)
@@ -120,7 +121,6 @@ public partial class SequenceView : UserControl
         // Reset the axis to the inital value of the scrollbar.
         UpdateScrolling(0);
         AvaPlot1.Refresh();
-        AvaPlot1.Plot.Add.Annotation("This is an Annotation");
     }
 
     private void AddScrollBarUpdating()
@@ -128,35 +128,35 @@ public partial class SequenceView : UserControl
         AvaPlot1.PointerEntered += (s, e) =>
         {
             var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
-            UpdatePositionAnnotation((long) coordinates.X,(long)  coordinates.Y);
+            UpdatePositionAnnotation(coordinates.X, coordinates.Y);
             UpdateScrollBar();
         };
 
         AvaPlot1.PointerExited += (s, e) =>
         {
             var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
-            UpdatePositionAnnotation((long) coordinates.X,(long)  coordinates.Y);
+            UpdatePositionAnnotation(coordinates.X,  coordinates.Y);
             UpdateScrollBar();
         };
 
         AvaPlot1.PointerMoved += (s, e) =>
         {
             var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
-            UpdatePositionAnnotation((long) coordinates.X,(long)  coordinates.Y);
+            UpdatePositionAnnotation(coordinates.X, coordinates.Y);
             UpdateScrollBar();
         };
 
         AvaPlot1.PointerPressed += (s, e) =>
         {
             var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
-            UpdatePositionAnnotation((long) coordinates.X,(long)  coordinates.Y);
+            UpdatePositionAnnotation(coordinates.X, coordinates.Y);
             UpdateScrollBar();
         };
 
         AvaPlot1.PointerReleased += (s, e) =>
         {
             var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
-            UpdatePositionAnnotation((long) coordinates.X,(long)  coordinates.Y);
+            UpdatePositionAnnotation(coordinates.X, coordinates.Y);
             UpdateScrollBar();
         };
 
@@ -168,7 +168,7 @@ public partial class SequenceView : UserControl
         AvaPlot1.PointerWheelChanged += (s, e) =>
         {
             var coordinates = AvaPlot1.Plot.GetCoordinates(new Pixel(e.GetPosition(AvaPlot1).X, e.GetPosition(AvaPlot1).Y));
-            UpdatePositionAnnotation((long) coordinates.X,(long) coordinates.Y);
+            UpdatePositionAnnotation( coordinates.X, coordinates.Y);
             UpdateScrollBar();
         };
     }
@@ -328,6 +328,14 @@ public partial class SequenceView : UserControl
             AvaPlot1.Plot.MoveToTop(_anno);
             AvaPlot1.Refresh();
         };
+        
+       
+        var currentTheme = Application.Current!.ActualThemeVariant;
+        
+        Application.Current.TryGetResource("AnnotationColor", currentTheme, out var annotationColor);
+        var color = (Avalonia.Media.Color)annotationColor;
+        
+        _anno.LabelBackgroundColor = new Color(color.R, color.G, color.B).WithAlpha(0.7);
         _anno.LabelShadowColor = Colors.Transparent;
         AvaPlot1.Plot.MoveToTop(_anno);
     }
@@ -338,22 +346,26 @@ public partial class SequenceView : UserControl
     /// </summary>
     /// <param name="x">The x coordinate.</param>
     /// <param name="y">The y coordinate</param>
-    public void UpdatePositionAnnotation(long x, long y)
+    public void UpdatePositionAnnotation(double x, double y)
     {
         if (DataContext is not SequenceViewModel vm)
         {
             return;
         }
 
+        // View is moved by 0.5, so adding 0.5 to get correct pixel values
+        x = Math.Round(x);
+        y = Math.Round(y); 
+        
         // If outside the sequence just show the position and no values.
         if (x >= vm.Sequence.Shape.Width || y >= vm.Sequence.Shape.Height || x < 0 || y < 0)
         {
-            _anno.Text = $"(x: {x}, y: {y}, (r: , g: , b: ))";
+            _anno.Text = string.Format(PixelLabel, x, y, 0, 0, 0);
             return;
         }
 
-        var bytes = vm.Renderers[vm.RendererSelection].RenderPixel(vm.Sequence, x, y);
-        _anno.Text = $"(x: {x}, y: {y}, (r: {bytes.R}, g: {bytes.G}, b: {bytes.B})";
+        var bytes = vm.Renderers[vm.RendererSelection].RenderPixel(vm.Sequence, (long)(x), (long)(y));
+        _anno.Text = string.Format(PixelLabel, x, y, bytes.B, bytes.G, bytes.R);
     }
 
     private void _OpenTransformPopup()
@@ -429,8 +441,8 @@ public partial class SequenceView : UserControl
         var val = ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / vm.Sequence.Shape.Height) * 100;
         Bar1.Value = val <= 0.0 ? 0.0 : double.Min(val, 100.0);
     }
-
-
+    
+    
 
     private void Layoutable_OnLayoutUpdated(object? sender, EventArgs e)
     {
@@ -439,9 +451,9 @@ public partial class SequenceView : UserControl
         {
             return;
         }
-
+        
         if(vm.MinimapVms.Count > 0)
-        {
+        {   
             var mapViewModel = (vm.MinimapVms.First() as SizeAdjustableViewModelBase);
             if (mapViewModel is null)
             {

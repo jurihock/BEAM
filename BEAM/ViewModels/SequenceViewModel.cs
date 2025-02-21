@@ -91,7 +91,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     public void RegisterInspectionViewModel(InspectionViewModel inspectionViewModel)
     {
         _connectedInspectionViewModels.Add(inspectionViewModel);
-        inspectionViewModel.Update(PressedPointerPosition, ReleasedPointerPosition);
+        inspectionViewModel.Update(PressedPointerPosition.offsetBy(0.5, 0.5), ReleasedPointerPosition.offsetBy(0.5, 0.5));
     }
     
     public void UnregisterInspectionViewModel(InspectionViewModel inspectionViewModel)
@@ -102,8 +102,8 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public void UpdateInspectionViewModel()
     {
-        Coordinate2D pointPressed = _correctInvalid(PressedPointerPosition);
-        Coordinate2D pointReleased = _correctInvalid(ReleasedPointerPosition);
+        Coordinate2D pointPressed = _correctInvalid(PressedPointerPosition.offsetBy(0.5, 0.5));
+        Coordinate2D pointReleased = _correctInvalid(ReleasedPointerPosition.offsetBy(0.5, 0.5));
         foreach (var inspectionViewModel in _connectedInspectionViewModels)
         {
             inspectionViewModel.Update(pointPressed, pointReleased);
@@ -112,8 +112,8 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 
     private Coordinate2D _correctInvalid(Coordinate2D point)
     {
-        double x = point.Row;
-        double y = point.Column;
+        double x = point.Column;
+        double y = point.Row;
         
         if(x < 0)
             x = 0;
@@ -124,7 +124,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         else if(y >= Sequence.Shape.Height)
             y = Sequence.Shape.Height - 1;
         
-        return new Coordinate2D(x, y);
+        return new Coordinate2D(y, x);
     }
 
     public string Name => Sequence.GetName();
@@ -187,7 +187,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         _connectedInspectionViewModels.Add(inspectionViewModel);
         DockingVm.OpenDock(inspectionViewModel);
         
-        inspectionViewModel.Update(PressedPointerPosition, ReleasedPointerPosition);
+        inspectionViewModel.Update(PressedPointerPosition.offsetBy(0.5, 0.5), ReleasedPointerPosition.offsetBy(0.5, 0.5));
     }
     
 

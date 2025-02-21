@@ -46,7 +46,7 @@ public class MouseManipulator : Manipulator
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
-                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
                 }
             }
         };
@@ -66,7 +66,7 @@ public class MouseManipulator : Manipulator
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
-                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
                 }
             }
         };
@@ -86,7 +86,7 @@ public class MouseManipulator : Manipulator
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
-                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
                 }
             }
         };
@@ -112,7 +112,7 @@ public class MouseManipulator : Manipulator
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
-                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
                 }
             }
         };
@@ -132,7 +132,7 @@ public class MouseManipulator : Manipulator
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
-                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
                 }
             }
         };
@@ -149,7 +149,7 @@ public class MouseManipulator : Manipulator
                 plot.Plot.Axes.SetLimits(avaPlot.Plot.Axes.GetLimits());
                 plot.Refresh();
                 ScrollingSynchronizerMapper.UpdateOwnScrollBar(plot);
-                ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
+                ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
             }   
         };
 
@@ -168,7 +168,7 @@ public class MouseManipulator : Manipulator
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
-                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
                 }
             }
         };
@@ -188,7 +188,7 @@ public class MouseManipulator : Manipulator
                 foreach (var plot in _avaPlots.Where(p => p != avaPlot))
                 {
                     plot.RaiseEvent(e);
-                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation((long) coordinates.X, (long) coordinates.Y);
+                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
                 }
             }
         };
