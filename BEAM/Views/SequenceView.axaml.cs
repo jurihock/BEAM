@@ -96,7 +96,8 @@ public partial class SequenceView : UserControl
         {
             var vm = (DataContext as SequenceViewModel)!;
             var plot = AvaPlot1.Plot;
-            var ySize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
+            // Difference of bottom and top sometimes negative? Math.Abs required.
+            var ySize = Math.Abs(plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top);
             // Minus 100 to allow to scroll higher than the sequence for a better inspection of the start.
             var top = (e.NewValue / 100.0) * vm.Sequence.Shape.Height - 100.0;
             AvaPlot1.Plot.Axes.SetLimitsY(top, top + ySize);
