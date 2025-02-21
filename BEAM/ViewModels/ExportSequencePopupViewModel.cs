@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using BEAM.Exporter;
+using BEAM.Image;
+using BEAM.Models.Log;
 using BEAM.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace BEAM.ViewModels;
@@ -14,11 +19,42 @@ public partial class ExportSequencePopupViewModel : ViewModelBase
     private readonly SequenceViewModel _sequenceViewModel;
     private IStorageFolder? _folder;
     
+    [ObservableProperty]
+    public partial string SequenceName { get; set; }
+    
+    private SequenceType _selectedType;
+
+    public SequenceType SelectedType
+    {
+        get => _selectedType;
+        set
+        {
+            if (_selectedType != value)
+            {
+                _selectedType = value;
+                OnPropertyChanged(nameof(SelectedType));
+            }
+        }
+    }
+    
     public ExportSequencePopupViewModel(SequenceViewModel model)
     {
         _sequenceViewModel = model;
     }
 
+    public ObservableCollection<SequenceType> ExportTypes { get; } = new()
+    {
+        SequenceType.Envi,
+        SequenceType.Png
+    };
+    
+    public new event PropertyChangedEventHandler PropertyChanged;
+
+    protected new virtual void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+    
     [RelayCommand]
     public async Task ExportSequence()
     {
@@ -46,8 +82,21 @@ public partial class ExportSequencePopupViewModel : ViewModelBase
         {
             return false;
         }
-        Task.Run(() => PngExporter.ExportToPng(_folder, _sequenceViewModel.Sequence, 
-            _sequenceViewModel.Renderers[_sequenceViewModel.RendererSelection]));
+
+        switch (_selectedType)
+        {
+            case SequenceType.Envi:
+                Task.Run(() => EnviExporter.Export(_folder, SequenceName, _sequenceViewModel.Sequence,
+                    _sequenceViewModel.Renderers[_sequenceViewModel.RendererSelection]));
+                break;
+            case SequenceType.Png:
+                Task.Run(() => PngExporter.Export(_folder, SequenceName, _sequenceViewModel.Sequence, 
+                    _sequenceViewModel.Renderers[_sequenceViewModel.RendererSelection]));
+                break;
+            default:
+                return false;
+        }
+        Logger.GetInstance().LogMessage($"Started exporting sequence {_sequenceViewModel.Sequence.GetName()} as {_selectedType} to {_folder.Path.AbsolutePath}");
         return true;
     }
 }

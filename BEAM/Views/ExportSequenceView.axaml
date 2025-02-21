@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:BEAM.ViewModels"
+             xmlns:converter="clr-namespace:BEAM.Converter"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:ExportSequencePopupViewModel"
              x:Class="BEAM.Views.ExportSequenceView">
@@ -10,9 +11,26 @@
         <viewModels:ExportSequencePopupViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical" Margin="20, 10, 20, 0">
-        <Grid>
-            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10 0">Choose sequence:</TextBlock>
-            <Button Command="{Binding ExportSequence}">Export sequence as png</Button>
+        <Grid Margin="0 10">
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10 0">Choose path:</TextBlock>
+            <Button Command="{Binding ExportSequence}" HorizontalAlignment="Right">Choose file</Button>
+        </Grid>
+        <Grid Margin="0 10">
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10 0">Name of the sequence:</TextBlock>
+            <TextBox Text="{Binding SequenceName}" MinWidth="300" HorizontalAlignment="Right"/>
+        </Grid>
+        <Grid Margin="0 10">
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10 0">Choose sequence type: </TextBlock>
+            <ComboBox ItemsSource="{Binding ExportTypes}" SelectedItem="{Binding SelectedType}"  HorizontalAlignment="Right">
+                <ComboBox.Resources>
+                    <converter:EnumToStringConverter x:Key="EnumToStringConverter"/>
+                </ComboBox.Resources>
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
         </Grid>
         
         <StackPanel Margin="0 10" Orientation="Horizontal" HorizontalAlignment="Right">

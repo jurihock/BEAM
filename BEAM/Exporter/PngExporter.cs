@@ -1,7 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Avalonia.Platform.Storage;
 using BEAM.ImageSequence;
+using BEAM.Models.Log;
 using BEAM.Renderer;
 using SkiaSharp;
 
@@ -11,13 +11,13 @@ public static class PngExporter
 {
     private const long MaxHeight = 4096;
     
-    public static void ExportToPng(IStorageFolder? path, TransformedSequence sequence, SequenceRenderer renderer)
+    public static void Export(IStorageFolder? path, string name, TransformedSequence sequence, SequenceRenderer renderer)
     {
         if (path is null)
         {
             return;
         }
-        
+        Directory.CreateDirectory(Path.Combine(path.Path.AbsolutePath, name));
         var shape = sequence.Shape;
         for (var i = 0; i <= shape.Height / MaxHeight; i++)
         {
@@ -38,11 +38,12 @@ public static class PngExporter
             using var image = SKImage.FromBitmap(bitmap);
             using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
             { 
-                using (var stream = File.OpenWrite(Path.Combine(path.Path.AbsolutePath, $"{i:D8}.png")))
+                using (var stream = File.OpenWrite(Path.Combine(path.Path.AbsolutePath, name, $"{i:D8}.png")))
                 {
                     data.SaveTo(stream);
                 }
             }
         }
+        Logger.GetInstance().LogMessage($"Finished exporting sequence {sequence.GetName()} as Png to {path.Path.AbsolutePath}");
     }
 }
