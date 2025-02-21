@@ -20,6 +20,11 @@
         <StyleInclude Source="avares://NP.Ava.UniDock/Themes/DockStyles.axaml" />
 
         <!-- Styling -->
+
+        <Style Selector="ContextMenu">
+            <Setter Property="Background" Value="{DynamicResource WindowBg}"/>
+        </Style>
+
         <Style Selector=":is(np|CustomWindow).PlainFloatingWindow">
             <Setter Property="Background" Value="{DynamicResource WindowBg}" />
             <Setter Property="HeaderBackground" Value="{DynamicResource BackgroundColorDark}" />
