@@ -54,8 +54,11 @@
                 </NativeMenu>
             </NativeMenuItem>
         </NativeMenu>
-
     </NativeMenu.Menu>
+    
+    <Window.KeyBindings>
+        <KeyBinding Gesture="STRG+O" Command="{Binding OpenSequenceCommand}"></KeyBinding>
+    </Window.KeyBindings>
 
     <DockPanel LastChildFill="True" Margin="{Binding #Main.OffScreenMargin}">
 
