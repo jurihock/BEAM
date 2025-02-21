@@ -7,8 +7,8 @@ using ScottPlot;
 namespace BEAM.Analysis;
 
 /// <summary>
-/// Class implementing methods for calculating the standard deviation of the Channel values of all pixels in a region.
-/// Returns a plot depicting the standard deviation of the pixels in the region for each channels.
+/// Class implementing methods for calculating the average of the Channel values of all pixels in a region.
+/// Returns a plot depicting the average of the pixels in the region for each channels.
 /// </summary>
 public class RegionAnalysisAverageOfChannels : Analysis
 {
@@ -38,7 +38,7 @@ public class RegionAnalysisAverageOfChannels : Analysis
             return PlotCreator.CreateFormattedBarPlot(_sumChannels);
         }
         
-        // Calculate the standard deviations and store them in _sumChannelsSquared
+        // Calculate the average and store them in _sumChannels
         _CalculateResult(sequence);
 
         return PlotCreator.CreateFormattedBarPlot(_sumChannels);
@@ -47,7 +47,7 @@ public class RegionAnalysisAverageOfChannels : Analysis
     
     
     /// <summary>
-    /// Calculates the standard deviation of the channels in the region and stores the result in _sumChannelsSquared
+    /// Calculates the average of the channels in the region and stores the result in _sumChannels
     /// </summary>
     /// <param name="sequence"></param>
     //TODO: Line Image more efficient? Find more efficient implementation
@@ -69,7 +69,7 @@ public class RegionAnalysisAverageOfChannels : Analysis
 
     
     /// <summary>
-    /// Update _sumChannels(Squared) with the given pixel.
+    /// Update _sumChannels with the given pixel.
     /// </summary>
     /// <param name="pixel"></param>
     private void _UpdateWithPixel(double[] pixel)
