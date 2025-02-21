@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia.Input;
 using ScottPlot;
 using ScottPlot.Avalonia;
 
@@ -31,7 +32,7 @@ public class MouseManipulator : Manipulator
 
         _avaPlots.Add(avaPlot);
 
-        avaPlot.PointerEntered += (_, e) =>
+        void OnAvaPlotOnPointerEntered(object? _, PointerEventArgs e)
         {
             if (!_isSynchronizing)
             {
@@ -49,9 +50,11 @@ public class MouseManipulator : Manipulator
                     ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
                 }
             }
-        };
+        }
 
-        avaPlot.PointerExited += (_, e) =>
+        avaPlot.PointerEntered += OnAvaPlotOnPointerEntered;
+
+        void OnAvaPlotOnPointerExited(object? _, PointerEventArgs e)
         {
             if (!_isSynchronizing)
             {
@@ -69,9 +72,11 @@ public class MouseManipulator : Manipulator
                     ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
                 }
             }
-        };
+        }
 
-        avaPlot.PointerMoved += (_, e) =>
+        avaPlot.PointerExited += OnAvaPlotOnPointerExited;
+
+        void OnAvaPlotOnPointerMoved(object? _, PointerEventArgs e)
         {
             if (!_isSynchronizing)
             {
@@ -89,9 +94,11 @@ public class MouseManipulator : Manipulator
                     ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
                 }
             }
-        };
+        }
 
-        avaPlot.PointerPressed += (_, e) =>
+        avaPlot.PointerMoved += OnAvaPlotOnPointerMoved;
+
+        void OnAvaPlotOnPointerPressed(object? _, PointerPressedEventArgs e)
         {
             if (!_isSynchronizing)
             {
@@ -115,9 +122,11 @@ public class MouseManipulator : Manipulator
                     ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
                 }
             }
-        };
+        }
 
-        avaPlot.PointerReleased += (_, e) =>
+        avaPlot.PointerPressed += OnAvaPlotOnPointerPressed;
+
+        void OnAvaPlotOnPointerReleased(object? _, PointerReleasedEventArgs e)
         {
             if (!_isSynchronizing)
             {
@@ -135,14 +144,17 @@ public class MouseManipulator : Manipulator
                     ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
                 }
             }
-        };
+        }
 
-        avaPlot.PointerWheelChanged += (_, e) =>
+        avaPlot.PointerReleased += OnAvaPlotOnPointerReleased;
+
+        void OnAvaPlotOnPointerWheelChanged(object? _, PointerWheelEventArgs e)
         {
             if (!_isSynchronizing)
             {
                 return;
             }
+
             var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
             foreach (var plot in _avaPlots.Where(p => p != avaPlot))
             {
@@ -151,9 +163,11 @@ public class MouseManipulator : Manipulator
                 ScrollingSynchronizerMapper.UpdateOwnScrollBar(plot);
                 ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
             }
-        };
+        }
 
-        avaPlot.Tapped += (_, e) =>
+        avaPlot.PointerWheelChanged += OnAvaPlotOnPointerWheelChanged;
+
+        void OnAvaPlotOnTapped(object? _, TappedEventArgs e)
         {
             if (!_isSynchronizing)
             {
@@ -171,9 +185,11 @@ public class MouseManipulator : Manipulator
                     ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
                 }
             }
-        };
+        }
 
-        avaPlot.DoubleTapped += (_, e) =>
+        avaPlot.Tapped += OnAvaPlotOnTapped;
+
+        void OnAvaPlotOnDoubleTapped(object? _, TappedEventArgs e)
         {
             if (!_isSynchronizing)
             {
@@ -191,9 +207,12 @@ public class MouseManipulator : Manipulator
                     ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
                 }
             }
-        };
+        }
 
-        avaPlot.Holding += (_, e) =>
+        
+        avaPlot.DoubleTapped += OnAvaPlotOnDoubleTapped;
+
+        void OnAvaPlotOnHolding(object? _, HoldingRoutedEventArgs e)
         {
             if (!_isSynchronizing)
             {
@@ -209,7 +228,9 @@ public class MouseManipulator : Manipulator
                     //ScrollingSynchronizer.UpdateOwnScrollBar(plot);
                 }
             }
-        };
+        }
+
+        avaPlot.Holding += OnAvaPlotOnHolding;
 
         return true;
     }
