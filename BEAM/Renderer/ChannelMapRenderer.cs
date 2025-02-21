@@ -47,9 +47,9 @@ public partial class ChannelMapRenderer : SequenceRenderer
 
         BGR color = new BGR()
         {
-            B = (byte)colors[0], // b
+            B = (byte)colors[2], // b
             G = (byte)colors[1], // g
-            R = (byte)colors[2], // r
+            R = (byte)colors[0], // r
         };
 
         return color;
