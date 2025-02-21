@@ -26,29 +26,29 @@
         <NativeMenu>
             <NativeMenuItem Header="_File">
                 <NativeMenu>
-                    <NativeMenuItem Header="Open Files" Command="{Binding OpenSequenceCommand}" />
-                    <NativeMenuItem Header="Open Folder"
+                    <NativeMenuItem Header="O_pen Files" Command="{Binding OpenSequenceCommand}" />
+                    <NativeMenuItem Header="_Open Folder"
                                     Command="{Binding OpenSequenceFromFolderCommand}">
                     </NativeMenuItem>
                     <NativeMenuItemSeparator />
-                    <NativeMenuItem Header="Exit" Command="{Binding ExitBeamCommand}"
+                    <NativeMenuItem Header="_Exit" Command="{Binding ExitBeamCommand}"
                                     IsVisible="{OnPlatform macOS=False, Default=True}" />
                 </NativeMenu>
             </NativeMenuItem>
             <NativeMenuItem Header="_View">
                 <NativeMenu>
-                    <NativeMenuItem Header="Open Log Window" Command="{Binding OpenStatusWindowCommand}" />
+                    <NativeMenuItem Header="_Open Log Window" Command="{Binding OpenStatusWindowCommand}" />
                 </NativeMenu>
             </NativeMenuItem>
             <NativeMenuItem Header="_Synchronization">
                 <NativeMenu>
-                    <NativeMenuItem Header="Activate (without repositioning)" Command="{Binding ActivateSynchronizationCommand}"></NativeMenuItem>
-                    <NativeMenuItem Header="Deactivate" Command="{Binding DeactivateSynchronizationCommand}"></NativeMenuItem>
+                    <NativeMenuItem Header="_Activate (without repositioning)" Command="{Binding ActivateSynchronizationCommand}"></NativeMenuItem>
+                    <NativeMenuItem Header="_Deactivate" Command="{Binding DeactivateSynchronizationCommand}"></NativeMenuItem>
                 </NativeMenu>
             </NativeMenuItem>
             <NativeMenuItem Header="_Help">
                 <NativeMenu>
-                    <NativeMenuItem Header="About" Command="{Binding OpenAboutWindowCommand}" />
+                    <NativeMenuItem Header="_About" Command="{Binding OpenAboutWindowCommand}" />
                 </NativeMenu>
             </NativeMenuItem>
         </NativeMenu>
