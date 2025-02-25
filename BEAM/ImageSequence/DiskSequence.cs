@@ -185,7 +185,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
         _shape = new ImageShape(width, height, firstImage.Shape.Channels);
     }
 
-    public static readonly List<string> SupportedSequences = ["PNG", "ENVI"];
+    public static readonly List<string> SupportedSequences = ["PNG", "ENVI", "HDF"];
 
     /// <summary>
     /// The supported file types and their respective Sequence type
@@ -195,6 +195,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
         [".png"] = typeof(SkiaSequence),
         [".raw"] = typeof(EnviSequence),
         [".hdr"] = typeof(EnviSequence),
+        [".hdf5"] = typeof(HdfSequence),
     };
 
 

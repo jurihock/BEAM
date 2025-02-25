@@ -99,6 +99,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         var (min, max) = sequence switch
         {
             SkiaSequence => (0, 255),
+            HdfSequence => (0, 255),
             _ => (0, 1)
         };
 
@@ -113,6 +114,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         RendererSelection = sequence switch
         {
             SkiaSequence => 0,
+            HdfSequence => 0,
             _ => 1
         };
         
