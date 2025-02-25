@@ -1,6 +1,9 @@
+using ExCSS;
 using PureHDF;
 using PureHDF.Selections;
+using PureHDF.VOL.Native;
 using System;
+using System.Buffers;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 
@@ -98,20 +101,31 @@ public static class HdfExtensions
                     $"Invalid array shape {dst.Length} != {zzz.Length}!");
             }
 
-            var points = new ulong[zzz.Length, 3];
+            var nativedataset = dataset as NativeDataset;
+            ArgumentNullException.ThrowIfNull(nativedataset);
+
+            var width = (long)dataset.Space.Dimensions[1];
+            var height = (long)dataset.Space.Dimensions[0];
+            var channels = (long)dataset.Space.Dimensions[2];
+
+            var bytes = (int)(channels * sizeof(short));
+            using var owner = MemoryPool<byte>.Shared.Rent(minBufferSize: bytes);
+            var memory = owner.Memory[..bytes];
+
+            var hyperslab = new HyperslabSelection(
+                3,
+                [(ulong)y, (ulong)x, 0],
+                [1, 1, 1],
+                [1, 1, (ulong)channels],
+                [1, 1, 1]);
+
+            nativedataset.Read(memory, hyperslab);
+
+            var src = MemoryMarshal.Cast<byte, short>(memory.Span);
 
             for (var i = 0; i < zzz.Length; i++)
             {
-                points[i, 0] = (ulong)y;
-                points[i, 1] = (ulong)x;
-                points[i, 2] = (ulong)zzz[i];
-            }
-
-            var src = dataset.Read<short[]>(new PointSelection(points));
-
-            for (var i = 0; i < zzz.Length; i++)
-            {
-                dst[i] = src[i] >> 8;
+                dst[i] = src[zzz[i]] >> 8;
             }
         });
     }
