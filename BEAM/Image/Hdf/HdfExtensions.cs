@@ -79,4 +79,40 @@ public static class HdfExtensions
 
         return Expression.Lambda<Func<long, long, long, T>>(output, indices).Compile();
     }
+
+    public static Action<long, long, int[], double[]> CreateDoubleValuesGetter(this IH5Dataset dataset)
+    {
+        var type = dataset.Type;
+
+        if (type.TypeOf() != typeof(short))
+        {
+            throw new NotSupportedException(
+                $"Currently unsupported dataset data type {type.TypeOf()}!");
+        }
+
+        return new Action<long, long, int[], double[]>((x, y, zzz, dst) =>
+        {
+            if (dst.Length != zzz.Length)
+            {
+                throw new ArgumentException(
+                    $"Invalid array shape {dst.Length} != {zzz.Length}!");
+            }
+
+            var points = new ulong[zzz.Length, 3];
+
+            for (var i = 0; i < zzz.Length; i++)
+            {
+                points[i, 0] = (ulong)y;
+                points[i, 1] = (ulong)x;
+                points[i, 2] = (ulong)zzz[i];
+            }
+
+            var src = dataset.Read<short[]>(new PointSelection(points));
+
+            for (var i = 0; i < zzz.Length; i++)
+            {
+                dst[i] = src[i] >> 8;
+            }
+        });
+    }
 }

@@ -4,6 +4,7 @@ using PureHDF.VOL.Native;
 using System;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using System.Linq;
 
 namespace BEAM.Image.Hdf;
 
@@ -21,6 +22,7 @@ public class HdfImage<T> : ITypedImage<T>, IMemoryImage
 
     private Func<long, long, long, T> GetValue { get; init; }
     private Func<long, long, long, double> GetDoubleValue { get; init; }
+    private Action<long, long, int[], double[]> GetDoubleValues { get; init; }
 
     /// <summary>
     /// This image's dimensions, meaning its length, width and channel count.
@@ -79,6 +81,7 @@ public class HdfImage<T> : ITypedImage<T>, IMemoryImage
 
         GetValue = dataset.CreateValueGetter<T>();
         GetDoubleValue = dataset.CreateValueGetter<double>();
+        GetDoubleValues = dataset.CreateDoubleValuesGetter();
     }
 
     public void Dispose()
@@ -114,22 +117,30 @@ public class HdfImage<T> : ITypedImage<T>, IMemoryImage
 
     public double[] GetPixel(long x, long y)
     {
+        //var values = new double[Shape.Channels];
+        //for (var i = 0; i < Shape.Channels; i++)
+        //{
+        //    values[i] = GetPixel(x, y, i);
+        //}
+
         var values = new double[Shape.Channels];
-        for (var i = 0; i < Shape.Channels; i++)
-        {
-            values[i] = GetPixel(x, y, i);
-        }
+
+        GetDoubleValues(x, y, Enumerable.Range(0, Shape.Channels).ToArray(), values);
 
         return values;
     }
 
     public double[] GetPixel(long x, long y, int[] channels)
     {
+        //var values = new double[channels.Length];
+        //for (var i = 0; i < channels.Length; i++)
+        //{
+        //    values[i] = GetPixel(x, y, channels[i]);
+        //}
+
         var values = new double[channels.Length];
-        for (var i = 0; i < channels.Length; i++)
-        {
-            values[i] = GetPixel(x, y, channels[i]);
-        }
+
+        GetDoubleValues(x, y, channels, values);
 
         return values;
     }
@@ -149,12 +160,17 @@ public class HdfImage<T> : ITypedImage<T>, IMemoryImage
             case XyzImageMemoryLayout:
             case YxzImageMemoryLayout:
                 {
+                    //for (var x = 0; x < xs.Length; x++)
+                    //{
+                    //    for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
+                    //    {
+                    //        data[x][channelIdx] = GetPixel(xs[x], line, channels[channelIdx]);
+                    //    }
+                    //}
+
                     for (var x = 0; x < xs.Length; x++)
                     {
-                        for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
-                        {
-                            data[x][channelIdx] = GetPixel(xs[x], line, channels[channelIdx]);
-                        }
+                        GetDoubleValues(xs[x], line, channels, data[x]);
                     }
 
                     break;
@@ -163,15 +179,15 @@ public class HdfImage<T> : ITypedImage<T>, IMemoryImage
             case YzxImageMemoryLayout:
             case ZyxImageMemoryLayout:
                 {
-                    for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
-                    {
-                        for (var x = 0; x < xs.Length; x++)
-                        {
-                            data[x][channelIdx] = GetPixel(xs[x], line, channels[channelIdx]);
-                        }
-                    }
+                    //for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
+                    //{
+                    //    for (var x = 0; x < xs.Length; x++)
+                    //    {
+                    //        data[x][channelIdx] = GetPixel(xs[x], line, channels[channelIdx]);
+                    //    }
+                    //}
 
-                    break;
+                    throw new NotImplementedException(); // break;
                 }
             default:
                 throw new NotImplementedException($"Efficient pixel data line getter not implemented for  layout type {Layout.GetType()} when using ENVI images");
@@ -195,12 +211,17 @@ public class HdfImage<T> : ITypedImage<T>, IMemoryImage
             case XyzImageMemoryLayout:
             case YxzImageMemoryLayout:
                 {
+                    //for (var x = 0; x < Shape.Width; x++)
+                    //{
+                    //    for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
+                    //    {
+                    //        data[x][channelIdx] = GetPixel(x, line, channels[channelIdx]);
+                    //    }
+                    //}
+
                     for (var x = 0; x < Shape.Width; x++)
                     {
-                        for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
-                        {
-                            data[x][channelIdx] = GetPixel(x, line, channels[channelIdx]);
-                        }
+                        GetDoubleValues(x, line, channels, data[x]);
                     }
 
                     break;
@@ -209,15 +230,15 @@ public class HdfImage<T> : ITypedImage<T>, IMemoryImage
             case YzxImageMemoryLayout:
             case ZyxImageMemoryLayout:
                 {
-                    for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
-                    {
-                        for (var x = 0; x < Shape.Width; x++)
-                        {
-                            data[x][channelIdx] = GetPixel(x, line, channels[channelIdx]);
-                        }
-                    }
+                    //for (var channelIdx = 0; channelIdx < channels.Length; channelIdx++)
+                    //{
+                    //    for (var x = 0; x < Shape.Width; x++)
+                    //    {
+                    //        data[x][channelIdx] = GetPixel(x, line, channels[channelIdx]);
+                    //    }
+                    //}
 
-                    break;
+                    throw new NotImplementedException(); // break;
                 }
             default:
                 throw new NotImplementedException($"Efficient pixel data line getter not implemented for  layout type {Layout.GetType()} when using ENVI images");
