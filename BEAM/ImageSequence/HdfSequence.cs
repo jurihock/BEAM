@@ -21,7 +21,7 @@ public class HdfSequence(List<string> imagePaths, string name) : DiskSequence(im
 
     protected internal override bool InitializeSequence()
     {
-        using var _ = Timer.Start("Initialize Envi Sequence");
+        using var _ = Timer.Start("Initialize HDF Sequence");
         var removed = ImagePaths.RemoveAll(path =>
             !Path.GetExtension(path).Equals(".hdf5"));
 

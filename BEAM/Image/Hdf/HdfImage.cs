@@ -13,15 +13,16 @@ namespace BEAM.Image.Hdf;
 /// </summary>
 public class HdfImage<T> : ITypedImage<T>, IMemoryImage
 {
+    private string FilePath { get; set; }
+
     private MemoryMappedFile? FileMapping { get; set; }
     private MemoryMappedViewAccessor? FileAccessor { get; set; }
 
-    private NativeFile? File { get; set; }
-    private IH5Group Group { get; set; }
-    private IH5Dataset Dataset { get; set; }
+    private NativeFile? Datafile { get; set; }
+    private IH5Dataset? Dataset { get; set; }
 
     private Func<long, long, long, T> GetValue { get; init; }
-    private Func<long, long, long, double> GetDoubleValue { get; init; }
+    private Func<long, long, int, double> GetDoubleValue { get; init; }
     private Action<long, long, int[], double[]> GetDoubleValues { get; init; }
 
     /// <summary>
@@ -39,7 +40,7 @@ public class HdfImage<T> : ITypedImage<T>, IMemoryImage
     /// The default file endings of .hdr for header files and .raw for data files must be used.
     /// </summary>
     /// <param name="filepath">The path to both envi files including their name. Therefor their names must match.</param>
-    public HdfImage(string filepath) : this(filepath, ("Data", "Image"))
+    public HdfImage(string filepath) : this(filepath, "Data/Image")
     {
     }
 
@@ -51,14 +52,15 @@ public class HdfImage<T> : ITypedImage<T>, IMemoryImage
     /// <param name="datapath">TODO HDF</param>
     /// <exception cref="FileNotFoundException">If either file was found at the specified filepath.</exception>
     /// <exception cref="NotSupportedException">If no envi file, or an ENVI file with a byte order other than the host's was found.</exception>
-    public HdfImage(string filepath, (string group, string dataset) datapath)
+    public HdfImage(string filepath, string datapath)
     {
+        // Trace.WriteLine($"HDF READ {filepath}");
+
         var mmf = MemoryMappedFile.CreateFromFile(filepath, FileMode.OpenOrCreate, null, 0, MemoryMappedFileAccess.Read);
         var acc = mmf.CreateViewAccessor(0, 0, MemoryMappedFileAccess.Read);
 
-        var file = H5File.Open(acc);
-        var group = file.Group(datapath.group);
-        var dataset = group.Dataset(datapath.dataset);
+        var datafile = H5File.Open(acc);
+        var dataset = datafile.Dataset(datapath);
 
         var width = (long)dataset.Space.Dimensions[1];
         var height = (long)dataset.Space.Dimensions[0];
@@ -72,15 +74,16 @@ public class HdfImage<T> : ITypedImage<T>, IMemoryImage
         Layout = new YxzImageMemoryLayout(
             Shape);
 
+        FilePath = filepath;
+
         FileMapping = mmf;
         FileAccessor = acc;
 
-        File = file;
-        Group = group;
+        Datafile = datafile;
         Dataset = dataset;
 
         GetValue = dataset.CreateValueGetter<T>();
-        GetDoubleValue = dataset.CreateValueGetter<double>();
+        GetDoubleValue = dataset.CreateDoubleValueGetter();
         GetDoubleValues = dataset.CreateDoubleValuesGetter();
     }
 
@@ -97,10 +100,10 @@ public class HdfImage<T> : ITypedImage<T>, IMemoryImage
             return;
         }
 
-        if (File != null)
+        if (Datafile != null)
         {
-            File.Dispose();
-            File = null;
+            Datafile.Dispose();
+            Datafile = null;
         }
 
         if (FileMapping != null)
@@ -147,6 +150,8 @@ public class HdfImage<T> : ITypedImage<T>, IMemoryImage
 
     public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
     {
+        // Trace.WriteLine($"HDF GetPixelLineData {xs.Length} {line} {channels.Length} {Path.GetFileNameWithoutExtension(FilePath)}");
+
         var data = new double[xs.Length][];
         for (var i = 0; i < xs.Length; i++)
         {

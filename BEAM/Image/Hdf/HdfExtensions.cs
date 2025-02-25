@@ -1,13 +1,13 @@
-using ExCSS;
 using PureHDF;
 using PureHDF.Selections;
 using PureHDF.VOL.Native;
 using System;
 using System.Buffers;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 
-namespace BEAM.Image.Envi;
+namespace BEAM.Image.Hdf;
 
 /// <summary>
 /// This class provides utility Methods for other Envi-associated classes like <see cref="EnviByteOrder"/> and
@@ -83,6 +83,39 @@ public static class HdfExtensions
         return Expression.Lambda<Func<long, long, long, T>>(output, indices).Compile();
     }
 
+    public static Func<long, long, int, double> CreateDoubleValueGetter(this IH5Dataset dataset)
+    {
+        var type = dataset.Type;
+
+        if (type.TypeOf() != typeof(short))
+        {
+            throw new NotSupportedException(
+                $"Currently unsupported dataset data type {type.TypeOf()}!");
+        }
+
+        return new Func<long, long, int, double>((x, y, z) =>
+        {
+            var channels = (int)dataset.Space.Dimensions.Last();
+
+            var bytes = channels * sizeof(short);
+            using var cache = MemoryPool<byte>.Shared.Rent(bytes);
+            var memory = cache.Memory[..bytes];
+
+            var roi = new HyperslabSelection(
+                3,
+                [(ulong)y, (ulong)x, 0],
+                [1, 1, 1],
+                [1, 1, (ulong)channels],
+                [1, 1, 1]);
+
+            (dataset as NativeDataset)!.Read(memory, roi);
+
+            var src = MemoryMarshal.Cast<byte, short>(memory.Span);
+
+            return src[z] >> 8;
+        });
+    }
+
     public static Action<long, long, int[], double[]> CreateDoubleValuesGetter(this IH5Dataset dataset)
     {
         var type = dataset.Type;
@@ -101,25 +134,20 @@ public static class HdfExtensions
                     $"Invalid array shape {dst.Length} != {zzz.Length}!");
             }
 
-            var nativedataset = dataset as NativeDataset;
-            ArgumentNullException.ThrowIfNull(nativedataset);
+            var channels = (int)dataset.Space.Dimensions.Last();
 
-            var width = (long)dataset.Space.Dimensions[1];
-            var height = (long)dataset.Space.Dimensions[0];
-            var channels = (long)dataset.Space.Dimensions[2];
+            var bytes = channels * sizeof(short);
+            using var cache = MemoryPool<byte>.Shared.Rent(bytes);
+            var memory = cache.Memory[..bytes];
 
-            var bytes = (int)(channels * sizeof(short));
-            using var owner = MemoryPool<byte>.Shared.Rent(minBufferSize: bytes);
-            var memory = owner.Memory[..bytes];
-
-            var hyperslab = new HyperslabSelection(
+            var roi = new HyperslabSelection(
                 3,
                 [(ulong)y, (ulong)x, 0],
                 [1, 1, 1],
                 [1, 1, (ulong)channels],
                 [1, 1, 1]);
 
-            nativedataset.Read(memory, hyperslab);
+            (dataset as NativeDataset)!.Read(memory, roi);
 
             var src = MemoryMarshal.Cast<byte, short>(memory.Span);
 
