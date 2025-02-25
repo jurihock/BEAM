@@ -2,7 +2,6 @@ using PureHDF;
 using PureHDF.Selections;
 using PureHDF.VOL.Native;
 using System;
-using System.Buffers;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
@@ -98,8 +97,7 @@ public static class HdfExtensions
             var channels = (int)dataset.Space.Dimensions.Last();
 
             var bytes = channels * sizeof(short);
-            using var cache = MemoryPool<byte>.Shared.Rent(bytes);
-            var memory = cache.Memory[..bytes];
+            Span<byte> memory = stackalloc byte[bytes];
 
             var roi = new HyperslabSelection(
                 3,
@@ -110,7 +108,7 @@ public static class HdfExtensions
 
             (dataset as NativeDataset)!.Read(memory, roi);
 
-            var src = MemoryMarshal.Cast<byte, short>(memory.Span);
+            var src = MemoryMarshal.Cast<byte, short>(memory);
 
             return src[z] >> 8;
         });
@@ -137,8 +135,7 @@ public static class HdfExtensions
             var channels = (int)dataset.Space.Dimensions.Last();
 
             var bytes = channels * sizeof(short);
-            using var cache = MemoryPool<byte>.Shared.Rent(bytes);
-            var memory = cache.Memory[..bytes];
+            Span<byte> memory = stackalloc byte[bytes];
 
             var roi = new HyperslabSelection(
                 3,
@@ -149,7 +146,7 @@ public static class HdfExtensions
 
             (dataset as NativeDataset)!.Read(memory, roi);
 
-            var src = MemoryMarshal.Cast<byte, short>(memory.Span);
+            var src = MemoryMarshal.Cast<byte, short>(memory);
 
             for (var i = 0; i < zzz.Length; i++)
             {
