@@ -3,6 +3,7 @@ using PureHDF;
 using PureHDF.VOL.Native;
 using System;
 using System.IO;
+using System.IO.MemoryMappedFiles;
 
 namespace BEAM.Image.Hdf;
 
@@ -11,6 +12,9 @@ namespace BEAM.Image.Hdf;
 /// </summary>
 public class HdfImage<T> : ITypedImage<T>, IMemoryImage
 {
+    private MemoryMappedFile? FileMapping { get; set; }
+    private MemoryMappedViewAccessor? FileAccessor { get; set; }
+
     private NativeFile? File { get; set; }
     private IH5Group Group { get; set; }
     private IH5Dataset Dataset { get; set; }
@@ -47,7 +51,10 @@ public class HdfImage<T> : ITypedImage<T>, IMemoryImage
     /// <exception cref="NotSupportedException">If no envi file, or an ENVI file with a byte order other than the host's was found.</exception>
     public HdfImage(string filepath, (string group, string dataset) datapath)
     {
-        var file = H5File.OpenRead(filepath);
+        var mmf = MemoryMappedFile.CreateFromFile(filepath, FileMode.OpenOrCreate, null, 0, MemoryMappedFileAccess.Read);
+        var acc = mmf.CreateViewAccessor(0, 0, MemoryMappedFileAccess.Read);
+
+        var file = H5File.Open(acc);
         var group = file.Group(datapath.group);
         var dataset = group.Dataset(datapath.dataset);
 
@@ -62,6 +69,9 @@ public class HdfImage<T> : ITypedImage<T>, IMemoryImage
 
         Layout = new YxzImageMemoryLayout(
             Shape);
+
+        FileMapping = mmf;
+        FileAccessor = acc;
 
         File = file;
         Group = group;
@@ -88,6 +98,12 @@ public class HdfImage<T> : ITypedImage<T>, IMemoryImage
         {
             File.Dispose();
             File = null;
+        }
+
+        if (FileMapping != null)
+        {
+            FileMapping.Dispose();
+            FileMapping = null;
         }
     }
 
