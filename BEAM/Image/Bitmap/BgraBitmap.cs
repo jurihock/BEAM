@@ -64,11 +64,11 @@ public sealed class BgraBitmap : SKBitmap, IBitmap<BGRA>
 
     public void Read(string path)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 
     public void Write(string path)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 }

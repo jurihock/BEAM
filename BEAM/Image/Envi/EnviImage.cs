@@ -209,7 +209,8 @@ public class EnviImage<T> : ITypedImage<T>, IMemoryImage
                     break;
                 }
             default:
-                throw new NotImplementedException($"Efficient pixel data line getter not implemented for  layout type {Layout.GetType()} when using ENVI images");
+                throw new NotSupportedException($"Efficient pixel data line getter not implemented for  layout type " +
+                                                $"{Layout.GetType()} when using ENVI images");
         }
 
         return new LineImage(data);
@@ -255,7 +256,8 @@ public class EnviImage<T> : ITypedImage<T>, IMemoryImage
                     break;
                 }
             default:
-                throw new NotImplementedException($"Efficient pixel data line getter not implemented for  layout type {Layout.GetType()} when using ENVI images");
+                throw new NotSupportedException($"Efficient pixel data line getter not implemented for  layout type " +
+                                                $"{Layout.GetType()} when using ENVI images");
         }
 
         return new LineImage(data);

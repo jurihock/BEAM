@@ -61,17 +61,7 @@ public class LineImage : IImage
 
         return values;
     }
-
-    /// <summary>
-    /// Returns this LineImage, if the line is 0.
-    /// Warning: DO NOT USE THIS METHOD
-    /// The channels of this LineImage are not altered, as they might have already been altered from the original sequence.
-    /// It is not intended to call this method on the LineImage.
-    /// </summary>
-    /// <param name="line"></param>
-    /// <param name="channels"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    
     public LineImage GetPixelLineData(long line, int[] channels)
     {
         if (line != 0)
@@ -79,12 +69,18 @@ public class LineImage : IImage
             throw new ArgumentOutOfRangeException(nameof(line), line, $"{line} can only be 0 for LineImage");
         }
 
-        return this;
+        throw new NotSupportedException("Getting LineImage from a LineImage is not supported!");
     }
-
+    
+    
     public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
     {
-        throw new NotImplementedException();
+        if (line != 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(line), line, $"{line} can only be 0 for LineImage");
+        }
+
+        throw new NotSupportedException("Getting LineImage from a LineImage is not supported!");
     }
 
     public void Dispose()
