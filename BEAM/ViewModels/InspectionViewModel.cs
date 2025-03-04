@@ -65,7 +65,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         if (KeepData) return;
         _pointerRectanglePosition = (pressedPoint, releasedPoint);
-        Plot result = _currentAnalysis.Analyze(pressedPoint, releasedPoint, _currentSequenceViewModel.Sequence);
+        var result = _currentAnalysis.Analyze(pressedPoint, releasedPoint, _currentSequenceViewModel.Sequence);
         CurrentPlot = result;
     }
 

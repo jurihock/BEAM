@@ -19,7 +19,7 @@ public class RegionAnalysisAverageOfChannels : Analysis
     private Coordinate2D _bottomRight;
     private int _amountChannels;
 
-    public override Plot Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint, ISequence sequence)
+    protected override Plot PerformAnalysis(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint, ISequence sequence)
     {
         using var _ = Timer.Start("Region analysis (avg of channels)");
         _topLeft =

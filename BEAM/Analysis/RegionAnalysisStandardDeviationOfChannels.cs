@@ -20,7 +20,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
     private Coordinate2D _bottomRight;
     private int _amountChannels;
 
-    public override Plot Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
+    protected override Plot PerformAnalysis(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
         ISequence sequence)
     {
         using var _ = Timer.Start("Region analysis (std deviation of channels)");
@@ -44,8 +44,6 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
             plot = PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
             plot.Title(Name);
             return plot;
-
-            //return PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
         }
 
         // Calculate the standard deviations and store them in _sumChannelsSquared
