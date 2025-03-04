@@ -2,6 +2,7 @@
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
 using BEAM.Profiling;
+using BEAM.ViewModels;
 using ScottPlot;
 
 namespace BEAM.Analysis;
@@ -20,8 +21,8 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
     private Coordinate2D _bottomRight;
     private int _amountChannels;
 
-    protected override Plot PerformAnalysis(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
-        ISequence sequence)
+    protected override void PerformAnalysis(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
+        ISequence sequence, InspectionViewModel inspectionViewModel)
     {
         using var _ = Timer.Start("Region analysis (std deviation of channels)");
         _topLeft =
@@ -43,7 +44,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
 
             plot = PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
             plot.Title(Name);
-            return plot;
+            inspectionViewModel.CurrentPlot = plot;
         }
 
         // Calculate the standard deviations and store them in _sumChannelsSquared
@@ -51,7 +52,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
 
         plot = PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
         plot.Title(Name);
-        return plot;
+        inspectionViewModel.CurrentPlot = plot;
     }
 
 

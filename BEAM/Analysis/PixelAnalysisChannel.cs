@@ -1,5 +1,7 @@
-﻿using BEAM.Datatypes;
+﻿using Avalonia.Threading;
+using BEAM.Datatypes;
 using BEAM.ImageSequence;
+using BEAM.ViewModels;
 using ScottPlot;
 
 
@@ -10,13 +12,19 @@ public class PixelAnalysisChannel : Analysis
 
     private const string Name = "Pixel Channel Analysis";
 
-    protected override Plot PerformAnalysis(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint, ISequence sequence)
-    {
-        double[] channels = sequence.GetPixel((long)pointerPressedPoint.Column, (long)pointerReleasedPoint.Row);
+    private double[] _channels = [];
 
-        Plot plot = PlotCreator.CreateFormattedBarPlot(channels);
-        plot.Title(Name);
-        return plot;
+    protected override void PerformAnalysis(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
+        ISequence sequence, InspectionViewModel inspectionViewModel)
+    {
+        _channels = sequence.GetPixel((long)pointerPressedPoint.Column, (long)pointerReleasedPoint.Row);
+
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            var plot = PlotCreator.CreateFormattedBarPlot(_channels);
+            plot.Title(Name);
+            inspectionViewModel.CurrentPlot = plot;
+        });
     }
 
     public override string ToString()

@@ -2,6 +2,7 @@
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
 using BEAM.Profiling;
+using BEAM.ViewModels;
 using ScottPlot;
 
 namespace BEAM.Analysis;
@@ -19,7 +20,8 @@ public class RegionAnalysisAverageOfChannels : Analysis
     private Coordinate2D _bottomRight;
     private int _amountChannels;
 
-    protected override Plot PerformAnalysis(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint, ISequence sequence)
+    protected override void PerformAnalysis(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
+        ISequence sequence, InspectionViewModel inspectionViewModel)
     {
         using var _ = Timer.Start("Region analysis (avg of channels)");
         _topLeft =
@@ -37,7 +39,7 @@ public class RegionAnalysisAverageOfChannels : Analysis
 
         Plot plot = PlotCreator.CreateFormattedBarPlot(_sumChannels);
         plot.Title(Name);
-        return plot;
+        inspectionViewModel.CurrentPlot = plot;
     }
 
 

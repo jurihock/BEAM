@@ -65,8 +65,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         if (KeepData) return;
         _pointerRectanglePosition = (pressedPoint, releasedPoint);
-        var result = _currentAnalysis.Analyze(pressedPoint, releasedPoint, _currentSequenceViewModel.Sequence);
-        CurrentPlot = result;
+        _currentAnalysis.Analyze(pressedPoint, releasedPoint, _currentSequenceViewModel.Sequence, this);
     }
 
 
@@ -95,10 +94,10 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         }
 
         _currentAnalysis = AnalysisList[index];
-        CurrentPlot = _currentAnalysis.Analyze(
+        _currentAnalysis.Analyze(
             _pointerRectanglePosition.pressed,
             _pointerRectanglePosition.released,
-            _currentSequenceViewModel.Sequence);
+            _currentSequenceViewModel.Sequence, this);
         return Task.CompletedTask;
     }
 
@@ -145,9 +144,6 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             }
         }
     }
-
-
-
 
     /// <summary>
     /// This method will simply switch to the first sequence in the list of existing sequences.
