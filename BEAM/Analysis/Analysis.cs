@@ -1,8 +1,10 @@
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
 using BEAM.ViewModels;
+using NP.Concepts.Behaviors;
 using ScottPlot;
 
 namespace BEAM.Analysis;
@@ -25,7 +27,11 @@ public abstract class Analysis
     public void Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint, ISequence sequence,
         InspectionViewModel inspectionViewModel)
     {
-        Task.Run(() => PerformAnalysis(pointerPressedPoint, pointerReleasedPoint, sequence, inspectionViewModel));
+        Task.Run(() =>
+        {
+            PerformAnalysis(pointerPressedPoint, pointerReleasedPoint, sequence, inspectionViewModel);
+            SetPlot(inspectionViewModel);
+        });
     }
 
     /// <summary>
@@ -40,4 +46,19 @@ public abstract class Analysis
         ISequence sequence, InspectionViewModel inspectionViewModel);
 
     public abstract override string ToString();
+
+    protected abstract Plot GetAnalysisPlot();
+
+    /// <summary>
+    /// Called by the asyncronous threads to update the plot in the InspectionViewModel
+    /// </summary>
+    /// <param name="inspectionViewModel"></param>
+    protected async void SetPlot(InspectionViewModel inspectionViewModel)
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            var plot = GetAnalysisPlot();
+            inspectionViewModel.CurrentPlot = plot;
+        });
+    }
 }

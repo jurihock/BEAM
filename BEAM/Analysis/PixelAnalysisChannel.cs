@@ -18,13 +18,13 @@ public class PixelAnalysisChannel : Analysis
         ISequence sequence, InspectionViewModel inspectionViewModel)
     {
         _channels = sequence.GetPixel((long)pointerPressedPoint.Column, (long)pointerReleasedPoint.Row);
+    }
 
-        Dispatcher.UIThread.Post(() =>
-        {
-            var plot = PlotCreator.CreateFormattedBarPlot(_channels);
-            plot.Title(Name);
-            inspectionViewModel.CurrentPlot = plot;
-        });
+    protected override Plot GetAnalysisPlot()
+    {
+        var plot = PlotCreator.CreateFormattedBarPlot(_channels);
+        plot.Title(Name);
+        return plot;
     }
 
     public override string ToString()

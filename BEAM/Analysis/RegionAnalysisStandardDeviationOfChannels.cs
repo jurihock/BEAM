@@ -41,20 +41,19 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
         if (Math.Abs(_AmountPixels() - 1) < 0.001)
         {
             _sumChannelsSquared = new double[_amountChannels];
-
-            plot = PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
-            plot.Title(Name);
-            inspectionViewModel.CurrentPlot = plot;
+            return;
         }
 
         // Calculate the standard deviations and store them in _sumChannelsSquared
         _CalculateResult(sequence);
-
-        plot = PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
-        plot.Title(Name);
-        inspectionViewModel.CurrentPlot = plot;
     }
 
+    protected override Plot GetAnalysisPlot()
+    {
+        var plot = PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
+        plot.Title(Name);
+        return plot;
+    }
 
     /// <summary>
     /// Calculates the standard deviation of the channels in the region and stores the result in _sumChannelsSquared

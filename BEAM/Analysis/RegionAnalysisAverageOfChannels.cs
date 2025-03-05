@@ -36,13 +36,14 @@ public class RegionAnalysisAverageOfChannels : Analysis
 
         // Calculate the average and store them in _sumChannels
         _CalculateResult(sequence);
-
-        Plot plot = PlotCreator.CreateFormattedBarPlot(_sumChannels);
-        plot.Title(Name);
-        inspectionViewModel.CurrentPlot = plot;
     }
 
-
+    protected override Plot GetAnalysisPlot()
+    {
+        var plot = PlotCreator.CreateFormattedBarPlot(_sumChannels);
+        plot.Title(Name);
+        return plot;
+    }
 
     /// <summary>
     /// Calculates the average of the channels in the region and stores the result in _sumChannels
