@@ -32,6 +32,11 @@ public class PixelAnalysisChannel : Analysis
         return plot;
     }
 
+    public override AnalysisTypes GetAnalysisType()
+    {
+        return AnalysisTypes.PixelAnalysisChannel;
+    }
+
     public override string ToString()
     {
         return Name;

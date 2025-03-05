@@ -54,6 +54,11 @@ public class RegionAnalysisAverageOfChannels : Analysis
         return plot;
     }
 
+    public override AnalysisTypes GetAnalysisType()
+    {
+        return AnalysisTypes.RegionAnalysisAverageOfChannels;
+    }
+
     /// <summary>
     /// Calculates the average of the channels in the region and stores the result in _sumChannels
     /// </summary>

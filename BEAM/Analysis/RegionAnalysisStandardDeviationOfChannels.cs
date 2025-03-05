@@ -59,6 +59,11 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
         return plot;
     }
 
+    public override AnalysisTypes GetAnalysisType()
+    {
+        return AnalysisTypes.RegionAnalysisStandardDeviationOfChannels;
+    }
+
     /// <summary>
     /// Calculates the standard deviation of the channels in the region and stores the result in _sumChannelsSquared
     /// </summary>

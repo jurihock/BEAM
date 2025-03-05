@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ScottPlot;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BEAM.Views;
@@ -49,16 +50,19 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     private (Coordinate2D pressed, Coordinate2D released) _pointerRectanglePosition;
     public ObservableCollection<SequenceViewModel> ExistingSequenceViewModels { get; private set; } = new();
 
-    public static List<Analysis.Analysis> AnalysisList { get; } =
-    [
-        new PixelAnalysisChannel(),
-        new RegionAnalysisStandardDeviationOfChannels(),
-        new RegionAnalysisAverageOfChannels()
-    ];
+    /// <summary>
+    /// Used for display of all options of AnalysisLists.
+    /// </summary>
+    public static List<Analysis.Analysis> AnalysisList { get; } = Analysis.Analysis.GetAllAnalysis();
+    // [
+    //     new PixelAnalysisChannel(),
+    //     new RegionAnalysisStandardDeviationOfChannels(),
+    //     new RegionAnalysisAverageOfChannels()
+    // ];
 
     public InspectionViewModel(SequenceViewModel sequenceViewModel, DockingViewModel dock)
     {
-        _currentAnalysis = AnalysisList[0];
+        _currentAnalysis = Analysis.Analysis.GetAnalysis(0);
         _currentSequenceViewModel = sequenceViewModel;
         ProgressWindow = new AnalysisProgressWindow(this);
         dock.Items.CollectionChanged += DockingItemsChanged;
@@ -145,11 +149,12 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         AnalysisRunning = false;
         AnalysisProgress = 0;
-        if (ProgressWindow is not null && ProgressWindow.IsVisible)
+        if (ProgressWindow.IsVisible)
         {
             ProgressWindow.Close();
         }
     }
+
 
     /// <summary>
     /// Creates a new Inspection window
@@ -173,13 +178,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             return Task.FromResult(false);
         }
 
-        _currentAnalysis = AnalysisList[index];
-        _currentAnalysis.Analyze(
-            _pointerRectanglePosition.pressed,
-            _pointerRectanglePosition.released,
-            _currentSequenceViewModel.Sequence, 
-            this, 
-            _cancellationTokenSource.Token);
+        _currentAnalysis = Analysis.Analysis.GetAnalysis((AnalysisTypes)index);
         return Task.CompletedTask;
     }
 
@@ -258,7 +257,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 
     public int CurrentAnalysisIndex()
     {
-        return AnalysisList.FindIdx(_currentAnalysis);
+        return (int)_currentAnalysis.GetAnalysisType();
     }
 
     public void Dispose()

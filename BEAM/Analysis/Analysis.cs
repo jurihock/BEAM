@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.Tracing;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
@@ -87,5 +89,26 @@ public abstract class Analysis
     protected static void SetProgress(InspectionViewModel inspectionViewModel, byte progress)
     {
         Dispatcher.UIThread.Post(() => inspectionViewModel.AnalysisProgress = progress);
+    }
+    
+    public abstract AnalysisTypes GetAnalysisType();
+    
+    
+    public static Analysis GetAnalysis(AnalysisTypes type)
+    {
+        return type switch
+        {
+            AnalysisTypes.PixelAnalysisChannel => new PixelAnalysisChannel(),
+            AnalysisTypes.RegionAnalysisAverageOfChannels => new RegionAnalysisAverageOfChannels(),
+            AnalysisTypes.RegionAnalysisStandardDeviationOfChannels => new RegionAnalysisStandardDeviationOfChannels(),
+            _ => throw new InvalidOperationException("Undefined AnalysisType referenced.")
+        };
+    }
+
+    public static List<Analysis> GetAllAnalysis()
+    {
+        List<Analysis> list = [];
+        list.AddRange(Enum.GetValues<AnalysisTypes>().Select(GetAnalysis));
+        return list;
     }
 }
