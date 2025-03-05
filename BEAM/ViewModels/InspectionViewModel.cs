@@ -35,6 +35,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             OnPropertyChanged();
         }
     }
+
     private AnalysisProgressWindow ProgressWindow { get; set; }
     
     private CancellationTokenSource _cancellationTokenSource = new();
@@ -59,6 +60,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         _currentAnalysis = AnalysisList[0];
         _currentSequenceViewModel = sequenceViewModel;
+        ProgressWindow = new AnalysisProgressWindow(this);
         dock.Items.CollectionChanged += DockingItemsChanged;
 
         foreach (var item in dock.Items)
@@ -101,12 +103,27 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 
     private void StartAnalysis(Coordinate2D pressedPoint, Coordinate2D releasedPoint)
     {
+        // Only display progress for more than 100 Pixels analysed.
+        if (amountPixels(pressedPoint, releasedPoint) > 100)
+        {
+            ProgressWindow = new AnalysisProgressWindow(this);
+            ProgressWindow.Show();
+        }
         AnalysisRunning = true;
-        ProgressWindow = new AnalysisProgressWindow(this);
-        ProgressWindow.Show();
         _pointerRectanglePosition = (pressedPoint, releasedPoint);
         _currentAnalysis.Analyze(pressedPoint, releasedPoint, _currentSequenceViewModel.Sequence,
             this, _cancellationTokenSource.Token);
+    }
+
+    /// <summary>
+    /// Calculate the amount of pixels encompassed by the rectangle parallel to the axes with these corners. 
+    /// </summary>
+    /// <param name="pressedPoint"></param>
+    /// <param name="releasedPoint"></param>
+    /// <returns></returns>
+    private double amountPixels(Coordinate2D pressedPoint, Coordinate2D releasedPoint)
+    {
+        return Math.Abs((pressedPoint.Column - releasedPoint.Column) * (pressedPoint.Row - releasedPoint.Row));
     }
 
     /// <summary>
@@ -128,7 +145,10 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         AnalysisRunning = false;
         AnalysisProgress = 0;
-        ProgressWindow.Close();
+        if (ProgressWindow is not null && ProgressWindow.IsVisible)
+        {
+            ProgressWindow.Close();
+        }
     }
 
     /// <summary>
