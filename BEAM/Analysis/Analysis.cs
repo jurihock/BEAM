@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -69,7 +68,7 @@ public abstract class Analysis
     /// Called by the asyncronous threads to update the plot in the InspectionViewModel
     /// </summary>
     /// <param name="inspectionViewModel"></param>
-    private async void SetPlot(InspectionViewModel inspectionViewModel)
+    private void SetPlot(InspectionViewModel inspectionViewModel)
     {
         Dispatcher.UIThread.Post(() =>
         {
@@ -79,10 +78,10 @@ public abstract class Analysis
         });
     }
 
-    protected void CheckAndCancelAnalysis(InspectionViewModel inspectionViewModel, CancellationToken token)
+    protected static void CheckAndCancelAnalysis(CancellationToken token)
     {
         if (!token.IsCancellationRequested) return;
-        Dispatcher.UIThread.Post(() => Models.Log.Logger.GetInstance().Warning(LogEvent.Analysis, "Analysis cancelled"));
+        Dispatcher.UIThread.Post(() => Logger.GetInstance().Warning(LogEvent.Analysis, "Analysis cancelled"));
         token.ThrowIfCancellationRequested();
     }
 

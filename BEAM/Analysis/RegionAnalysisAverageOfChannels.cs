@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Threading;
-using Avalonia.Logging;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
-using BEAM.Models.Log;
 using BEAM.ViewModels;
 using ScottPlot;
-using ScottPlot.ArrowShapes;
-using Double = System.Double;
+using Double = double;
 using Timer = BEAM.Profiling.Timer;
 
 namespace BEAM.Analysis;
@@ -82,7 +79,7 @@ public class RegionAnalysisAverageOfChannels : Analysis
             for (var column = _topLeft.Column; column <= _bottomRight.Column; column++)
             {
                 _UpdateWithPixel(sequence.GetPixel((long)column, (long)row));
-                CheckAndCancelAnalysis(_inspectionViewModel, _token);
+                CheckAndCancelAnalysis(_token);
 
                 // report progress to InspectionViewModel
                 counterToNextProgressDisplay--;

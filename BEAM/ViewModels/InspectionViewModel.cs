@@ -9,7 +9,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ScottPlot;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BEAM.Views;
@@ -25,7 +24,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 {
     [ObservableProperty] private Plot? _currentPlot;
 
-    private byte _analysisProgress = 0;
+    private byte _analysisProgress;
 
     public byte AnalysisProgress
     {
@@ -40,15 +39,14 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     private AnalysisProgressWindow ProgressWindow { get; set; }
     
     private CancellationTokenSource _cancellationTokenSource = new();
-    private bool AnalysisRunning = false;
+    private bool _analysisRunning;
     
     private bool KeepData { get; set; }
 
 
     private SequenceViewModel _currentSequenceViewModel;
     private Analysis.Analysis _currentAnalysis;
-    private (Coordinate2D pressed, Coordinate2D released) _pointerRectanglePosition;
-    public ObservableCollection<SequenceViewModel> ExistingSequenceViewModels { get; private set; } = new();
+    public ObservableCollection<SequenceViewModel> ExistingSequenceViewModels { get; } = [];
 
     /// <summary>
     /// Used for display of all options of AnalysisLists.
@@ -82,7 +80,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         _currentSequenceViewModel.UnregisterInspectionViewModel(this);
         
-        if (!AnalysisRunning) return;
+        if (!_analysisRunning) return;
         AbortAnalysis();
         ProgressWindow.Close();
     }
@@ -96,7 +94,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     public void Update(Coordinate2D pressedPoint, Coordinate2D releasedPoint)
     {
         if (KeepData) return;
-        if (AnalysisRunning)
+        if (_analysisRunning)
         {
             Models.Log.Logger.GetInstance().Warning(LogEvent.Analysis, "Analysis is already running.");
             return;
@@ -108,13 +106,12 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     private void StartAnalysis(Coordinate2D pressedPoint, Coordinate2D releasedPoint)
     {
         // Only display progress for more than 100 Pixels analysed.
-        if (amountPixels(pressedPoint, releasedPoint) > 100)
+        if (AmountPixels(pressedPoint, releasedPoint) > 100)
         {
             ProgressWindow = new AnalysisProgressWindow(this);
             ProgressWindow.Show();
         }
-        AnalysisRunning = true;
-        _pointerRectanglePosition = (pressedPoint, releasedPoint);
+        _analysisRunning = true;
         _currentAnalysis.Analyze(pressedPoint, releasedPoint, _currentSequenceViewModel.Sequence,
             this, _cancellationTokenSource.Token);
     }
@@ -125,7 +122,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     /// <param name="pressedPoint"></param>
     /// <param name="releasedPoint"></param>
     /// <returns></returns>
-    private double amountPixels(Coordinate2D pressedPoint, Coordinate2D releasedPoint)
+    private static double AmountPixels(Coordinate2D pressedPoint, Coordinate2D releasedPoint)
     {
         return Math.Abs((pressedPoint.Column - releasedPoint.Column) * (pressedPoint.Row - releasedPoint.Row));
     }
@@ -135,7 +132,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     /// </summary>
     public void AbortAnalysis()
     {
-        if (!AnalysisRunning) return;
+        if (!_analysisRunning) return;
         _cancellationTokenSource.Cancel();
         _cancellationTokenSource.Dispose();
         _cancellationTokenSource = new CancellationTokenSource();
@@ -147,7 +144,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     /// </summary>
     public void AnalysisEnded()
     {
-        AnalysisRunning = false;
+        _analysisRunning = false;
         AnalysisProgress = 0;
         if (ProgressWindow.IsVisible)
         {
@@ -178,7 +175,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             return Task.FromResult(false);
         }
 
-        if (AnalysisRunning)
+        if (_analysisRunning)
         {
             AbortAnalysis();
         }
@@ -269,5 +266,6 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         if (CurrentPlot is null) return;
         CurrentPlot.Dispose();
         GC.SuppressFinalize(this);
+        _cancellationTokenSource.Dispose();
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Threading;
-using Avalonia.Threading;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
 using BEAM.ViewModels;
