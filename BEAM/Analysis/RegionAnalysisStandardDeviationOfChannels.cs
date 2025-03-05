@@ -84,7 +84,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
             for (var column = _topLeft.Column; column <= _bottomRight.Column; column++)
             {
                 _UpdateWithPixel(sequence.GetPixel((long)column, (long)row));
-                _token.ThrowIfCancellationRequested();
+                CheckAndCancelAnalysis(_inspectionViewModel, _token);
 
                 // report progress to InspectionViewModel
                 counterToNextProgressDisplay--;

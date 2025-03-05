@@ -77,6 +77,13 @@ public abstract class Analysis
         });
     }
 
+    protected void CheckAndCancelAnalysis(InspectionViewModel inspectionViewModel, CancellationToken token)
+    {
+        if (!token.IsCancellationRequested) return;
+        Dispatcher.UIThread.Post(() => Models.Log.Logger.GetInstance().Warning(LogEvent.Analysis, "Analysis cancelled"));
+        token.ThrowIfCancellationRequested();
+    }
+
     protected static void SetProgress(InspectionViewModel inspectionViewModel, byte progress)
     {
         Dispatcher.UIThread.Post(() => inspectionViewModel.AnalysisProgress = progress);
