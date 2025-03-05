@@ -19,7 +19,7 @@ public class PixelAnalysisChannel : Analysis
     {
         _channels = sequence.GetPixel((long)pointerPressedPoint.Column, (long)pointerReleasedPoint.Row);
 
-        Dispatcher.UIThread.InvokeAsync(() =>
+        Dispatcher.UIThread.Post(() =>
         {
             var plot = PlotCreator.CreateFormattedBarPlot(_channels);
             plot.Title(Name);
