@@ -178,6 +178,10 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             return Task.FromResult(false);
         }
 
+        if (AnalysisRunning)
+        {
+            AbortAnalysis();
+        }
         _currentAnalysis = Analysis.Analysis.GetAnalysis((AnalysisTypes)index);
         return Task.CompletedTask;
     }
