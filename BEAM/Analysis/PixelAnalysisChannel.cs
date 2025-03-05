@@ -1,4 +1,5 @@
-﻿using Avalonia.Threading;
+﻿using System.Threading;
+using Avalonia.Threading;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
 using BEAM.ViewModels;
@@ -7,6 +8,10 @@ using ScottPlot;
 
 namespace BEAM.Analysis;
 
+
+/// <summary>
+/// Class for analyzing and displaying the channel values for a single pixel.
+/// </summary>
 public class PixelAnalysisChannel : Analysis
 {
 
@@ -15,7 +20,7 @@ public class PixelAnalysisChannel : Analysis
     private double[] _channels = [];
 
     protected override void PerformAnalysis(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
-        ISequence sequence, InspectionViewModel inspectionViewModel)
+        ISequence sequence, InspectionViewModel inspectionViewModel, CancellationToken cancellationToken)
     {
         _channels = sequence.GetPixel((long)pointerPressedPoint.Column, (long)pointerReleasedPoint.Row);
     }

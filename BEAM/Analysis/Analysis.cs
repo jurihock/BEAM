@@ -1,10 +1,12 @@
+using System;
+using System.Diagnostics.Tracing;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
+using BEAM.Models.Log;
 using BEAM.ViewModels;
-using NP.Concepts.Behaviors;
 using ScottPlot;
 
 namespace BEAM.Analysis;
@@ -24,14 +26,25 @@ public abstract class Analysis
     /// <param name="pointerReleasedPoint"></param>
     /// <param name="sequence"></param>
     /// <param name="inspectionViewModel"></param>
+    /// <param name="cancellationToken"></param>
     public void Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint, ISequence sequence,
-        InspectionViewModel inspectionViewModel)
+        InspectionViewModel inspectionViewModel, CancellationToken cancellationToken)
     {
-        Task.Run(() =>
+        try
         {
-            PerformAnalysis(pointerPressedPoint, pointerReleasedPoint, sequence, inspectionViewModel);
-            SetPlot(inspectionViewModel);
-        });
+            Task.Run(() =>
+            {
+                inspectionViewModel.AnalysisProgress = 0;
+                PerformAnalysis(pointerPressedPoint, pointerReleasedPoint, sequence, inspectionViewModel,
+                    cancellationToken);
+                SetPlot(inspectionViewModel);
+            }, cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            Logger.GetInstance().Warning(LogEvent.Analysis, "Analysis cancelled");
+            Dispatcher.UIThread.Post(inspectionViewModel.AnalysisEnded);
+        }
     }
 
     /// <summary>
@@ -41,9 +54,10 @@ public abstract class Analysis
     /// <param name="pointerReleasedPoint"></param>
     /// <param name="sequence"></param>
     /// <param name="inspectionViewModel"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns> A plot displaying the result of the Analysis.</returns>
     protected abstract void PerformAnalysis(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
-        ISequence sequence, InspectionViewModel inspectionViewModel);
+        ISequence sequence, InspectionViewModel inspectionViewModel, CancellationToken cancellationToken);
 
     public abstract override string ToString();
 
@@ -53,12 +67,18 @@ public abstract class Analysis
     /// Called by the asyncronous threads to update the plot in the InspectionViewModel
     /// </summary>
     /// <param name="inspectionViewModel"></param>
-    protected async void SetPlot(InspectionViewModel inspectionViewModel)
+    private async void SetPlot(InspectionViewModel inspectionViewModel)
     {
         Dispatcher.UIThread.Post(() =>
         {
             var plot = GetAnalysisPlot();
             inspectionViewModel.CurrentPlot = plot;
+            inspectionViewModel.AnalysisEnded();
         });
+    }
+
+    protected static void SetProgress(InspectionViewModel inspectionViewModel, byte progress)
+    {
+        Dispatcher.UIThread.Post(() => inspectionViewModel.AnalysisProgress = progress);
     }
 }

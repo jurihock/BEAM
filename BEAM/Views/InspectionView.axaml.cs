@@ -35,9 +35,11 @@ public partial class InspectionView : UserControl
         if (DataContext is not InspectionViewModel vm) return;
         SequencePicker.SelectedIndex = vm.CurrentSequenceIndex();
         AnalysisPicker.SelectedIndex = vm.CurrentAnalysisIndex();
-        vm.PropertyChanged += (_, _) =>
+        vm.PropertyChanged += (_, e) =>
         {
-            FillPlot(vm.CurrentPlot);
+            // Update the plot, if the plot changed and is not null
+            if (e.PropertyName != nameof(InspectionViewModel.CurrentPlot)) return;
+            if (vm.CurrentPlot != null) FillPlot(vm.CurrentPlot);
         };
         
         if (vm.CurrentPlot is null) return;

@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Threading;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
-using BEAM.Profiling;
 using BEAM.ViewModels;
 using ScottPlot;
+using ScottPlot.ArrowShapes;
+using Double = System.Double;
+using Timer = BEAM.Profiling.Timer;
 
 namespace BEAM.Analysis;
 
@@ -19,9 +22,11 @@ public class RegionAnalysisAverageOfChannels : Analysis
     private Coordinate2D _topLeft;
     private Coordinate2D _bottomRight;
     private int _amountChannels;
+    private InspectionViewModel? _inspectionViewModel;
+    private CancellationToken _token;
 
     protected override void PerformAnalysis(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
-        ISequence sequence, InspectionViewModel inspectionViewModel)
+        ISequence sequence, InspectionViewModel inspectionViewModel, CancellationToken cancellationToken)
     {
         using var _ = Timer.Start("Region analysis (avg of channels)");
         _topLeft =
@@ -33,6 +38,8 @@ public class RegionAnalysisAverageOfChannels : Analysis
                 (long)Math.Max(pointerPressedPoint.Column, pointerReleasedPoint.Column));
 
         _amountChannels = sequence.Shape.Channels;
+        _inspectionViewModel = inspectionViewModel;
+        _token = cancellationToken;
 
         // Calculate the average and store them in _sumChannels
         _CalculateResult(sequence);
@@ -52,6 +59,15 @@ public class RegionAnalysisAverageOfChannels : Analysis
     private void _CalculateResult(ISequence sequence)
     {
         _sumChannels = new double[_amountChannels];
+        var progressDisplayInterval = (_bottomRight.Row - _topLeft.Row) * (_bottomRight.Column - _topLeft.Column) / 100;
+        var counterToNextProgressDisplay = progressDisplayInterval;
+        
+        // if the analysed region has less than 100 pixels, do not display the progress
+        if (counterToNextProgressDisplay < 1) counterToNextProgressDisplay = Double.PositiveInfinity;
+        
+        // stores the current process as percentage based value (Progress = relative amount of pixels already visited)
+        byte currentProgress = 0;
+        SetProgress(_inspectionViewModel ?? throw new InvalidOperationException(), currentProgress);
 
         // fill _sumChannels(Squared) with the correct values given in the sequence
         for (var row = _topLeft.Row; row <= _bottomRight.Row; row++)
@@ -59,6 +75,14 @@ public class RegionAnalysisAverageOfChannels : Analysis
             for (var column = _topLeft.Column; column <= _bottomRight.Column; column++)
             {
                 _UpdateWithPixel(sequence.GetPixel((long)column, (long)row));
+                _token.ThrowIfCancellationRequested();
+
+                // report progress to InspectionViewModel
+                counterToNextProgressDisplay--;
+                if (counterToNextProgressDisplay > 0) continue;
+                currentProgress++;
+                counterToNextProgressDisplay = progressDisplayInterval;
+                SetProgress(_inspectionViewModel, currentProgress);
             }
         }
 
