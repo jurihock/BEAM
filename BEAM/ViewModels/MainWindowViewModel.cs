@@ -21,14 +21,31 @@ namespace BEAM.ViewModels;
 /// </summary>
 public partial class MainWindowViewModel : ViewModelBase
 {
-    [ObservableProperty] private string? _fileText;
-    [ObservableProperty] public partial DockingViewModel DockingVm { get; set; } = new();
+    [ObservableProperty] public partial string? FileText { get; set; }
 
+    /// <summary>
+    /// The view model for the docking manager.
+    /// Used for opening new docks.
+    /// </summary>
+    [ObservableProperty]
+    public partial DockingViewModel DockingVm { get; set; } = new();
 
+    /// <summary>
+    /// The height of the title bar.
+    /// </summary>
     public static int TitleBarHeight => 38;
 
+    /// <summary>
+    /// The controller for handling the synchronization of the open plots.
+    /// </summary>
     private SyncedPlotController? _syncedPlotController;
 
+    /// <summary>
+    /// Constructor for the main window view model.
+    ///
+    /// Initializes the synced plot controller for
+    /// handling the synchronization of the open plots.
+    /// </summary>
     public MainWindowViewModel()
     {
         _syncedPlotController = new SyncedPlotController();
@@ -36,6 +53,10 @@ public partial class MainWindowViewModel : ViewModelBase
         PlotControllerManager.RegisterController(_syncedPlotController);
     }
 
+    /// <summary>
+    /// Opens the file picker for a single file
+    /// and tries to open the selected file as a sequence.
+    /// </summary>
     [RelayCommand]
     private async Task OpenSequence()
     {
@@ -63,6 +84,10 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    /// Opens the folder picker and
+    /// tries to open the selected folder as a sequence.
+    /// </summary>
     [RelayCommand]
     private async Task OpenSequenceFromFolder()
     {
@@ -89,12 +114,18 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    /// Exits the application.
+    /// </summary>
     [RelayCommand]
     private void ExitBeam()
     {
         Environment.Exit(0);
     }
 
+    /// <summary>
+    /// Opens the folder picker and returns the Folder.
+    /// </summary>
     private static async Task<IStorageFolder?> OpenFolderPickerAsync()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
@@ -110,6 +141,9 @@ public partial class MainWindowViewModel : ViewModelBase
         return folder.Count >= 1 ? folder[0] : null;
     }
 
+    /// <summary>
+    /// Opens the file picker and returns the Files.
+    /// </summary>
     private static async Task<IReadOnlyList<IStorageFile>?> OpenFilePickerAsync()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
@@ -125,6 +159,9 @@ public partial class MainWindowViewModel : ViewModelBase
         return files;
     }
 
+    /// <summary>
+    /// Opens the status window.
+    /// </summary>
     [RelayCommand]
     private void OpenStatusWindow()
     {
@@ -132,6 +169,9 @@ public partial class MainWindowViewModel : ViewModelBase
         statusWindow.Show();
     }
 
+    /// <summary>
+    /// Opens the about window.
+    /// </summary> 
     [RelayCommand]
     private void OpenAboutWindow()
     {
@@ -146,6 +186,9 @@ public partial class MainWindowViewModel : ViewModelBase
         aboutWindow.ShowDialog(v.MainWindow);
     }
 
+    /// <summary>
+    /// starts the synchronization of the plots. (without resizing)
+    /// </summary>
     [RelayCommand]
     private void ActivateSynchronization()
     {
@@ -153,6 +196,9 @@ public partial class MainWindowViewModel : ViewModelBase
         ScrollingSynchronizerMapper.ActivateSynchronization();
     }
 
+    /// <summary>
+    /// stops the synchronization of the plots.
+    /// </summary>
     [RelayCommand]
     private void DeactivateSynchronization()
     {
