@@ -64,6 +64,10 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         _currentAnalysis = Analysis.Analysis.GetAnalysis(0);
         _currentSequenceViewModel = sequenceViewModel;
+        _currentSequenceViewModel.CloseEvent += (sender, args) =>
+        {
+            if (sender is SequenceViewModel) {this.AbortAnalysis();}
+        } ;
         ProgressWindow = new AnalysisProgressWindow(this);
         dock.Items.CollectionChanged += DockingItemsChanged;
 
@@ -81,10 +85,14 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     public void OnClose()
     {
         _currentSequenceViewModel.UnregisterInspectionViewModel(this);
-        
-        if (!_analysisRunning) return;
-        AbortAnalysis();
-        ProgressWindow.Close();
+        _cancellationTokenSource.Cancel();
+        if (_analysisRunning)
+        {
+            AbortAnalysis();
+            ProgressWindow.Close();
+        }
+        _cancellationTokenSource.Dispose();
+        _cancellationTokenSource = new CancellationTokenSource();
     }
 
     /// <summary>
@@ -132,10 +140,19 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     /// <summary>
     /// Stops the currently running Analysis
     /// </summary>
-    public void AbortAnalysis()
+    public async void AbortAnalysis()
     {
         if (!_analysisRunning) return;
-        _cancellationTokenSource.Cancel();
+        await _cancellationTokenSource.CancelAsync();
+        try
+        {
+            await _currentAnalysis.CurrentTask;
+        }
+        catch (OperationCanceledException)
+        {
+            Models.Log.Logger.GetInstance().Warning(LogEvent.Analysis, "Analysis cancelled");
+            AnalysisEnded();
+        }
         _cancellationTokenSource.Dispose();
         _cancellationTokenSource = new CancellationTokenSource();
         AnalysisEnded();
@@ -268,6 +285,6 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         if (CurrentPlot is null) return;
         CurrentPlot.Dispose();
         GC.SuppressFinalize(this);
-        _cancellationTokenSource.Dispose();
+        //_cancellationTokenSource.Dispose();
     }
 }

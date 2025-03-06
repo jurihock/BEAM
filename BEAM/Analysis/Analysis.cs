@@ -18,6 +18,8 @@ namespace BEAM.Analysis;
 /// </summary>
 public abstract class Analysis
 {
+    public Task CurrentTask = Task.CompletedTask;
+    
     /// <summary>
     /// Analyses the sequence in the rectangle encompassed by the rectangle parallel to the axes and the points
     /// pointerPressedPoint and pointerReleasedPoint at its edges. The created plot is stored in targetPlot
@@ -31,21 +33,13 @@ public abstract class Analysis
     public void Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint, ISequence sequence,
         InspectionViewModel inspectionViewModel, CancellationToken cancellationToken)
     {
-        try
+        CurrentTask = Task.Run(() =>
         {
-            Task.Run(() =>
-            {
-                inspectionViewModel.AnalysisProgress = 0;
-                PerformAnalysis(pointerPressedPoint, pointerReleasedPoint, sequence, inspectionViewModel,
-                    cancellationToken);
-                SetPlot(inspectionViewModel);
-            }, cancellationToken);
-        }
-        catch (OperationCanceledException)
-        {
-            Logger.GetInstance().Warning(LogEvent.Analysis, "Analysis cancelled");
-            Dispatcher.UIThread.Post(inspectionViewModel.AnalysisEnded);
-        }
+            inspectionViewModel.AnalysisProgress = 0;
+            PerformAnalysis(pointerPressedPoint, pointerReleasedPoint, sequence, inspectionViewModel,
+                cancellationToken);
+            SetPlot(inspectionViewModel);
+        }, cancellationToken);
     }
 
     /// <summary>
@@ -81,13 +75,12 @@ public abstract class Analysis
     protected static void CheckAndCancelAnalysis(CancellationToken token)
     {
         if (!token.IsCancellationRequested) return;
-        Dispatcher.UIThread.Post(() => Logger.GetInstance().Warning(LogEvent.Analysis, "Analysis cancelled"));
         token.ThrowIfCancellationRequested();
     }
 
     protected static void SetProgress(InspectionViewModel inspectionViewModel, byte progress)
     {
-        Dispatcher.UIThread.Post(() => inspectionViewModel.AnalysisProgress = progress);
+        inspectionViewModel.AnalysisProgress = progress;
     }
     
     public abstract AnalysisTypes GetAnalysisType();
