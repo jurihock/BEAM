@@ -46,6 +46,8 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 
     private SequenceViewModel _currentSequenceViewModel;
     private Analysis.Analysis _currentAnalysis;
+    public string CurrentAnalysisName => _currentAnalysis.ToString();
+
     public ObservableCollection<SequenceViewModel> ExistingSequenceViewModels { get; } = [];
 
     /// <summary>

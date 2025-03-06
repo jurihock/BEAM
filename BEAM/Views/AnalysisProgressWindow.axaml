@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:DataType="viewModels:InspectionViewModel"
         x:Class="BEAM.Views.AnalysisProgressWindow"
-        Title="BEAM - Analyzing"
+        Title="{Binding CurrentAnalysisName}"
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterOwner"
         CanResize="False"
