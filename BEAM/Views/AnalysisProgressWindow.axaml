@@ -6,16 +6,17 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:DataType="viewModels:InspectionViewModel"
         x:Class="BEAM.Views.AnalysisProgressWindow"
-        Title="{Binding CurrentAnalysisName}"
+        Title="Analysis"
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterOwner"
         CanResize="False"
         Background="{DynamicResource WindowBg}">
 
     <StackPanel Margin="20">
-            <ProgressBar Margin="0 10" Height="20"
-                         Minimum="0" Maximum="100" Value="{Binding AnalysisProgress}"
-                         ShowProgressText="True"/>
+        <TextBlock Margin = "0 10" Height="20" Text="{Binding CurrentAnalysisName}"/>
+        <ProgressBar Margin="0 10" Height="20"
+                     Minimum="0" Maximum="100" Value="{Binding AnalysisProgress}"
+                     ShowProgressText="True"/>
             <Button HorizontalAlignment="Center" Command="{Binding AbortAnalysis}">Abort</Button>
     </StackPanel>
 </Window>
