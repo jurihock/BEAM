@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia.Media;
+using BEAM.Models.Log;
 using BEAM.Renderer;
 using BEAM.ViewModels;
 
@@ -66,7 +67,12 @@ public class ArgMaxHSVConfigControlViewModel : ViewModelBase, ISaveControl
         var map = new ChannelHSVMap(ObsChannels.ToArray());
         if (map.GetAmountUsedChannels() == 0)
         {
-            // throw exception for logging
+            // Initiliaze ArgMaxRenderer correctly, if not happened yet
+            if (_renderer.GetChannelHsvMap().AmountChannels == 0)
+            {
+                _renderer.UpdateChannelHSVMap(new ChannelHSVMap(map.AmountChannels).ToArray());
+            }
+            Logger.GetInstance().Warning(LogEvent.Rendering, "No Channel selected for ArgMaxRenderer.");
             return;
         }
 
