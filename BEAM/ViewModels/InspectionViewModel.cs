@@ -54,11 +54,6 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     /// Used for display of all options of AnalysisLists.
     /// </summary>
     public static List<Analysis.Analysis> AnalysisList { get; } = Analysis.Analysis.GetAllAnalysis();
-    // [
-    //     new PixelAnalysisChannel(),
-    //     new RegionAnalysisStandardDeviationOfChannels(),
-    //     new RegionAnalysisAverageOfChannels()
-    // ];
 
     public InspectionViewModel(SequenceViewModel sequenceViewModel, DockingViewModel dock)
     {
