@@ -59,7 +59,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     {
         _currentAnalysis = Analysis.Analysis.GetAnalysis(0);
         _currentSequenceViewModel = sequenceViewModel;
-        _currentSequenceViewModel.CloseEvent += (sender, args) =>
+        _currentSequenceViewModel.CloseEvent += (sender, _) =>
         {
             if (sender is SequenceViewModel) {this.AbortAnalysis();}
         } ;
