@@ -255,7 +255,7 @@ public static class PlotCreator
             float angle = (i * 20);
             var el = plot.Add.Ellipse(center, radiusX, radiusY, angle);
             el.LineWidth = 3;
-            el.LineColor = new Color(barColor.R, barColor.G, barColor.B).WithAlpha(0.1 + 0.2 * i);
+            el.LineColor = new Color(lineColor.R, lineColor.G, lineColor.B).WithAlpha(0.1 + 0.2 * i);
         }
 
         // Set limit of X- and Y-Axis
