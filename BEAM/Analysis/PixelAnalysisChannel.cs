@@ -19,7 +19,7 @@ public class PixelAnalysisChannel : Analysis
     private double[] _channels = [];
 
     protected override void PerformAnalysis(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
-        ISequence sequence, InspectionViewModel inspectionViewModel, CancellationToken cancellationToken)
+        ISequence sequence, CancellationToken cancellationToken)
     {
         _channels = sequence.GetPixel((long)pointerPressedPoint.Column, (long)pointerReleasedPoint.Row);
     }

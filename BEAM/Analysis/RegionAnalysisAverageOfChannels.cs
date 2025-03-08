@@ -21,11 +21,10 @@ public class RegionAnalysisAverageOfChannels : Analysis
     private Coordinate2D _topLeft;
     private Coordinate2D _bottomRight;
     private int _amountChannels;
-    private InspectionViewModel? _inspectionViewModel;
     private CancellationToken _token;
 
     protected override void PerformAnalysis(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
-        ISequence sequence, InspectionViewModel inspectionViewModel, CancellationToken cancellationToken)
+        ISequence sequence, CancellationToken cancellationToken)
     {
         using var _ = Timer.Start("Region analysis (avg of channels)");
         _topLeft =
@@ -37,7 +36,6 @@ public class RegionAnalysisAverageOfChannels : Analysis
                 (long)Math.Max(pointerPressedPoint.Column, pointerReleasedPoint.Column));
 
         _amountChannels = sequence.Shape.Channels;
-        _inspectionViewModel = inspectionViewModel;
         _token = cancellationToken;
 
         // Calculate the average and store them in _sumChannels
@@ -71,7 +69,7 @@ public class RegionAnalysisAverageOfChannels : Analysis
         
         // stores the current process as percentage based value (Progress = relative amount of pixels already visited)
         byte currentProgress = 0;
-        SetProgress(_inspectionViewModel ?? throw new InvalidOperationException(), currentProgress);
+        SetProgress(BoundInspectionViewModel, currentProgress);
 
         // fill _sumChannels(Squared) with the correct values given in the sequence
         for (var row = _topLeft.Row; row <= _bottomRight.Row; row++)
@@ -86,7 +84,7 @@ public class RegionAnalysisAverageOfChannels : Analysis
                 if (counterToNextProgressDisplay > 0) continue;
                 currentProgress++;
                 counterToNextProgressDisplay = progressDisplayInterval;
-                SetProgress(_inspectionViewModel, currentProgress);
+                SetProgress(BoundInspectionViewModel, currentProgress);
             }
         }
 

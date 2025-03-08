@@ -20,6 +20,8 @@ public abstract class Analysis
 {
     public Task CurrentTask = Task.CompletedTask;
     
+    protected InspectionViewModel? BoundInspectionViewModel;
+    
     /// <summary>
     /// Analyses the sequence in the rectangle encompassed by the rectangle parallel to the axes and the points
     /// pointerPressedPoint and pointerReleasedPoint at its edges. The created plot is stored in targetPlot
@@ -33,13 +35,22 @@ public abstract class Analysis
     public void Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint, ISequence sequence,
         InspectionViewModel inspectionViewModel, CancellationToken cancellationToken)
     {
+        BoundInspectionViewModel = inspectionViewModel;
         CurrentTask = Task.Run(() =>
         {
             inspectionViewModel.AnalysisProgress = 0;
-            PerformAnalysis(pointerPressedPoint, pointerReleasedPoint, sequence, inspectionViewModel,
+            PerformAnalysis(pointerPressedPoint, pointerReleasedPoint, sequence,
                 cancellationToken);
             SetPlot(inspectionViewModel);
         }, cancellationToken);
+    }
+
+    public Plot AnalyzeforPlot(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
+        ISequence sequence)
+    {
+        BoundInspectionViewModel = null;
+        PerformAnalysis(pointerPressedPoint, pointerReleasedPoint, sequence, new CancellationToken());
+        return GetAnalysisPlot();
     }
 
     /// <summary>
@@ -48,11 +59,10 @@ public abstract class Analysis
     /// <param name="pointerPressedPoint"></param>
     /// <param name="pointerReleasedPoint"></param>
     /// <param name="sequence"></param>
-    /// <param name="inspectionViewModel"></param>
     /// <param name="cancellationToken"></param>
     /// <returns> A plot displaying the result of the Analysis.</returns>
     protected abstract void PerformAnalysis(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
-        ISequence sequence, InspectionViewModel inspectionViewModel, CancellationToken cancellationToken);
+        ISequence sequence, CancellationToken cancellationToken);
 
     public abstract override string ToString();
 
@@ -78,8 +88,14 @@ public abstract class Analysis
         token.ThrowIfCancellationRequested();
     }
 
-    protected static void SetProgress(InspectionViewModel inspectionViewModel, byte progress)
+    /// <summary>
+    /// Updates the current progress in the inspectionViewModel of the current analysis.
+    /// </summary>
+    /// <param name="inspectionViewModel"></param>
+    /// <param name="progress"></param>
+    protected void SetProgress(InspectionViewModel? inspectionViewModel, byte progress)
     {
+        if (inspectionViewModel is null) return;
         inspectionViewModel.AnalysisProgress = progress;
     }
     

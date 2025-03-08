@@ -21,11 +21,10 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
     private Coordinate2D _topLeft;
     private Coordinate2D _bottomRight;
     private int _amountChannels;
-    private InspectionViewModel? _inspectionViewModel;
     private CancellationToken _token;
 
     protected override void PerformAnalysis(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
-        ISequence sequence, InspectionViewModel inspectionViewModel, CancellationToken cancellationToken)
+        ISequence sequence, CancellationToken cancellationToken)
     {
         using var _ = Timer.Start("Region analysis (std deviation of channels)");
         _topLeft =
@@ -38,7 +37,6 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
 
         _amountChannels = sequence.Shape.Channels;
 
-        _inspectionViewModel = inspectionViewModel;
         _token = cancellationToken;
 
         // Catch trivial case of only one pixel selected
@@ -81,7 +79,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
         
         // stores the current process as percentage based value (Progress = relative amount of pixels already visited)
         byte currentProgress = 0;
-        SetProgress(_inspectionViewModel ?? throw new InvalidOperationException(), currentProgress);
+        SetProgress(BoundInspectionViewModel, currentProgress);
 
         // fill _sumChannels(Squared) with the correct values given in the sequence
         for (var row = _topLeft.Row; row <= _bottomRight.Row; row++)
@@ -96,7 +94,7 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
                 if (counterToNextProgressDisplay > 0) continue;
                 currentProgress++;
                 counterToNextProgressDisplay = progressDisplayInterval;
-                SetProgress(_inspectionViewModel, currentProgress);
+                SetProgress(BoundInspectionViewModel, currentProgress);
             }
         }
 

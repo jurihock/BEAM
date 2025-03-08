@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Styling;
 using ScottPlot;
 using ScottPlot.AxisRules;
+using Colors = Avalonia.Media.Colors;
 
 namespace BEAM.Analysis;
 
@@ -23,25 +24,34 @@ public static class PlotCreator
         Plot plot = new Plot();
 
         var currentTheme = Application.Current?.ActualThemeVariant ?? ThemeVariant.Default;
+        Avalonia.Media.Color fontColor;
+        
+        try
+        {
+            // change figure colors
+            Application.Current!.TryGetResource("WindowBg", currentTheme, out var background);
+            var backgroundColor = (Avalonia.Media.Color)background!;
+            plot.FigureBackground.Color = new Color(backgroundColor.R, backgroundColor.G, backgroundColor.B);
 
-        // change figure colors
-        Application.Current!.TryGetResource("WindowBg", currentTheme, out var background);
-        var backgroundColor = (Avalonia.Media.Color)background!;
-        plot.FigureBackground.Color = new Color(backgroundColor.R, backgroundColor.G, backgroundColor.B);
+            Application.Current.TryGetResource("BackgroundColorDark", currentTheme, out var backgroundDark);
+            var backgroundColorDark = (Avalonia.Media.Color)backgroundDark!;
+            plot.DataBackground.Color =
+                new Color(backgroundColorDark.R, backgroundColorDark.G, backgroundColorDark.B);
 
-        Application.Current.TryGetResource("BackgroundColorDark", currentTheme, out var backgroundDark);
-        var backgroundColorDark = (Avalonia.Media.Color)backgroundDark!;
-        plot.DataBackground.Color =
-            new Color(backgroundColorDark.R, backgroundColorDark.G, backgroundColorDark.B);
+            // change axis and grid colors
+            Application.Current.TryGetResource("FontColor", currentTheme, out var fontColorScottPlot);
+            fontColor = (Avalonia.Media.Color)fontColorScottPlot!;
+            plot.Axes.Color(new Color(fontColor.R, fontColor.G, fontColor.B));
 
-        // change axis and grid colors
-        Application.Current.TryGetResource("FontColor", currentTheme, out var fontColorScottPlot);
-        var fontColor = (Avalonia.Media.Color)fontColorScottPlot!;
-        plot.Axes.Color(new Color(fontColor.R, fontColor.G, fontColor.B));
-
-        Application.Current.TryGetResource("Separator", currentTheme, out var majorLines);
-        var majorLineColor = (Avalonia.Media.Color)majorLines!;
-        plot.Grid.MajorLineColor = new Color(majorLineColor.R, majorLineColor.G, majorLineColor.B);
+            Application.Current.TryGetResource("Separator", currentTheme, out var majorLines);
+            var majorLineColor = (Avalonia.Media.Color)majorLines!;
+            plot.Grid.MajorLineColor = new Color(majorLineColor.R, majorLineColor.G, majorLineColor.B);
+        }
+        catch (NullReferenceException) // for testing, the App.axaml resources are null
+        {
+            plot.Add.Bars(values);
+            return plot;
+        }
 
         var barPlot = plot.Add.Bars(values);
 
