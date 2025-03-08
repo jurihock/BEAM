@@ -246,16 +246,16 @@ public static class PlotCreator
         SetGridLineColor(plot);
 
         Coordinates center = new(0, 0);
-        double radiusX = 0.04;
-        double radiusY = 0.2;
+        double radiusX = 1;
+        double radiusY = 5;
         var lineColor = GetAccentcolor();
 
-        for (int i = 0; i < 5; i++)
+        for (var i = 0; i < 5; i++)
         {
             float angle = (i * 20);
             var el = plot.Add.Ellipse(center, radiusX, radiusY, angle);
             el.LineWidth = 3;
-            el.LineColor = new Color(lineColor.R, lineColor.G, lineColor.B).WithAlpha(0.1 + 0.2 * i);
+            el.LineColor = new Color(lineColor.R, lineColor.G, lineColor.B).WithAlpha(1 - 0.2 * i);
         }
 
         // Set limit of X- and Y-Axis
@@ -276,7 +276,6 @@ public static class PlotCreator
         plot.Axes.Rules.Add(maximumBoundary);
 
         plot.Layout.Frameless();
-        plot.Axes.Margins(0, 0);
         plot.Title("No sequence selected");
         return plot;
     }
