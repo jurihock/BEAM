@@ -3,8 +3,10 @@ using System;
 using System.Linq;
 using Avalonia;
 using Avalonia.Styling;
+using BEAM.Datatypes.Color;
 using ScottPlot;
 using ScottPlot.AxisRules;
+using ScottPlot.Plottables;
 using Colors = Avalonia.Media.Colors;
 
 namespace BEAM.Analysis;
@@ -14,66 +16,143 @@ namespace BEAM.Analysis;
 /// </summary>
 public static class PlotCreator
 {
-    /// <summary>
-    /// Creates a formatted bar plot, preventing scrolling to far in / out in regard to the given data.
-    /// </summary>
-    /// <param name="values"></param>
-    /// <returns></returns>
-    public static Plot CreateFormattedBarPlot(double[] values)
+    private static void SetFigureBackgroundColor(Plot plot)
     {
-        Plot plot = new Plot();
-
+        Avalonia.Media.Color backgroundColor;
         var currentTheme = Application.Current?.ActualThemeVariant ?? ThemeVariant.Default;
-        Avalonia.Media.Color fontColor;
-        
+
         try
         {
-            // change figure colors
             Application.Current!.TryGetResource("WindowBg", currentTheme, out var background);
-            var backgroundColor = (Avalonia.Media.Color)background!;
-            plot.FigureBackground.Color = new Color(backgroundColor.R, backgroundColor.G, backgroundColor.B);
+            backgroundColor = (Avalonia.Media.Color)background!;
+        }
+        catch (NullReferenceException)
+        {
+            backgroundColor = Colors.White;
+        }
+        
+        plot.FigureBackground.Color = new Color(backgroundColor.R, backgroundColor.G, backgroundColor.B);
+    }
+    
+    private static void SetBackgroundColor(Plot plot)
+    {
+        Avalonia.Media.Color backgroundColor;
+        var currentTheme = Application.Current?.ActualThemeVariant ?? ThemeVariant.Default;
 
-            Application.Current.TryGetResource("BackgroundColorDark", currentTheme, out var backgroundDark);
-            var backgroundColorDark = (Avalonia.Media.Color)backgroundDark!;
-            plot.DataBackground.Color =
-                new Color(backgroundColorDark.R, backgroundColorDark.G, backgroundColorDark.B);
+        try
+        {
+            Application.Current!.TryGetResource("BackgroundColorDark", currentTheme, out var background);
+            backgroundColor = (Avalonia.Media.Color)background!;
+        }
+        catch (NullReferenceException)
+        {
+            backgroundColor = Colors.Gray;
+        }
 
-            // change axis and grid colors
-            Application.Current.TryGetResource("FontColor", currentTheme, out var fontColorScottPlot);
+        plot.DataBackground.Color = new Color(backgroundColor.R, backgroundColor.G, backgroundColor.B);
+    }
+
+    private static void SetAxesAndFontColor(Plot plot)
+    {
+        Avalonia.Media.Color fontColor;
+        var currentTheme = Application.Current?.ActualThemeVariant ?? ThemeVariant.Default;
+
+        try
+        {
+            Application.Current!.TryGetResource("FontColor", currentTheme, out var fontColorScottPlot);
             fontColor = (Avalonia.Media.Color)fontColorScottPlot!;
-            plot.Axes.Color(new Color(fontColor.R, fontColor.G, fontColor.B));
-
-            Application.Current.TryGetResource("Separator", currentTheme, out var majorLines);
-            var majorLineColor = (Avalonia.Media.Color)majorLines!;
-            plot.Grid.MajorLineColor = new Color(majorLineColor.R, majorLineColor.G, majorLineColor.B);
         }
-        catch (NullReferenceException) // for testing, the App.axaml resources are null
+        catch (NullReferenceException)
         {
-            plot.Add.Bars(values);
-            return plot;
+            fontColor = Colors.Black;
         }
 
-        var barPlot = plot.Add.Bars(values);
+        plot.Axes.Color(new Color(fontColor.R, fontColor.G, fontColor.B));
+    }
 
-        // Add labels
-        if (values.Length <= 4)
+    private static void SetGridLineColor(Plot plot)
+    {
+        Avalonia.Media.Color lineColor;
+        var currentTheme = Application.Current?.ActualThemeVariant ?? ThemeVariant.Default;
+
+        try
         {
-            foreach (var bar in barPlot.Bars)
-            {
-                bar.Label = Math.Round(bar.Value, 3).ToString(CultureInfo.InvariantCulture);
-            }
-
-            barPlot.ValueLabelStyle.ForeColor = new Color(fontColor.R, fontColor.G, fontColor.B);
-
-            Application.Current.TryGetResource("Accent", currentTheme, out var accentColor);
-            var barColor = (Avalonia.Media.Color)accentColor!;
-            barPlot.Color = new Color(barColor.R, barColor.G, barColor.B);
-
-            barPlot.ValueLabelStyle.Bold = true;
-            barPlot.ValueLabelStyle.FontSize = 18;
+            Application.Current!.TryGetResource("Separator", currentTheme, out var majorLines);
+            lineColor = (Avalonia.Media.Color)majorLines!;
+        }
+        catch (NullReferenceException)
+        {
+            lineColor = Colors.LightGray;
         }
 
-        // Set limit of X- and Y-Axis
+        plot.Grid.MajorLineColor = new Color(lineColor.R, lineColor.G, lineColor.B);
+    }
+
+    private static void SetForegroundColor(BarPlot barPlot)
+    {
+        Avalonia.Media.Color fontColor;
+        var currentTheme = Application.Current?.ActualThemeVariant ?? ThemeVariant.Default;
+
+        try
+        {
+            Application.Current!.TryGetResource("FontColor", currentTheme, out var fontColorScottPlot);
+            fontColor = (Avalonia.Media.Color)fontColorScottPlot!;
+        }catch (NullReferenceException)
+        {
+            fontColor = Colors.BlueViolet;
+        }
+        
+        barPlot.ValueLabelStyle.ForeColor = new Color(fontColor.R, fontColor.G, fontColor.B);
+    }
+    
+    private static void SetAccentColor(BarPlot barPlot)
+    {
+        Avalonia.Media.Color accentCol;
+        var currentTheme = Application.Current?.ActualThemeVariant ?? ThemeVariant.Default;
+
+        try
+        {
+            Application.Current!.TryGetResource("Accent", currentTheme, out var accentColor);
+            accentCol = (Avalonia.Media.Color)accentColor!;
+        }catch (NullReferenceException)
+        {
+            accentCol = Colors.Firebrick;
+        }
+        
+        barPlot.Color = new Color(accentCol.R, accentCol.G, accentCol.B);
+    }
+
+    private static Avalonia.Media.Color GetAccentcolor()
+    {
+        var currentTheme = Application.Current?.ActualThemeVariant ?? ThemeVariant.Default;
+        try
+        {
+            Application.Current!.TryGetResource("Accent", currentTheme, out var accentColor);
+            return (Avalonia.Media.Color)accentColor!;
+        }catch (NullReferenceException)
+        {
+            return Colors.Firebrick;
+        }
+
+    }
+
+    private static void AddLabels(BarPlot barPlot)
+    {
+        foreach (var bar in barPlot.Bars)
+        {
+            bar.Label = Math.Round(bar.Value, 3).ToString(CultureInfo.InvariantCulture);
+        }
+
+        SetForegroundColor(barPlot);
+        
+        SetAccentColor(barPlot);
+
+        barPlot.ValueLabelStyle.Bold = true;
+        barPlot.ValueLabelStyle.FontSize = 18;
+    }
+
+    private static void SetLimitsAndLockMovement(Plot plot, double[] values)
+    {
         var yAxisLimit = values.Max();
         if (yAxisLimit < 1)
         {
@@ -84,18 +163,10 @@ public static class PlotCreator
         plot.Axes.SetLimitsY(0, yAxisLimit + yAxisLimitBuffer);
         plot.Axes.SetLimitsX(-0.9, values.Length - 1 + 0.9);
 
-        // Lock movement of the 
         var limits = plot.Axes.GetLimits();
         var lockedVerticalRule = new LockedVertical(plot.Axes.Left, limits.Bottom, limits.Top);
         plot.Axes.Rules.Add(lockedVerticalRule);
-
-        // Set X-Axis to have an autoscaling, integer tick step
-        var bottomTickGen = new ScottPlot.TickGenerators.NumericAutomatic
-        {
-            IntegerTicksOnly = true
-        };
-        plot.Axes.Bottom.TickGenerator = bottomTickGen;
-
+        
         // Define boundary, user can not move outside (data always visible)
         // Prevents scrolling and panning too far out / away from data
         var maximumBoundary = new MaximumBoundary(plot.Axes.Bottom, plot.Axes.Left, limits);
@@ -110,6 +181,48 @@ public static class PlotCreator
 
         plot.Axes.Rules.Add(minSpanRule);
         plot.Axes.Rules.Add(maxSpanRule);
+    }
+
+    private static void SetTickGeneratorIntegerAutoScaleX(Plot plot)
+    {
+        var bottomTickGen = new ScottPlot.TickGenerators.NumericAutomatic
+        {
+            IntegerTicksOnly = true
+        };
+        plot.Axes.Bottom.TickGenerator = bottomTickGen;
+    }
+    
+    /// <summary>
+    /// Creates a formatted bar plot, preventing scrolling to far in / out in regard to the given data.
+    /// </summary>
+    /// <param name="values"></param>
+    /// <returns></returns>
+    public static Plot CreateFormattedBarPlot(double[] values)
+    {
+        var plot = new Plot();
+        
+        // change figure colors
+        SetFigureBackgroundColor(plot);
+
+        SetBackgroundColor(plot);
+
+        // change axis and grid colors
+        SetAxesAndFontColor(plot);
+
+        SetGridLineColor(plot);
+
+        var barPlot = plot.Add.Bars(values);
+
+        // Add labels
+        if (values.Length <= 4)
+        {
+            AddLabels(barPlot);
+        }
+
+        SetLimitsAndLockMovement(plot, values);
+        
+        // Set X-Axis to have an autoscaling, integer tick step
+        SetTickGeneratorIntegerAutoScaleX(plot);
 
         return plot;
     }
@@ -122,29 +235,20 @@ public static class PlotCreator
     {
         Plot plot = new();
 
-        var currentTheme = Application.Current!.ActualThemeVariant;
-
         // change figure colors
-        Application.Current.TryGetResource("WindowBg", currentTheme, out var background);
-        var backgroundColor = (Avalonia.Media.Color)background!;
-        plot.FigureBackground.Color = new Color(backgroundColor.R, backgroundColor.G, backgroundColor.B);
+        SetFigureBackgroundColor(plot);
 
-        Application.Current.TryGetResource("BackgroundColorDark", currentTheme, out var backgroundDark);
-        var backgroundColorDark = (Avalonia.Media.Color)backgroundDark!;
-        plot.DataBackground.Color =
-            new Color(backgroundColorDark.R, backgroundColorDark.G, backgroundColorDark.B);
+        SetBackgroundColor(plot);
 
         // change axis and grid colors
-        Application.Current.TryGetResource("FontColor", currentTheme, out var fontColorScottPlot);
-        var fontColor = (Avalonia.Media.Color)fontColorScottPlot!;
-        plot.Axes.Color(new Color(fontColor.R, fontColor.G, fontColor.B));
+        SetAxesAndFontColor(plot);
 
-        Application.Current.TryGetResource("Accent", currentTheme, out var accentColor);
-        var barColor = (Avalonia.Media.Color)accentColor!;
+        SetGridLineColor(plot);
 
         Coordinates center = new(0, 0);
-        double radiusX = 1;
-        double radiusY = 5;
+        double radiusX = 0.04;
+        double radiusY = 0.2;
+        var lineColor = GetAccentcolor();
 
         for (int i = 0; i < 5; i++)
         {
@@ -164,11 +268,7 @@ public static class PlotCreator
         plot.Axes.Rules.Add(lockedVerticalRule);
 
         // Set X-Axis to have an autoscaling, integer tick step
-        var bottomTickGen = new ScottPlot.TickGenerators.NumericAutomatic
-        {
-            IntegerTicksOnly = true
-        };
-        plot.Axes.Bottom.TickGenerator = bottomTickGen;
+        SetTickGeneratorIntegerAutoScaleX(plot);
 
         // Define boundary, user can not move outside (data always visible)
         // Prevents scrolling and panning too far out / away from data
