@@ -76,29 +76,7 @@ public partial class ColorSettingsPopupViewModel : ViewModelBase
     private StackPanel _BuildPanel(SequenceRenderer renderer)
     {
         var panel = new StackPanel() { Margin = new Thickness(30, 0, 0, 0) };
-
-        /*switch (renderer)
-        {
-            case HeatMapRenderer htmRenderer:
-                var hmView = new HeatMapConfigControlView(htmRenderer, _sequenceViewModel);
-                panel.Children.Add(hmView);
-                _controls.Add(hmView);
-                break;
-            case ChannelMapRenderer chmRenderer:
-                var chmView = new ChannelMapConfigControlView(chmRenderer, _sequenceViewModel);
-                panel.Children.Add(chmView);
-                _controls.Add(chmView);
-                break;
-            case ArgMaxRendererGrey:
-                break;
-            case ArgMaxRendererColorHSV argmHSVRenderer:
-                var argmHSVView = new ArgMaxHSVConfigControlView(argmHSVRenderer, _sequenceViewModel);
-                panel.Children.Add(argmHSVView);
-                _controls.Add(argmHSVView);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(renderer));
-        }*/
+        
         SaveUserControl? configView = renderer.GetConfigView(_sequenceViewModel);
         if (configView is null)
         {
