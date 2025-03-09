@@ -19,7 +19,7 @@ public static class DefaultRendererEnumConversion
     public static SequenceRenderer Sequence(this RendererEnum renderer, int min, int max)
     {
         return renderer switch
-        {
+        {       
             RendererEnum.ChannelMapRenderer => new ChannelMapRenderer(min, max, 2, 1, 0),
             RendererEnum.HeatMapRendererRB => new HeatMapRendererRB(min, max, 0, 0.1, 0.9),
             RendererEnum.ArgMaxRendererGrey => new ArgMaxRendererGrey(min, max),
