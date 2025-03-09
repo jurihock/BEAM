@@ -29,6 +29,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     /// View model for handling docking functionality.
     /// </summary>
     [ObservableProperty] public partial DockingViewModel DockingVm { get; set; } = new();
+    
     /// <summary>
     /// The position where the pointer was initially pressed.
     /// </summary>
@@ -41,7 +42,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     /// <summary>
     /// Collection of inspection view models connected to this sequence.
     /// </summary>
-    private List<InspectionViewModel> _connectedInspectionViewModels = new();
+    private readonly List<InspectionViewModel> _connectedInspectionViewModels = [];
 
     /// <summary>
     /// Event raised when renderers are updated.
@@ -80,8 +81,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     /// Collection of minimap view models.
     /// </summary>
     [ObservableProperty]
-    public partial ObservableCollection<ViewModelBase> MinimapVms { get; set; } =
-        new ObservableCollection<ViewModelBase>();
+    public partial ObservableCollection<ViewModelBase> MinimapVms { get; set; } = [];
 
     /// <summary>
     /// Initializes a new instance of the SequenceViewModel.
@@ -92,8 +92,6 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     public SequenceViewModel(ISequence sequence, DockingViewModel dockingVm)
     {
         Sequence = new TransformedSequence(sequence);
-        DockingVm = dockingVm;
-
         DockingVm = dockingVm;
 
         var (min, max) = sequence switch
@@ -136,9 +134,6 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     public void RegisterInspectionViewModel(InspectionViewModel inspectionViewModel)
     {
         _connectedInspectionViewModels.Add(inspectionViewModel);
-        inspectionViewModel.Update(
-            _correctInvalid(PressedPointerPosition.OffsetBy(0.5, 0.5)), 
-            _correctInvalid(ReleasedPointerPosition.OffsetBy(0.5, 0.5)));
     }
     
     /// <summary>
@@ -156,8 +151,8 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public void UpdateInspectionViewModel()
     {
-        Coordinate2D pointPressed = _correctInvalid(PressedPointerPosition.OffsetBy(0.5, 0.5));
-        Coordinate2D pointReleased = _correctInvalid(ReleasedPointerPosition.OffsetBy(0.5, 0.5));
+        var pointPressed = _correctClickPosition(PressedPointerPosition);
+        var pointReleased = _correctClickPosition(ReleasedPointerPosition);
         foreach (var inspectionViewModel in _connectedInspectionViewModels)
         {
             inspectionViewModel.Update(pointPressed, pointReleased);
@@ -171,8 +166,8 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     /// <returns>A corrected coordinate within sequence bounds.</returns>
     private Coordinate2D _correctInvalid(Coordinate2D point)
     {
-        double x = point.Column;
-        double y = point.Row;
+        var x = point.Column;
+        var y = point.Row;
         
         if(x < 0)
             x = 0;
@@ -258,13 +253,23 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public void OpenInspectionView()
     {
-        InspectionViewModel inspectionViewModel = new InspectionViewModel(this, DockingVm);
+        var inspectionViewModel = new InspectionViewModel(this, DockingVm);
         _connectedInspectionViewModels.Add(inspectionViewModel);
         DockingVm.OpenDock(inspectionViewModel);
         
         inspectionViewModel.Update(
-            _correctInvalid(PressedPointerPosition.OffsetBy(0.5, 0.5)), 
-            _correctInvalid(ReleasedPointerPosition.OffsetBy(0.5, 0.5)));
+            _correctClickPosition(PressedPointerPosition), 
+        _correctClickPosition(ReleasedPointerPosition));
+    }
+    
+    /// <summary>
+    /// Corrects the coordinates clicked by to user to match data layout
+    /// </summary>
+    /// <param name="point"></param>
+    /// <returns></returns>
+    private Coordinate2D _correctClickPosition(Coordinate2D point)
+    {
+        return _correctInvalid(point.OffsetBy(0.5, 0.5));
     }
     
 

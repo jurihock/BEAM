@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Threading;
+using Avalonia.Logging;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
-using BEAM.Profiling;
+using BEAM.Models.Log;
+using BEAM.ViewModels;
 using ScottPlot;
+using Timer = BEAM.Profiling.Timer;
 
 namespace BEAM.Analysis;
 
@@ -19,9 +23,10 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
     private Coordinate2D _topLeft;
     private Coordinate2D _bottomRight;
     private int _amountChannels;
+    private CancellationToken _token;
 
-    public override Plot Analyze(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
-        ISequence sequence)
+    protected override void PerformAnalysis(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
+        ISequence sequence, CancellationToken cancellationToken)
     {
         using var _ = Timer.Start("Region analysis (std deviation of channels)");
         _topLeft =
@@ -34,28 +39,30 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
 
         _amountChannels = sequence.Shape.Channels;
 
-        Plot plot;
+        _token = cancellationToken;
 
         // Catch trivial case of only one pixel selected
         if (Math.Abs(_AmountPixels() - 1) < 0.001)
         {
             _sumChannelsSquared = new double[_amountChannels];
-
-            plot = PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
-            plot.Title(Name);
-            return plot;
-
-            //return PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
+            return;
         }
 
         // Calculate the standard deviations and store them in _sumChannelsSquared
         _CalculateResult(sequence);
+    }
 
-        plot = PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
+    protected override Plot GetAnalysisPlot()
+    {
+        var plot = PlotCreator.CreateFormattedBarPlot(_sumChannelsSquared);
         plot.Title(Name);
         return plot;
     }
 
+    public override AnalysisTypes GetAnalysisType()
+    {
+        return AnalysisTypes.RegionAnalysisStandardDeviationOfChannels;
+    }
 
     /// <summary>
     /// Calculates the standard deviation of the channels in the region and stores the result in _sumChannelsSquared
@@ -65,18 +72,37 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
     {
         _sumChannels = new double[_amountChannels];
         _sumChannelsSquared = new double[_amountChannels];
+        
+        var progressDisplayInterval = (_bottomRight.Row - _topLeft.Row) * (_bottomRight.Column - _topLeft.Column) / 100;
+        var counterToNextProgressDisplay = progressDisplayInterval;
+        
+        // if the analysed region has less than 100 pixels, do not display the progress
+        if (counterToNextProgressDisplay < 1) counterToNextProgressDisplay = Double.PositiveInfinity;
+        
+        // stores the current process as percentage based value (Progress = relative amount of pixels already visited)
+        byte currentProgress = 0;
+        SetProgress(BoundInspectionViewModel, currentProgress);
 
         // fill _sumChannels(Squared) with the correct values given in the sequence
         for (var row = _topLeft.Row; row <= _bottomRight.Row; row++)
         {
             for (var column = _topLeft.Column; column <= _bottomRight.Column; column++)
             {
+
                 _UpdateWithPixel(sequence.GetPixel((long)column, (long)row));
+                CheckAndCancelAnalysis(_token);
+                    
+                // report progress to InspectionViewModel
+                counterToNextProgressDisplay--;
+                if (counterToNextProgressDisplay > 0) continue;
+                currentProgress++;
+                counterToNextProgressDisplay = progressDisplayInterval;
+                SetProgress(BoundInspectionViewModel, currentProgress);
             }
         }
 
         _calculateMeans();
-        for (int i = 0; i < _amountChannels; i++)
+        for (var i = 0; i < _amountChannels; i++)
         {
             _sumChannelsSquared[i] = _CalculateStandardDeviation(i);
         }
