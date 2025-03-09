@@ -45,6 +45,19 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 
 
     private SequenceViewModel _currentSequenceViewModel;
+    private SequenceViewModel CurrentSequenceViewModel 
+    {
+        set
+        {
+            _currentSequenceViewModel = value;
+            _currentSequenceViewModel.CloseEvent += (sender, _) =>
+            {
+                if (sender is SequenceViewModel) {this.AbortAnalysis();}
+            } ;
+        }
+        get => _currentSequenceViewModel;
+    }
+
     private Analysis.Analysis _currentAnalysis;
     public string CurrentAnalysisName => _currentAnalysis.ToString();
 
@@ -58,11 +71,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     public InspectionViewModel(SequenceViewModel sequenceViewModel, DockingViewModel dock)
     {
         _currentAnalysis = Analysis.Analysis.GetAnalysis(0);
-        _currentSequenceViewModel = sequenceViewModel;
-        _currentSequenceViewModel.CloseEvent += (sender, _) =>
-        {
-            if (sender is SequenceViewModel) {this.AbortAnalysis();}
-        } ;
+        CurrentSequenceViewModel = sequenceViewModel;
         ProgressWindow = new AnalysisProgressWindow(this);
         dock.Items.CollectionChanged += DockingItemsChanged;
 
@@ -74,12 +83,11 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             }
         }
     }
-
-
+    
     public string Name { get; } = "Inspection Window";
     public void OnClose()
     {
-        _currentSequenceViewModel.UnregisterInspectionViewModel(this);
+        CurrentSequenceViewModel.UnregisterInspectionViewModel(this);
         _cancellationTokenSource.Cancel();
         if (_analysisRunning)
         {
@@ -117,7 +125,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             ProgressWindow.Show();
         }
         _analysisRunning = true;
-        _currentAnalysis.Analyze(pressedPoint, releasedPoint, _currentSequenceViewModel.Sequence,
+        _currentAnalysis.Analyze(pressedPoint, releasedPoint, CurrentSequenceViewModel.Sequence,
             this, _cancellationTokenSource.Token);
     }
 
@@ -173,7 +181,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public void Clone()
     {
-        _currentSequenceViewModel.OpenInspectionViewCommand.Execute(null);
+        CurrentSequenceViewModel.OpenInspectionViewCommand.Execute(null);
     }
 
     /// <summary>
@@ -205,9 +213,9 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     public void ChangeSequence(int index)
     {
         if (index < 0 || index >= ExistingSequenceViewModels.Count) return;
-        _currentSequenceViewModel.UnregisterInspectionViewModel(this);
-        _currentSequenceViewModel = ExistingSequenceViewModels[index];
-        _currentSequenceViewModel.RegisterInspectionViewModel(this);
+        CurrentSequenceViewModel.UnregisterInspectionViewModel(this);
+        CurrentSequenceViewModel = ExistingSequenceViewModels[index];
+        CurrentSequenceViewModel.RegisterInspectionViewModel(this);
     }
 
 
@@ -236,7 +244,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             {
                 if (item is not SequenceViewModel sequenceViewModel) continue;
                 ExistingSequenceViewModels.Remove(sequenceViewModel);
-                if (sequenceViewModel == _currentSequenceViewModel) SwitchToFirst();
+                if (sequenceViewModel == CurrentSequenceViewModel) SwitchToFirst();
             }
         }
     }
@@ -251,9 +259,9 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             CurrentPlot = PlotCreator.CreatePlaceholderPlot();
             return;
         }
-        _currentSequenceViewModel.UnregisterInspectionViewModel(this);
-        _currentSequenceViewModel = ExistingSequenceViewModels[0];
-        _currentSequenceViewModel.RegisterInspectionViewModel(this);
+        CurrentSequenceViewModel.UnregisterInspectionViewModel(this);
+        CurrentSequenceViewModel = ExistingSequenceViewModels[0];
+        CurrentSequenceViewModel.RegisterInspectionViewModel(this);
     }
 
     /// <summary>
@@ -267,7 +275,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 
     public int CurrentSequenceIndex()
     {
-        return ExistingSequenceViewModels.FindIdx(_currentSequenceViewModel);
+        return ExistingSequenceViewModels.FindIdx(CurrentSequenceViewModel);
     }
 
     public int CurrentAnalysisIndex()

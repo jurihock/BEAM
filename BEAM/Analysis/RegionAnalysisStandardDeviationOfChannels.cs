@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading;
+using Avalonia.Logging;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
+using BEAM.Models.Log;
 using BEAM.ViewModels;
 using ScottPlot;
 using Timer = BEAM.Profiling.Timer;
@@ -86,9 +88,10 @@ public class RegionAnalysisStandardDeviationOfChannels : Analysis
         {
             for (var column = _topLeft.Column; column <= _bottomRight.Column; column++)
             {
+
                 _UpdateWithPixel(sequence.GetPixel((long)column, (long)row));
                 CheckAndCancelAnalysis(_token);
-
+                    
                 // report progress to InspectionViewModel
                 counterToNextProgressDisplay--;
                 if (counterToNextProgressDisplay > 0) continue;
