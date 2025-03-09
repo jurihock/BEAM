@@ -139,6 +139,12 @@ public class EnviImage<T> : ITypedImage<T>, IMemoryImage
             FileAccessor.Dispose();
             FileAccessor = null;
         }
+
+        if (FileMapping != null)
+        {
+            FileMapping.Dispose();
+            FileMapping = null;
+        }
     }
 
     public double GetPixel(long x, long y, int channel)
