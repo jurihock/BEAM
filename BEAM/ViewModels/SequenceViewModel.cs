@@ -26,7 +26,19 @@ namespace BEAM.ViewModels;
 /// </summary>
 public partial class SequenceViewModel : ViewModelBase, IDockBase
 {
+    /// <summary>
+    /// The type of the default renderer to be used if a sequence does not explicitly specify one.
+    /// </summary>
+    public const RenderTypes DefaultRendererType = RenderTypes.HeatMapRendererRb;
+    
+    /// <summary>
+    /// The default minimum value for pixels within a raw sequence.
+    /// </summary>
     public const int DefaultSequenceRangeLowerBound = 0;
+    
+    /// <summary>
+    /// The default maximum value for pixels within a raw sequence.
+    /// </summary>
     public const int DefaultSequenceRangeUpperBound = 1;
     public event EventHandler<CloseEventArgs> CloseEvent = delegate { };
 
@@ -100,8 +112,6 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         DockingVm = dockingVm;
 
         DockingVm = dockingVm;
-        int min = 0;
-        int max = 1;
         ValueRangeAttribute range;
         try
         {
@@ -112,25 +122,25 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             range = new ValueRangeAttribute(DefaultSequenceRangeLowerBound, DefaultSequenceRangeUpperBound);
         }
 
-        min = range.Min;
-        max = range.Max;
+        var min = range.Min;
+        var max = range.Max;
 
-        RendererEnum selectedOption;
+        RenderTypes selectedOption;
         try
         {
             selectedOption = sequence.GetType().GetCustomAttributes<RendererAttribute>().First().DefaultRenderer;
         }
         catch (Exception ex) when (ex is TargetInvocationException or ReflectionTypeLoadException or IndexOutOfRangeException or InvalidOperationException)
         {
-            selectedOption= RendererEnum.HeatMapRendererRB;
+            selectedOption= DefaultRendererType;
         }
 
         RendererSelection = (int)selectedOption;
-        var rendererOptions = Enum.GetValues(typeof(RendererEnum));
+        var rendererOptions = Enum.GetValues(typeof(RenderTypes));
         Renderers = new SequenceRenderer[rendererOptions.Length];
         for(var i = 0; i < rendererOptions.Length; i++)
         {
-            Renderers[i] = ((RendererEnum)((rendererOptions.GetValue(i)) ?? RendererEnum.ChannelMapRenderer)).Sequence(min, max);
+            Renderers[i] = ((RenderTypes)((rendererOptions.GetValue(i)) ?? RenderTypes.ChannelMapRenderer)).Sequence(min, max);
         }
         
         _currentMinimap = SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultClones().Active;

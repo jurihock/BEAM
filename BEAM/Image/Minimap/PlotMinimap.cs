@@ -36,7 +36,7 @@ public class PlotMinimap : Minimap
     /// </summary>
     private const int RelHeightCompactionFactor = 2000;
     /// <summary>
-    /// If a sequence has less row, use ReplacementCompaction instead.
+    /// If a sequence has less row, use RelHeightCompactionFactor instead.
     /// </summary>
     private const int MaxHeightForRelCompaction = 15000;
     
@@ -75,6 +75,17 @@ public class PlotMinimap : Minimap
         } 
         return _viewModel;
     }
+
+    public override void TransformationRerender(TransformedSequence newSequence, long newStart, long newEnd)
+    {
+        int actualCompactionUsed = CompactionFactor;
+        if(MaxHeightForRelCompaction >= newSequence.Shape.Height)
+        {
+            
+            actualCompactionUsed = (int) Math.Ceiling(newSequence.Shape.Height / (double) RelHeightCompactionFactor);
+        }
+    }
+
 
     /// <summary>
     /// Handles the logic for creating the minimap data alongside its

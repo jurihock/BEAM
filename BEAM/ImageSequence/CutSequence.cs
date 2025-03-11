@@ -1,6 +1,5 @@
 using System;
 using BEAM.Image;
-using BEAM.Renderer.Attributes;
 
 namespace BEAM.ImageSequence;
 

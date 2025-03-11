@@ -1,4 +1,3 @@
-using Avalonia.Controls;
 using BEAM.Renderer;
 using BEAM.ViewModels;
 using BEAM.Views.Utility;

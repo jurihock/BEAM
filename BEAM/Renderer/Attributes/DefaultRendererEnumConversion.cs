@@ -3,7 +3,7 @@
 namespace BEAM.Renderer.Attributes;
 
 /// <summary>
-/// This class provides utility methods to convert <see cref="RendererEnum"/> to <see cref="SequenceRenderer"/>,
+/// This class provides utility methods to convert <see cref="RenderTypes"/> to <see cref="SequenceRenderer"/>,
 /// hence mapping the enum representation to an actual renderer.
 /// </summary>
 public static class DefaultRendererEnumConversion
@@ -16,14 +16,14 @@ public static class DefaultRendererEnumConversion
     /// <param name="max">The maximum pixel value for the renderer.</param>
     /// <returns>The actual <see cref="SequenceRenderer"/> correspnding to this enum entry.</returns>
     /// <exception cref="ArgumentException">If there is no corresponding renderer defined for this enum entry.</exception>
-    public static SequenceRenderer Sequence(this RendererEnum renderer, int min, int max)
+    public static SequenceRenderer Sequence(this RenderTypes renderer, int min, int max)
     {
         return renderer switch
         {       
-            RendererEnum.ChannelMapRenderer => new ChannelMapRenderer(min, max, 2, 1, 0),
-            RendererEnum.HeatMapRendererRB => new HeatMapRendererRB(min, max, 0, 0.1, 0.9),
-            RendererEnum.ArgMaxRendererGrey => new ArgMaxRendererGrey(min, max),
-            RendererEnum.ArgMaxRendererColorHSV => new ArgMaxRendererColorHSV(min, max),
+            RenderTypes.ChannelMapRenderer => new ChannelMapRenderer(min, max, 2, 1, 0),
+            RenderTypes.HeatMapRendererRb => new HeatMapRendererRB(min, max, 0, 0.1, 0.9),
+            RenderTypes.ArgMaxRendererGrey => new ArgMaxRendererGrey(min, max),
+            RenderTypes.ArgMaxRendererColorHsva => new ArgMaxRendererColorHSV(min, max),
             _ => throw new ArgumentException(null, nameof(renderer))
         };
     }

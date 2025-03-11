@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Avalonia;
 using Avalonia.Controls;
-using BEAM.Controls;
 using BEAM.Renderer;
 using BEAM.Views.Utility;
 using CommunityToolkit.Mvvm.ComponentModel;

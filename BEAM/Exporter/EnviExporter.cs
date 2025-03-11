@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using Avalonia.Platform.Storage;
 using BEAM.Image.Envi;

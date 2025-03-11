@@ -1,5 +1,4 @@
-﻿using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Markup.Xaml;
 using BEAM.Renderer;
 using BEAM.ViewModels;
 using BEAM.Views.Utility;
