@@ -93,8 +93,10 @@ public class RenderedChannelThresholdAlgorithm : IMinimapAlgorithm
     
     private double AnalyzeLine(long line)
     {
+        if (_fetchMask == null) return 0;
+
         double sum = 0.0f;
-        var bgrs = new BGR[_fetchMask!.Length];
+        var bgrs = new BGR[_fetchMask.Length];
         var renderedData = _renderer!.RenderPixels(_sequence!, _fetchMask!, line, bgrs, _pool);
         foreach (var entry in renderedData)
         {
