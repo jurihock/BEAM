@@ -308,12 +308,12 @@ public class SequenceImage : IDisposable
         }
 
         const int par = 10;
+        var pool = ArrayPool<double>.Create();
         Parallel.For(0, par, p =>
         {
             var current = height / par * p;
             var next = height / par * (p + 1);
 
-            var pool = ArrayPool<double>.Create();
             var bgr = new BGR[xs.Length];
 
             for (int j = current; j < next; j++)
