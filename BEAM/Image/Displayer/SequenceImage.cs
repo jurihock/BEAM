@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using BEAM.Datatypes.Color;
 using BEAM.Image.Bitmap;
 using BEAM.ImageSequence;
+using BEAM.Profiling;
 using BEAM.Renderer;
 using SkiaSharp;
 
@@ -305,14 +307,21 @@ public class SequenceImage : IDisposable
             xs[i] = startX + i * (endX - startX) / width;
         }
 
-        // using parallelism to render
-        Parallel.For(0, height, j =>
+        const int par = 10;
+        var pool = ArrayPool<double>.Create();
+        Parallel.For(0, par, p =>
+        {
+            var current = height / par * p;
+            var next = height / par * (p + 1);
+
+            var bgr = new BGR[xs.Length];
+
+            for (int j = current; j < next; j++)
             {
-                //for(var j = 0; j < height; j++) {
                 var line = startLine + j * (endLine - startLine) / height;
 
                 // rendering each pixel using a renderer
-                var data = Renderer.RenderPixels(_sequence, xs, line);
+                var data = Renderer.RenderPixels(_sequence, xs, line, bgr, pool);
 
                 var span = bitmap.GetPixelSpan();
                 var pixels = MemoryMarshal.Cast<byte, BGRA>(span);
@@ -323,9 +332,7 @@ public class SequenceImage : IDisposable
                     pixels[j * width + i] = new BGRA(data[i], 255);
                 }
             }
-        );
-
-
+        });
         return bitmap;
     }
 

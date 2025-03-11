@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -79,22 +80,22 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
         return img.GetPixel(x, imageLine, channels);
     }
 
-    public LineImage GetPixelLineData(long line, int[] channels)
+    public LineImage GetPixelLineData(long line, int[] channels, ArrayPool<double> pool)
     {
         var imageIdx = line / SingleImageHeight;
         var imageLine = line % SingleImageHeight;
 
         var img = GetImage((int)imageIdx);
-        return img.GetPixelLineData(imageLine, channels);
+        return img.GetPixelLineData(imageLine, channels, pool);
     }
 
-    public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
+    public LineImage GetPixelLineData(long[] xs, long line, int[] channels, ArrayPool<double> pool)
     {
         var imageIdx = line / SingleImageHeight;
         var imageLine = line % SingleImageHeight;
 
         var img = GetImage((int)imageIdx);
-        return img.GetPixelLineData(xs, imageLine, channels);
+        return img.GetPixelLineData(xs, imageLine, channels, pool);
     }
 
     public string GetName()

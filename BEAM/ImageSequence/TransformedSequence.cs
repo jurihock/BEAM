@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Linq;
 using BEAM.Image;
 
@@ -52,15 +53,15 @@ public class TransformedSequence(ISequence originalSequence) : ISequence
         return originalSequence.GetPixel(transform.x, transform.y, channels);
     }
 
-    public LineImage GetPixelLineData(long line, int[] channels)
+    public LineImage GetPixelLineData(long line, int[] channels, ArrayPool<double> pool)
     {
-        return originalSequence.GetPixelLineData(_UndoTransformY(line), channels);
+        return originalSequence.GetPixelLineData(_UndoTransformY(line), channels, pool);
     }
 
-    public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
+    public LineImage GetPixelLineData(long[] xs, long line, int[] channels, ArrayPool<double> pool)
     {
         var transformedXs = xs.Select(_UndoTransformX).ToArray();
-        return originalSequence.GetPixelLineData(transformedXs, _UndoTransformY(line), channels);
+        return originalSequence.GetPixelLineData(transformedXs, _UndoTransformY(line), channels, pool);
     }
 
     public string GetName()

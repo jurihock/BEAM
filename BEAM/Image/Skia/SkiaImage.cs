@@ -1,5 +1,6 @@
 using SkiaSharp;
 using System;
+using System.Buffers;
 using System.IO;
 
 namespace BEAM.Image.Skia;
@@ -105,12 +106,12 @@ public class SkiaImage<T> : IMemoryImage, ITypedImage<T>
         return values;
     }
 
-    public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
+    public LineImage GetPixelLineData(long[] xs, long line, int[] channels, ArrayPool<double> pool)
     {
         var data = new double[xs.Length][];
         for (var i = 0; i < xs.Length; i++)
         {
-            data[i] = new double[channels.Length];
+            data[i] = pool.Rent(channels.Length);
         }
 
         for (var x = 0; x < xs.Length; x++)
@@ -121,15 +122,15 @@ public class SkiaImage<T> : IMemoryImage, ITypedImage<T>
             }
         }
 
-        return new LineImage(data);
+        return new LineImage(data, pool);
     }
 
-    public LineImage GetPixelLineData(long line, int[] channels)
+    public LineImage GetPixelLineData(long line, int[] channels, ArrayPool<double> pool)
     {
         var data = new double[Shape.Width][];
         for (var i = 0; i < Shape.Width; i++)
         {
-            data[i] = new double[channels.Length];
+            data[i] = pool.Rent(channels.Length);
         }
 
         for (var x = 0; x < Shape.Width; x++)
@@ -140,7 +141,7 @@ public class SkiaImage<T> : IMemoryImage, ITypedImage<T>
             }
         }
 
-        return new LineImage(data);
+        return new LineImage(data, pool);
     }
 
     /// <summary>

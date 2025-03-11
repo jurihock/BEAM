@@ -1,4 +1,5 @@
-﻿using BEAM.Datatypes;
+﻿using System.Buffers;
+using BEAM.Datatypes;
 using BEAM.Datatypes.Color;
 using BEAM.ImageSequence;
 
@@ -22,7 +23,7 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
         return color;
     }
 
-    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y)
+    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y, BGR[] bgrs, ArrayPool<double> pool)
     {
         var channels = new int[sequence.Shape.Channels];
         for (var i = 0; i < sequence.Shape.Channels; i++)
@@ -30,8 +31,7 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
             channels[i] = i;
         }
 
-        var line = sequence.GetPixelLineData(xs, y, channels);
-        var data = new BGR[xs.Length];
+        var line = sequence.GetPixelLineData(xs, y, channels, pool);
 
         for (var x = 0; x < xs.Length; x++)
         {
@@ -39,10 +39,10 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
 
             var color = GetColor(argMax, channels.Length);
 
-            data[x] = color;
+            bgrs[x] = color;
         }
 
-        return data;
+        return bgrs;
     }
 
     protected abstract BGR GetColor(int channelNumber, int amountChannels);

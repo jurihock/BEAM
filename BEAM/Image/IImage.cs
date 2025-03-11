@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 
 namespace BEAM.Image;
 
@@ -35,6 +36,6 @@ public interface IImage : IDisposable
     /// <returns>The requested channel values</returns>
     double[] GetPixel(long x, long y, int[] channels);
 
-    LineImage GetPixelLineData(long line, int[] channels);
-    LineImage GetPixelLineData(long[] xs, long line, int[] channels);
+    LineImage GetPixelLineData(long line, int[] channels, ArrayPool<double> pool);
+    LineImage GetPixelLineData(long[] xs, long line, int[] channels, ArrayPool<double> pool);
 }
