@@ -1,4 +1,5 @@
-﻿using System.Runtime.Intrinsics;
+﻿using System.Buffers;
+using System.Runtime.Intrinsics;
 using BEAM.Datatypes.Color;
 using BEAM.Exceptions;
 using BEAM.ImageSequence;
@@ -60,10 +61,9 @@ public partial class ChannelMapRenderer : SequenceRenderer
     /// <param name="xs"></param>
     /// <param name="y"></param>
     /// <returns>[x, argb]</returns>
-    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y)
+    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y, BGR[] bgrs, ArrayPool<double> pool)
     {
-        var data = new BGR[xs.Length];
-        var img = sequence.GetPixelLineData(xs, y, [ChannelBlue, ChannelGreen, ChannelRed]);
+        var img = sequence.GetPixelLineData(xs, y, [ChannelBlue, ChannelGreen, ChannelRed], pool);
 
         for (var x = 0; x < xs.Length; x++)
         {
@@ -74,7 +74,7 @@ public partial class ChannelMapRenderer : SequenceRenderer
                 0
             ]));
 
-            data[x] = new BGR()
+            bgrs[x] = new BGR()
             {
                 B = (byte)colors[0], // b
                 G = (byte)colors[1], // g
@@ -84,7 +84,7 @@ public partial class ChannelMapRenderer : SequenceRenderer
 
         }
 
-        return data;
+        return bgrs;
     }
 
     public override RenderTypes GetRenderType()

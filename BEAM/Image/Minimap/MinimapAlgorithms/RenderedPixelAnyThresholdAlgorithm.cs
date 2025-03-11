@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Threading;
 using BEAM.Datatypes.Color;
 using BEAM.Exceptions;
@@ -26,6 +27,8 @@ public class RenderedPixelAnyThresholdAlgorithm : IMinimapAlgorithm
     private SequenceRenderer? _renderer;
     private BGR _thresholds;
     private long[]? _fetchMask;
+    private readonly ArrayPool<double> _pool = ArrayPool<double>.Create();
+
     public RenderedPixelAnyThresholdAlgorithm()
     {
         _thresholds = new BGR(ThresholdBlue, ThresholdGreen, ThresholdRed);
@@ -62,8 +65,8 @@ public class RenderedPixelAnyThresholdAlgorithm : IMinimapAlgorithm
     {
         double sum = 0.0f;
 
-        
-        var renderedData = _renderer!.RenderPixels(_sequence!, _fetchMask!, line);
+        var bgrs = new BGR[_fetchMask!.Length];
+        var renderedData = _renderer!.RenderPixels(_sequence!, _fetchMask!, line, bgrs, _pool);
         foreach (var entry in renderedData)
         { 
             _ctx!.Value.ThrowIfCancellationRequested();
