@@ -333,32 +333,6 @@ public class SequenceImage : IDisposable
                 }
             }
         });
-
-        //return bitmap;
-
-        // using parallelism to render
-        /*Parallel.For(0, height, j =>
-            {
-                //for(var j = 0; j < height; j++) {
-                var line = startLine + j * (endLine - startLine) / height;
-
-                // rendering each pixel using a renderer
-                var pool = ArrayPool<double>.Create();
-                var bgr = new BGR[xs.Length];
-                var data = Renderer.RenderPixels(_sequence, xs, line, bgr, pool);
-
-                var span = bitmap.GetPixelSpan();
-                var pixels = MemoryMarshal.Cast<byte, BGRA>(span);
-
-                // putting the data inside the bitmap
-                for (var i = 0; i < width; i++)
-                {
-                    pixels[j * width + i] = new BGRA(data[i], 255);
-                }
-            }
-        );*/
-
-
         return bitmap;
     }
 
