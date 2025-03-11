@@ -79,7 +79,7 @@ public class PlotMinimap : Minimap
         return _viewModel;
     }
 
-    public override async Task TransformationRerender(TransformedSequence newSequence, long startCutoff, long endCutoff)
+    public override async Task CutRerender(TransformedSequence newSequence, long startCutoff, long endCutoff)
     {
         Console.WriteLine("Minimap recieved request: " + newSequence.Shape.Width + " " + newSequence.Shape.Height + "|||" + startCutoff + ";;" + endCutoff);
         if (!IsGenerated || Sequence is null)
@@ -89,6 +89,63 @@ public class PlotMinimap : Minimap
             await Task.Run(() => GenerateMinimap(false), CancellationTokenSource.Token);
         }
 
+
+        if (endCutoff == 0 && startCutoff == 0)
+        {
+            Console.WriteLine("no change");
+            return;
+        }
+        else
+        {
+            Console.WriteLine("only cutting");
+            if (MaxHeightForRelCompaction >= newSequence.Shape.Height)
+            {
+                Console.WriteLine("Using exact calculation");
+                var actualCompactionUsed =
+                    (int)Math.Ceiling(newSequence.Shape.Height / (double)RelHeightCompactionFactor);
+                this.Sequence = newSequence;
+                GeneratePlotDisregardingPrev(actualCompactionUsed);
+            }
+            else
+            {
+                Console.WriteLine("Using user specified calculation");
+                CutPlotToFit(startCutoff, endCutoff);
+                this.Sequence = newSequence;
+            }
+                
+                
+            if (_viewModel is null)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    _viewModel = new MinimapPlotViewModel(_plot);
+                });
+            } 
+            IsGenerated = true;
+            _viewModel!.CurrentPlot = _plot; 
+            Console.WriteLine("Changed plot");
+        }
+        
+
+        
+        /*int actualCompactionUsed = CompactionFactor;
+        if (MaxHeightForRelCompaction >= newSequence.Shape.Height)
+        {
+            actualCompactionUsed = (int)Math.Ceiling(newSequence.Shape.Height / (double)RelHeightCompactionFactor);
+            GeneratePlotDisregardingPrev(actualCompactionUsed);
+        }
+        else CutPlotToFit(newStart, newEnd);
+        this.Sequence = newSequence;*/
+    }
+
+    public override async Task TransformationRerender(TransformedSequence newSequence)
+    {
+        if (!IsGenerated || Sequence is null)
+        {
+            Console.WriteLine("Aborted prematurely");
+            this.Sequence = newSequence;
+            await Task.Run(() => GenerateMinimap(false), CancellationTokenSource.Token);
+        }
         bool isTransformed = false;
         try
         {
@@ -99,58 +156,13 @@ public class PlotMinimap : Minimap
         {
             isTransformed = !(Math.Abs(newSequence.ScaleX - 1) < 0.0001f && Math.Abs(newSequence.ScaleY - 1) < 0.0001f);
         }
-        
-        if(!isTransformed)
+
+        if (!isTransformed)
         {
-            if (endCutoff == 0 && startCutoff == 0)
-            {
-                Console.WriteLine("no change");
-                return;
-            }
-            else
-            {
-                Console.WriteLine("only cutting");
-                if (MaxHeightForRelCompaction >= newSequence.Shape.Height)
-                {
-                    Console.WriteLine("Using exact calculation");
-                    var actualCompactionUsed =
-                        (int)Math.Ceiling(newSequence.Shape.Height / (double)RelHeightCompactionFactor);
-                    this.Sequence = newSequence;
-                    GeneratePlotDisregardingPrev(actualCompactionUsed);
-                }
-                else
-                {
-                    Console.WriteLine("Using user specified calculation");
-                    CutPlotToFit(startCutoff, endCutoff);
-                    this.Sequence = newSequence;
-                }
-                
-                
-                if (_viewModel is null)
-                {
-                    await Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        _viewModel = new MinimapPlotViewModel(_plot);
-                    });
-                } 
-                IsGenerated = true;
-                _viewModel!.CurrentPlot = _plot; 
-                Console.WriteLine("Changed plot");
-            }
-        }
-        else
-        {
-            Console.WriteLine("Dimensions did not match");
+            return;
         }
         
-        /*int actualCompactionUsed = CompactionFactor;
-        if (MaxHeightForRelCompaction >= newSequence.Shape.Height)
-        {
-            actualCompactionUsed = (int)Math.Ceiling(newSequence.Shape.Height / (double)RelHeightCompactionFactor);
-            GeneratePlotDisregardingPrev(actualCompactionUsed);
-        }
-        else CutPlotToFit(newStart, newEnd);
-        this.Sequence = newSequence;*/
+        
     }
     
     private void CutPlotToFit(long startOffset, long endOffset)
@@ -231,7 +243,8 @@ public class PlotMinimap : Minimap
         }
     }
 
-    // This method throws an OperationCanceledException if the generation process was canceled through the CancellationToken
+    // This method throws an OperationCanceledException if the generation process was canceled through the CancellationToken.
+    // All calling methods must furthermore ensure that MinimapAlgorithm != null.
     private void GeneratePlotDisregardingPrev(int compactionFactor)
     {
         _plot = new Plot();

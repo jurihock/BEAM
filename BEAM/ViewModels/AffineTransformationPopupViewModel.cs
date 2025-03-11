@@ -44,6 +44,7 @@ public partial class AffineTransformationPopupViewModel(SequenceViewModel model)
         model.Sequence.ScaleX = (double)ScaleX;
         model.Sequence.ScaleY = (double)ScaleY;
         model.RenderersUpdated.Invoke(this, new RenderersUpdatedEventArgs());
+        model.TransformMinimap();
         return true;
     }
 }

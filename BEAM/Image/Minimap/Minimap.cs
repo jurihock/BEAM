@@ -112,5 +112,7 @@ public abstract class Minimap
     /// <returns>The ViewModel of the UI element.</returns>
     public abstract ViewModelBase GetDisplayableViewModel();
     
-    public abstract Task TransformationRerender(TransformedSequence newSequence, long newStart, long newEnd);
+    public abstract Task CutRerender(TransformedSequence newSequence, long newStart, long newEnd);
+    
+    public abstract Task TransformationRerender(TransformedSequence newSequence);
 }
