@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Styling;
@@ -92,9 +93,22 @@ public partial class MinimapPlotView : UserControl
         }
 
         vm.NotifyOnSizeChanged(OnSizeChanged);
+        vm.PropertyChanged += OnPropertyChanged;
         FillPlot(vm.CurrentPlot);
     }
-
+    
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        Console.WriteLine("Property changed");
+        if(DataContext is not MinimapPlotViewModel vm)
+        {
+            return;
+        }
+        if (e.PropertyName == nameof(MinimapPlotViewModel.CurrentPlot))
+        {
+            FillPlot(vm.CurrentPlot);
+        }
+    }
     private void OnSizeChanged(object sender, ViewModels.Utility.SizeChangedEventArgs e)
     {
         AdaptSize(e.Width, e.Height);

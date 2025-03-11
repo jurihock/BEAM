@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
@@ -42,6 +43,7 @@ public abstract class Minimap
     /// </summary>
     public void StopGeneration()
     {
+        if (IsGenerated) return;
         CancellationTokenSource.Cancel();
         CancellationTokenSource.Dispose();
         CancellationTokenSource = new CancellationTokenSource();
@@ -110,5 +112,5 @@ public abstract class Minimap
     /// <returns>The ViewModel of the UI element.</returns>
     public abstract ViewModelBase GetDisplayableViewModel();
     
-    public abstract void TransformationRerender(TransformedSequence newSequence, long newStart, long newEnd);
+    public abstract Task TransformationRerender(TransformedSequence newSequence, long newStart, long newEnd);
 }

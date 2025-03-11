@@ -42,9 +42,12 @@ public partial class CutSequencePopupViewModel : ViewModelBase
         {
             return false;
         }
+
+        var oldLength = _sequenceViewModel.Sequence.Shape.Height;
         _sequenceViewModel.Sequence = new TransformedSequence(new CutSequence(_sequenceViewModel.Sequence.GetName(),
                                         StartOffset, EndOffset, _sequenceViewModel.Sequence));
         _sequenceViewModel.CutSequence(this, new RenderersUpdatedEventArgs());
+        _sequenceViewModel.TransformMinimap(StartOffset, oldLength - EndOffset);
         return true;
     }
 }

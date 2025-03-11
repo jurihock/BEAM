@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using BEAM.Image.Minimap.MinimapAlgorithms;
@@ -11,6 +13,7 @@ using BEAM.ViewModels.Minimap;
 using BEAM.Views.Minimap.Popups.EmbeddedSettings;
 using BEAM.Views.Utility;
 using ScottPlot;
+using ScottPlot.Plottables;
 
 namespace BEAM.Image.Minimap;
 
@@ -58,7 +61,7 @@ public class PlotMinimap : Minimap
     {
         this.Sequence = sequence;
         MinimapGenerated += eventCallbackFunc;
-        Task.Run(GenerateMinimap, CancellationTokenSource.Token);
+        Task.Run(() => GenerateMinimap(), CancellationTokenSource.Token);
     }
 
     public override void SetRenderer(SequenceRenderer renderer)
@@ -76,22 +79,117 @@ public class PlotMinimap : Minimap
         return _viewModel;
     }
 
-    public override void TransformationRerender(TransformedSequence newSequence, long newStart, long newEnd)
+    public override async Task TransformationRerender(TransformedSequence newSequence, long startCutoff, long endCutoff)
     {
-        int actualCompactionUsed = CompactionFactor;
-        if(MaxHeightForRelCompaction >= newSequence.Shape.Height)
+        Console.WriteLine("Minimap recieved request: " + newSequence.Shape.Width + " " + newSequence.Shape.Height + "|||" + startCutoff + ";;" + endCutoff);
+        if (!IsGenerated || Sequence is null)
         {
-            
-            actualCompactionUsed = (int) Math.Ceiling(newSequence.Shape.Height / (double) RelHeightCompactionFactor);
+            Console.WriteLine("Aborted prematurely");
+            this.Sequence = newSequence;
+            await Task.Run(() => GenerateMinimap(false), CancellationTokenSource.Token);
         }
+
+        bool isTransformed = false;
+        try
+        {
+            isTransformed = !(Math.Abs(((TransformedSequence)Sequence).ScaleX - newSequence.ScaleX) < 0.0001f
+                              && Math.Abs(((TransformedSequence)Sequence).ScaleY - newSequence.ScaleY) < 0.0001f);
+        }
+        catch (Exception ex)
+        {
+            isTransformed = !(Math.Abs(newSequence.ScaleX - 1) < 0.0001f && Math.Abs(newSequence.ScaleY - 1) < 0.0001f);
+        }
+        
+        if(!isTransformed)
+        {
+            if (endCutoff == 0 && startCutoff == 0)
+            {
+                Console.WriteLine("no change");
+                return;
+            }
+            else
+            {
+                Console.WriteLine("only cutting");
+                if (MaxHeightForRelCompaction >= newSequence.Shape.Height)
+                {
+                    Console.WriteLine("Using exact calculation");
+                    var actualCompactionUsed =
+                        (int)Math.Ceiling(newSequence.Shape.Height / (double)RelHeightCompactionFactor);
+                    this.Sequence = newSequence;
+                    GeneratePlotDisregardingPrev(actualCompactionUsed);
+                }
+                else
+                {
+                    Console.WriteLine("Using user specified calculation");
+                    CutPlotToFit(startCutoff, endCutoff);
+                    this.Sequence = newSequence;
+                }
+                
+                
+                if (_viewModel is null)
+                {
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        _viewModel = new MinimapPlotViewModel(_plot);
+                    });
+                } 
+                IsGenerated = true;
+                _viewModel!.CurrentPlot = _plot; 
+                Console.WriteLine("Changed plot");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Dimensions did not match");
+        }
+        
+        /*int actualCompactionUsed = CompactionFactor;
+        if (MaxHeightForRelCompaction >= newSequence.Shape.Height)
+        {
+            actualCompactionUsed = (int)Math.Ceiling(newSequence.Shape.Height / (double)RelHeightCompactionFactor);
+            GeneratePlotDisregardingPrev(actualCompactionUsed);
+        }
+        else CutPlotToFit(newStart, newEnd);
+        this.Sequence = newSequence;*/
+    }
+    
+    private void CutPlotToFit(long startOffset, long endOffset)
+    {
+        double maxValue = 0;
+        double minValue = 0;
+        Console.WriteLine("Cutting");
+        List<Bar> bars = ((BarPlot)_plot.PlottableList[0]).Bars;
+        Plot newPlot = new Plot();
+        List<Bar> barsToAdd = new List<Bar>();
+        foreach (var bar in bars)
+        {
+            Console.WriteLine("bar position: " + bar.Position);
+            if(bar.Position >= startOffset && bar.Position < Sequence!.Shape.Height - endOffset)
+            {
+                bar.Position -= startOffset;
+                if (bar.Value > maxValue)
+                {
+                    maxValue = bar.Value;
+                }
+                else if (bar.Value < minValue)
+                {
+                    minValue = bar.Value;
+                }
+                Console.WriteLine("Added bar from position " + bar.Position);
+                barsToAdd.Add(bar);
+            }
+        }
+        newPlot.Add.Bars(barsToAdd.ToArray());
+        _plot = newPlot;
+        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence!.Shape.Height - startOffset - endOffset + ScrollBarOffset);
     }
 
-
+    
     /// <summary>
     /// Handles the logic for creating the minimap data alongside its
     /// visual representation in the required format(<see cref="Avalonia.Controls.UserControl"/>).
     /// </summary>
-    private async Task GenerateMinimap()
+    private async Task GenerateMinimap(bool inform = true)
     {
         using var _ = Profiling.Timer.Start("Generate Minimap");
         if (Sequence is null || MinimapAlgorithm is null)
@@ -106,60 +204,75 @@ public class PlotMinimap : Minimap
             return;
         }
         
-        int actualCompactionUsed = CompactionFactor;
+        var actualCompactionUsed = CompactionFactor;
+        try
+        {
+             GeneratePlotDisregardingPrev(actualCompactionUsed);
+        }    catch (OperationCanceledException e)
+        {
+            //End routine, Generation process was canceled
+            return;
+        }
+        
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _viewModel = new MinimapPlotViewModel(_plot);
+            IsGenerated = true;
+            
+        });
+        if (inform)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                _viewModel = new MinimapPlotViewModel(_plot);
+                IsGenerated = true;
+                OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Success));
+            });
+        }
+    }
+
+    // This method throws an OperationCanceledException if the generation process was canceled through the CancellationToken
+    private void GeneratePlotDisregardingPrev(int compactionFactor)
+    {
         _plot = new Plot();
       
         double maxValue = 0;
         double minValue = 0;
         
-        if(MaxHeightForRelCompaction >= Sequence.Shape.Height)
+        if(MaxHeightForRelCompaction >= Sequence!.Shape.Height)
         {
             
-            actualCompactionUsed = (int) Math.Ceiling(Sequence.Shape.Height / (double) RelHeightCompactionFactor);
+            compactionFactor = (int) Math.Ceiling(Sequence.Shape.Height / (double) RelHeightCompactionFactor);
         }
-        Bar[] bars = new Bar[Sequence.Shape.Height / actualCompactionUsed];
+        Bar[] bars = new Bar[Sequence.Shape.Height / compactionFactor];
+        
 
-        try
+        for (int i = 0; i < Sequence.Shape.Height / compactionFactor; i++)
         {
-            for (int i = 0; i < Sequence.Shape.Height / actualCompactionUsed; i++)
+            CancellationTokenSource.Token.ThrowIfCancellationRequested();
+            double calculation = MinimapAlgorithm.GetLineValue(i * compactionFactor);
+            if (calculation > maxValue)
             {
-                CancellationTokenSource.Token.ThrowIfCancellationRequested();
-                double calculation = MinimapAlgorithm.GetLineValue(i * actualCompactionUsed);
-                if (calculation > maxValue)
-                {
-                    maxValue = calculation;
-                }
-                else if (calculation < minValue)
-                {
-                    minValue = calculation;
-                }
-
-                Bar bar = new Bar
-                {
-                    Position = i * actualCompactionUsed,
-                    Value = calculation,
-                    Orientation = Orientation.Horizontal
-                };
-                bars[i] = bar;
+                maxValue = calculation;
             }
-        }
+            else if (calculation < minValue)
+            {
+                minValue = calculation;
+            }
 
-        catch (OperationCanceledException e)
-        {
-            Logger.GetInstance().Info(LogEvent.BasicMessage,$"Minimap Generation was canceled: {e.Source}");
-            //End routine, Generation process was canceled
-            return;
+            Bar bar = new Bar
+            {
+                Position = i * compactionFactor,
+                Value = calculation,
+                Orientation = Orientation.Horizontal
+            };
+            bars[i] = bar;
         }
+        
         _plot.Axes.InvertY();
         _plot.Add.Bars(bars);
         _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence.Shape.Height + ScrollBarOffset);
 
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _viewModel = new MinimapPlotViewModel(_plot);
-            IsGenerated = true;
-            OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Success));
-        });
     }
 
     protected override string GetName()

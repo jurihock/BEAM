@@ -324,6 +324,17 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         _currentMinimap?.StopGeneration();
         MinimapVms.Clear();
     }
+
+    public void TransformMinimap(long startOffset, long endOffset)
+    {
+        if (_currentMinimap is null)
+        {
+            return;
+        }
+        _currentMinimap.StopGeneration();
+        Console.WriteLine($"Minimap change; StartOffset: {startOffset}, EndOffset: {endOffset}");
+        _currentMinimap.TransformationRerender(Sequence, startOffset, endOffset);
+    }
 }
 
 public class CloseEventArgs
