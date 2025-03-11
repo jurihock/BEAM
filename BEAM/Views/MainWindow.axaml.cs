@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -23,6 +24,7 @@ public partial class MainWindow : Window
             var viewmodel = (MainWindowViewModel)DataContext!;
             DockView.DataContext = viewmodel.DockingVm;
         };
+        Closed += (_, _) => Environment.Exit(0);
 
         AddHandler(DragDrop.DropEvent, OnDrop);
     }
