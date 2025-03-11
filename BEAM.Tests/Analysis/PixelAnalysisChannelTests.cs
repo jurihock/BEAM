@@ -3,13 +3,15 @@ using BEAM.Datatypes;
 using BEAM.ImageSequence;
 using Moq;
 using ScottPlot.Plottables;
+using Xunit;
 
 namespace BEAM.Tests.Analysis;
 
 public class PixelAnalysisChannelTests
 {
+    
     [Fact]
-    public void Analyze_ReturnsPlotWithCorrectData_WhenCalledWithValidCoordinates()
+    public void AnalyzeForPlot_ReturnsPlotWithCorrectData_WhenCalledWithValidCoordinates()
     {
         var pointerPressedPoint = new Coordinate2D(0, 0);
         var pointerReleasedPoint = new Coordinate2D(1, 1);
@@ -17,7 +19,7 @@ public class PixelAnalysisChannelTests
         sequenceMock.Setup(s => s.GetPixel(It.IsAny<long>(), It.IsAny<long>())).Returns(new double[] { 1, 2, 3 });
 
         var analysis = new PixelAnalysisChannel();
-        var plot = analysis.Analyze(pointerPressedPoint, pointerReleasedPoint, sequenceMock.Object);
+        var plot = analysis.AnalyzeforPlot(pointerPressedPoint, pointerReleasedPoint, sequenceMock.Object);
 
         var barPlot = plot.GetPlottables().OfType<BarPlot>().FirstOrDefault();
         Assert.NotNull(barPlot);
@@ -37,8 +39,7 @@ public class PixelAnalysisChannelTests
         sequenceMock.Setup(s => s.GetPixel(It.IsAny<long>(), It.IsAny<long>())).Returns(new double[] { });
         
         var analysis = new PixelAnalysisChannel();
-        Assert.Throws<InvalidOperationException>(() => analysis.Analyze(pointerPressedPoint, pointerReleasedPoint, sequenceMock.Object));
-
+        Assert.Throws<InvalidOperationException>(() => analysis.AnalyzeforPlot(pointerPressedPoint, pointerReleasedPoint, sequenceMock.Object));
     }
 
     [Fact]

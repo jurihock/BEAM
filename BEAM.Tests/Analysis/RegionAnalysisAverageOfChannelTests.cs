@@ -17,7 +17,7 @@ public class RegionAnalysisAverageOfChannelsTests
     }
 
     [Fact]
-    public void RegionAnalysisAverageOfChannels_Analyze_CalculatesCorrectResults()
+    public void RegionAnalysisAverageOfChannels_AnalyzeForPlot_CalculatesCorrectResults()
     {
         var analysis = new RegionAnalysisAverageOfChannels();
         var path = GetFilePath().Split(Path.DirectorySeparatorChar).SkipLast(1);
@@ -25,7 +25,7 @@ public class RegionAnalysisAverageOfChannelsTests
         var sequence = new SkiaSequence(list, "Test.png");
         var start = new Coordinate2D(0, 0);
         var end = new Coordinate2D(100, 100);
-        var result = analysis.Analyze(start, end, sequence);
+        var result = analysis.AnalyzeforPlot(start, end, sequence);
         Assert.NotNull(result);
 
         var bars = result.GetPlottables<BarPlot>().FirstOrDefault();
@@ -37,7 +37,7 @@ public class RegionAnalysisAverageOfChannelsTests
         
         var newStart = new Coordinate2D(300, 400);
         var newEnd = new Coordinate2D(400, 500);
-        var newResult = analysis.Analyze(newStart, newEnd, sequence);
+        var newResult = analysis.AnalyzeforPlot(newStart, newEnd, sequence);
         Assert.NotNull(newResult);
         
         var newBars = newResult.GetPlottables<BarPlot>().FirstOrDefault();

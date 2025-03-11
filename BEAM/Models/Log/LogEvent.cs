@@ -14,5 +14,6 @@ public enum LogEvent
     BasicMessage,
     ThrownException,
     Critical,
+    Analysis,
     Rendering
 }

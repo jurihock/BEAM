@@ -4,11 +4,14 @@ using System.Collections.ObjectModel;
 using BEAM.Analysis;
 using BEAM.Datatypes;
 using BEAM.Docking;
+using BEAM.Models.Log;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ScottPlot;
 using System.Collections.Specialized;
+using System.Threading;
 using System.Threading.Tasks;
+using BEAM.Views;
 using NP.Utilities;
 
 
@@ -20,25 +23,56 @@ namespace BEAM.ViewModels;
 public partial class InspectionViewModel : ViewModelBase, IDockBase
 {
     [ObservableProperty] private Plot? _currentPlot;
+
+    private byte _analysisProgress;
+
+    public byte AnalysisProgress
+    {
+        get => _analysisProgress;
+        set
+        {
+            _analysisProgress = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private AnalysisProgressWindow ProgressWindow { get; set; }
+    
+    private CancellationTokenSource _cancellationTokenSource = new();
+    private bool _analysisRunning;
+    
     private bool KeepData { get; set; }
 
 
     private SequenceViewModel _currentSequenceViewModel;
-    private Analysis.Analysis _currentAnalysis;
-    private (Coordinate2D pressed, Coordinate2D released) _pointerRectanglePosition;
-    public ObservableCollection<SequenceViewModel> ExistingSequenceViewModels { get; private set; } = new();
+    private SequenceViewModel CurrentSequenceViewModel 
+    {
+        set
+        {
+            _currentSequenceViewModel = value;
+            _currentSequenceViewModel.CloseEvent += (sender, _) =>
+            {
+                if (sender is SequenceViewModel) {this.AbortAnalysis();}
+            } ;
+        }
+        get => _currentSequenceViewModel;
+    }
 
-    public static List<Analysis.Analysis> AnalysisList { get; } =
-    [
-        new PixelAnalysisChannel(),
-        new RegionAnalysisStandardDeviationOfChannels(),
-        new RegionAnalysisAverageOfChannels()
-    ];
+    private Analysis.Analysis _currentAnalysis;
+    public string CurrentAnalysisName => _currentAnalysis.ToString();
+
+    public ObservableCollection<SequenceViewModel> ExistingSequenceViewModels { get; } = [];
+
+    /// <summary>
+    /// Used for display of all options of AnalysisLists.
+    /// </summary>
+    public static List<Analysis.Analysis> AnalysisList { get; } = Analysis.Analysis.GetAllAnalysis();
 
     public InspectionViewModel(SequenceViewModel sequenceViewModel, DockingViewModel dock)
     {
-        _currentAnalysis = AnalysisList[0];
-        _currentSequenceViewModel = sequenceViewModel;
+        _currentAnalysis = Analysis.Analysis.GetAnalysis(0);
+        CurrentSequenceViewModel = sequenceViewModel;
+        ProgressWindow = new AnalysisProgressWindow(this);
         dock.Items.CollectionChanged += DockingItemsChanged;
 
         foreach (var item in dock.Items)
@@ -49,24 +83,95 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             }
         }
     }
-
-
+    
     public string Name { get; } = "Inspection Window";
     public void OnClose()
     {
-        _currentSequenceViewModel.UnregisterInspectionViewModel(this);
+        CurrentSequenceViewModel.UnregisterInspectionViewModel(this);
+        _cancellationTokenSource.Cancel();
+        if (_analysisRunning)
+        {
+            AbortAnalysis();
+            ProgressWindow.Close();
+        }
+        _cancellationTokenSource.Dispose();
+        _cancellationTokenSource = new CancellationTokenSource();
     }
 
     /// <summary>
     /// When the user interacted with the view, the coordinates of where the
     /// pointer was pressed and released, are passed to this method.
+    ///
+    /// Does not update, if KeepData is activated or an analysis is already running.
     /// </summary>
     public void Update(Coordinate2D pressedPoint, Coordinate2D releasedPoint)
     {
         if (KeepData) return;
-        _pointerRectanglePosition = (pressedPoint, releasedPoint);
-        Plot result = _currentAnalysis.Analyze(pressedPoint, releasedPoint, _currentSequenceViewModel.Sequence);
-        CurrentPlot = result;
+        if (_analysisRunning)
+        {
+            Models.Log.Logger.GetInstance().Warning(LogEvent.Analysis, "Analysis is already running.");
+            return;
+        }
+        
+        StartAnalysis(pressedPoint, releasedPoint);
+    }
+
+    private void StartAnalysis(Coordinate2D pressedPoint, Coordinate2D releasedPoint)
+    {
+        // Only display progress for more than 100 Pixels analysed.
+        if (AmountPixels(pressedPoint, releasedPoint) > 100)
+        {
+            ProgressWindow = new AnalysisProgressWindow(this);
+            ProgressWindow.Show();
+        }
+        _analysisRunning = true;
+        _currentAnalysis.Analyze(pressedPoint, releasedPoint, CurrentSequenceViewModel.Sequence,
+            this, _cancellationTokenSource.Token);
+    }
+
+    /// <summary>
+    /// Calculate the amount of pixels encompassed by the rectangle parallel to the axes with these corners. 
+    /// </summary>
+    /// <param name="pressedPoint"></param>
+    /// <param name="releasedPoint"></param>
+    /// <returns></returns>
+    private static double AmountPixels(Coordinate2D pressedPoint, Coordinate2D releasedPoint)
+    {
+        return Math.Abs((pressedPoint.Column - releasedPoint.Column) * (pressedPoint.Row - releasedPoint.Row));
+    }
+
+    /// <summary>
+    /// Stops the currently running Analysis
+    /// </summary>
+    public async void AbortAnalysis()
+    {
+        if (!_analysisRunning) return;
+        await _cancellationTokenSource.CancelAsync();
+        try
+        {
+            await _currentAnalysis.CurrentTask;
+        }
+        catch (OperationCanceledException)
+        {
+            Models.Log.Logger.GetInstance().Warning(LogEvent.Analysis, "Analysis cancelled");
+            AnalysisEnded();
+        }
+        _cancellationTokenSource.Dispose();
+        _cancellationTokenSource = new CancellationTokenSource();
+        AnalysisEnded();
+    }
+
+    /// <summary>
+    /// Called when the analysis finished successfully.
+    /// </summary>
+    public void AnalysisEnded()
+    {
+        _analysisRunning = false;
+        AnalysisProgress = 0;
+        if (ProgressWindow.IsVisible)
+        {
+            ProgressWindow.Close();
+        }
     }
 
 
@@ -76,10 +181,8 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public void Clone()
     {
-        _currentSequenceViewModel.OpenInspectionViewCommand.Execute(null);
+        CurrentSequenceViewModel.OpenInspectionViewCommand.Execute(null);
     }
-
-
 
     /// <summary>
     /// When called, this method changes the currently used analysis method.
@@ -94,11 +197,11 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             return Task.FromResult(false);
         }
 
-        _currentAnalysis = AnalysisList[index];
-        CurrentPlot = _currentAnalysis.Analyze(
-            _pointerRectanglePosition.pressed,
-            _pointerRectanglePosition.released,
-            _currentSequenceViewModel.Sequence);
+        if (_analysisRunning)
+        {
+            AbortAnalysis();
+        }
+        _currentAnalysis = Analysis.Analysis.GetAnalysis((AnalysisTypes)index);
         return Task.CompletedTask;
     }
 
@@ -110,9 +213,9 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     public void ChangeSequence(int index)
     {
         if (index < 0 || index >= ExistingSequenceViewModels.Count) return;
-        _currentSequenceViewModel.UnregisterInspectionViewModel(this);
-        _currentSequenceViewModel = ExistingSequenceViewModels[index];
-        _currentSequenceViewModel.RegisterInspectionViewModel(this);
+        CurrentSequenceViewModel.UnregisterInspectionViewModel(this);
+        CurrentSequenceViewModel = ExistingSequenceViewModels[index];
+        CurrentSequenceViewModel.RegisterInspectionViewModel(this);
     }
 
 
@@ -141,13 +244,10 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             {
                 if (item is not SequenceViewModel sequenceViewModel) continue;
                 ExistingSequenceViewModels.Remove(sequenceViewModel);
-                if (sequenceViewModel == _currentSequenceViewModel) SwitchToFirst();
+                if (sequenceViewModel == CurrentSequenceViewModel) SwitchToFirst();
             }
         }
     }
-
-
-
 
     /// <summary>
     /// This method will simply switch to the first sequence in the list of existing sequences.
@@ -159,9 +259,9 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
             CurrentPlot = PlotCreator.CreatePlaceholderPlot();
             return;
         }
-        _currentSequenceViewModel.UnregisterInspectionViewModel(this);
-        _currentSequenceViewModel = ExistingSequenceViewModels[0];
-        _currentSequenceViewModel.RegisterInspectionViewModel(this);
+        CurrentSequenceViewModel.UnregisterInspectionViewModel(this);
+        CurrentSequenceViewModel = ExistingSequenceViewModels[0];
+        CurrentSequenceViewModel.RegisterInspectionViewModel(this);
     }
 
     /// <summary>
@@ -175,12 +275,12 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
 
     public int CurrentSequenceIndex()
     {
-        return ExistingSequenceViewModels.FindIdx(_currentSequenceViewModel);
+        return ExistingSequenceViewModels.FindIdx(CurrentSequenceViewModel);
     }
 
     public int CurrentAnalysisIndex()
     {
-        return AnalysisList.FindIdx(_currentAnalysis);
+        return (int)_currentAnalysis.GetAnalysisType();
     }
 
     public void Dispose()
@@ -188,5 +288,6 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
         if (CurrentPlot is null) return;
         CurrentPlot.Dispose();
         GC.SuppressFinalize(this);
+        //_cancellationTokenSource.Dispose();
     }
 }
