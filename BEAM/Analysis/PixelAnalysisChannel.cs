@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
-using BEAM.ViewModels;
 using ScottPlot;
 
 

@@ -48,6 +48,8 @@ public class PlotMinimap : Minimap
     /// </summary>
     public IMinimapAlgorithm? MinimapAlgorithm;
 
+    public long TransOffsetY { get; set; } = 0;
+
     private Plot _plot = new Plot();
     private MinimapPlotViewModel? _viewModel;
 
@@ -125,21 +127,12 @@ public class PlotMinimap : Minimap
             _viewModel!.CurrentPlot = _plot; 
             Console.WriteLine("Changed plot");
         }
-        
-
-        
-        /*int actualCompactionUsed = CompactionFactor;
-        if (MaxHeightForRelCompaction >= newSequence.Shape.Height)
-        {
-            actualCompactionUsed = (int)Math.Ceiling(newSequence.Shape.Height / (double)RelHeightCompactionFactor);
-            GeneratePlotDisregardingPrev(actualCompactionUsed);
-        }
-        else CutPlotToFit(newStart, newEnd);
-        this.Sequence = newSequence;*/
     }
 
     public override async Task TransformationRerender(TransformedSequence newSequence)
     {
+        TransOffsetY = (long) newSequence.DrawOffsetY;
+        this.Sequence = newSequence;
         if (!IsGenerated || Sequence is null)
         {
             Console.WriteLine("Aborted prematurely");
@@ -161,6 +154,25 @@ public class PlotMinimap : Minimap
         {
             return;
         }
+
+        var actualCompactionUsed = CompactionFactor;
+        if (MaxHeightForRelCompaction >= newSequence.Shape.Height)
+        {
+            Console.WriteLine("Using exact calculation");
+            actualCompactionUsed = (int)Math.Ceiling(newSequence.Shape.Height / (double)RelHeightCompactionFactor);
+        }
+
+        GeneratePlotDisregardingPrev(actualCompactionUsed);
+        
+        if (_viewModel is null)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                _viewModel = new MinimapPlotViewModel(_plot);
+            });
+        } 
+        IsGenerated = true;
+        _viewModel!.CurrentPlot = _plot; 
         
         
     }
@@ -193,10 +205,10 @@ public class PlotMinimap : Minimap
         }
         newPlot.Add.Bars(barsToAdd.ToArray());
         _plot = newPlot;
-        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence!.Shape.Height - startOffset - endOffset + ScrollBarOffset);
+        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence!.Shape.Height - startOffset - endOffset + ScrollBarOffset + TransOffsetY);
     }
 
-    
+
     /// <summary>
     /// Handles the logic for creating the minimap data alongside its
     /// visual representation in the required format(<see cref="Avalonia.Controls.UserControl"/>).
@@ -275,7 +287,7 @@ public class PlotMinimap : Minimap
 
             Bar bar = new Bar
             {
-                Position = i * compactionFactor,
+                Position = i * compactionFactor + TransOffsetY,
                 Value = calculation,
                 Orientation = Orientation.Horizontal
             };
@@ -284,7 +296,7 @@ public class PlotMinimap : Minimap
         
         _plot.Axes.InvertY();
         _plot.Add.Bars(bars);
-        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence.Shape.Height + ScrollBarOffset);
+        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence.Shape.Height + ScrollBarOffset + TransOffsetY);
 
     }
 

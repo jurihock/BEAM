@@ -45,7 +45,7 @@ public abstract class Analysis
         }, cancellationToken);
     }
 
-    public Plot AnalyzeforPlot(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
+    public Plot AnalyzeForPlot(Coordinate2D pointerPressedPoint, Coordinate2D pointerReleasedPoint,
         ISequence sequence)
     {
         BoundInspectionViewModel = null;

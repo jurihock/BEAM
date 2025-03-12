@@ -338,7 +338,9 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 
     public void TransformMinimap()
     {
-        throw new NotImplementedException();
+        if(_currentMinimap is null) return;
+        _currentMinimap.StopGeneration();
+        _currentMinimap.TransformationRerender(Sequence);
     }
 }
 
