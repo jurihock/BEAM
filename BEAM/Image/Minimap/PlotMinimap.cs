@@ -132,7 +132,6 @@ public class PlotMinimap : Minimap
     public override async Task TransformationRerender(TransformedSequence newSequence)
     {
         TransOffsetY = (long) newSequence.DrawOffsetY;
-        this.Sequence = newSequence;
         if (!IsGenerated || Sequence is null)
         {
             Console.WriteLine("Aborted prematurely");
@@ -143,27 +142,33 @@ public class PlotMinimap : Minimap
         try
         {
             isTransformed = !(Math.Abs(((TransformedSequence)Sequence).ScaleX - newSequence.ScaleX) < 0.0001f
-                              && Math.Abs(((TransformedSequence)Sequence).ScaleY - newSequence.ScaleY) < 0.0001f);
+                              && Math.Abs(((TransformedSequence)Sequence).ScaleY - newSequence.ScaleY) < 0.0001f
+                && Math.Abs(((TransformedSequence)Sequence).DrawOffsetY - newSequence.DrawOffsetY) < 0.0001f
+                && Math.Abs(((TransformedSequence)Sequence).DrawOffsetX - newSequence.DrawOffsetX) < 0.0001f);
+            Console.WriteLine("Minmap has TransfSequ");
         }
         catch (Exception ex)
         {
-            isTransformed = !(Math.Abs(newSequence.ScaleX - 1) < 0.0001f && Math.Abs(newSequence.ScaleY - 1) < 0.0001f);
+            Console.WriteLine("No prev Transformation");
+            isTransformed = !(Math.Abs(newSequence.ScaleX - 1) < 0.0001f && Math.Abs(newSequence.ScaleY - 1) < 0.0001f 
+                            && newSequence is { DrawOffsetY: 0, DrawOffsetX: 0 });
         }
-
+        Console.WriteLine("Transformed: " + isTransformed);
         if (!isTransformed)
         {
+            this.Sequence = newSequence;
             return;
         }
-
+        this.Sequence = newSequence;
         var actualCompactionUsed = CompactionFactor;
         if (MaxHeightForRelCompaction >= newSequence.Shape.Height)
         {
             Console.WriteLine("Using exact calculation");
             actualCompactionUsed = (int)Math.Ceiling(newSequence.Shape.Height / (double)RelHeightCompactionFactor);
         }
-
+        Console.WriteLine($"A vs C: {actualCompactionUsed} vs {CompactionFactor}");
         GeneratePlotDisregardingPrev(actualCompactionUsed);
-        
+        Console.WriteLine("Finished generating");
         if (_viewModel is null)
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
