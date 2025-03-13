@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Runtime.Intrinsics;
 using BEAM.Datatypes.Color;
@@ -75,7 +76,16 @@ public abstract partial class SequenceRenderer : ObservableObject, ICloneable
 
     public abstract BGR RenderPixel(ISequence sequence, long x, long y);
 
-    public abstract BGR[] RenderPixels(ISequence sequence, long[] xs, long y);
+    /// <summary>
+    /// Renders requested parts of a line.
+    /// </summary>
+    /// <param name="sequence">The sequence to render from</param>
+    /// <param name="xs">The x coords use render</param>
+    /// <param name="y">the line</param>
+    /// <param name="bgrs">a pre-allocated array for the return values. Length = xs.Length</param>
+    /// <param name="pool">A memory pool to use</param>
+    /// <returns>The rendererd data</returns>
+    public abstract BGR[] RenderPixels(ISequence sequence, long[] xs, long y, BGR[] bgrs, ArrayPool<double> pool);
 
     public abstract RenderTypes GetRenderType();
 

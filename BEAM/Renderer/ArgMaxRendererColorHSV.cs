@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Linq;
 using BEAM.Controls;
 using BEAM.Datatypes;
@@ -78,12 +79,11 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
         return color;
     }
 
-    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y)
+    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y, BGR[] bgrs, ArrayPool<double> pool)
     {
         var usedChannelIndices = _channelHsvMap.GetUsedChannels();
 
-        var line = sequence.GetPixelLineData(xs, y, usedChannelIndices);
-        var data = new BGR[xs.Length];
+        var line = sequence.GetPixelLineData(xs, y, usedChannelIndices, pool);
 
         for (var x = 0; x < xs.Length; x++)
         {
@@ -91,10 +91,10 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
 
             var color = _channelHsvMap.GetColorBGR(usedChannelIndices[argMaxChannel]);
 
-            data[x] = color;
+            bgrs[x] = color;
         }
 
-        return data;
+        return bgrs;
     }
 
     /// <summary>

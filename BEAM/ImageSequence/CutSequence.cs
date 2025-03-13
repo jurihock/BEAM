@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using BEAM.Image;
 
 namespace BEAM.ImageSequence;
@@ -29,14 +30,14 @@ public class CutSequence(string name, long startOffset, long endOffset, ISequenc
         return originalSequence.GetPixel(x, y + startOffset, channels);
     }
 
-    public LineImage GetPixelLineData(long line, int[] channels)
+    public LineImage GetPixelLineData(long line, int[] channels, ArrayPool<double> pool)
     {
-        return originalSequence.GetPixelLineData(line + startOffset, channels);
+        return originalSequence.GetPixelLineData(line + startOffset, channels, pool);
     }
 
-    public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
+    public LineImage GetPixelLineData(long[] xs, long line, int[] channels, ArrayPool<double> pool)
     {
-        return originalSequence.GetPixelLineData(xs, line + startOffset, channels);
+        return originalSequence.GetPixelLineData(xs, line + startOffset, channels, pool);
     }
 
     public string GetName()
