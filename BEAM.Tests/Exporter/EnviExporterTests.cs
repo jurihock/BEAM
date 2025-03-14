@@ -38,7 +38,7 @@ public class EnviExporterTests
         var sequence2 = new EnviSequence(list2, "CoolSequence");
         Assert.True(SequenceCompare(sequence, sequence2));
         File.Delete($"{exportPath}.raw");
-        File.Delete($"{exportPath}.raw");
+        File.Delete($"{exportPath}.hdr");
     }
     
     [Fact]
