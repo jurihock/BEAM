@@ -100,15 +100,13 @@ public partial class MinimapPlotView : UserControl
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName != nameof(MinimapPlotViewModel.CurrentPlot)) return;
-        Console.WriteLine("Property changed");
         if(DataContext is not MinimapPlotViewModel vm)
         {
             return;
         }
-        if (e.PropertyName == nameof(MinimapPlotViewModel.CurrentPlot))
-        {
-            FillPlot(vm.CurrentPlot);
-        }
+
+        FillPlot(vm.CurrentPlot);
+        
     }
     private void OnSizeChanged(object sender, ViewModels.Utility.SizeChangedEventArgs e)
     {

@@ -49,7 +49,7 @@ public partial class MinimapPlotViewModel : SizeAdjustableViewModelBase, IDockBa
     /// Initializes a new instance with the specified plot.
     /// </summary>
     /// <param name="plot">The plot to display.</param>
-    /// <param name="source">The minimap based on which the data is being generated.</param>
+    /// <param name="source">The minimap which performs the generation process.</param>
     /// <param name="name">The name of the sequence corresponding to this minimap</param>
     public MinimapPlotViewModel(Plot plot,  PlotMinimap source, string name = "Minimap View")
     {
@@ -59,14 +59,12 @@ public partial class MinimapPlotViewModel : SizeAdjustableViewModelBase, IDockBa
         this._source = source;
         ProgressWindow = new MinimapProgressWindow(this);
     }
-    public void ReplacePlot(Plot newPlot)
-    {
-        CurrentPlot = newPlot;
-    }
 
+    /// <summary>
+    /// Initializes a new progress bar and therefore sets the MinimapProgress attribute to zero.
+    /// </summary>
     public void InitializeStatusWindow()
     {
-        Console.WriteLine("Started new Progress bar");
         MinimapProgress = 0;
         ProgressWindow.Show();
     }

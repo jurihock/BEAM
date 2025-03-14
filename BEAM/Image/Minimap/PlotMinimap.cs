@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using BEAM.Image.Minimap.MinimapAlgorithms;
 using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
-using BEAM.Models.Log;
 using BEAM.Renderer;
-using BEAM.ViewModels;
 using BEAM.ViewModels.Minimap;
+using BEAM.ViewModels.Utility;
 using BEAM.Views.Minimap.Popups.EmbeddedSettings;
 using BEAM.Views.Utility;
 using ScottPlot;
@@ -48,21 +46,23 @@ public class PlotMinimap : Minimap
     /// </summary>
     public IMinimapAlgorithm? MinimapAlgorithm;
 
-    public long TransOffsetY { get; set; } = 0;
+    private long TransOffsetY { get; set; }
 
-    private Plot _plot = new Plot();
+    private Plot _plot = new();
     private MinimapPlotViewModel _viewModel;
 
     public PlotMinimap()
     {
         MinimapAlgorithm = SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObject();
-        _viewModel = new MinimapPlotViewModel(_plot, this);
+        _viewModel = new MinimapPlotViewModel(_plot, this, Name);
     }
-    
+
+    private TransformationStorer _latestData;
 
     public override void StartGeneration(ISequence sequence, MinimapGeneratedEventHandler eventCallbackFunc)
     {
         this.Sequence = sequence;
+        _latestData.Update(sequence);
         MinimapGenerated += eventCallbackFunc;
         Task.Run(() => GenerateMinimap(), CancellationTokenSource.Token);
     }
@@ -73,9 +73,9 @@ public class PlotMinimap : Minimap
         MinimapAlgorithm.SetRenderer(renderer);
     }
 
-    public override ViewModelBase GetDisplayableViewModel()
+    public override SizeAdjustableViewModelBase GetDisplayableViewModel()
     {
-        if (!IsGenerated || _viewModel is null)
+        if (!IsGenerated)
         {
             return new MinimapPlotViewModel(_plot, this);
         } 
@@ -84,10 +84,8 @@ public class PlotMinimap : Minimap
 
     public override async Task CutRerender(TransformedSequence newSequence, long startCutoff, long endCutoff)
     {
-        Console.WriteLine("Minimap recieved request: " + newSequence.Shape.Width + " " + newSequence.Shape.Height + "|||" + startCutoff + ";;" + endCutoff);
         if (!IsGenerated || Sequence is null)
         {
-            Console.WriteLine("Aborted prematurely");
             this.Sequence = newSequence;
             await Task.Run(() => GenerateMinimap(false), CancellationTokenSource.Token);
         }
@@ -95,39 +93,28 @@ public class PlotMinimap : Minimap
 
         if (endCutoff == 0 && startCutoff == 0)
         {
-            Console.WriteLine("no change");
+            // nothing has actually changed
             return;
+        }
+
+        if (MaxHeightForRelCompaction >= newSequence.Shape.Height)
+        {
+            var actualCompactionUsed =
+                (int)Math.Ceiling(newSequence.Shape.Height / (double)RelHeightCompactionFactor);
+            this.Sequence = newSequence;
+            await GeneratePlotDisregardingPrev(actualCompactionUsed);
         }
         else
         {
-            Console.WriteLine("only cutting");
-            if (MaxHeightForRelCompaction >= newSequence.Shape.Height)
-            {
-                Console.WriteLine("Using exact calculation");
-                var actualCompactionUsed =
-                    (int)Math.Ceiling(newSequence.Shape.Height / (double)RelHeightCompactionFactor);
-                this.Sequence = newSequence;
-                GeneratePlotDisregardingPrev(actualCompactionUsed);
-            }
-            else
-            {
-                Console.WriteLine("Using user specified calculation");
-                CutPlotToFit(startCutoff, endCutoff);
-                this.Sequence = newSequence;
-            }
-                
-                
-            if (_viewModel is null)
-            {
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    _viewModel = new MinimapPlotViewModel(_plot, this);
-                });
-            } 
-            IsGenerated = true;
-            _viewModel!.CurrentPlot = _plot; 
-            Console.WriteLine("Changed plot");
+            CutPlotToFit(startCutoff, endCutoff);
+            this.Sequence = newSequence;
         }
+                
+                
+  
+        IsGenerated = true;
+        _viewModel.CurrentPlot = _plot; 
+        _latestData.Update(newSequence);
     }
 
     public override async Task TransformationRerender(TransformedSequence newSequence)
@@ -135,65 +122,86 @@ public class PlotMinimap : Minimap
         TransOffsetY = (long) newSequence.DrawOffsetY;
         if (!IsGenerated || Sequence is null)
         {
-            Console.WriteLine("Aborted prematurely");
             this.Sequence = newSequence;
             await Task.Run(() => GenerateMinimap(false), CancellationTokenSource.Token);
         }
-        bool isTransformed = false;
-        try
-        {
-            isTransformed = !(Math.Abs(((TransformedSequence)Sequence).ScaleX - newSequence.ScaleX) < 0.0001f
-                              && Math.Abs(((TransformedSequence)Sequence).ScaleY - newSequence.ScaleY) < 0.0001f
-                && Math.Abs(((TransformedSequence)Sequence).DrawOffsetY - newSequence.DrawOffsetY) < 0.0001f
-                && Math.Abs(((TransformedSequence)Sequence).DrawOffsetX - newSequence.DrawOffsetX) < 0.0001f);
-            Console.WriteLine("Minmap has TransfSequ");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("No prev Transformation");
-            isTransformed = !(Math.Abs(newSequence.ScaleX - 1) < 0.0001f && Math.Abs(newSequence.ScaleY - 1) < 0.0001f 
-                            && newSequence is { DrawOffsetY: 0, DrawOffsetX: 0 });
-        }
-        Console.WriteLine("Transformed: " + isTransformed);
+
+        IsGenerated = false;
+
+        var isTransformed = !(Math.Abs(_latestData.ScaleX - newSequence.ScaleX) < 0.0001f
+                              && Math.Abs(_latestData.ScaleY - newSequence.ScaleY) < 0.0001f
+                              && Math.Abs(_latestData.OffsetY - newSequence.DrawOffsetY) < 0.0001f
+                              && Math.Abs(_latestData.OffsetX - newSequence.DrawOffsetX) < 0.0001f);
+        this.Sequence = newSequence;
         if (!isTransformed)
         {
-            this.Sequence = newSequence;
             return;
         }
-        this.Sequence = newSequence;
-        var actualCompactionUsed = CompactionFactor;
-        if (MaxHeightForRelCompaction >= newSequence.Shape.Height)
+
+        if (Math.Abs(_latestData.ScaleX - newSequence.ScaleX) < 0.0001f
+            && Math.Abs(_latestData.ScaleY - newSequence.ScaleY) < 0.0001f)
         {
-            Console.WriteLine("Using exact calculation");
-            actualCompactionUsed = (int)Math.Ceiling(newSequence.Shape.Height / (double)RelHeightCompactionFactor);
+            // Only offsets have changed, no scaling. Hence, do not recalculating the plot.
+            await Task.Run(() => MovePlotByOffset(newSequence));
         }
-        Console.WriteLine($"A vs C: {actualCompactionUsed} vs {CompactionFactor}");
-        GeneratePlotDisregardingPrev(actualCompactionUsed);
-        Console.WriteLine("Finished generating");
-        if (_viewModel is null)
+        else
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
+            var actualCompactionUsed = CompactionFactor;
+            if (MaxHeightForRelCompaction >= newSequence.Shape.Height)
             {
-                _viewModel = new MinimapPlotViewModel(_plot, this);
-            });
-        } 
+                actualCompactionUsed = (int)Math.Ceiling(newSequence.Shape.Height / (double)RelHeightCompactionFactor);
+            }
+            await Task.Run(() => GeneratePlotDisregardingPrev(actualCompactionUsed));
+        }
+        
         IsGenerated = true;
-        _viewModel!.CurrentPlot = _plot; 
-        
-        
+        _viewModel.CurrentPlot = _plot; 
+        _latestData.Update(newSequence);
     }
-    
+
+    /// <summary>
+    /// Moves a plot by the offset of the new sequence and the internally saved ones.
+    /// </summary>
+    private void MovePlotByOffset(TransformedSequence newSequence)
+    {
+        List<Bar> bars = ((BarPlot)_plot.PlottableList[0]).Bars;
+        Plot newPlot = new Plot();
+        List<Bar> barsToAdd = new List<Bar>();
+        double maxValue = 0;
+        double minValue = 0;
+        foreach (var bar in bars)
+        {
+            if (bar.Value > maxValue)
+            {
+                maxValue = bar.Value;
+            }
+            else if (bar.Value < minValue)
+            {
+                minValue = bar.Value;
+            }
+            bar.Position += newSequence.DrawOffsetY - _latestData.OffsetY;
+            barsToAdd.Add(bar);
+        }
+        newPlot.Add.Bars(barsToAdd.ToArray());
+        _plot = newPlot;
+        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: newSequence.Shape.Height +  newSequence.DrawOffsetY + ScrollBarOffset);
+
+    }
+
+    /// <summary>
+    /// Cuts the plot to fit a smaller sequence.
+    /// </summary>
+    /// <param name="startOffset">The number of lines cut from the beginning.</param>
+    /// <param name="endOffset">The number of lines cut from the end.</param>
     private void CutPlotToFit(long startOffset, long endOffset)
     {
         double maxValue = 0;
         double minValue = 0;
-        Console.WriteLine("Cutting");
         List<Bar> bars = ((BarPlot)_plot.PlottableList[0]).Bars;
         Plot newPlot = new Plot();
         List<Bar> barsToAdd = new List<Bar>();
         foreach (var bar in bars)
         {
-            Console.WriteLine("bar position: " + bar.Position);
             if(bar.Position >= startOffset && bar.Position < Sequence!.Shape.Height - endOffset)
             {
                 bar.Position -= startOffset;
@@ -205,7 +213,6 @@ public class PlotMinimap : Minimap
                 {
                     minValue = bar.Value;
                 }
-                Console.WriteLine("Added bar from position " + bar.Position);
                 barsToAdd.Add(bar);
             }
         }
@@ -224,13 +231,19 @@ public class PlotMinimap : Minimap
         using var _ = Profiling.Timer.Start("Generate Minimap");
         if (Sequence is null || MinimapAlgorithm is null)
         {
-            OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Failure));
+            if (inform)
+            {
+                OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Failure));
+            }
             return;
         }
         bool result = MinimapAlgorithm.AnalyzeSequence(Sequence, this.CancellationTokenSource.Token);
         if (!result)
         {
-            OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Failure));
+            if (inform)
+            {
+                OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Failure));
+            }
             return;
         }
         
@@ -238,7 +251,7 @@ public class PlotMinimap : Minimap
         try
         {
              await GeneratePlotDisregardingPrev(actualCompactionUsed);
-        }    catch (OperationCanceledException e)
+        }    catch (OperationCanceledException)
         {
             //End routine, Generation process was canceled
             return;
@@ -280,7 +293,6 @@ public class PlotMinimap : Minimap
         Bar[] bars = new Bar[workload];
         
         await Dispatcher.UIThread.InvokeAsync(() => _viewModel.InitializeStatusWindow());
-        Console.WriteLine("Initialized");
         for (int i = 0; i < workload; i++)
         {
             CancellationTokenSource.Token.ThrowIfCancellationRequested();
@@ -301,19 +313,19 @@ public class PlotMinimap : Minimap
                 Orientation = Orientation.Horizontal
             };
             bars[i] = bar;
-            //Dispatcher.UIThread.InvokeAsync(() => _viewModel.MinimapProgress = (byte)(i / Math.Max((workload - 1), 1)));
-            //Console.WriteLine($"Progress: { (byte) Math.Round((i / (double) Math.Max((workload - 1), 1)) * 100)}");
-            //Dispatcher.UIThread.InvokeAsync(() => _viewModel.MinimapProgress = (byte) Math.Round((i / (double) Math.Max((workload - 1), 1)) * 100));
             _viewModel.MinimapProgress = (byte)Math.Round((i / (double)Math.Max((workload - 1), 1)) * 100);
-            //Console.WriteLine("Hence minimap Progress: " + _viewModel.MinimapProgress);
         }
-        Console.WriteLine("Finished");
         
         await Dispatcher.UIThread.InvokeAsync(() => _viewModel.CloseStatusWindow());
         _plot.Axes.InvertY();
         _plot.Add.Bars(bars);
         _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence.Shape.Height + ScrollBarOffset + TransOffsetY);
 
+    }
+
+    protected override void CancelGenerationVisuals()
+    {
+        _viewModel.CloseStatusWindow();
     }
 
     protected override string GetName()
