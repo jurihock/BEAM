@@ -17,6 +17,7 @@ public static class PngExporter
     /// </summary>
     private const long MaxHeight = 4096;
 
+    // TODO: Why TransformedSequence, not ISequence
     /// <summary>
     /// Exports the given sequence to the specified path in the PNG format.
     /// </summary>
