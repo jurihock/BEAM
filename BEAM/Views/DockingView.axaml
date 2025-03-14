@@ -17,7 +17,7 @@
         <np:DockManager x:Key="TheDockManager" />
     </UserControl.Resources>
 
-    <np:RootDockGroup x:Name="RootDock" TheDockManager="{StaticResource TheDockManager}">
+    <np:RootDockGroup x:Name="RootDock" TheDockManager="{StaticResource TheDockManager}" IsHitTestVisible="{Binding HasDock}">
         <np:StackDockGroup DockId="StackDock" IsStableGroup="True" />
     </np:RootDockGroup>
 </UserControl>

@@ -168,13 +168,15 @@ public class SequenceImage : IDisposable
 
     private void _InitPreviews()
     {
+        var scale = Math.Min(_sequence.Shape.Width, _sequence.Shape.Height) > 10 ? 0.25 : 1;
+
         for (var i = 0; i < _minPreloadedSections; i++)
         {
             _sequenceParts.Add(new SequencePart(_sequence, this, i * _sectionHeight + _startLine));
 
             var height = Math.Min(_sectionHeight,
                 _sequence.Shape.Height - (_sequenceParts.Count > 1 ? _sequenceParts[^1].YEnd : 0));
-            _sequenceParts[i].Render(0.25, height, false);
+            _sequenceParts[i].Render(scale, height, false);
         }
     }
 
@@ -307,7 +309,9 @@ public class SequenceImage : IDisposable
             xs[i] = startX + i * (endX - startX) / width;
         }
 
-        const int par = 10;
+        // clamping the parallelism so that images with only a few lines still render correctly
+        var par = Math.Min(10, height);
+
         var pool = ArrayPool<double>.Create();
         Parallel.For(0, par, p =>
         {

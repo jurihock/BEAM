@@ -7,7 +7,7 @@ public class LoggerTests
     [Fact]
     public void CreateNewLogger()
     {
-        Logger.Init();
+        Logger.Init("testlog.txt");
         // Arrange
         var logger = Logger.GetInstance();
         
@@ -21,7 +21,7 @@ public class LoggerTests
         logger.LogMessage("This is a test log message");
 
         // Assert
-        Assert.True(File.Exists("../../../loggerTests/testLogs/testLog.txt"));
+        Assert.True(File.Exists("testlog.txt"));
     }
     
 
