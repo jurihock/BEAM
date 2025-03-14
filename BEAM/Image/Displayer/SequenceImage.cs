@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using BEAM.Datatypes.Color;
 using BEAM.Image.Bitmap;
 using BEAM.ImageSequence;
+using BEAM.Profiling;
 using BEAM.Renderer;
 using SkiaSharp;
 
@@ -166,13 +168,15 @@ public class SequenceImage : IDisposable
 
     private void _InitPreviews()
     {
+        var scale = Math.Min(_sequence.Shape.Width, _sequence.Shape.Height) > 10 ? 0.25 : 1;
+
         for (var i = 0; i < _minPreloadedSections; i++)
         {
             _sequenceParts.Add(new SequencePart(_sequence, this, i * _sectionHeight + _startLine));
 
             var height = Math.Min(_sectionHeight,
                 _sequence.Shape.Height - (_sequenceParts.Count > 1 ? _sequenceParts[^1].YEnd : 0));
-            _sequenceParts[i].Render(0.25, height, false);
+            _sequenceParts[i].Render(scale, height, false);
         }
     }
 
@@ -305,14 +309,22 @@ public class SequenceImage : IDisposable
             xs[i] = startX + i * (endX - startX) / width;
         }
 
-        // using parallelism to render
-        Parallel.For(0, height, j =>
+        // clamping the parallelism so that images with only a few lines still render correctly
+        var par = Math.Min(10, height);
+
+        Parallel.For(0, par, p =>
+        {
+            var current = height / par * p;
+            var next = height / par * (p + 1);
+
+            var bgr = new BGR[xs.Length];
+
+            for (int j = current; j < next; j++)
             {
-                //for(var j = 0; j < height; j++) {
                 var line = startLine + j * (endLine - startLine) / height;
 
                 // rendering each pixel using a renderer
-                var data = Renderer.RenderPixels(_sequence, xs, line);
+                var data = Renderer.RenderPixels(_sequence, xs, line, bgr);
 
                 var span = bitmap.GetPixelSpan();
                 var pixels = MemoryMarshal.Cast<byte, BGRA>(span);
@@ -323,9 +335,7 @@ public class SequenceImage : IDisposable
                     pixels[j * width + i] = new BGRA(data[i], 255);
                 }
             }
-        );
-
-
+        });
         return bitmap;
     }
 

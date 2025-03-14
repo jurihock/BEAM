@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using NP.Utilities;
 
 namespace BEAM.Image;
@@ -12,6 +13,7 @@ public class LineImage : IImage
 
     /// <summary>
     /// The data of the line.
+    /// Attention: the data allocation has to come from the passed memory pool.
     /// </summary>
     /// <param name="data">The data with layout data[x pos][channel]</param>
     public LineImage(double[][] data)
@@ -85,7 +87,6 @@ public class LineImage : IImage
 
     public void Dispose()
     {
-        // class does not manage additional resources -> no need to dispose
         GC.SuppressFinalize(this);
     }
 }

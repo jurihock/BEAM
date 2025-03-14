@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Threading;
 using BEAM.Datatypes.Color;
 using BEAM.Exceptions;
@@ -31,7 +32,8 @@ public class RenderedChannelThresholdAlgorithm : IMinimapAlgorithm
     private SequenceRenderer? _renderer;
     private BGR _thresholds;
     private long[]? _fetchMask;
-    
+    private readonly ArrayPool<double> _pool = ArrayPool<double>.Create();
+
     
     /// <summary>
     /// Prepares the algorithm for sequence analysis by initializing thresholds and storing sequence data.
@@ -91,8 +93,11 @@ public class RenderedChannelThresholdAlgorithm : IMinimapAlgorithm
     
     private double AnalyzeLine(long line)
     {
+        if (_fetchMask == null) return 0;
+
         double sum = 0.0f;
-        var renderedData = _renderer!.RenderPixels(_sequence!, _fetchMask!, line);
+        var bgrs = new BGR[_fetchMask.Length];
+        var renderedData = _renderer!.RenderPixels(_sequence!, _fetchMask!, line, bgrs);
         foreach (var entry in renderedData)
         {
             _ctx!.Value.ThrowIfCancellationRequested();

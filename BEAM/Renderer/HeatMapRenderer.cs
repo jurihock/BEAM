@@ -1,4 +1,5 @@
-﻿using BEAM.Datatypes.Color;
+﻿using System.Buffers;
+using BEAM.Datatypes.Color;
 using BEAM.Exceptions;
 using BEAM.ImageSequence;
 
@@ -79,9 +80,8 @@ public abstract class HeatMapRenderer : SequenceRenderer
             IntensityRange * RelMinHottestIntensity + MinimumOfIntensityRange);
     }
 
-    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y)
+    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y, BGR[] bgrs)
     {
-        var data = new BGR[xs.Length];
         var img = sequence.GetPixelLineData(xs, y, [Channel]);
 
         for (var i = 0; i < xs.Length; i++)
@@ -89,10 +89,10 @@ public abstract class HeatMapRenderer : SequenceRenderer
             var color = GetColor(img.GetPixel(i, 0, 0),
                 IntensityRange * RelMaxColdestIntensity + MinimumOfIntensityRange,
                 IntensityRange * RelMinHottestIntensity + MinimumOfIntensityRange);
-            data[i] = color;
+            bgrs[i] = color;
         }
 
-        return data;
+        return bgrs;
     }
 
     /// <summary>
