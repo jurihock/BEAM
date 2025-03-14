@@ -9,6 +9,7 @@ using Xunit.Abstractions;
 
 namespace BEAM.Tests.Exporter;
 
+[Collection("ExporterTests")]
 public class PngExporterTests
 {
     private readonly ITestOutputHelper _testOutputHelper;
@@ -66,6 +67,7 @@ public class PngExporterTests
         Assert.True(FileCompare($"{exportPath + Path.DirectorySeparatorChar}00000000.png", originalPng));
         
         Directory.Delete(exportPath, true);
+
     }
     
     // This was copied from the C# tutorial on https://learn.microsoft.com/de-de/troubleshoot/developer/visualstudio/csharp/language-compilers/create-file-compare
@@ -75,6 +77,7 @@ public class PngExporterTests
     // files are not the same.
     private static bool FileCompare(string file1, string file2)
     {
+        
         int file1byte;
         int file2byte;
         FileStream fs1;

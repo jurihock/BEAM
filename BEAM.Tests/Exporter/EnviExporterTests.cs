@@ -1,18 +1,16 @@
 using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Avalonia.Platform.Storage;
 using BEAM.Exporter;
 using BEAM.ImageSequence;
 using BEAM.Models.Log;
 using BEAM.Renderer;
 using Moq;
-using Xunit.Abstractions;
 
 namespace BEAM.Tests.Exporter;
 
+[Collection("ExporterTests")]
 public class EnviExporterTests
 {
-
     [Fact]
     public void Export_WritesCorrectData()
     {
@@ -37,6 +35,9 @@ public class EnviExporterTests
         list2.Add(exportPath);
         var sequence2 = new EnviSequence(list2, "CoolSequence");
         Assert.True(SequenceCompare(sequence, sequence2));
+        
+        sequence.Dispose();
+        sequence2.Dispose();
         File.Delete($"{exportPath}.raw");
         File.Delete($"{exportPath}.hdr");
     }
@@ -63,6 +64,7 @@ public class EnviExporterTests
         
         path = GetFilePath().Split(Path.DirectorySeparatorChar).SkipLast(1);
         var originalEnvi = Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "./TestData/Envi/EnviTest");
+        sequence.Dispose();
         Assert.True(File.Exists($"{exportPath}.hdr"));
         Assert.True(FileCompare($"{exportPath}.hdr", $"{originalEnvi}.hdr"));
         
@@ -70,6 +72,7 @@ public class EnviExporterTests
         Assert.True(FileCompare($"{exportPath}.raw", $"{originalEnvi}.raw"));
         
         Assert.False(FileCompare($"{exportPath}.raw", $"{exportPath}.hdr"));
+        
         File.Delete($"{exportPath}.raw");
         File.Delete($"{exportPath}.hdr");
     }
