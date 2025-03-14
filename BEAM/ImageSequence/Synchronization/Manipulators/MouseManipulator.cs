@@ -49,15 +49,13 @@ public class MouseManipulator : Manipulator
             }
 
             EventSourceMapper.AddIfNotExists(e, avaPlot);
-            if (EventSourceMapper.IsSource(e, avaPlot))
-            {
-                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
+            if (!EventSourceMapper.IsSource(e, avaPlot)) return;
+            var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
 
-                foreach (var plot in _avaPlots.Where(p => p != avaPlot))
-                {
-                    plot.RaiseEvent(e);
-                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
-                }
+            foreach (var plot in _avaPlots.Where(p => p != avaPlot))
+            {
+                plot.RaiseEvent(e);
+                ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
             }
         }
 
@@ -66,6 +64,24 @@ public class MouseManipulator : Manipulator
         avaPlot.PointerMoved += PointerEvent;
         avaPlot.PointerPressed += PointerEvent;
         avaPlot.PointerReleased += PointerEvent;
+
+        void OnKey(object? sender, KeyEventArgs e)
+        {
+            if (!_isSynchronizing)
+            {
+                return;
+            }
+
+            EventSourceMapper.AddIfNotExists(e, avaPlot);
+            if (!EventSourceMapper.IsSource(e, avaPlot)) return;
+            foreach (var plot in _avaPlots.Where(p => p != avaPlot))
+            {
+                plot.RaiseEvent(e);
+            }
+        }
+
+        avaPlot.KeyDown += OnKey;
+        avaPlot.KeyUp += OnKey;
 
         void OnAvaPlotOnPointerWheelChanged(object? _, PointerWheelEventArgs e)
         {
