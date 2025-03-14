@@ -467,7 +467,7 @@ public partial class SequenceView : UserControl
     public void UpdateScrollBar()
     {
         var vm = (DataContext as SequenceViewModel)!;
-        var val = ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / vm.Sequence.Shape.Height) * 100;
+        var val = ((AvaPlot1.Plot.Axes.GetLimits().Top + 100) / (vm.Sequence.Shape.Height + vm.Sequence.DrawOffsetY)) * 100;
         Bar1.Value = val <= 0.0 ? 0.0 : double.Min(val, 100.0);
     }
 
