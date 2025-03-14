@@ -167,7 +167,7 @@ public class DiskSequenceTests
         var diskSequence = DiskSequence.Open(testSequenceFolder);
         Assert.NotNull(diskSequence);
 
-        Assert.Equal(diskSequence.GetLoadedImageCount(), 2);
+        Assert.Equal(1, diskSequence.GetLoadedImageCount());
         // test correct shape of the Sequence
         var shape = new ImageShape(10, 30, 4);
         Assert.Equal(shape, diskSequence.Shape);

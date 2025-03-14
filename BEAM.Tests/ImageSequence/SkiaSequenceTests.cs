@@ -99,7 +99,6 @@ public class SkiaSequenceTests
         var list = new List<string> { Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "../TestAssets/Test.png") };
 
         var sequence = new SkiaSequence(list, "CoolSequence");
-        var buffer = ArrayPool<double>.Shared;
         var xs = new long[] {0, 1, 2, 3, 500, 798, 799};
         
         var lineData = sequence.GetPixelLineData(xs, 0, [0, 1, 2, 3]);
