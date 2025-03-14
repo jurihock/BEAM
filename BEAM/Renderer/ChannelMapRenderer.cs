@@ -1,5 +1,4 @@
 using BEAM.Controls;
-using System.Buffers;
 using System.Runtime.Intrinsics;
 using BEAM.Datatypes.Color;
 using BEAM.Exceptions;

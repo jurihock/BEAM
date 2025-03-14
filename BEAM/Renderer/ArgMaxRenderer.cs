@@ -1,5 +1,4 @@
-﻿using System.Buffers;
-using BEAM.Datatypes;
+﻿using BEAM.Datatypes;
 using BEAM.Datatypes.Color;
 using BEAM.ImageSequence;
 

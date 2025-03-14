@@ -1,9 +1,12 @@
+using System;
 using System.IO;
+using System.Threading;
 using Avalonia.Platform.Storage;
 using BEAM.Image.Envi;
 using BEAM.ImageSequence;
 using BEAM.Models.Log;
 using BEAM.Renderer;
+using BEAM.ViewModels;
 
 namespace BEAM.Exporter;
 
@@ -18,14 +21,18 @@ public static class EnviExporter
     /// <param name="path">The path where the files will be saved.</param>
     /// <param name="sequence">The sequence to be exported.</param>
     /// <param name="renderer">The renderer used for the sequence.</param>
-    public static void Export(IStorageFile path, TransformedSequence sequence, SequenceRenderer renderer)
+    /// <param name="vm">The ViewModel used to store the progress as a data bound value.</param>
+    public static void Export(IStorageFile path, TransformedSequence sequence, SequenceRenderer renderer, ExportProgressWindowViewModel vm)
     {
 
         CreateHeaderFile(path, sequence);
         using var stream = File.OpenWrite($"{path.Path.LocalPath}.raw");
         using var writer = new BinaryWriter(stream);
+        long steps = sequence.Shape.Height / 100;
+        CancellationToken ctx = vm.GetCancellationToken();
         for (var y = 0; y < sequence.Shape.Height; y++)
         {
+            ctx.ThrowIfCancellationRequested();
             for (var x = 0; x < sequence.Shape.Width; x++)
             {
                 var data = sequence.GetPixel(x, y);
@@ -34,7 +41,15 @@ public static class EnviExporter
                     writer.Write(data[k]);
                 }
             }
+
+            if (y % steps == 0)
+            {
+                vm.ActionProgress = (byte)Math.Round((y / (double)sequence.Shape.Height) *100);
+            }
+            
         }
+
+        vm.Close();
         Logger.GetInstance().LogMessage($"Finished exporting sequence {sequence.GetName()} as ENVI to {path.Path.LocalPath}");
     }
 
@@ -57,5 +72,15 @@ public static class EnviExporter
         using var stream = File.OpenWrite($"{path.Path.LocalPath}.hdr");
         using var writer = new StreamWriter(stream);
         writer.Write(header);
+    }
+
+    /// <summary>
+    /// Cleans up any remnants of the export process. if it was canceled prematurely.
+    /// </summary>
+    /// <param name="folder">The path to which the original export was meant to take place.</param>
+    public static void Cleanup(IStorageFile folder)
+    {
+        File.Delete($"{folder.Path.AbsolutePath}.hdr");
+        File.Delete($"{folder.Path.AbsolutePath}.raw");
     }
 }

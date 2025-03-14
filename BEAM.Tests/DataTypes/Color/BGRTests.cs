@@ -1,7 +1,6 @@
-namespace BEAM.Tests.DataTypes;
-
 using BEAM.Datatypes.Color;
-using Xunit;
+
+namespace BEAM.Tests.DataTypes.Color;
 
 public class BGRTests
 {

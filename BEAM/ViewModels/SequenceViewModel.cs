@@ -198,14 +198,14 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         var x = point.Column;
         var y = point.Row;
         
-        if(x < 0)
-            x = 0;
-        else if (x >= Sequence.Shape.Width)
-            x = Sequence.Shape.Width - 1;
-        if(y < 0)
-            y = 0;
-        else if(y >= Sequence.Shape.Height)
-            y = Sequence.Shape.Height - 1;
+        if(x < 0 + Sequence.DrawOffsetX)
+            x = Sequence.DrawOffsetX;
+        else if (x >= Sequence.Shape.Width + Sequence.DrawOffsetX)
+            x = Sequence.Shape.Width - 1 + Sequence.DrawOffsetX;
+        if(y < Sequence.DrawOffsetY)
+            y = Sequence.DrawOffsetX;
+        else if(y >= Sequence.Shape.Height + Sequence.DrawOffsetX)
+            y = Sequence.Shape.Height - 1 + Sequence.DrawOffsetX;
         
         return new Coordinate2D(y, x);
     }
@@ -328,7 +328,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 
     public void CutMinimap(long startOffset, long endOffset)
     {
-        if (_currentMinimap is null)
+        if (_currentMinimap is null || MinimapVms.Count == 0)
         {
             return;
         }
@@ -338,7 +338,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 
     public void TransformMinimap()
     {
-        if(_currentMinimap is null) return;
+        if(_currentMinimap is null || MinimapVms.Count == 0) return;
         _currentMinimap.StopGeneration();
         _currentMinimap.TransformationRerender(Sequence);
     }
