@@ -74,7 +74,7 @@ public class DiskSequenceTests
     /// </summary>
     /// <exception cref="Exception">If opening the file fails, an exception is thrown</exception>
     [Fact]
-    public void TestOpeningRgbwSequenceRgb3ImagesPNG()
+    public void TestOpeningRgbwSequenceRgb3ImagesPng()
     {
         var testSequenceFolder = "";
         try
