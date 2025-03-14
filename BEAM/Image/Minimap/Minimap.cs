@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using BEAM.Image.Minimap.Utility;
 using BEAM.ImageSequence;
 using BEAM.Renderer;
-using BEAM.ViewModels;
+using BEAM.ViewModels.Utility;
 using BEAM.Views.Utility;
 
 namespace BEAM.Image.Minimap;
@@ -42,11 +43,17 @@ public abstract class Minimap
     /// </summary>
     public void StopGeneration()
     {
+        if (IsGenerated) return;
+        CancelGenerationVisuals();
         CancellationTokenSource.Cancel();
         CancellationTokenSource.Dispose();
         CancellationTokenSource = new CancellationTokenSource();
     }
-    
+
+    /// <summary>
+    /// Methods is used to close all visuals indicating the generation process.
+    /// </summary>
+    protected abstract void CancelGenerationVisuals();
     /// <summary>
     /// Method for this class subclasses to call whenever they have
     /// finished their generation process so the original caller can be informed.
@@ -75,7 +82,7 @@ public abstract class Minimap
     
 
     /// <summary>
-    /// Returns a deep clone of this minimap. A clone must especially keep the changable settings of its origin.
+    /// Returns a deep clone of this minimap. A clone must especially keep the changeable settings of its origin.
     /// </summary>
     /// <returns></returns>
     public abstract Minimap Clone();
@@ -108,7 +115,24 @@ public abstract class Minimap
     /// The corresponding view will be created automatically with a parameterless constructor.
     /// </summary>
     /// <returns>The ViewModel of the UI element.</returns>
-    public abstract ViewModelBase GetDisplayableViewModel();
+    public abstract SizeAdjustableViewModelBase GetDisplayableViewModel();
     
-    public abstract void TransformationRerender(TransformedSequence newSequence, long newStart, long newEnd);
+    /// <summary>
+    /// Method is used to adjust the minimap if the original sequence has been cut.
+    /// </summary>
+    /// <param name="newSequence">The resulting new, now cut, sequence.</param>
+    /// <param name="startCutoff">The number of lines cut from the beginning.</param>
+    /// <param name="endCutoff">The number of lines cut from the end.</param>
+    /// <returns>Nothing, is implemented as a task to execute async operations.</returns>
+    public abstract Task CutRerender(TransformedSequence newSequence, long startCutoff, long endCutoff);
+    
+    /// <summary>
+    /// Method is used to adjust the minimap if the original sequence has been transformed.
+    /// Beware of the following: if the minimap is supplied with the underlying sequence,
+    /// whose values have been changed beforehand,
+    /// then these will already be changed in the internal reference as well.
+    /// </summary>
+    /// <param name="newSequence">The new, now transformed, sequence.</param>
+    /// <returns>Nothing, is implemented as a task to execute async operations.</returns>
+    public abstract Task TransformationRerender(TransformedSequence newSequence);
 }

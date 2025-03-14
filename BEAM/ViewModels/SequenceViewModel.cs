@@ -15,6 +15,7 @@ using CommunityToolkit.Mvvm.Input;
 using BEAM.Renderer;
 using BEAM.Models.Log;
 using BEAM.Renderer.Attributes;
+using BEAM.ViewModels.Utility;
 using BEAM.Views.Minimap.Popups;
 
 
@@ -98,7 +99,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     /// Collection of minimap view models.
     /// </summary>
     [ObservableProperty]
-    public partial ObservableCollection<ViewModelBase> MinimapVms { get; set; } = [];
+    public partial ObservableCollection<SizeAdjustableViewModelBase> MinimapVms { get; set; } = [];
 
     /// <summary>
     /// Initializes a new instance of the SequenceViewModel.
@@ -149,7 +150,6 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             if (RendererSelection < Renderers.Length && RendererSelection >= 0)
             {
                 _currentMinimap.SetRenderer(Renderers[RendererSelection]);
-                _currentMinimap.StartGeneration(sequence, OnMinimapGenerated);
             }
         }
         
@@ -309,6 +309,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     {
         CloseEvent.Invoke(this, new CloseEventArgs());
         _currentMinimap?.StopGeneration();
+        
     }
     
     public override string ToString()
@@ -323,6 +324,23 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     {
         _currentMinimap?.StopGeneration();
         MinimapVms.Clear();
+    }
+
+    public void CutMinimap(long startOffset, long endOffset)
+    {
+        if (_currentMinimap is null)
+        {
+            return;
+        }
+        _currentMinimap.StopGeneration();
+        _currentMinimap.CutRerender(Sequence, startOffset, endOffset);
+    }
+
+    public void TransformMinimap()
+    {
+        if(_currentMinimap is null) return;
+        _currentMinimap.StopGeneration();
+        _currentMinimap.TransformationRerender(Sequence);
     }
 }
 

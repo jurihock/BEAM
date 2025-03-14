@@ -29,7 +29,7 @@ public class RegionAnalysisStandardDerivationOfChannelsTests
         var sequence = new SkiaSequence(list, "Test.png");
         var start = new Coordinate2D(425, 239);
         var end = new Coordinate2D(426, 239);
-        var result = analysis.AnalyzeforPlot(start, end, sequence);
+        var result = analysis.AnalyzeForPlot(start, end, sequence);
         Assert.NotNull(result);
 
         var bars = result.GetPlottables<BarPlot>().FirstOrDefault();
@@ -41,7 +41,7 @@ public class RegionAnalysisStandardDerivationOfChannelsTests
         
         var newStart = new Coordinate2D(300, 400);
         var newEnd = new Coordinate2D(400, 500);
-        var newResult = analysis.AnalyzeforPlot(newStart, newEnd, sequence);
+        var newResult = analysis.AnalyzeForPlot(newStart, newEnd, sequence);
         Assert.NotNull(newResult);
         
         var newBars = newResult.GetPlottables<BarPlot>().FirstOrDefault();
