@@ -7,6 +7,7 @@ public class LoggerTests
     [Fact]
     public void CreateNewLogger()
     {
+        Logger.Init();
         // Arrange
         var logger = Logger.GetInstance();
         
