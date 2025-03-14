@@ -184,8 +184,60 @@ public class DiskSequenceTests
         // test access to third image
         Assert.Equal([255, 0, 0, 255], diskSequence.GetPixel(0,20));
         Assert.Equal([255, 0, 0, 255], diskSequence.GetPixel(9,29));
-        //Assert.Throws<>()
         
         diskSequence.Dispose();
+    }
+
+    /// <summary>
+    /// Tests accessing a pixel outside of the sequence.
+    /// </summary>
+    /// <exception cref="Exception"></exception>
+    [Fact]
+    public void TestAccessToPositionOutsideOfImage()
+    {var testSequenceFolder = "";
+        try
+        {
+            // Create the base directory dynamically
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            baseDirectory = Directory.GetParent(baseDirectory)!.FullName;
+            baseDirectory = Directory.GetParent(baseDirectory)!.FullName;
+            baseDirectory = Directory.GetParent(baseDirectory)!.FullName;
+            baseDirectory = Directory.GetParent(baseDirectory)!.FullName;
+
+            
+            // Use a well-defined path test directory
+            testSequenceFolder = Path.Combine(baseDirectory, "TestSequence");
+
+            // Check if the directory exists
+            if (!Directory.Exists(testSequenceFolder))
+            {
+                throw new Exception($"Cannot find the folder at: {testSequenceFolder}");
+            }
+
+            _testOutputHelper.WriteLine("Folder found successfully!");
+        }
+        catch (Exception ex)
+        {
+            _testOutputHelper.WriteLine($"Error: {ex.Message}");
+        }
+        
+        string testSequenceFilePath = Path.Combine(testSequenceFolder, "RGBW_VierPixelSequenz.png");
+        List<string> filepaths = [testSequenceFilePath];
+        // open the test Sequence
+        var diskSequence = DiskSequence.Open(filepaths, "Test");
+        Assert.NotNull(diskSequence);
+        
+        // test that the image loaded correctly
+        Assert.Equal([0, 0, 255, 255], diskSequence.GetPixel(0, 0));
+        
+        //access to invalid pixel value
+        Assert.Throws<InvalidOperationException>(() => diskSequence.GetPixel(42, 42));
+        Assert.Throws<InvalidOperationException>(() => diskSequence.GetPixel(0, 42));
+        Assert.Throws<InvalidOperationException>(() => diskSequence.GetPixel(42, 0));
+        Assert.Throws<InvalidOperationException>(() => diskSequence.GetPixel(-42, -42));
+        Assert.Throws<InvalidOperationException>(() => diskSequence.GetPixel(0, -42));
+        Assert.Throws<InvalidOperationException>(() => diskSequence.GetPixel(-42, 0));
+        Assert.Throws<InvalidOperationException>(() => diskSequence.GetPixel(-42, 42));
+        Assert.Throws<InvalidOperationException>(() => diskSequence.GetPixel(42, -42));
     }
 }

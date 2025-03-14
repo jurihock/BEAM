@@ -55,6 +55,8 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
 
     public double GetPixel(long x, long y, int channel)
     {
+        if (!checkPixelInSequence(x, y, channel)) throw new InvalidOperationException("Pixel is not in sequence");
+        
         var imageIdx = y / SingleImageHeight;
         var imageLine = y % SingleImageHeight;
 
@@ -64,6 +66,8 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
 
     public double[] GetPixel(long x, long y)
     {
+        if (!checkCoordinatesInSequence(x, y)) throw new InvalidOperationException("Pixel is not in sequence");
+
         var imageIdx = y / SingleImageHeight;
         var imageLine = y % SingleImageHeight;
 
@@ -73,6 +77,8 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
 
     public double[] GetPixel(long x, long y, int[] channels)
     {
+        if (!(checkCoordinatesInSequence(x, y) && checkChannelsInSequence(channels))) throw new InvalidOperationException("Pixel is not in sequence");
+        
         var imageIdx = y / SingleImageHeight;
         var imageLine = y % SingleImageHeight;
 
@@ -80,8 +86,40 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
         return img.GetPixel(x, imageLine, channels);
     }
 
+    private bool checkLineInSequence(long y)
+    {
+        return y >= 0 && y < Shape.Height;
+    }
+
+    private bool checkColumnInSequence(long x)
+    {
+        return x >= 0 && x < Shape.Width;
+    }
+
+    private bool checkCoordinatesInSequence(long x, long y)
+    {
+        return checkLineInSequence(y) && checkColumnInSequence(x);
+    }
+
+    private bool checkChannelInSequence(int channel)
+    {
+        return channel >= 0 && channel < Shape.Channels;
+    }
+
+    private bool checkPixelInSequence(long x, long y, int channel)
+    {
+        return checkCoordinatesInSequence(x, y) && checkChannelInSequence(channel);
+    }
+
+    private bool checkChannelsInSequence(int[] channels)
+    {
+        return channels.All(checkChannelInSequence);
+    }
+
     public LineImage GetPixelLineData(long line, int[] channels, ArrayPool<double> pool)
     {
+        if (!(checkLineInSequence(line) && checkChannelsInSequence(channels))) 
+            throw new InvalidOperationException("Line or channels not in sequence");
         var imageIdx = line / SingleImageHeight;
         var imageLine = line % SingleImageHeight;
 
@@ -91,6 +129,11 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
 
     public LineImage GetPixelLineData(long[] xs, long line, int[] channels, ArrayPool<double> pool)
     {
+        if (!(checkLineInSequence(line) 
+              && checkChannelsInSequence(channels)
+              && xs.All(checkColumnInSequence))) 
+            throw new InvalidOperationException("Line or channels not in sequence");
+        
         var imageIdx = line / SingleImageHeight;
         var imageLine = line % SingleImageHeight;
 
