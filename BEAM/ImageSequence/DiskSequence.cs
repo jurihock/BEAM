@@ -54,6 +54,8 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
 
     public double GetPixel(long x, long y, int channel)
     {
+        if (!CheckPixelInSequence(x, y, channel)) throw new InvalidOperationException("Pixel is not in sequence");
+
         var imageIdx = y / SingleImageHeight;
         var imageLine = y % SingleImageHeight;
 
@@ -63,6 +65,8 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
 
     public double[] GetPixel(long x, long y)
     {
+        if (!CheckCoordinatesInSequence(x, y)) throw new InvalidOperationException("Pixel is not in sequence");
+
         var imageIdx = y / SingleImageHeight;
         var imageLine = y % SingleImageHeight;
 
@@ -72,6 +76,8 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
 
     public double[] GetPixel(long x, long y, int[] channels)
     {
+        if (!(CheckCoordinatesInSequence(x, y) && CheckChannelsInSequence(channels))) throw new InvalidOperationException("Pixel is not in sequence");
+
         var imageIdx = y / SingleImageHeight;
         var imageLine = y % SingleImageHeight;
 
@@ -79,8 +85,41 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
         return img.GetPixel(x, imageLine, channels);
     }
 
+    private bool CheckLineInSequence(long y)
+    {
+        return y >= 0 && y < Shape.Height;
+    }
+
+    private bool CheckColumnInSequence(long x)
+    {
+        return x >= 0 && x < Shape.Width;
+    }
+
+    private bool CheckCoordinatesInSequence(long x, long y)
+    {
+        return CheckLineInSequence(y) && CheckColumnInSequence(x);
+    }
+
+    private bool CheckChannelInSequence(int channel)
+    {
+        return channel >= 0 && channel < Shape.Channels;
+    }
+
+    private bool CheckPixelInSequence(long x, long y, int channel)
+    {
+        return CheckCoordinatesInSequence(x, y) && CheckChannelInSequence(channel);
+    }
+
+    private bool CheckChannelsInSequence(int[] channels)
+    {
+        return channels.All(CheckChannelInSequence);
+    }
+
+
     public LineImage GetPixelLineData(long line, int[] channels)
     {
+        if (!(CheckLineInSequence(line) && CheckChannelsInSequence(channels)))
+            throw new InvalidOperationException("Line or channels not in sequence");
         var imageIdx = line / SingleImageHeight;
         var imageLine = line % SingleImageHeight;
 
@@ -90,6 +129,11 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
 
     public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
     {
+        if (!(CheckLineInSequence(line)
+              && CheckChannelsInSequence(channels)
+              && xs.All(CheckColumnInSequence)))
+            throw new InvalidOperationException("Line or channels not in sequence");
+
         var imageIdx = line / SingleImageHeight;
         var imageLine = line % SingleImageHeight;
 
@@ -103,7 +147,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     }
 
     private readonly Mutex _loadedImagesMutex = new();
-    private IImage?[] _loadedImages;
+    private IImage?[] _loadedImages = new IImage?[imagePaths.Count];
 
     /// <summary>
     /// Loads the desired image so that it's data can be accessed randomly.
@@ -124,7 +168,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     /// <returns>A long representing the amount of images loaded in the sequence</returns>
     public long GetLoadedImageCount()
     {
-        return _loadedImages.Length;
+        return ImagePaths.Count;
     }
 
     /// <summary>
@@ -221,7 +265,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
             {
                 throw new InvalidSequenceException("Sequence could not be loaded due to error (see log)!");
             }
-            sequence._loadedImages = new IImage?[sequence.ImagePaths.Count];
+            //sequence._loadedImages = new IImage?[sequence.ImagePaths.Count];
 
             return sequence;
         }

@@ -26,7 +26,6 @@ public static class PngExporter
     /// <param name="path">The path where the files will be saved.</param>
     /// <param name="sequence">The sequence to be exported.</param>
     /// <param name="renderer">The renderer used for the sequence.</param>
-    /// <param name="vm">The ViewModel used to store the progress as a data bound value.</param>
     public static void Export(IStorageFile path, TransformedSequence sequence, SequenceRenderer renderer, ExportProgressWindowViewModel vm)
     {
         var i = 0;
@@ -84,7 +83,7 @@ public static class PngExporter
                 }
             }
         }
-        
+
         vm.Close();
         Logger.GetInstance().LogMessage($"Finished exporting sequence {sequence.GetName()} as Png to {path.Path.AbsolutePath}");
     }

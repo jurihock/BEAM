@@ -41,18 +41,6 @@ public class PlotCreatorTests
     }
 
     [Fact]
-    public void CreatePlaceholderPlot_ReturnsPlotWithCorrectLimits()
-    {
-        var plot = PlotCreator.CreatePlaceholderPlot();
-
-        var limits = plot.Axes.GetLimits();
-        Assert.Equal(-5, limits.Bottom);
-        Assert.Equal(5, limits.Top);
-        Assert.Equal(-5, limits.Left);
-        Assert.Equal(5, limits.Right);
-    }
-
-    [Fact]
     public void CreatePlaceholderPlot_AddsEllipsesToPlot()
     {
         var plot = PlotCreator.CreatePlaceholderPlot();

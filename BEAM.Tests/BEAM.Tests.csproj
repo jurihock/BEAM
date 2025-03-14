@@ -27,7 +27,6 @@
 
     <ItemGroup>
       <Folder Include="loggerTests\testLogs\" />
-      <Folder Include="TestAssets\" />
     </ItemGroup>
 
 </Project>
