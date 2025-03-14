@@ -383,17 +383,24 @@ public partial class SequenceView : UserControl
         }
 
         // View is moved by 0.5, so adding 0.5 to get correct pixel values
+        // View is moved by 0.5, so adding 0.5 to get correct pixel values
         x = Math.Round(x);
         y = Math.Round(y);
 
+        var checkWidth = Math.Round(vm.Sequence.Shape.Width * vm.Sequence.ScaleX) + vm.Sequence.DrawOffsetX;
+        var checkHeight = Math.Round(vm.Sequence.Shape.Height * vm.Sequence.ScaleY) + vm.Sequence.DrawOffsetY;
+        
         // If outside the sequence just show the position and no values.
-        if (x >= vm.Sequence.Shape.Width || y >= vm.Sequence.Shape.Height || x < 0 || y < 0)
+        if (x >= checkWidth || y >= checkHeight || x < vm.Sequence.DrawOffsetX || y < vm.Sequence.DrawOffsetY)
         {
             _anno.Text = string.Format(PixelLabel, x, y, 0, 0, 0);
             return;
         }
-
-        var bytes = vm.Renderers[vm.RendererSelection].RenderPixel(vm.Sequence, (long)(x), (long)(y));
+        var transX = x - vm.Sequence.DrawOffsetX;
+        var transY = y - vm.Sequence.DrawOffsetY;
+        
+        
+        var bytes = vm.Renderers[vm.RendererSelection].RenderPixel(vm.Sequence, (long) transX, (long) transY);
         _anno.Text = string.Format(PixelLabel, x, y, bytes.R, bytes.G, bytes.B);
     }
 
