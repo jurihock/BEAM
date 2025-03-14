@@ -32,11 +32,20 @@ public class MouseManipulator : Manipulator
 
         _avaPlots.Add(avaPlot);
 
-        void OnAvaPlotOnPointerEntered(object? _, PointerEventArgs e)
+        void PointerEvent(object? _, PointerEventArgs e)
         {
             if (!_isSynchronizing)
             {
                 return;
+            }
+
+            // ingore right click -> scottplot context menu
+            if (e is PointerPressedEventArgs pressedEventArgs)
+            {
+                if (pressedEventArgs.GetCurrentPoint(avaPlot).Properties.IsRightButtonPressed)
+                {
+                    return;
+                }
             }
 
             EventSourceMapper.AddIfNotExists(e, avaPlot);
@@ -52,101 +61,11 @@ public class MouseManipulator : Manipulator
             }
         }
 
-        avaPlot.PointerEntered += OnAvaPlotOnPointerEntered;
-
-        void OnAvaPlotOnPointerExited(object? _, PointerEventArgs e)
-        {
-            if (!_isSynchronizing)
-            {
-                return;
-            }
-
-            EventSourceMapper.AddIfNotExists(e, avaPlot);
-            if (EventSourceMapper.IsSource(e, avaPlot))
-            {
-                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
-
-                foreach (var plot in _avaPlots.Where(p => p != avaPlot))
-                {
-                    plot.RaiseEvent(e);
-                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
-                }
-            }
-        }
-
-        avaPlot.PointerExited += OnAvaPlotOnPointerExited;
-
-        void OnAvaPlotOnPointerMoved(object? _, PointerEventArgs e)
-        {
-            if (!_isSynchronizing)
-            {
-                return;
-            }
-
-            EventSourceMapper.AddIfNotExists(e, avaPlot);
-            if (EventSourceMapper.IsSource(e, avaPlot))
-            {
-                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
-
-                foreach (var plot in _avaPlots.Where(p => p != avaPlot))
-                {
-                    plot.RaiseEvent(e);
-                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
-                }
-            }
-        }
-
-        avaPlot.PointerMoved += OnAvaPlotOnPointerMoved;
-
-        void OnAvaPlotOnPointerPressed(object? _, PointerPressedEventArgs e)
-        {
-            if (!_isSynchronizing)
-            {
-                return;
-            }
-
-            // check for right click -> only opens context push menu (Scottplot internal)
-            if (e.GetCurrentPoint(avaPlot).Properties.IsRightButtonPressed)
-            {
-                return;
-            }
-
-            EventSourceMapper.AddIfNotExists(e, avaPlot);
-            if (EventSourceMapper.IsSource(e, avaPlot))
-            {
-                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
-
-                foreach (var plot in _avaPlots.Where(p => p != avaPlot))
-                {
-                    plot.RaiseEvent(e);
-                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
-                }
-            }
-        }
-
-        avaPlot.PointerPressed += OnAvaPlotOnPointerPressed;
-
-        void OnAvaPlotOnPointerReleased(object? _, PointerReleasedEventArgs e)
-        {
-            if (!_isSynchronizing)
-            {
-                return;
-            }
-
-            EventSourceMapper.AddIfNotExists(e, avaPlot);
-            if (EventSourceMapper.IsSource(e, avaPlot))
-            {
-                var coordinates = avaPlot.Plot.GetCoordinates(new Pixel(e.GetPosition(avaPlot).X, e.GetPosition(avaPlot).Y));
-
-                foreach (var plot in _avaPlots.Where(p => p != avaPlot))
-                {
-                    plot.RaiseEvent(e);
-                    ScrollingSynchronizerMapper.GetSequenceView(plot).UpdatePositionAnnotation(coordinates.X, coordinates.Y);
-                }
-            }
-        }
-
-        avaPlot.PointerReleased += OnAvaPlotOnPointerReleased;
+        avaPlot.PointerEntered += PointerEvent;
+        avaPlot.PointerExited += PointerEvent;
+        avaPlot.PointerMoved += PointerEvent;
+        avaPlot.PointerPressed += PointerEvent;
+        avaPlot.PointerReleased += PointerEvent;
 
         void OnAvaPlotOnPointerWheelChanged(object? _, PointerWheelEventArgs e)
         {
