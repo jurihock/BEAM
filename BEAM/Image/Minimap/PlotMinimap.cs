@@ -292,7 +292,8 @@ public class PlotMinimap : Minimap
         Bar[] bars = new Bar[workload];
         
         await Dispatcher.UIThread.InvokeAsync(() => _viewModel.InitializeStatusWindow());
-        for (int i = 0; i < workload; i++)
+        long step = (int) Math.Max(1, workload / 100);
+        for (long i = 0; i < workload; i++)
         {
             CancellationTokenSource.Token.ThrowIfCancellationRequested();
             double calculation = MinimapAlgorithm!.GetLineValue(i * compactionFactor);
@@ -312,7 +313,10 @@ public class PlotMinimap : Minimap
                 Orientation = Orientation.Horizontal
             };
             bars[i] = bar;
-            _viewModel.MinimapProgress = (byte)Math.Round((i / (double)Math.Max((workload - 1), 1)) * 100);
+            if (i % step == 0)
+            {
+                _viewModel.MinimapProgress = (byte)Math.Round((i / (double)Math.Max((workload - 1), 1)) * 100);
+            }
         }
         
         await Dispatcher.UIThread.InvokeAsync(() => _viewModel.CloseStatusWindow());
