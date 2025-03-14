@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using Avalonia;
 using Avalonia.Styling;
-using BEAM.Datatypes.Color;
 using ScottPlot;
 using ScottPlot.AxisRules;
 using ScottPlot.Plottables;

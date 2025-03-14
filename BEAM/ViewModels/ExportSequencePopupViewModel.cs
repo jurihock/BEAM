@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using BEAM.Exporter;
 using BEAM.Image;
 using BEAM.Models.Log;
+using BEAM.Views;
 using CommunityToolkit.Mvvm.Input;
 
 namespace BEAM.ViewModels;
@@ -108,21 +111,52 @@ public partial class ExportSequencePopupViewModel : ViewModelBase
             return false;
         }
 
+        CancellationTokenSource ctxSource = new CancellationTokenSource();
+        var vm = new ExportProgressWindowViewModel(ctxSource);
+        var popup = new ExportProgressWindowView(vm);
+        popup.Show();
         switch (_selectedType)
         {
             case SequenceType.Envi:
                 Task.Run(() => EnviExporter.Export(_folder, _sequenceViewModel.Sequence,
-                    _sequenceViewModel.Renderers[_sequenceViewModel.RendererSelection]));
+                        _sequenceViewModel.Renderers[_sequenceViewModel.RendererSelection],
+                        vm), ctxSource.Token)
+                    .ContinueWith((_) =>
+                    {
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            if (popup.IsVisible)
+                            {
+                                popup.Close();
+                            }
+                        });
+                        EnviExporter.Cleanup(_folder);
+                    }, TaskContinuationOptions.OnlyOnCanceled);
+                ;
                 break;
             case SequenceType.Png:
                 Task.Run(() => PngExporter.Export(_folder, _sequenceViewModel.Sequence,
-                    _sequenceViewModel.Renderers[_sequenceViewModel.RendererSelection]));
+                        _sequenceViewModel.Renderers[_sequenceViewModel.RendererSelection],
+                        vm), ctxSource.Token)
+                    .ContinueWith((_) =>
+                    {
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            if (popup.IsVisible)
+                            {
+                                popup.Close();
+                            }
+                        });
+                        PngExporter.Cleanup(_folder);
+                    }, TaskContinuationOptions.OnlyOnCanceled);
                 break;
             default:
                 return false;
         }
-        Logger.GetInstance().LogMessage($"Started exporting sequence {_sequenceViewModel.Sequence.GetName()} as {_selectedType} to {_folder.Path.AbsolutePath}");
+
+        Logger.GetInstance()
+            .LogMessage(
+                $"Started exporting sequence {_sequenceViewModel.Sequence.GetName()} as {_selectedType} to {_folder.Path.AbsolutePath}");
         return true;
     }
-    
 }

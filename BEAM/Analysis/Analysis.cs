@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Avalonia.Threading;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
-using BEAM.Models.Log;
 using BEAM.ViewModels;
 using ScottPlot;
 
