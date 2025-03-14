@@ -312,7 +312,6 @@ public class SequenceImage : IDisposable
         // clamping the parallelism so that images with only a few lines still render correctly
         var par = Math.Min(10, height);
 
-        var pool = ArrayPool<double>.Create();
         Parallel.For(0, par, p =>
         {
             var current = height / par * p;
@@ -325,7 +324,7 @@ public class SequenceImage : IDisposable
                 var line = startLine + j * (endLine - startLine) / height;
 
                 // rendering each pixel using a renderer
-                var data = Renderer.RenderPixels(_sequence, xs, line, bgr, pool);
+                var data = Renderer.RenderPixels(_sequence, xs, line, bgr);
 
                 var span = bitmap.GetPixelSpan();
                 var pixels = MemoryMarshal.Cast<byte, BGRA>(span);

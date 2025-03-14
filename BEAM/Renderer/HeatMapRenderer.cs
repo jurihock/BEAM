@@ -80,9 +80,9 @@ public abstract class HeatMapRenderer : SequenceRenderer
             IntensityRange * RelMinHottestIntensity + MinimumOfIntensityRange);
     }
 
-    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y, BGR[] bgrs, ArrayPool<double> pool)
+    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y, BGR[] bgrs)
     {
-        var img = sequence.GetPixelLineData(xs, y, [Channel], pool);
+        var img = sequence.GetPixelLineData(xs, y, [Channel]);
 
         for (var i = 0; i < xs.Length; i++)
         {

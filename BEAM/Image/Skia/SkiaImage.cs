@@ -106,12 +106,12 @@ public class SkiaImage<T> : IMemoryImage, ITypedImage<T>
         return values;
     }
 
-    public LineImage GetPixelLineData(long[] xs, long line, int[] channels, ArrayPool<double> pool)
+    public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
     {
         var data = new double[xs.Length][];
         for (var i = 0; i < xs.Length; i++)
         {
-            data[i] = pool.Rent(channels.Length);
+            data[i] = new double[channels.Length];
         }
 
         for (var x = 0; x < xs.Length; x++)
@@ -122,15 +122,15 @@ public class SkiaImage<T> : IMemoryImage, ITypedImage<T>
             }
         }
 
-        return new LineImage(data, pool);
+        return new LineImage(data);
     }
 
-    public LineImage GetPixelLineData(long line, int[] channels, ArrayPool<double> pool)
+    public LineImage GetPixelLineData(long line, int[] channels)
     {
         var data = new double[Shape.Width][];
         for (var i = 0; i < Shape.Width; i++)
         {
-            data[i] = pool.Rent(channels.Length);
+            data[i] = new double[channels.Length];
         }
 
         for (var x = 0; x < Shape.Width; x++)
@@ -141,7 +141,7 @@ public class SkiaImage<T> : IMemoryImage, ITypedImage<T>
             }
         }
 
-        return new LineImage(data, pool);
+        return new LineImage(data);
     }
 
     /// <summary>

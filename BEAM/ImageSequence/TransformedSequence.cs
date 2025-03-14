@@ -53,15 +53,15 @@ public class TransformedSequence(ISequence originalSequence) : ISequence
         return originalSequence.GetPixel(transform.x, transform.y, channels);
     }
 
-    public LineImage GetPixelLineData(long line, int[] channels, ArrayPool<double> pool)
+    public LineImage GetPixelLineData(long line, int[] channels)
     {
-        return originalSequence.GetPixelLineData(_UndoTransformY(line), channels, pool);
+        return originalSequence.GetPixelLineData(_UndoTransformY(line), channels);
     }
 
-    public LineImage GetPixelLineData(long[] xs, long line, int[] channels, ArrayPool<double> pool)
+    public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
     {
         var transformedXs = xs.Select(_UndoTransformX).ToArray();
-        return originalSequence.GetPixelLineData(transformedXs, _UndoTransformY(line), channels, pool);
+        return originalSequence.GetPixelLineData(transformedXs, _UndoTransformY(line), channels);
     }
 
     public string GetName()

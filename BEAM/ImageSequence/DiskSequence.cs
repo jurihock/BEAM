@@ -80,22 +80,22 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
         return img.GetPixel(x, imageLine, channels);
     }
 
-    public LineImage GetPixelLineData(long line, int[] channels, ArrayPool<double> pool)
+    public LineImage GetPixelLineData(long line, int[] channels)
     {
         var imageIdx = line / SingleImageHeight;
         var imageLine = line % SingleImageHeight;
 
         var img = GetImage((int)imageIdx);
-        return img.GetPixelLineData(imageLine, channels, pool);
+        return img.GetPixelLineData(imageLine, channels);
     }
 
-    public LineImage GetPixelLineData(long[] xs, long line, int[] channels, ArrayPool<double> pool)
+    public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
     {
         var imageIdx = line / SingleImageHeight;
         var imageLine = line % SingleImageHeight;
 
         var img = GetImage((int)imageIdx);
-        return img.GetPixelLineData(xs, imageLine, channels, pool);
+        return img.GetPixelLineData(xs, imageLine, channels);
     }
 
     public string GetName()

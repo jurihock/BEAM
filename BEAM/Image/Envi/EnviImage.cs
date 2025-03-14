@@ -176,12 +176,12 @@ public class EnviImage<T> : ITypedImage<T>, IMemoryImage
         return values;
     }
 
-    public LineImage GetPixelLineData(long[] xs, long line, int[] channels, ArrayPool<double> pool)
+    public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
     {
         var data = new double[xs.Length][];
         for (var i = 0; i < xs.Length; i++)
         {
-            data[i] = pool.Rent(channels.Length);
+            data[i] = new double[channels.Length];
         }
 
         switch (Layout)
@@ -220,15 +220,15 @@ public class EnviImage<T> : ITypedImage<T>, IMemoryImage
                                                 $"{Layout.GetType()} when using ENVI images");
         }
 
-        return new LineImage(data, pool);
+        return new LineImage(data);
     }
 
-    public LineImage GetPixelLineData(long line, int[] channels, ArrayPool<double> pool)
+    public LineImage GetPixelLineData(long line, int[] channels)
     {
         var data = new double[Shape.Width][];
         for (var i = 0; i < Shape.Width; i++)
         {
-            data[i] = pool.Rent(channels.Length);
+            data[i] = new double[channels.Length];
         }
 
         switch (Layout)
@@ -267,7 +267,7 @@ public class EnviImage<T> : ITypedImage<T>, IMemoryImage
                                                 $"{Layout.GetType()} when using ENVI images");
         }
 
-        return new LineImage(data, pool);
+        return new LineImage(data);
     }
 
     public T this[long x, long y, int channel] => GetValue(Layout.Flatten(x, y, channel));

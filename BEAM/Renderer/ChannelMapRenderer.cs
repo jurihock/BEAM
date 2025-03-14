@@ -61,9 +61,9 @@ public partial class ChannelMapRenderer : SequenceRenderer
     /// <param name="xs"></param>
     /// <param name="y"></param>
     /// <returns>[x, argb]</returns>
-    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y, BGR[] bgrs, ArrayPool<double> pool)
+    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y, BGR[] bgrs)
     {
-        var img = sequence.GetPixelLineData(xs, y, [ChannelBlue, ChannelGreen, ChannelRed], pool);
+        var img = sequence.GetPixelLineData(xs, y, [ChannelBlue, ChannelGreen, ChannelRed]);
 
         for (var x = 0; x < xs.Length; x++)
         {

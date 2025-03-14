@@ -30,14 +30,14 @@ public class CutSequence(string name, long startOffset, long endOffset, ISequenc
         return originalSequence.GetPixel(x, y + startOffset, channels);
     }
 
-    public LineImage GetPixelLineData(long line, int[] channels, ArrayPool<double> pool)
+    public LineImage GetPixelLineData(long line, int[] channels)
     {
-        return originalSequence.GetPixelLineData(line + startOffset, channels, pool);
+        return originalSequence.GetPixelLineData(line + startOffset, channels);
     }
 
-    public LineImage GetPixelLineData(long[] xs, long line, int[] channels, ArrayPool<double> pool)
+    public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
     {
-        return originalSequence.GetPixelLineData(xs, line + startOffset, channels, pool);
+        return originalSequence.GetPixelLineData(xs, line + startOffset, channels);
     }
 
     public string GetName()
