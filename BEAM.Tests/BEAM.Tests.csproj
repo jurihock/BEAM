@@ -26,8 +26,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Exporter\" />
       <Folder Include="loggerTests\testLogs\" />
-      <Folder Include="TestAssets\" />
     </ItemGroup>
 
 </Project>
