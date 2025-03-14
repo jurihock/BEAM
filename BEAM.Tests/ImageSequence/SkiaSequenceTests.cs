@@ -107,7 +107,7 @@ public class SkiaSequenceTests
         Assert.Equal([0, 0, 0, 0], lineData.GetPixel(0, 0));
         Assert.Equal(0, lineData.GetPixel(2, 0, 1));
         Assert.Equal(0, lineData.GetPixel(4, 0, 3));
-        Assert.Equal(0, lineData.GetPixel(7, 0, 2));
+        Assert.Equal(0, lineData.GetPixel(6, 0, 2));
     }
 
     [Fact]
