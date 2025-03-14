@@ -181,6 +181,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public void Clone()
     {
+        if (ExistingSequenceViewModels.IsNullOrEmpty()) return;
         CurrentSequenceViewModel.OpenInspectionViewCommand.Execute(null);
     }
 
