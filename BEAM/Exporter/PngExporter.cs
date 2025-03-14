@@ -17,14 +17,13 @@ public static class PngExporter
     /// </summary>
     private const long MaxHeight = 4096;
 
-    // TODO: Why TransformedSequence, not ISequence
     /// <summary>
     /// Exports the given sequence to the specified path in the PNG format.
     /// </summary>
     /// <param name="path">The path where the files will be saved.</param>
     /// <param name="sequence">The sequence to be exported.</param>
     /// <param name="renderer">The renderer used for the sequence.</param>
-    public static void Export(IStorageFile path, TransformedSequence sequence, SequenceRenderer renderer)
+    public static void Export(IStorageFile path, ISequence sequence, SequenceRenderer renderer)
     {
         var i = 0;
         Directory.CreateDirectory(path.Path.AbsolutePath);
