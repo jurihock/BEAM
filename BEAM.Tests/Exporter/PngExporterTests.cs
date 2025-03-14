@@ -5,11 +5,19 @@ using BEAM.ImageSequence;
 using BEAM.Models.Log;
 using BEAM.Renderer;
 using Moq;
+using Xunit.Abstractions;
 
 namespace BEAM.Tests.Exporter;
 
 public class PngExporterTests
 {
+    private readonly ITestOutputHelper _testOutputHelper;
+
+    public PngExporterTests(ITestOutputHelper testOutputHelper)
+    {
+        _testOutputHelper = testOutputHelper;
+    }
+
     [Fact]
     public void Export_WritesCorrectData()
     {
@@ -17,8 +25,8 @@ public class PngExporterTests
         var path = GetFilePath().Split(Path.DirectorySeparatorChar).SkipLast(1);
         var list = new List<string> { Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "./TestData/Envi/EnviTest") };
 
-        var sequence = new EnviSequence(list, "CoolSequence");
-        var transSequence = new TransformedSequence(sequence);
+        var envi = new EnviSequence(list, "CoolSequence");
+        var transSequence = new TransformedSequence(envi);
         
         path = GetFilePath().Split(Path.DirectorySeparatorChar).SkipLast(1);
         var exportPath = Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "./TestPngFile");
@@ -26,12 +34,11 @@ public class PngExporterTests
         pathMock.SetupGet(p => p.Path).Returns(new Uri(exportPath));
         var renderer = new ChannelMapRenderer(0, 255, 2, 1, 0);
         
-        Directory.Delete(exportPath);
         PngExporter.Export(pathMock.Object, transSequence, renderer);
         
         var sequence2 = SkiaSequence.Open(exportPath);
-        Assert.True(SequenceCompare(sequence, sequence2));
-        Directory.Delete(exportPath);
+        Assert.True(SequenceCompare(sequence2, envi, renderer));
+        Directory.Delete(exportPath, true);
     }
     
     [Fact]
@@ -50,8 +57,7 @@ public class PngExporterTests
         pathMock.SetupGet(p => p.Path).Returns(new Uri(exportPath));
         var renderer = new ChannelMapRenderer(0, 255, 2, 1, 0);
         
-        Directory.Delete(exportPath);
-        EnviExporter.Export(pathMock.Object, transSequence, renderer);
+        PngExporter.Export(pathMock.Object, transSequence, renderer);
         
         path = GetFilePath().Split(Path.DirectorySeparatorChar).SkipLast(1);
         var originalPng = Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "./TestData/Png/Test.png");
@@ -59,7 +65,7 @@ public class PngExporterTests
         Assert.True(File.Exists($"{exportPath + Path.DirectorySeparatorChar}00000000.png"));
         Assert.True(FileCompare($"{exportPath + Path.DirectorySeparatorChar}00000000.png", originalPng));
         
-        Directory.Delete(exportPath);
+        Directory.Delete(exportPath, true);
     }
     
     // This was copied from the C# tutorial on https://learn.microsoft.com/de-de/troubleshoot/developer/visualstudio/csharp/language-compilers/create-file-compare
@@ -118,9 +124,9 @@ public class PngExporterTests
         return ((file1byte - file2byte) == 0);
     }
 
-    private static bool SequenceCompare(ISequence sequence1, ISequence sequence2)
+    private bool SequenceCompare(ISequence sequence1, EnviSequence envi, SequenceRenderer renderer)
     {
-        if (sequence1.Shape != sequence2.Shape)
+        if (sequence1.Shape != envi.Shape)
         {
             return false;
         }
@@ -130,11 +136,14 @@ public class PngExporterTests
             for(var j = 0; j < sequence1.Shape.Width; j++)
             {
                 var same = true;
-                for (var k = 0; k < sequence1.Shape.Channels; k++)
+                //Only compare the first 3 channels due to the Renderer only returning 3 on envi
+                for (var k = 0; k < 3; k++)
                 {
-                    if (sequence1.GetPixel(j, i)[k] != sequence2.GetPixel(j, i)[k])
+                    if (Math.Abs(sequence1.GetPixel(j, i)[k] - renderer.RenderPixel(envi, j, i)[k]) > 0.01)
                     {
                         same = false;
+                        _testOutputHelper.WriteLine($"Pixel at {j}, {i} is different in channel {k}: {sequence1.GetPixel(j, i)[k]} vs {renderer
+                            .RenderPixel(envi, j, i)[k]}");
                         break;
                     }
                 }
