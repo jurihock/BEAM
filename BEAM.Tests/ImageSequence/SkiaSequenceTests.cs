@@ -132,7 +132,7 @@ public class SkiaSequenceTests
         var sequence = new SkiaSequence(list, "CoolSequence");
         Assert.Equal(1, sequence.GetLoadedImageCount());
         
-        list.Add(Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "../TestAssets/Flag_of_Germany.png"));
+        list.Add(Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "../TestAssets/Flag_of_Deutschland.png"));
         var sequence2 = new SkiaSequence(list, "BeamSuperDuperSequence!");
         Assert.Equal(2, sequence2.GetLoadedImageCount());
     }
@@ -142,7 +142,7 @@ public class SkiaSequenceTests
     {
         var path = GetFilePath().Split(Path.DirectorySeparatorChar).SkipLast(1);
         var list = new List<string> { Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "../TestAssets/Test.png") };
-        list.Add(Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "../TestAssets/Flag_of_Germany.png"));
+        list.Add(Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "../TestAssets/Flag_of_Deutschland.png"));
         
         var sequence = new SkiaSequence(list, "CoolSequence");
         Assert.Throws<ArgumentOutOfRangeException>(() => sequence.GetImage(-1));
@@ -197,6 +197,7 @@ public class SkiaSequenceTests
         path = GetFilePath().Split(Path.DirectorySeparatorChar).SkipLast(1);
         var name = Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "..");
         Assert.Equal(name, sequence.GetName());
+        //Finds Germany and ignores the EU due to invalid shape and then finds Test.png
         Assert.Equal(2, sequence.GetLoadedImageCount());
         Assert.Equal(new ImageShape(800, 1200, 4), sequence.Shape);
     }
