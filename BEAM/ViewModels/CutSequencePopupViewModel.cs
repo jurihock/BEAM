@@ -38,10 +38,16 @@ public partial class CutSequencePopupViewModel : ViewModelBase
     /// <returns>Whether the sequence could be cut successfully</returns>
     public bool Save()
     {
-        if (StartOffset < 0 || StartOffset > MaxOffset || EndOffset < 0 || EndOffset > MaxOffset)
+        
+        if (StartOffset < 0 
+            || StartOffset > MaxOffset 
+            || EndOffset < 0 
+            || EndOffset > MaxOffset
+            || StartOffset > EndOffset)
         {
             return false;
         }
+        
         _sequenceViewModel.Sequence = new TransformedSequence(new CutSequence(_sequenceViewModel.Sequence.GetName(),
                                         StartOffset, EndOffset, _sequenceViewModel.Sequence));
         _sequenceViewModel.CutSequence(this, new RenderersUpdatedEventArgs());
