@@ -85,7 +85,7 @@ public class SkiaSequenceTests
 
         var sequence = new SkiaSequence(list, "CoolSequence");
         var buffer = ArrayPool<double>.Shared;
-        var lineData = sequence.GetPixelLineData(0, [0, 1, 2, 3], buffer);
+        var lineData = sequence.GetPixelLineData(0, [0, 1, 2, 3]);
         
         Assert.Equal(new ImageShape(800, 1, 4), lineData.Shape);
         Assert.Equal([0, 0, 0, 0], lineData.GetPixel(0, 0));
@@ -102,7 +102,7 @@ public class SkiaSequenceTests
         var buffer = ArrayPool<double>.Shared;
         var xs = new long[] {0, 1, 2, 3, 500, 798, 799};
         
-        var lineData = sequence.GetPixelLineData(xs, 0, [0, 1, 2, 3], buffer);
+        var lineData = sequence.GetPixelLineData(xs, 0, [0, 1, 2, 3]);
         Assert.Equal(new ImageShape(7, 1, 4), lineData.Shape);
         Assert.Equal([0, 0, 0, 0], lineData.GetPixel(0, 0));
         Assert.Equal(0, lineData.GetPixel(2, 0, 1));
