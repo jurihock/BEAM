@@ -10,17 +10,14 @@ namespace BEAM.Image;
 public class LineImage : IImage
 {
     private readonly double[][] _data;
-    private readonly ArrayPool<double> _pool;
 
     /// <summary>
     /// The data of the line.
     /// Attention: the data allocation has to come from the passed memory pool.
     /// </summary>
     /// <param name="data">The data with layout data[x pos][channel]</param>
-    /// <param name="pool">The memory pool where the data came from.</param>
-    public LineImage(double[][] data, ArrayPool<double> pool)
+    public LineImage(double[][] data)
     {
-        _pool = pool;
         _data = data;
         if (data.IsNullOrEmpty() || data[0].IsNullOrEmpty())
         {
@@ -67,7 +64,7 @@ public class LineImage : IImage
         return values;
     }
     
-    public LineImage GetPixelLineData(long line, int[] channels, ArrayPool<double> pool)
+    public LineImage GetPixelLineData(long line, int[] channels)
     {
         if (line != 0)
         {
@@ -78,7 +75,7 @@ public class LineImage : IImage
     }
     
     
-    public LineImage GetPixelLineData(long[] xs, long line, int[] channels, ArrayPool<double> pool)
+    public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
     {
         if (line != 0)
         {
@@ -90,12 +87,6 @@ public class LineImage : IImage
 
     public void Dispose()
     {
-        foreach (var t in _data)
-        {
-            _pool.Return(t);
-        }
-
-        // class does not manage additional resources -> no need to dispose
         GC.SuppressFinalize(this);
     }
 }

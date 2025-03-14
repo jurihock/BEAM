@@ -72,11 +72,11 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
         return color;
     }
 
-    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y, BGR[] bgrs, ArrayPool<double> pool)
+    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y, BGR[] bgrs)
     {
         var usedChannelIndices = _channelHsvMap.GetUsedChannels();
 
-        var line = sequence.GetPixelLineData(xs, y, usedChannelIndices, pool);
+        var line = sequence.GetPixelLineData(xs, y, usedChannelIndices);
 
         for (var x = 0; x < xs.Length; x++)
         {

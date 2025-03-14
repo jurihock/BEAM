@@ -83,7 +83,7 @@ public abstract partial class SequenceRenderer : ObservableObject, ICloneable
     /// <param name="bgrs">a pre-allocated array for the return values. Length = xs.Length</param>
     /// <param name="pool">A memory pool to use</param>
     /// <returns>The rendererd data</returns>
-    public abstract BGR[] RenderPixels(ISequence sequence, long[] xs, long y, BGR[] bgrs, ArrayPool<double> pool);
+    public abstract BGR[] RenderPixels(ISequence sequence, long[] xs, long y, BGR[] bgrs);
 
     public abstract RenderTypes GetRenderType();
 

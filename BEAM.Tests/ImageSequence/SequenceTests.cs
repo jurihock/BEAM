@@ -38,34 +38,34 @@ public class SequenceTests
             return data;
         }
 
-        public LineImage GetPixelLineData(long line, int[] channels, ArrayPool<double> pool)
+        public LineImage GetPixelLineData(long line, int[] channels)
         {
             var data = new double[channels.Length][];
             for (int i = 0; i < channels.Length; i++)
             {
-                data[i] = pool.Rent((int)Shape.Width);
+                data[i] = new double[Shape.Width];
                 for (var j = 0; j < data[i].Length; j++)
                 {
                     data[i][j] = value;
                 }
             }
 
-            return new LineImage(data, pool);
+            return new LineImage(data);
         }
 
-        public LineImage GetPixelLineData(long[] xs, long line, int[] channels, ArrayPool<double> pool)
+        public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
         {
             var data = new double[channels.Length][];
             for (int i = 0; i < channels.Length; i++)
             {
-                data[i] = pool.Rent(xs.Length);
+                data[i] = new double[xs.Length];
                 for (var j = 0; j < data[i].Length; j++)
                 {
                     data[i][j] = value;
                 }
             }
 
-            return new LineImage(data, pool);
+            return new LineImage(data);
         }
 
         public string GetName() => "ValueSequence";
@@ -119,34 +119,34 @@ public class SequenceTests
             return data;
         }
 
-        public LineImage GetPixelLineData(long line, int[] channels, ArrayPool<double> pool)
+        public LineImage GetPixelLineData(long line, int[] channels)
         {
             var data = new double[channels.Length][];
             for (var i = 0; i < channels.Length; i++)
             {
-                data[i] = pool.Rent((int)Shape.Width);
+                data[i] = new double[Shape.Width];
                 for (var j = 0; j < data[i].Length; j++)
                 {
                     data[i][j] = GetPixel(j, line, channels[i]);
                 }
             }
 
-            return new LineImage(data, pool);
+            return new LineImage(data);
         }
 
-        public LineImage GetPixelLineData(long[] xs, long line, int[] channels, ArrayPool<double> pool)
+        public LineImage GetPixelLineData(long[] xs, long line, int[] channels)
         {
             var data = new double[channels.Length][];
             for (var i = 0; i < channels.Length; i++)
             {
-                data[i] = pool.Rent(xs.Length);
+                data[i] = new double[xs.Length];
                 for (var j = 0; j < data[i].Length; j++)
                 {
                     data[i][j] = GetPixel(xs[j], line, channels[i]);
                 }
             }
 
-            return new LineImage(data, pool);
+            return new LineImage(data);
         }
 
         public string GetName()

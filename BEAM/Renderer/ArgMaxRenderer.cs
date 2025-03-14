@@ -23,7 +23,7 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
         return color;
     }
 
-    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y, BGR[] bgrs, ArrayPool<double> pool)
+    public override BGR[] RenderPixels(ISequence sequence, long[] xs, long y, BGR[] bgrs)
     {
         var channels = new int[sequence.Shape.Channels];
         for (var i = 0; i < sequence.Shape.Channels; i++)
@@ -31,7 +31,7 @@ public abstract class ArgMaxRenderer(double minimumOfIntensityRange, double maxi
             channels[i] = i;
         }
 
-        var line = sequence.GetPixelLineData(xs, y, channels, pool);
+        var line = sequence.GetPixelLineData(xs, y, channels);
 
         for (var x = 0; x < xs.Length; x++)
         {
