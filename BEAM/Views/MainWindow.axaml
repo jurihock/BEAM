@@ -65,7 +65,7 @@
         <DockPanel LastChildFill="True" Background="{DynamicResource WindowBg}">
             <Panel>
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <Button Command="{Binding OpenSequenceFromFolderCommand}" Background="Transparent" Padding="10 5">
+                    <Button Command="{Binding OpenSequenceFromFolderCommand}" Background="Transparent" Padding="10 5" Focusable="False">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock FontSize="20" Foreground="{DynamicResource Accent}">Open a sequence</TextBlock>
                             <TextBlock Margin="10 0" Foreground="Gray" VerticalAlignment="Center">File -> Open Folder</TextBlock>
