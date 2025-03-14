@@ -13,12 +13,6 @@ using Xunit.Abstractions;
 
 public class RegionAnalysisStandardDerivationOfChannelsTests
 {
-    private readonly ITestOutputHelper _testOutputHelper;
-
-    public RegionAnalysisStandardDerivationOfChannelsTests(ITestOutputHelper testOutputHelper)
-    {
-        _testOutputHelper = testOutputHelper;
-    }
 
     [Fact]
     public void RegionAnalysisAverageOfChannels_AnalyzeForPlot_CalculatesCorrectResults()
@@ -51,6 +45,29 @@ public class RegionAnalysisStandardDerivationOfChannelsTests
         Assert.Equal(33, Math.Round(newBars.Bars[2].Value));
         Assert.Equal(26, Math.Round(newBars.Bars[3].Value));
     }
+    
+    [Fact]
+    public void RegionAnalysisStandardDeviation_ThrowsException_WhenOutsideOfSequence()
+    {
+        var analysis = new RegionAnalysisStandardDeviationOfChannels();
+        var path = GetFilePath().Split(Path.DirectorySeparatorChar).SkipLast(1);
+        var list = new List<string> { Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "../TestAssets/Test.png") };
+        var sequence = new SkiaSequence(list, "Test.png");
+        
+        var start = new Coordinate2D(426, 239);
+        var end = new Coordinate2D(426, 78000);
+        Assert.Throws<InvalidOperationException>(() => analysis.AnalyzeforPlot(start, end, sequence));
+
+        end = new Coordinate2D(80000, 239);
+        Assert.Throws<InvalidOperationException>(() => analysis.AnalyzeforPlot(start, end, sequence));
+        
+        end = new Coordinate2D(-1, 239);
+        Assert.Throws<InvalidOperationException>(() => analysis.AnalyzeforPlot(start, end, sequence));
+        
+        end = new Coordinate2D(426, -1);
+        Assert.Throws<InvalidOperationException>(() => analysis.AnalyzeforPlot(start, end, sequence));
+    }
+    
     [Fact]
     public void ToString_ReturnsCorrectName()
     {
