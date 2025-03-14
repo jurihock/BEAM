@@ -328,7 +328,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 
     public void CutMinimap(long startOffset, long endOffset)
     {
-        if (_currentMinimap is null)
+        if (_currentMinimap is null || MinimapVms.Count == 0)
         {
             return;
         }
@@ -338,7 +338,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
 
     public void TransformMinimap()
     {
-        if(_currentMinimap is null) return;
+        if(_currentMinimap is null || MinimapVms.Count == 0) return;
         _currentMinimap.StopGeneration();
         _currentMinimap.TransformationRerender(Sequence);
     }

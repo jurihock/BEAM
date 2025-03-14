@@ -53,7 +53,7 @@ public sealed class SequencePlottable(ISequence sequence, SequenceRenderer rende
         // min <-> max flipped since inverted Y axis
         var minY = rp.Plot.Grid.YAxis.Max;
         var maxY = rp.Plot.Grid.YAxis.Min;
-        SequenceImage.Update((long)minY, (long)maxY, rp.Canvas.DeviceClipBounds.Height);
+        SequenceImage.Update((long)minY - (long) yOffset, (long)maxY - (long)yOffset, rp.Canvas.DeviceClipBounds.Height);
 
         // drawing the images
         using SKPaint paint = new();

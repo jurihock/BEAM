@@ -45,8 +45,7 @@ public class PlotMinimap : Minimap
     /// The underlying algorithm used to calculate values for pixel lines. These values will later be displayed in the plot.
     /// </summary>
     public IMinimapAlgorithm? MinimapAlgorithm;
-
-    private long TransOffsetY { get; set; }
+    
 
     private Plot _plot = new();
     private MinimapPlotViewModel _viewModel;
@@ -54,7 +53,7 @@ public class PlotMinimap : Minimap
     public PlotMinimap()
     {
         MinimapAlgorithm = SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObject();
-        _viewModel = new MinimapPlotViewModel(_plot, this, Name);
+        _viewModel = new MinimapPlotViewModel(_plot, this,"Rendering: " + Name);
     }
 
     private TransformationStorer _latestData;
@@ -119,7 +118,6 @@ public class PlotMinimap : Minimap
 
     public override async Task TransformationRerender(TransformedSequence newSequence)
     {
-        TransOffsetY = (long) newSequence.DrawOffsetY;
         if (!IsGenerated || Sequence is null)
         {
             this.Sequence = newSequence;
@@ -218,7 +216,7 @@ public class PlotMinimap : Minimap
         }
         newPlot.Add.Bars(barsToAdd.ToArray());
         _plot = newPlot;
-        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence!.Shape.Height - startOffset - endOffset + ScrollBarOffset + TransOffsetY);
+        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence!.Shape.Height - startOffset - endOffset + ScrollBarOffset + _latestData.OffsetY);
     }
 
 
@@ -308,7 +306,7 @@ public class PlotMinimap : Minimap
 
             Bar bar = new Bar
             {
-                Position = i * compactionFactor + TransOffsetY,
+                Position = i * compactionFactor + _latestData.OffsetY,
                 Value = calculation,
                 Orientation = Orientation.Horizontal
             };
@@ -319,7 +317,7 @@ public class PlotMinimap : Minimap
         await Dispatcher.UIThread.InvokeAsync(() => _viewModel.CloseStatusWindow());
         _plot.Axes.InvertY();
         _plot.Add.Bars(bars);
-        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence.Shape.Height + ScrollBarOffset + TransOffsetY);
+        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence.Shape.Height + ScrollBarOffset + _latestData.OffsetY);
 
     }
 
