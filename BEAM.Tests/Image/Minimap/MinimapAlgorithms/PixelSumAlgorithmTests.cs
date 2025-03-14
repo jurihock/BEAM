@@ -6,6 +6,7 @@ using BEAM.Renderer;
 
 namespace BEAM.Tests.Image.Minimap.MinimapAlgorithms;
 
+[Collection("GlobalTests")]
 public class PixelSumAlgorithmTests
 {
     [Fact]

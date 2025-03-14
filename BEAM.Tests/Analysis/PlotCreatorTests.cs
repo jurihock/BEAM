@@ -3,6 +3,7 @@ using ScottPlot.Plottables;
 
 namespace BEAM.Tests.Analysis;
 
+[Collection("GlobalTests")]
 public class PlotCreatorTests
 {
     [Fact]

@@ -10,7 +10,7 @@ using Xunit.Abstractions;
 
 namespace BEAM.Tests.Exporter;
 
-[Collection("ExporterTests")]
+[Collection("GlobalTests")]
 public class PngExporterTests
 {
     private readonly ITestOutputHelper _testOutputHelper;

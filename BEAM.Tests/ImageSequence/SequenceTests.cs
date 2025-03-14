@@ -3,6 +3,7 @@ using BEAM.ImageSequence;
 
 namespace BEAM.Tests.ImageSequence;
 
+[Collection("GlobalTests")]
 public class SequenceTests
 {
     class ValueSequence(int width, int height, int channels, double value) : ISequence

@@ -1,10 +1,12 @@
-﻿using BEAM.Image.Minimap.Utility;
+﻿using Avalonia.Headless.XUnit;
+using BEAM.Image.Minimap.Utility;
 
 namespace BEAM.Tests.Minimap;
 
+[Collection("GlobalTests")]
 public class MinimapSettingsProviderTestsTwo
 {
-    [Fact]
+    [AvaloniaFact]
     public void Constructor_ShouldPopulateDefaultMinimaps()
     {
         var provider = new MinimapSettingsProvider();
@@ -12,7 +14,7 @@ public class MinimapSettingsProviderTestsTwo
         Assert.NotEmpty(defaults);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void GetDefaultObject_ShouldReturnNonNullDefault()
     {
         var provider = new MinimapSettingsProvider();
@@ -20,7 +22,7 @@ public class MinimapSettingsProviderTestsTwo
         Assert.NotNull(defaultObject);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void SetDefaultObject_ShouldUpdateCurrentDefault()
     {
         var provider = new MinimapSettingsProvider();
@@ -29,7 +31,7 @@ public class MinimapSettingsProviderTestsTwo
         Assert.Equal(newDefault, provider.GetDefaultObject());
     }
     
-    [Fact]
+    [AvaloniaFact]
     public void GetDefaultClones_ShouldReturnClonesAndCurrentDefaultClone()
     {
         var provider = new MinimapSettingsProvider();

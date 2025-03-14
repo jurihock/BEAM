@@ -8,6 +8,7 @@ using Xunit.Abstractions;
 
 namespace BEAM.Tests.ImageSequence;
 
+[Collection("GlobalTests")]
 public class SkiaSequenceTests
 {
     private readonly ITestOutputHelper _testOutputHelper;

@@ -8,6 +8,7 @@ using Xunit.Abstractions;
 
 namespace BEAM.Tests.ImageSequence;
 
+[Collection("GlobalTests")]
 public class EnviSequenceTests
 {
     private readonly ITestOutputHelper _testOutputHelper;

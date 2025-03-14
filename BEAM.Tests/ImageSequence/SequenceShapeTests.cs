@@ -2,7 +2,7 @@ using BEAM.ImageSequence;
 
 namespace BEAM.Tests.ImageSequence;
 using Xunit;
-
+[Collection("GlobalTests")]
 public class SequenceShapeTests
 {
     [Fact]

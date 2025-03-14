@@ -3,7 +3,7 @@ using BEAM.Image;
 namespace BEAM.Tests.Image;
 
 using Xunit;
-
+[Collection("GlobalTests")]
 public class LineImageTests
 {
     [Fact]

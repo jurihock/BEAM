@@ -4,6 +4,7 @@ using BEAM.Datatypes.Color;
 using BEAM.Controls;
 using Xunit;
 
+[Collection("GlobalTests")]
 public class ChannelHSVMapTests
 {
     [Fact]

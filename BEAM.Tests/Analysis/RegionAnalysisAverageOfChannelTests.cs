@@ -7,6 +7,7 @@ using Xunit.Abstractions;
 
 namespace BEAM.Tests.Analysis;
 
+[Collection("GlobalTests")]
 public class RegionAnalysisAverageOfChannelsTests
 {
     private readonly ITestOutputHelper _testOutputHelper;

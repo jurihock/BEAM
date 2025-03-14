@@ -1,3 +1,4 @@
+using Avalonia.Headless.XUnit;
 using BEAM.ImageSequence.Synchronization.Manipulators;
 
 namespace BEAM.Tests.ImageSequence.Synchronisation.Manipulators;
@@ -6,9 +7,10 @@ using Avalonia.Interactivity;
 using ScottPlot.Avalonia;
 using Xunit;
 
+[Collection("GlobalTests")]
 public class EventSourceMapperTests
 {
-    [Fact]
+    [AvaloniaFact]
     public void AddEventSource_AddsEventAndSource()
     {
         var eventSource = new RoutedEventArgs();
@@ -19,7 +21,7 @@ public class EventSourceMapperTests
         Assert.True(EventSourceMapper.IsSource(eventSource, plot));
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void AddEventSource_LimitExceeded()
     {
         for (int i = 0; i < 100; i++)
@@ -47,7 +49,7 @@ public class EventSourceMapperTests
         Assert.True(EventSourceMapper.IsSource(newEvent, newPlot));
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void IsSource_ReturnsFalse_WhenEventNotMapped()
     {
         var eventSource = new RoutedEventArgs();
@@ -56,7 +58,7 @@ public class EventSourceMapperTests
         Assert.False(EventSourceMapper.IsSource(eventSource, plot));
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void AddIfNotExists_AddsEventAndSource_WhenEventNotMapped()
     {
         var eventSource = new RoutedEventArgs();
@@ -67,7 +69,7 @@ public class EventSourceMapperTests
         Assert.True(EventSourceMapper.IsSource(eventSource, plot));
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void AddIfNotExists_DoesNotAddEvent_WhenEventAlreadyMapped()
     {
         var eventSource = new RoutedEventArgs();
@@ -81,7 +83,7 @@ public class EventSourceMapperTests
         Assert.False(EventSourceMapper.IsSource(eventSource, plot2));
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void Clear_RemovesAllEventsAndSources()
     {
         var eventSource = new RoutedEventArgs();

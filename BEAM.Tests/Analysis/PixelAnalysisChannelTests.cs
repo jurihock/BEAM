@@ -8,6 +8,7 @@ using Xunit;
 
 namespace BEAM.Tests.Analysis;
 
+[Collection("GlobalTests")]
 public class PixelAnalysisChannelTests
 {
     

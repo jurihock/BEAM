@@ -9,7 +9,7 @@ using Moq;
 
 namespace BEAM.Tests.Exporter;
 
-[Collection("ExporterTests")]
+[Collection("GlobalTests")]
 public class EnviExporterTests
 {
     [Fact]

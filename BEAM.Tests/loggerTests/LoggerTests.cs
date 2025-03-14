@@ -2,6 +2,7 @@ using BEAM.Models.Log;
 
 namespace BEAM.Tests.loggerTests;
 
+[Collection("GlobalTests")]
 public class LoggerTests
 {
     [Fact]

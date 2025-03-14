@@ -6,6 +6,7 @@ using Xunit;
 using System;
 using System.Runtime.InteropServices;
 
+[Collection("GlobalTests")]
 public class BgraBitmapTests
 {
     [Fact]

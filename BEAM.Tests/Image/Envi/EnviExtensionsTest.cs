@@ -6,6 +6,7 @@ using BEAM.Image.Envi;
 using System;
 using Xunit;
 
+[Collection("GlobalTests")]
 public class EnviExtensionsTests
 {
     [Fact]

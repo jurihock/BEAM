@@ -7,6 +7,7 @@ namespace BEAM.Tests.ImageSequence;
 /// <summary>
 /// Test for the class 
 /// </summary>
+[Collection("GlobalTests")]
 public class DiskSequenceTests
 {
     private readonly ITestOutputHelper _testOutputHelper;

@@ -7,6 +7,7 @@ using SkiaSharp;
 using Xunit;
 using System;
 
+[Collection("GlobalTests")]
 public class SkiaImageExtensionsTests
 {
     [Fact]

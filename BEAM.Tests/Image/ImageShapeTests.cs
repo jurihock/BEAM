@@ -3,6 +3,7 @@ namespace BEAM.Tests.Image;
 using BEAM.Image;
 using Xunit;
 
+[Collection("GlobalTests")]
 public class ImageShapeTests
 {
     [Fact]
