@@ -4,6 +4,7 @@ using BEAM.Exporter;
 using BEAM.ImageSequence;
 using BEAM.Models.Log;
 using BEAM.Renderer;
+using BEAM.ViewModels;
 using Moq;
 
 namespace BEAM.Tests.Exporter;
@@ -29,7 +30,7 @@ public class EnviExporterTests
         
         File.Delete($"{exportPath}.raw");
         File.Delete($"{exportPath}.hdr");
-        EnviExporter.Export(pathMock.Object, transSequence, renderer);
+        EnviExporter.Export(pathMock.Object, transSequence, renderer, new ExportProgressWindowViewModel(new CancellationTokenSource()));
 
         var list2 = new List<string>();
         list2.Add(exportPath);
@@ -60,7 +61,7 @@ public class EnviExporterTests
         
         File.Delete($"{exportPath}.raw");
         File.Delete($"{exportPath}.hdr");
-        EnviExporter.Export(pathMock.Object, transSequence, renderer);
+        EnviExporter.Export(pathMock.Object, transSequence, renderer, new ExportProgressWindowViewModel(new CancellationTokenSource()));
         
         path = GetFilePath().Split(Path.DirectorySeparatorChar).SkipLast(1);
         var originalEnvi = Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "./TestData/Envi/EnviTest");

@@ -4,6 +4,7 @@ using BEAM.Exporter;
 using BEAM.ImageSequence;
 using BEAM.Models.Log;
 using BEAM.Renderer;
+using BEAM.ViewModels;
 using Moq;
 using Xunit.Abstractions;
 
@@ -35,7 +36,7 @@ public class PngExporterTests
         pathMock.SetupGet(p => p.Path).Returns(new Uri(exportPath));
         var renderer = new ChannelMapRenderer(0, 255, 2, 1, 0);
         
-        PngExporter.Export(pathMock.Object, transSequence, renderer);
+        PngExporter.Export(pathMock.Object, transSequence, renderer, new ExportProgressWindowViewModel(new CancellationTokenSource()));
         
         var sequence2 = SkiaSequence.Open(exportPath);
         Assert.True(SequenceCompare(sequence2, envi, renderer));
@@ -58,7 +59,7 @@ public class PngExporterTests
         pathMock.SetupGet(p => p.Path).Returns(new Uri(exportPath));
         var renderer = new ChannelMapRenderer(0, 255, 2, 1, 0);
         
-        PngExporter.Export(pathMock.Object, transSequence, renderer);
+        PngExporter.Export(pathMock.Object, transSequence, renderer, new ExportProgressWindowViewModel(new CancellationTokenSource()));
         
         path = GetFilePath().Split(Path.DirectorySeparatorChar).SkipLast(1);
         var originalPng = Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "./TestData/Png/Test.png");

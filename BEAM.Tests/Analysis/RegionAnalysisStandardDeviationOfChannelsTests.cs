@@ -56,16 +56,16 @@ public class RegionAnalysisStandardDerivationOfChannelsTests
         
         var start = new Coordinate2D(426, 239);
         var end = new Coordinate2D(426, 78000);
-        Assert.Throws<InvalidOperationException>(() => analysis.AnalyzeforPlot(start, end, sequence));
+        Assert.Throws<InvalidOperationException>(() => analysis.AnalyzeForPlot(start, end, sequence));
 
         end = new Coordinate2D(80000, 239);
-        Assert.Throws<InvalidOperationException>(() => analysis.AnalyzeforPlot(start, end, sequence));
+        Assert.Throws<InvalidOperationException>(() => analysis.AnalyzeForPlot(start, end, sequence));
         
         end = new Coordinate2D(-1, 239);
-        Assert.Throws<InvalidOperationException>(() => analysis.AnalyzeforPlot(start, end, sequence));
+        Assert.Throws<InvalidOperationException>(() => analysis.AnalyzeForPlot(start, end, sequence));
         
         end = new Coordinate2D(426, -1);
-        Assert.Throws<InvalidOperationException>(() => analysis.AnalyzeforPlot(start, end, sequence));
+        Assert.Throws<InvalidOperationException>(() => analysis.AnalyzeForPlot(start, end, sequence));
     }
     
     [Fact]
