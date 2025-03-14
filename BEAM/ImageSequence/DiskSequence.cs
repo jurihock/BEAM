@@ -169,7 +169,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     /// <returns>A long representing the amount of images loaded in the sequence</returns>
     public long GetLoadedImageCount()
     {
-        return _loadedImages.Length;
+        return ImagePaths.Count;
     }
 
     /// <summary>
