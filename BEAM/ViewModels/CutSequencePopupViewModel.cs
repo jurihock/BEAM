@@ -46,11 +46,15 @@ public partial class CutSequencePopupViewModel : ViewModelBase
             || StartOffset > EndOffset)
         {
             return false;
+        } else if(EndOffset == MaxOffset && StartOffset == 0)
+        {
+            return true;
         }
         
         _sequenceViewModel.Sequence = new TransformedSequence(new CutSequence(_sequenceViewModel.Sequence.GetName(),
                                         StartOffset, EndOffset, _sequenceViewModel.Sequence));
         _sequenceViewModel.CutSequence(this, new RenderersUpdatedEventArgs());
+        _sequenceViewModel.CutMinimap(StartOffset, MaxOffset - EndOffset);
         return true;
     }
 }

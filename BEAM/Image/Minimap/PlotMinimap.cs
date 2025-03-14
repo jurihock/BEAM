@@ -95,18 +95,19 @@ public class PlotMinimap : Minimap
             // nothing has actually changed
             return;
         }
-
         if (MaxHeightForRelCompaction >= newSequence.Shape.Height)
         {
             var actualCompactionUsed =
                 (int)Math.Ceiling(newSequence.Shape.Height / (double)RelHeightCompactionFactor);
             this.Sequence = newSequence;
-            await GeneratePlotDisregardingPrev(actualCompactionUsed);
+            IsGenerated = false;
+            await Task.Run(() => GeneratePlotDisregardingPrev(actualCompactionUsed));
         }
         else
         {
             CutPlotToFit(startCutoff, endCutoff);
-            this.Sequence = newSequence;
+            this.Sequence= newSequence;
+            
         }
                 
                 
@@ -200,9 +201,9 @@ public class PlotMinimap : Minimap
         List<Bar> barsToAdd = new List<Bar>();
         foreach (var bar in bars)
         {
-            if(bar.Position >= startOffset && bar.Position < Sequence!.Shape.Height - endOffset)
-            {
-                bar.Position -= startOffset;
+            if(bar.Position >= startOffset + _latestData.OffsetY  && bar.Position < Sequence!.Shape.Height - endOffset + _latestData.OffsetY)
+            { 
+                bar.Position = bar.Position - startOffset - _latestData.OffsetY;
                 if (bar.Value > maxValue)
                 {
                     maxValue = bar.Value;
@@ -216,7 +217,7 @@ public class PlotMinimap : Minimap
         }
         newPlot.Add.Bars(barsToAdd.ToArray());
         _plot = newPlot;
-        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence!.Shape.Height - startOffset - endOffset + ScrollBarOffset + _latestData.OffsetY);
+        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence!.Shape.Height - startOffset - endOffset + ScrollBarOffset);
     }
 
 
