@@ -65,12 +65,15 @@
         <DockPanel LastChildFill="True" Background="{DynamicResource WindowBg}">
             <Panel>
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="20" Foreground="{DynamicResource Accent}">Open a sequence</TextBlock>
-                        <TextBlock Margin="10 0" Foreground="Gray" VerticalAlignment="Center">File -> Open Folder</TextBlock>
-                    </StackPanel>
-                    <TextBlock FontSize="20" Margin="0 10 0 0" Foreground="Gray">Drop files here to open them</TextBlock>
+                    <Button Command="{Binding OpenSequenceFromFolderCommand}" Background="Transparent" Padding="10 5">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontSize="20" Foreground="{DynamicResource Accent}">Open a sequence</TextBlock>
+                            <TextBlock Margin="10 0" Foreground="Gray" VerticalAlignment="Center">File -> Open Folder</TextBlock>
+                        </StackPanel>
+                    </Button>
+                    <TextBlock FontSize="20" Margin="10 5 0 0" Foreground="Gray">Drop files here to open them</TextBlock>
                 </StackPanel>
+
                 <views:DockingView x:Name="DockView" />
             </Panel>
         </DockPanel>
