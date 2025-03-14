@@ -35,6 +35,10 @@ public partial class MinimapPlotViewModel : SizeAdjustableViewModelBase, IDockBa
         _currentPlot = plot;
         CurrentPlot = plot;
     }
+    public void ReplacePlot(Plot newPlot)
+    {
+        CurrentPlot = newPlot;
+    }
 
     public void Dispose()
     {

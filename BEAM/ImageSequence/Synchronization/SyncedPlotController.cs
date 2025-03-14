@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using BEAM.ImageSequence.Synchronization.Manipulators;
-using ExCSS;
 using ScottPlot.Avalonia;
 
 namespace BEAM.ImageSequence.Synchronization;
