@@ -26,7 +26,7 @@ public static class PngExporter
     /// <param name="path">The path where the files will be saved.</param>
     /// <param name="sequence">The sequence to be exported.</param>
     /// <param name="renderer">The renderer used for the sequence.</param>
-    public static void Export(IStorageFile path, TransformedSequence sequence, SequenceRenderer renderer)
+    public static void Export(IStorageFile path, TransformedSequence sequence, SequenceRenderer renderer, ExportProgressWindowViewModel vm)
     {
         var i = 0;
         Directory.CreateDirectory(path.Path.AbsolutePath);
