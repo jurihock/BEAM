@@ -31,6 +31,7 @@ public partial class MinimapPlotViewModel : SizeAdjustableViewModelBase, IDockBa
         get => _minimapProgress;
         set
         {
+            if (_minimapProgress == value) return;
             _minimapProgress = value;
             OnPropertyChanged();
         }
@@ -65,8 +66,8 @@ public partial class MinimapPlotViewModel : SizeAdjustableViewModelBase, IDockBa
 
     public void InitializeStatusWindow()
     {
+        Console.WriteLine("Started new Progress bar");
         MinimapProgress = 0;
-        ProgressWindow = new MinimapProgressWindow(this);
         ProgressWindow.Show();
     }
 
@@ -79,8 +80,20 @@ public partial class MinimapPlotViewModel : SizeAdjustableViewModelBase, IDockBa
     [RelayCommand]
     public void AbortGeneration()
     {
-        ProgressWindow.Close();
         _source.StopGeneration();
+        if (ProgressWindow.IsVisible)
+        {
+            ProgressWindow.Close();
+            ProgressWindow = new MinimapProgressWindow(this);
+        }
     }
-    
+
+    public void CloseStatusWindow()
+    {
+        if (ProgressWindow.IsVisible)
+        {
+            ProgressWindow.Close();
+            ProgressWindow = new MinimapProgressWindow(this);
+        }
+    }
 }

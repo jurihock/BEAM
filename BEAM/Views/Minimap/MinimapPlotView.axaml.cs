@@ -99,6 +99,7 @@ public partial class MinimapPlotView : UserControl
     
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
+        if (e.PropertyName != nameof(MinimapPlotViewModel.CurrentPlot)) return;
         Console.WriteLine("Property changed");
         if(DataContext is not MinimapPlotViewModel vm)
         {

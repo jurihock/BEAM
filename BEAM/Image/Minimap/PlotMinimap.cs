@@ -51,11 +51,12 @@ public class PlotMinimap : Minimap
     public long TransOffsetY { get; set; } = 0;
 
     private Plot _plot = new Plot();
-    private MinimapPlotViewModel? _viewModel;
+    private MinimapPlotViewModel _viewModel;
 
     public PlotMinimap()
     {
         MinimapAlgorithm = SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObject();
+        _viewModel = new MinimapPlotViewModel(_plot, this);
     }
     
 
@@ -236,7 +237,7 @@ public class PlotMinimap : Minimap
         var actualCompactionUsed = CompactionFactor;
         try
         {
-             GeneratePlotDisregardingPrev(actualCompactionUsed);
+             await GeneratePlotDisregardingPrev(actualCompactionUsed);
         }    catch (OperationCanceledException e)
         {
             //End routine, Generation process was canceled
@@ -262,10 +263,10 @@ public class PlotMinimap : Minimap
 
     // This method throws an OperationCanceledException if the generation process was canceled through the CancellationToken.
     // All calling methods must furthermore ensure that MinimapAlgorithm != null.
-    private void GeneratePlotDisregardingPrev(int compactionFactor)
+    private async Task GeneratePlotDisregardingPrev(int compactionFactor)
     {
         _plot = new Plot();
-      
+        
         double maxValue = 0;
         double minValue = 0;
         
@@ -274,10 +275,13 @@ public class PlotMinimap : Minimap
             
             compactionFactor = (int) Math.Ceiling(Sequence.Shape.Height / (double) RelHeightCompactionFactor);
         }
-        Bar[] bars = new Bar[Sequence.Shape.Height / compactionFactor];
-        
 
-        for (int i = 0; i < Sequence.Shape.Height / compactionFactor; i++)
+        long workload = Sequence.Shape.Height / compactionFactor;
+        Bar[] bars = new Bar[workload];
+        
+        await Dispatcher.UIThread.InvokeAsync(() => _viewModel.InitializeStatusWindow());
+        Console.WriteLine("Initialized");
+        for (int i = 0; i < workload; i++)
         {
             CancellationTokenSource.Token.ThrowIfCancellationRequested();
             double calculation = MinimapAlgorithm!.GetLineValue(i * compactionFactor);
@@ -297,8 +301,15 @@ public class PlotMinimap : Minimap
                 Orientation = Orientation.Horizontal
             };
             bars[i] = bar;
+            //Dispatcher.UIThread.InvokeAsync(() => _viewModel.MinimapProgress = (byte)(i / Math.Max((workload - 1), 1)));
+            //Console.WriteLine($"Progress: { (byte) Math.Round((i / (double) Math.Max((workload - 1), 1)) * 100)}");
+            //Dispatcher.UIThread.InvokeAsync(() => _viewModel.MinimapProgress = (byte) Math.Round((i / (double) Math.Max((workload - 1), 1)) * 100));
+            _viewModel.MinimapProgress = (byte)Math.Round((i / (double)Math.Max((workload - 1), 1)) * 100);
+            //Console.WriteLine("Hence minimap Progress: " + _viewModel.MinimapProgress);
         }
+        Console.WriteLine("Finished");
         
+        await Dispatcher.UIThread.InvokeAsync(() => _viewModel.CloseStatusWindow());
         _plot.Axes.InvertY();
         _plot.Add.Bars(bars);
         _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence.Shape.Height + ScrollBarOffset + TransOffsetY);
