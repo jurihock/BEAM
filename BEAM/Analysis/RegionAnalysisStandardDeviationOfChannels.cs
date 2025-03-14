@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Threading;
-using Avalonia.Logging;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
-using BEAM.Models.Log;
-using BEAM.ViewModels;
 using ScottPlot;
 using Timer = BEAM.Profiling.Timer;
 

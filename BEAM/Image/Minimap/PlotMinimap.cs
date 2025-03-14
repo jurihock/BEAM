@@ -45,8 +45,7 @@ public class PlotMinimap : Minimap
     /// The underlying algorithm used to calculate values for pixel lines. These values will later be displayed in the plot.
     /// </summary>
     public IMinimapAlgorithm? MinimapAlgorithm;
-
-    private long TransOffsetY { get; set; }
+    
 
     private Plot _plot = new();
     private MinimapPlotViewModel _viewModel;
@@ -54,7 +53,7 @@ public class PlotMinimap : Minimap
     public PlotMinimap()
     {
         MinimapAlgorithm = SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObject();
-        _viewModel = new MinimapPlotViewModel(_plot, this, Name);
+        _viewModel = new MinimapPlotViewModel(_plot, this,"Generating: " + Name);
     }
 
     private TransformationStorer _latestData;
@@ -96,18 +95,19 @@ public class PlotMinimap : Minimap
             // nothing has actually changed
             return;
         }
-
         if (MaxHeightForRelCompaction >= newSequence.Shape.Height)
         {
             var actualCompactionUsed =
                 (int)Math.Ceiling(newSequence.Shape.Height / (double)RelHeightCompactionFactor);
             this.Sequence = newSequence;
-            await GeneratePlotDisregardingPrev(actualCompactionUsed);
+            IsGenerated = false;
+            await Task.Run(() => GeneratePlotDisregardingPrev(actualCompactionUsed));
         }
         else
         {
             CutPlotToFit(startCutoff, endCutoff);
-            this.Sequence = newSequence;
+            this.Sequence= newSequence;
+            
         }
                 
                 
@@ -119,7 +119,6 @@ public class PlotMinimap : Minimap
 
     public override async Task TransformationRerender(TransformedSequence newSequence)
     {
-        TransOffsetY = (long) newSequence.DrawOffsetY;
         if (!IsGenerated || Sequence is null)
         {
             this.Sequence = newSequence;
@@ -202,9 +201,9 @@ public class PlotMinimap : Minimap
         List<Bar> barsToAdd = new List<Bar>();
         foreach (var bar in bars)
         {
-            if(bar.Position >= startOffset && bar.Position < Sequence!.Shape.Height - endOffset)
-            {
-                bar.Position -= startOffset;
+            if(bar.Position >= startOffset + _latestData.OffsetY  && bar.Position < Sequence!.Shape.Height - endOffset + _latestData.OffsetY)
+            { 
+                bar.Position = bar.Position - startOffset - _latestData.OffsetY;
                 if (bar.Value > maxValue)
                 {
                     maxValue = bar.Value;
@@ -218,7 +217,7 @@ public class PlotMinimap : Minimap
         }
         newPlot.Add.Bars(barsToAdd.ToArray());
         _plot = newPlot;
-        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence!.Shape.Height - startOffset - endOffset + ScrollBarOffset + TransOffsetY);
+        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence!.Shape.Height - startOffset - endOffset + ScrollBarOffset);
     }
 
 
@@ -293,7 +292,8 @@ public class PlotMinimap : Minimap
         Bar[] bars = new Bar[workload];
         
         await Dispatcher.UIThread.InvokeAsync(() => _viewModel.InitializeStatusWindow());
-        for (int i = 0; i < workload; i++)
+        long step = (int) Math.Max(1, workload / 100);
+        for (long i = 0; i < workload; i++)
         {
             CancellationTokenSource.Token.ThrowIfCancellationRequested();
             double calculation = MinimapAlgorithm!.GetLineValue(i * compactionFactor);
@@ -308,18 +308,21 @@ public class PlotMinimap : Minimap
 
             Bar bar = new Bar
             {
-                Position = i * compactionFactor + TransOffsetY,
+                Position = i * compactionFactor + _latestData.OffsetY,
                 Value = calculation,
                 Orientation = Orientation.Horizontal
             };
             bars[i] = bar;
-            _viewModel.MinimapProgress = (byte)Math.Round((i / (double)Math.Max((workload - 1), 1)) * 100);
+            if (i % step == 0)
+            {
+                _viewModel.MinimapProgress = (byte)Math.Round((i / (double)Math.Max((workload - 1), 1)) * 100);
+            }
         }
         
         await Dispatcher.UIThread.InvokeAsync(() => _viewModel.CloseStatusWindow());
         _plot.Axes.InvertY();
         _plot.Add.Bars(bars);
-        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence.Shape.Height + ScrollBarOffset + TransOffsetY);
+        _plot.Axes.SetLimits(left: minValue, right: maxValue, top: 0 - ScrollBarOffset , bottom: Sequence.Shape.Height + ScrollBarOffset + _latestData.OffsetY);
 
     }
 

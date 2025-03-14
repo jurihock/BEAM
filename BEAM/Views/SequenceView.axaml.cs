@@ -124,7 +124,7 @@ public partial class SequenceView : UserControl
             // Difference of bottom and top sometimes negative? Math.Abs required.
             var ySize = Math.Abs(plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top);
             // Minus 100 to allow to scroll higher than the sequence for a better inspection of the start.
-            var top = (e.NewValue / 100.0) * vm.Sequence.Shape.Height - 100.0;
+            var top = ((e.NewValue / 100.0) * (vm.Sequence.Shape.Height + vm.Sequence.DrawOffsetY)) - 100.0;
             AvaPlot1.Plot.Axes.SetLimitsY(top, top + ySize);
             AvaPlot1.Refresh();
             ScrollingSynchronizerMapper.Synchronize(this);
@@ -383,17 +383,24 @@ public partial class SequenceView : UserControl
         }
 
         // View is moved by 0.5, so adding 0.5 to get correct pixel values
+        // View is moved by 0.5, so adding 0.5 to get correct pixel values
         x = Math.Round(x);
         y = Math.Round(y);
 
+        var checkWidth = Math.Round(vm.Sequence.Shape.Width * vm.Sequence.ScaleX) + vm.Sequence.DrawOffsetX;
+        var checkHeight = Math.Round(vm.Sequence.Shape.Height * vm.Sequence.ScaleY) + vm.Sequence.DrawOffsetY;
+        
         // If outside the sequence just show the position and no values.
-        if (x >= vm.Sequence.Shape.Width || y >= vm.Sequence.Shape.Height || x < 0 || y < 0)
+        if (x >= checkWidth || y >= checkHeight || x < vm.Sequence.DrawOffsetX || y < vm.Sequence.DrawOffsetY)
         {
             _anno.Text = string.Format(PixelLabel, x, y, 0, 0, 0);
             return;
         }
-
-        var bytes = vm.Renderers[vm.RendererSelection].RenderPixel(vm.Sequence, (long)(x), (long)(y));
+        var transX = x - vm.Sequence.DrawOffsetX;
+        var transY = y - vm.Sequence.DrawOffsetY;
+        
+        
+        var bytes = vm.Renderers[vm.RendererSelection].RenderPixel(vm.Sequence, (long) transX, (long) transY);
         _anno.Text = string.Format(PixelLabel, x, y, bytes.R, bytes.G, bytes.B);
     }
 
@@ -443,7 +450,7 @@ public partial class SequenceView : UserControl
         var vm = (DataContext as SequenceViewModel)!;
         var plot = AvaPlot1.Plot;
         var ySize = plot.Axes.GetLimits().Bottom - plot.Axes.GetLimits().Top;
-        var top = (val / 100.0) * vm.Sequence.Shape.Height - 100.0;
+        var top = ((val / 100.0) * ((vm.Sequence.Shape.Height) + vm.Sequence.DrawOffsetY)) - 100.0;
         AvaPlot1.Plot.Axes.SetLimitsY(top, top + ySize);
         AvaPlot1.Refresh();
         Bar1.Value = val;
@@ -467,10 +474,10 @@ public partial class SequenceView : UserControl
     public void UpdateScrollBar()
     {
         var vm = (DataContext as SequenceViewModel)!;
-        var val = ((AvaPlot1.Plot.Axes.GetLimits().Top + 100.0) / vm.Sequence.Shape.Height) * 100;
+        var val = ((AvaPlot1.Plot.Axes.GetLimits().Top + 100) / (vm.Sequence.Shape.Height + vm.Sequence.DrawOffsetY)) * 100;
         Bar1.Value = val <= 0.0 ? 0.0 : double.Min(val, 100.0);
     }
-
+    
 
 
     private void Layoutable_OnLayoutUpdated(object? sender, EventArgs e)

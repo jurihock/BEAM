@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Avalonia.Threading;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
-using BEAM.Models.Log;
 using BEAM.ViewModels;
 using ScottPlot;
 
@@ -36,10 +35,20 @@ public abstract class Analysis
         InspectionViewModel inspectionViewModel, CancellationToken cancellationToken)
     {
         BoundInspectionViewModel = inspectionViewModel;
+        long offsetX = 0;
+        long offsetY = 0;
+        if (sequence.GetType().IsAssignableTo(typeof(TransformedSequence)))
+        {
+            offsetX = (long) ((TransformedSequence)sequence).DrawOffsetX;
+            offsetY = (long) ((TransformedSequence)sequence).DrawOffsetY;
+        }
+        var purifiedPointerPressedPoint = new Coordinate2D(pointerPressedPoint.Row - offsetY, pointerPressedPoint.Column - offsetX);
+        var purifiedPointerReleasedPoint = new Coordinate2D(pointerReleasedPoint.Row - offsetY, pointerReleasedPoint.Column - offsetX);
+         
         CurrentTask = Task.Run(() =>
         {
             inspectionViewModel.AnalysisProgress = 0;
-            PerformAnalysis(pointerPressedPoint, pointerReleasedPoint, sequence,
+            PerformAnalysis(purifiedPointerPressedPoint, purifiedPointerReleasedPoint, sequence,
                 cancellationToken);
             SetPlot(inspectionViewModel);
         }, cancellationToken);

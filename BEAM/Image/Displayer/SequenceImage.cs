@@ -1,5 +1,4 @@
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -7,7 +6,6 @@ using System.Threading.Tasks;
 using BEAM.Datatypes.Color;
 using BEAM.Image.Bitmap;
 using BEAM.ImageSequence;
-using BEAM.Profiling;
 using BEAM.Renderer;
 using SkiaSharp;
 
