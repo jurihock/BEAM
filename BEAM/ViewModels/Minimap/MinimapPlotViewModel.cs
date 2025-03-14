@@ -1,7 +1,10 @@
 using System;
 using BEAM.Docking;
+using BEAM.Image.Minimap;
 using BEAM.ViewModels.Utility;
+using BEAM.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using ScottPlot;
 
 namespace BEAM.ViewModels.Minimap;
@@ -20,24 +23,51 @@ public partial class MinimapPlotViewModel : SizeAdjustableViewModelBase, IDockBa
     /// <summary>
     /// Gets the display name of the minimap view.
     /// </summary>
-    public string Name { get; } = "Minimap View";
+    public string Name { get; init; }
+    
+    private byte _minimapProgress;
+    public byte MinimapProgress
+    {
+        get => _minimapProgress;
+        set
+        {
+            _minimapProgress = value;
+            OnPropertyChanged();
+        }
+    }
+    
+    private MinimapProgressWindow ProgressWindow { get; set; }
+    private readonly PlotMinimap _source;
 
     public void OnClose()
     {
+        ProgressWindow.Close();
     }
 
     /// <summary>
     /// Initializes a new instance with the specified plot.
     /// </summary>
     /// <param name="plot">The plot to display.</param>
-    public MinimapPlotViewModel(Plot plot)
+    /// <param name="source">The minimap based on which the data is being generated.</param>
+    /// <param name="name">The name of the sequence corresponding to this minimap</param>
+    public MinimapPlotViewModel(Plot plot,  PlotMinimap source, string name = "Minimap View")
     {
+        Name = name;
         _currentPlot = plot;
         CurrentPlot = plot;
+        this._source = source;
+        ProgressWindow = new MinimapProgressWindow(this);
     }
     public void ReplacePlot(Plot newPlot)
     {
         CurrentPlot = newPlot;
+    }
+
+    public void InitializeStatusWindow()
+    {
+        MinimapProgress = 0;
+        ProgressWindow = new MinimapProgressWindow(this);
+        ProgressWindow.Show();
     }
 
     public void Dispose()
@@ -45,4 +75,12 @@ public partial class MinimapPlotViewModel : SizeAdjustableViewModelBase, IDockBa
         GC.SuppressFinalize(this);
         CurrentPlot.Dispose();
     }
+    
+    [RelayCommand]
+    public void AbortGeneration()
+    {
+        ProgressWindow.Close();
+        _source.StopGeneration();
+    }
+    
 }

@@ -76,7 +76,7 @@ public class PlotMinimap : Minimap
     {
         if (!IsGenerated || _viewModel is null)
         {
-            return new MinimapPlotViewModel(_plot);
+            return new MinimapPlotViewModel(_plot, this);
         } 
         return _viewModel;
     }
@@ -120,7 +120,7 @@ public class PlotMinimap : Minimap
             {
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    _viewModel = new MinimapPlotViewModel(_plot);
+                    _viewModel = new MinimapPlotViewModel(_plot, this);
                 });
             } 
             IsGenerated = true;
@@ -173,7 +173,7 @@ public class PlotMinimap : Minimap
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                _viewModel = new MinimapPlotViewModel(_plot);
+                _viewModel = new MinimapPlotViewModel(_plot, this);
             });
         } 
         IsGenerated = true;
@@ -245,7 +245,7 @@ public class PlotMinimap : Minimap
         
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            _viewModel = new MinimapPlotViewModel(_plot);
+            _viewModel = new MinimapPlotViewModel(_plot, this);
             IsGenerated = true;
             
         });
@@ -253,7 +253,7 @@ public class PlotMinimap : Minimap
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                _viewModel = new MinimapPlotViewModel(_plot);
+                _viewModel = new MinimapPlotViewModel(_plot, this);
                 IsGenerated = true;
                 OnMinimapGenerated(new MinimapGeneratedEventArgs(this, MinimapGenerationResult.Success));
             });
@@ -280,7 +280,7 @@ public class PlotMinimap : Minimap
         for (int i = 0; i < Sequence.Shape.Height / compactionFactor; i++)
         {
             CancellationTokenSource.Token.ThrowIfCancellationRequested();
-            double calculation = MinimapAlgorithm.GetLineValue(i * compactionFactor);
+            double calculation = MinimapAlgorithm!.GetLineValue(i * compactionFactor);
             if (calculation > maxValue)
             {
                 maxValue = calculation;

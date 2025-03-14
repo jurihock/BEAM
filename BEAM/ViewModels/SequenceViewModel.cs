@@ -149,7 +149,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             if (RendererSelection < Renderers.Length && RendererSelection >= 0)
             {
                 _currentMinimap.SetRenderer(Renderers[RendererSelection]);
-                _currentMinimap.StartGeneration(sequence, OnMinimapGenerated);
+                //TODO: _currentMinimap.StartGeneration(sequence, OnMinimapGenerated);
             }
         }
         
