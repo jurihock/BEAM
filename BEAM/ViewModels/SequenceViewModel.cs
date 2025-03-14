@@ -333,7 +333,6 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             return;
         }
         _currentMinimap.StopGeneration();
-        Console.WriteLine($"Minimap change; StartOffset: {startOffset}, EndOffset: {endOffset}");
         _currentMinimap.CutRerender(Sequence, startOffset, endOffset);
     }
 
