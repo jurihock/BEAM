@@ -53,7 +53,7 @@ public class PlotMinimap : Minimap
     public PlotMinimap()
     {
         MinimapAlgorithm = SettingsUtilityHelper<IMinimapAlgorithm>.GetDefaultObject();
-        _viewModel = new MinimapPlotViewModel(_plot, this,"Rendering: " + Name);
+        _viewModel = new MinimapPlotViewModel(_plot, this,"Generating: " + Name);
     }
 
     private TransformationStorer _latestData;
