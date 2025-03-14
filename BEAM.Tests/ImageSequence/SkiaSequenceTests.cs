@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using BEAM.Exceptions;
 using BEAM.Image;
 using BEAM.ImageSequence;
+using BEAM.Models.Log;
 using Xunit.Abstractions;
 
 namespace BEAM.Tests.ImageSequence;
@@ -174,22 +175,28 @@ public class SkiaSequenceTests
     }
 
     [Fact]
-    public void OpenSkiaSequence_DetectsInvalidShapes()
+    public void OpenSkiaSequence_IgnoresInvalidShapes()
     {
+        Logger.Init();
         var path = GetFilePath().Split(Path.DirectorySeparatorChar).SkipLast(1);
         var list = new List<string> { Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "../TestAssets/Test.png") };
         list.Add(Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "../TestAssets/Flag_of_Europe.png"));
-        Assert.Throws<InvalidSequenceException>(() => SkiaSequence.Open(list, "Sun5on"));
+
+        var sequence = SkiaSequence.Open(list, "Sun5on");
+        Assert.Equal(1, sequence.GetLoadedImageCount());
     }
 
     [Fact]
     public void OpenSkiaSequenceFolder_IgnoresInvalidFiles()
     {
+        Logger.Init();
         var path = GetFilePath().Split(Path.DirectorySeparatorChar).SkipLast(1);
-        var str = Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "../TestAssets/");
+        var str = Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "../TestAssets");
         
         var sequence = SkiaSequence.Open(str);
-        Assert.Equal(str, sequence.GetName());
+        path = GetFilePath().Split(Path.DirectorySeparatorChar).SkipLast(1);
+        var name = Path.Combine(string.Join(Path.DirectorySeparatorChar, path), "..");
+        Assert.Equal(name, sequence.GetName());
         Assert.Equal(2, sequence.GetLoadedImageCount());
         Assert.Equal(new ImageShape(800, 1200, 4), sequence.Shape);
     }
