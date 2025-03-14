@@ -67,14 +67,9 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
             throw new ArgumentException("Channel count mismatch for sequence and ChannelHSVMap of ArgMax!");
         }
 
-        var argMaxChannel = channels
-            .Select((value, index) => new { Value = value, Index = index }) // Create an anonymous type with value and index
-            .Where(t => _channelHsvMap.IsChannelUsed(t.Index)) // Filter based on ChannelUsed
-            .Select(t => t.Value) // Select only the values
-            .ToArray() // Convert to array
-            .ArgMax(); // Call ArgMax on the filtered array
-
-        var color = GetColor(argMaxChannel, channels.Length);
+        var usedChannelIndices = _channelHsvMap.GetUsedChannels();
+        var argMaxChannel = sequence.GetPixel(x, y, usedChannelIndices).ArgMax(); // Call ArgMax on the filtered array
+        var color = _channelHsvMap.GetColorBGR(usedChannelIndices[argMaxChannel]);
 
         return color;
     }
