@@ -1,3 +1,4 @@
+using Avalonia.Headless.XUnit;
 using BEAM.Analysis;
 using BEAM.Datatypes;
 using BEAM.ImageSequence;
@@ -10,7 +11,7 @@ namespace BEAM.Tests.Analysis;
 public class PixelAnalysisChannelTests
 {
     
-    [Fact]
+    [AvaloniaFact]
     public void AnalyzeForPlot_ReturnsPlotWithCorrectData_WhenCalledWithValidCoordinates()
     {
         var pointerPressedPoint = new Coordinate2D(0, 0);

@@ -9,12 +9,6 @@ namespace BEAM.Tests.Renderer;
 
 public class ArgMaxRendererColorHSVTests
 {
-    private readonly ITestOutputHelper _testOutputHelper;
-
-    public ArgMaxRendererColorHSVTests(ITestOutputHelper testOutputHelper)
-    {
-        _testOutputHelper = testOutputHelper;
-    }
 
     [Fact]
     public void RenderPixel_ReturnsCorrectData()
@@ -27,10 +21,13 @@ public class ArgMaxRendererColorHSVTests
         
         renderer.UpdateChannelHSVMap(new ChannelHSVMap(4).ToArray());
         var result = renderer.RenderPixel(sequence, 0, 0);
-        Assert.Equal(new BGR(0, 255, 127), result);
+        Assert.Equal(new BGR(0, 0, 255), result);
         
-        result = renderer.RenderPixel(sequence, 480, 260);
-        Assert.Equal(new BGR(0, 255, 127), renderer.RenderPixel(sequence, 480, 260));
+        result = renderer.RenderPixel(sequence, 550, 120);
+        Assert.Equal(new BGR(255, 0, 127), result);
+
+        result = renderer.RenderPixel(sequence, 440, 169);
+        Assert.Equal(new BGR(255, 255, 0), result);
     }
 
     [Fact]

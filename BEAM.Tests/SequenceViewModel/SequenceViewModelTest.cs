@@ -1,3 +1,4 @@
+using Avalonia.Headless.XUnit;
 using BEAM.ViewModels;
 using BEAM.ImageSequence;
 using Moq;
@@ -7,7 +8,7 @@ namespace BEAM.Tests.SequenceViewModel;
 
 public class SequenceViewModelTest
 {
-    [Fact]
+    [AvaloniaFact]
     public void SequenceViewModel_Initialization_Test()
     {
         // Arrange
