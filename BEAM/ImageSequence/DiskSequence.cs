@@ -104,7 +104,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
     }
 
     private readonly Mutex _loadedImagesMutex = new();
-    private readonly IImage?[] _loadedImages = new IImage?[imagePaths.Count];
+    private IImage?[] _loadedImages;
 
     /// <summary>
     /// Loads the desired image so that it's data can be accessed randomly.
@@ -222,6 +222,7 @@ public abstract class DiskSequence(List<string> imagePaths, string name) : ISequ
             {
                 throw new InvalidSequenceException("Sequence could not be loaded due to error (see log)!");
             }
+            sequence._loadedImages = new IImage?[sequence.ImagePaths.Count];
 
             return sequence;
         }
