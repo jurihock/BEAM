@@ -36,7 +36,7 @@ public partial class SequenceView : UserControl
     /// <summary>
     /// Scale factor for minimap width relative to the main view.
     /// </summary>
-    private const double MinimapWidthScale = 0.15;
+    private const double MinimapWidthScale = 0.07;
 
     /// <summary>
     /// Property for hosting external user controls.
@@ -98,7 +98,7 @@ public partial class SequenceView : UserControl
 
         if (vm.MinimapVms.Any())
         {
-            if (vm.MinimapVms.First() is not SizeAdjustableViewModelBase mapViewModel) return;
+            if (vm.MinimapVms.First() is not { } mapViewModel) return;
             mapViewModel.NotifySizeChanged(this, new ViewModels.Utility.SizeChangedEventArgs(e.NewSize.Width * MinimapWidthScale, e.NewSize.Height));
         }
     }
@@ -489,7 +489,7 @@ public partial class SequenceView : UserControl
 
         if (vm.MinimapVms.Count > 0)
         {
-            var mapViewModel = (vm.MinimapVms.First() as SizeAdjustableViewModelBase);
+            SizeAdjustableViewModelBase? mapViewModel = (vm.MinimapVms.First());
             if (mapViewModel is null)
             {
                 return;

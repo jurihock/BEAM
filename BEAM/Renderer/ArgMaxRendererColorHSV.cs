@@ -5,6 +5,8 @@ using BEAM.Controls;
 using BEAM.Datatypes;
 using BEAM.Datatypes.Color;
 using BEAM.ImageSequence;
+using BEAM.ViewModels;
+using BEAM.Views.Utility;
 
 namespace BEAM.Renderer;
 
@@ -37,6 +39,11 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
         return new ArgMaxRendererColorHSV(MinimumOfIntensityRange, MaximumOfIntensityRange);
     }
 
+    public override SaveUserControl GetConfigView(SequenceViewModel baseVm)
+    {
+        return new ArgMaxHSVConfigControlView(this, baseVm);
+    }
+
     /// <summary>
     /// Converts the channel position of the channel with the highest intensity into an BGR value.
     /// </summary>
@@ -60,14 +67,9 @@ public class ArgMaxRendererColorHSV(double minimumOfIntensityRange, double maxim
             throw new ArgumentException("Channel count mismatch for sequence and ChannelHSVMap of ArgMax!");
         }
 
-        var argMaxChannel = channels
-            .Select((value, index) => new { Value = value, Index = index }) // Create an anonymous type with value and index
-            .Where(t => _channelHsvMap.IsChannelUsed(t.Index)) // Filter based on ChannelUsed
-            .Select(t => t.Value) // Select only the values
-            .ToArray() // Convert to array
-            .ArgMax(); // Call ArgMax on the filtered array
-
-        var color = GetColor(argMaxChannel, channels.Length);
+        var usedChannelIndices = _channelHsvMap.GetUsedChannels();
+        var argMaxChannel = sequence.GetPixel(x, y, usedChannelIndices).ArgMax(); // Call ArgMax on the filtered array
+        var color = _channelHsvMap.GetColorBGR(usedChannelIndices[argMaxChannel]);
 
         return color;
     }

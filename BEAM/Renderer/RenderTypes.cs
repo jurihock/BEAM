@@ -5,8 +5,8 @@
 /// </summary>
 public enum RenderTypes
 {
-    HeatMapRendererRb,
     ChannelMapRenderer,
+    HeatMapRendererRb,
     ArgMaxRendererGrey,
     ArgMaxRendererColorHsva
 }

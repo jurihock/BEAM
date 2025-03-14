@@ -19,7 +19,7 @@ public class PixelAnalysisChannelTests
         sequenceMock.Setup(s => s.GetPixel(It.IsAny<long>(), It.IsAny<long>())).Returns(new double[] { 1, 2, 3 });
 
         var analysis = new PixelAnalysisChannel();
-        var plot = analysis.AnalyzeforPlot(pointerPressedPoint, pointerReleasedPoint, sequenceMock.Object);
+        var plot = analysis.AnalyzeForPlot(pointerPressedPoint, pointerReleasedPoint, sequenceMock.Object);
 
         var barPlot = plot.GetPlottables().OfType<BarPlot>().FirstOrDefault();
         Assert.NotNull(barPlot);
@@ -39,7 +39,7 @@ public class PixelAnalysisChannelTests
         sequenceMock.Setup(s => s.GetPixel(It.IsAny<long>(), It.IsAny<long>())).Returns(new double[] { });
         
         var analysis = new PixelAnalysisChannel();
-        Assert.Throws<InvalidOperationException>(() => analysis.AnalyzeforPlot(pointerPressedPoint, pointerReleasedPoint, sequenceMock.Object));
+        Assert.Throws<InvalidOperationException>(() => analysis.AnalyzeForPlot(pointerPressedPoint, pointerReleasedPoint, sequenceMock.Object));
     }
 
     [Fact]

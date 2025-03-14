@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reflection;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
@@ -12,6 +14,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using BEAM.Renderer;
 using BEAM.Models.Log;
+using BEAM.Renderer.Attributes;
+using BEAM.ViewModels.Utility;
 using BEAM.Views.Minimap.Popups;
 
 
@@ -23,6 +27,20 @@ namespace BEAM.ViewModels;
 /// </summary>
 public partial class SequenceViewModel : ViewModelBase, IDockBase
 {
+    /// <summary>
+    /// The type of the default renderer to be used if a sequence does not explicitly specify one.
+    /// </summary>
+    public const RenderTypes DefaultRendererType = RenderTypes.HeatMapRendererRb;
+    
+    /// <summary>
+    /// The default minimum value for pixels within a raw sequence.
+    /// </summary>
+    public const int DefaultSequenceRangeLowerBound = 0;
+    
+    /// <summary>
+    /// The default maximum value for pixels within a raw sequence.
+    /// </summary>
+    public const int DefaultSequenceRangeUpperBound = 1;
     public event EventHandler<CloseEventArgs> CloseEvent = delegate { };
 
     /// <summary>
@@ -81,7 +99,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     /// Collection of minimap view models.
     /// </summary>
     [ObservableProperty]
-    public partial ObservableCollection<ViewModelBase> MinimapVms { get; set; } = [];
+    public partial ObservableCollection<SizeAdjustableViewModelBase> MinimapVms { get; set; } = [];
 
     /// <summary>
     /// Initializes a new instance of the SequenceViewModel.
@@ -94,25 +112,37 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         Sequence = new TransformedSequence(sequence);
         DockingVm = dockingVm;
 
-        var (min, max) = sequence switch
+        DockingVm = dockingVm;
+        ValueRangeAttribute range;
+        try
         {
-            SkiaSequence => (0, 255),
-            _ => (0, 1)
-        };
-
-        Renderers =
-        [
-            new ChannelMapRenderer(min, max, 2, 1, 0),
-            new HeatMapRendererRB(min, max, 0, 0.1, 0.9),
-            new ArgMaxRendererGrey(min, max),
-            new ArgMaxRendererColorHSV(min, max)
-        ];
-
-        RendererSelection = sequence switch
+            range = sequence.GetType().GetCustomAttributes<ValueRangeAttribute>().First();
+        }
+        catch (Exception ex) when (ex is TargetInvocationException or ReflectionTypeLoadException or IndexOutOfRangeException or InvalidOperationException)
         {
-            SkiaSequence => 0,
-            _ => 1
-        };
+            range = new ValueRangeAttribute(DefaultSequenceRangeLowerBound, DefaultSequenceRangeUpperBound);
+        }
+
+        var min = range.Min;
+        var max = range.Max;
+
+        RenderTypes selectedOption;
+        try
+        {
+            selectedOption = sequence.GetType().GetCustomAttributes<RendererAttribute>().First().DefaultRenderer;
+        }
+        catch (Exception ex) when (ex is TargetInvocationException or ReflectionTypeLoadException or IndexOutOfRangeException or InvalidOperationException)
+        {
+            selectedOption= DefaultRendererType;
+        }
+
+        RendererSelection = (int)selectedOption;
+        var rendererOptions = Enum.GetValues(typeof(RenderTypes));
+        Renderers = new SequenceRenderer[rendererOptions.Length];
+        for(var i = 0; i < rendererOptions.Length; i++)
+        {
+            Renderers[i] = ((RenderTypes)((rendererOptions.GetValue(i)) ?? RenderTypes.ChannelMapRenderer)).Sequence(min, max);
+        }
         
         _currentMinimap = SettingsUtilityHelper<Image.Minimap.Minimap>.GetDefaultClones().Active;
         if (_currentMinimap is not null)
@@ -120,7 +150,6 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
             if (RendererSelection < Renderers.Length && RendererSelection >= 0)
             {
                 _currentMinimap.SetRenderer(Renderers[RendererSelection]);
-                _currentMinimap.StartGeneration(sequence, OnMinimapGenerated);
             }
         }
         
@@ -280,6 +309,7 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     {
         CloseEvent.Invoke(this, new CloseEventArgs());
         _currentMinimap?.StopGeneration();
+        
     }
     
     public override string ToString()
@@ -294,6 +324,23 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
     {
         _currentMinimap?.StopGeneration();
         MinimapVms.Clear();
+    }
+
+    public void CutMinimap(long startOffset, long endOffset)
+    {
+        if (_currentMinimap is null)
+        {
+            return;
+        }
+        _currentMinimap.StopGeneration();
+        _currentMinimap.CutRerender(Sequence, startOffset, endOffset);
+    }
+
+    public void TransformMinimap()
+    {
+        if(_currentMinimap is null) return;
+        _currentMinimap.StopGeneration();
+        _currentMinimap.TransformationRerender(Sequence);
     }
 }
 

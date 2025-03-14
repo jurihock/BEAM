@@ -124,4 +124,5 @@ public partial class ExportSequencePopupViewModel : ViewModelBase
         Logger.GetInstance().LogMessage($"Started exporting sequence {_sequenceViewModel.Sequence.GetName()} as {_selectedType} to {_folder.Path.AbsolutePath}");
         return true;
     }
+    
 }

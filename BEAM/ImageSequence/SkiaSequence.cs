@@ -5,6 +5,8 @@ using BEAM.Image;
 using BEAM.Image.Skia;
 using BEAM.Models.Log;
 using BEAM.Profiling;
+using BEAM.Renderer;
+using BEAM.Renderer.Attributes;
 using SkiaSharp;
 
 namespace BEAM.ImageSequence;
@@ -13,6 +15,7 @@ namespace BEAM.ImageSequence;
 /// Implementation details for skia images.
 /// </summary>
 /// <param name="imagePaths">The skia images to use inside the sequence</param>
+[Renderer(RenderTypes.ChannelMapRenderer), ValueRange(0, 255)]
 public class SkiaSequence(List<string> imagePaths, string name) : DiskSequence(imagePaths, name)
 {
     protected internal override IImage LoadImage(int index) => new SkiaImage<byte>(ImagePaths[index]);
@@ -31,11 +34,14 @@ public class SkiaSequence(List<string> imagePaths, string name) : DiskSequence(i
         var firstImgWidth = firstImg.Info.Width;
         var firstImgHeight = firstImg.Info.Height;
 
+
         // iterate over all remaining images (last image can have any height), but not any width
-        foreach (var se in ImagePaths.Skip(1).Reverse().Skip(1).Reverse().Where(path =>
+        foreach (var se in ImagePaths.Skip(1).Where((path, index) =>
                  {
-                     var codec = SKCodec.Create(path);
-                     return codec.Info.Width != firstImgWidth || codec.Info.Height != firstImgHeight;
+                     var info = SKCodec.Create(path).Info;
+                     if (info.Width != firstImgWidth) return true;
+                     if(index != ImagePaths.Count - 2) return info.Height != firstImgHeight;
+                     return false;
                  }).ToList())
         {
             ImagePaths.Remove(se);

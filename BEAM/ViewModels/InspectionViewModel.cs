@@ -71,7 +71,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     public InspectionViewModel(SequenceViewModel sequenceViewModel, DockingViewModel dock)
     {
         _currentAnalysis = Analysis.Analysis.GetAnalysis(0);
-        CurrentSequenceViewModel = sequenceViewModel;
+        _currentSequenceViewModel = sequenceViewModel;
         ProgressWindow = new AnalysisProgressWindow(this);
         dock.Items.CollectionChanged += DockingItemsChanged;
 
@@ -181,6 +181,7 @@ public partial class InspectionViewModel : ViewModelBase, IDockBase
     [RelayCommand]
     public void Clone()
     {
+        if (ExistingSequenceViewModels.IsNullOrEmpty()) return;
         CurrentSequenceViewModel.OpenInspectionViewCommand.Execute(null);
     }
 
