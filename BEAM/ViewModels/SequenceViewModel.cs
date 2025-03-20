@@ -203,9 +203,9 @@ public partial class SequenceViewModel : ViewModelBase, IDockBase
         else if (x >= Sequence.Shape.Width + Sequence.DrawOffsetX)
             x = Sequence.Shape.Width - 1 + Sequence.DrawOffsetX;
         if(y < Sequence.DrawOffsetY)
-            y = Sequence.DrawOffsetX;
-        else if(y >= Sequence.Shape.Height + Sequence.DrawOffsetX)
-            y = Sequence.Shape.Height - 1 + Sequence.DrawOffsetX;
+            y = Sequence.DrawOffsetY;
+        else if(y >= Sequence.Shape.Height + Sequence.DrawOffsetY)
+            y = Sequence.Shape.Height - 1 + Sequence.DrawOffsetY;
         
         return new Coordinate2D(y, x);
     }

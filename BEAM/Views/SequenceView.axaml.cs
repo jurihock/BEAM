@@ -215,21 +215,6 @@ public partial class SequenceView : UserControl
         Application.Current.TryGetResource("FontColor", currentTheme, out var fontColorScottPlot);
         var fontColor = (Avalonia.Media.Color)fontColorScottPlot!;
         AvaPlot1.Plot.Axes.Color(new Color(fontColor.R, fontColor.G, fontColor.B));
-
-
-        // AvaPlot1.Plot.Grid.MajorLineColor = Colors.Aqua;
-
-        // change legend colors
-        // AvaPlot1.Plot.Legend.BackgroundColor = Colors.Aqua;
-        // AvaPlot1.Plot.Legend.FontColor = Colors.Aqua;
-        // AvaPlot1.Plot.Legend.OutlineColor = Colors.Aqua;
-
-        // AvaPlot1.Plot.Grid.MajorLineColor = Color.FromHex("#404040");
-        //
-        // // change legend colors
-        // AvaPlot1.Plot.Legend.BackgroundColor = Color.FromHex("#404040");
-        // AvaPlot1.Plot.Legend.FontColor = new Color(fontColor.R, fontColor.G, fontColor.B);
-        // AvaPlot1.Plot.Legend.OutlineColor = Color.FromHex("#d7d7d7");
     }
 
     private void _BuildCustomRightClickMenu()
@@ -387,8 +372,8 @@ public partial class SequenceView : UserControl
         x = Math.Round(x);
         y = Math.Round(y);
 
-        var checkWidth = Math.Round(vm.Sequence.Shape.Width * vm.Sequence.ScaleX) + vm.Sequence.DrawOffsetX;
-        var checkHeight = Math.Round(vm.Sequence.Shape.Height * vm.Sequence.ScaleY) + vm.Sequence.DrawOffsetY;
+        var checkWidth = vm.Sequence.Shape.Width + vm.Sequence.DrawOffsetX;
+        var checkHeight = vm.Sequence.Shape.Height + vm.Sequence.DrawOffsetY;
         
         // If outside the sequence just show the position and no values.
         if (x >= checkWidth || y >= checkHeight || x < vm.Sequence.DrawOffsetX || y < vm.Sequence.DrawOffsetY)
